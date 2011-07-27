@@ -1,0 +1,212 @@
+
+%!encoding:       iso-8859-1
+%!options(html):  --css-sugar -o hotkeys.html
+%!style(html):    ../styles.css
+%!preproc(html):  '%%html: ' ''
+%!postproc(html): '<HEAD>'  '<HEAD>\n<TITLE>joten @ AutoHotkey</TITLE>'
+%!postproc(html): '<HEAD>'  '<HEAD>\n<LINK REL="icon" HREF="../images/jn.ico" />'
+%!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="author" CONTENT="joten" />'
+%!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="keywords" CONTENT="AutoHotkey, joten, bug.n, tiling, window management" />'
+%!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="description" CONTENT="AutoHotkey scripts by joten" />'
+%!postproc(html): '<H1>'    '<H1 ID="bugn">'
+%!postproc(html): '\(c\)'   '&copy;'
+%!options(txt):   -o hotkeys.txt
+%!preproc(txt):   '%%txt: ' ''
+%!postproc(txt):  '<BR>'    ''
+
+= bug.n/hotkeys =
+------------------------------------------------------------------------
+
+=== General description ===
+
+**format**: <modifier><key>::<function>(<argument>)''<BR>''
+**modifier**:
+- ! = Alt (Mod1Mask)
+- ^ = Ctrl (ControlMask)
+- + = Shift (ShiftMask)
+- # = LWin (Mod4Mask)
+
+
+You will have to press all keys of a hotkey at the same time beginning
+with the modifier for calling the associated function, e. g. "#^q" means
+pressing the left Windows key and the shift key and the q key
+(WIN+CTRL+Q) for quitting bug.n.
+
+
+=== Window related hotkeys ===
+
+: #Down::**View_activateWindow(+1)**
+  Activate the next window in the active view.
+
+: #Up::**View_activateWindow(-1)**
+  Activate the previous window in the active view.
+
+: #+Down::**View_shuffleWindow(+1)**
+  Move the active window to the next position in the window list of the
+  view.
+
+: #+Up::**View_shuffleWindow(-1)**
+  Move the active window to the previous position in the window list of
+  the view.
+
+: #+Enter::**View_shuffleWindow(0)**
+  Move the active window to the first position in the window list of the
+  view.
+
+: #c::**Manager_closeWindow()**
+  Close the active window.
+
+: #+d::**Manager_toggleDecor()**
+  Show / Hide the title bar of the active window.
+
+: #+f::**View_toggleFloating()**
+  Toggle the floating status of the active window (i. e. dis- / regard
+  it when tiling).
+
+: #+m::**Manager_moveWindow()**
+  Move the active window by key (only floating windows).
+
+: #+s::**Manager_sizeWindow()**
+  Resize the active window by key (only floating windows).
+
+: #+x::**Manager_maximizeWindow()**
+  Move and resize the active window to the size of the work area (only
+  floating windows).
+
+: #i::**Manager_getWindowInfo()**
+  Get information for the active window (id, title, class, process name,
+  style, geometry, tags and floating state).
+
+: #+i::**Manager_getWindowList()**
+  Get a window list for the active view (id, title and class).
+
+
+=== Layout related hotkeys ===
+
+: #Tab::**View_setLayout(-1)**
+  Set the previously set layout. You may also use View_setLayout(">")
+  for setting the next layout in the layout array.
+
+: #f::**View_setLayout(3)**
+  Set the 3rd defined layout (i. e. floating layout in the default
+  configuration).
+
+: #m::**View_setLayout(2)**
+  Set the 2nd defined layout (i. e. monocle layout in the default
+  configuration).
+
+: #t::**View_setLayout(1)**
+  Set the 1st defined layout (i. e. tile layout in the default
+  configuration).
+
+: #Left::**View_setMFactor(-0.05)**
+  Reduce the size of the master area in the active view (only for the
+  "tile" layout).
+
+: #Right::**View_setMFactor(+0.05)**
+  Enlarge the size of the master area in the active view (only for the
+  "tile" layout).
+
+: #^t::**View_rotateLayoutAxis(1, +1)**
+  Rotate the layout axis (i. e. 2 -> 1 = vertical layout, 1 -> 2 =
+  horizontal layout, only for the "tile" layout).
+
+: #^Enter::**View_rotateLayoutAxis(1, +2)**
+  Mirror the layout axis (i. e. -1 -> 1 / 1 -> -1 = master on the left /
+  right side, -2 -> 2 / 2 -> -2 = master at top / bottom, only for the
+  "tile" layout).
+
+: #^Tab::**View_rotateLayoutAxis(2, +1)**
+  Rotate the master axis (i. e. 3 -> 1 = x-axis = horizontal stack, 1 ->
+  2 = y-axis = vertical stack, 2 -> 3 = z-axis = monocle, only for the
+  "tile" layout).
+
+: #^+Tab::**View_rotateLayoutAxis(3, +1)**
+  Rotate the stack axis (i. e. 3 -> 1 = x-axis = horizontal stack, 1 ->
+  2 = y-axis = vertical stack, 2 -> 3 = z-axis = monocle, only for the
+  "tile" layout).
+
+: #^Left::**View_setMSplit(+1)**
+  Move the master splitter, i. e. decrease the number of windows in the
+  master area (only for the "tile" layout).
+
+: #^Right::**View_setMSplit(-1)**
+  Move the master splitter, i. e. increase the number of windows in the
+  master area (only for the "tile" layout).
+
+
+=== Tag / View related hotkeys ===
+
+: #BackSpace::**Monitor_activateView(-1)**
+  Activate the previously activated view. You may also use
+  Monitor_activateView(">") for activating the next / adjacent view.
+
+: #+0::**Monitor_setWindowTag(0)**
+  Tag the active window with all tags (1 ... 9).
+
+: #<tag>::**Monitor_activateView(<tag>)**
+  Activate the view indicated by "<tag>" (choose one out of 1 ... 9), e.
+  g. #1::Monitor_activateView(1).
+
+: #+<tag>::**Monitor_setWindowTag(<tag>)**
+  Tag the active window indicated by "<tag>" (choose one tag out of 1
+  ... 9), e. g. #+1::Monitor_setWindowTag(1).
+
+: #^<tag>::**Monitor_toggleWindowTag(<tag>)**
+  Add / Remove the tag indicated by "<tag>" (1 ... 9) for the active
+  window, if it is not / is already set, e. g.
+  #^1::Monitor_toggleWindowTag(1).
+
+
+=== Monitor related hotkeys ===
+
+: #.::**Manager_activateMonitor(+1)**
+  Activate the next monitor in a multi-monitor environment.
+
+: #,::**Manager_activateMonitor(-1)**
+  Activate the previous monitor in a multi-monitor environment.
+
+: #+.::**Manager_setWindowMonitor(+1)**
+  Set the active window to the active view on the next monitor in a
+  multi-monitor environment.
+
+: #+,::**Manager_setWindowMonitor(-1)**
+  Set the active window to the active view on the previous monitor in a
+  multi-monitor environment.
+
+: #^+.::**Manager_setViewMonitor(+1)**
+  Set all windows of the active view on the active view of the next
+  monitor in a multi-monitor environment.
+
+: #^+,::**Manager_setViewMonitor(-1)**
+  Set all windows of the active view on the active view of the previous
+  monitor in a multi-monitor environment.
+
+: #+Space::**Monitor_toggleBar()**
+  Hide / Show the bar (bug.n status bar) on the active monitor.
+
+: #Space::**Monitor_toggleTaskBar()**
+  Hide / Show the task bar.
+
+
+=== Application related hotkeys ===
+
+: #y::**Bar_toggleCommandGui()**
+  Open the command GUI for executing programmes or bug.n functions.
+
+: #^e::**Run, edit, %Config_sessionFilePath%**
+  Open the session file in the standard text editor.
+
+: #^s::**Session_save()**
+  Save the current state of monitors, views, layouts.
+
+: #^r::**Reload**
+  For resetting the confguration, if running bug.n as an Autohotkey script.
+
+: #^q::**ExitApp**
+  Quit bug.n, restore the default Windows UI and show all windows.
+
+''<BR>''
+------------------------------------------------------------------------
+%%html: (c) 2010-2011 joten, last modified %%date(%d.%m.%Y) ([View txt2tags source %%infile]) [../images/jn.png]
+%%txt: (c) 2010-2011 joten, last modified %%date(%d.%m.%Y)

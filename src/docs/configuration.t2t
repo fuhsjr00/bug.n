@@ -1,0 +1,239 @@
+
+%!encoding:       iso-8859-1
+%!options(html):  --css-sugar -o configuration.html
+%!style(html):    ../styles.css
+%!preproc(html):  '%%html: ' ''
+%!postproc(html): '<HEAD>'  '<HEAD>\n<TITLE>joten @ AutoHotkey</TITLE>'
+%!postproc(html): '<HEAD>'  '<HEAD>\n<LINK REL="icon" HREF="../images/jn.ico" />'
+%!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="author" CONTENT="joten" />'
+%!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="keywords" CONTENT="AutoHotkey, joten, bug.n, tiling, window management" />'
+%!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="description" CONTENT="AutoHotkey scripts by joten" />'
+%!postproc(html): '<H1>'    '<H1 ID="bugn">'
+%!postproc(html): '\(c\)'   '&copy;'
+%!options(txt):   -o configuration.txt
+%!preproc(txt):   '%%txt: ' ''
+%!postproc(txt):  '<BR>'    ''
+
+= bug.n/configuration =
+------------------------------------------------------------------------
+
+=== bug.n GUI ===
+
+: **Config_showBar**=1
+  If false (=0), the bar is hidden. It can be made visible or hidden by hotkey.
+
+: **Config_topBar**=1
+  If false (=0), the bar is at the bottom.
+
+: **Config_fontName**=Lucida Console
+  A monospace font is preferable for bug.n to calculate the correct width
+  of the bar and its elements (sub-windows).
+
+: **Config_fontSize**=
+  Font size in pixel. The default value is retrieved from the "Window
+  Color and Appearance" settings for the "Active Title Bar".
+
+: **Config_normBgColor**=
+  Normal background color of bar elements. The first color is the color
+  for views without windows and the title bar (default: COLOR_MENU), the
+  second color is the first for the 'window count gradient' (default:
+  COLOR_INACTIVECAPTION) indicating one window on a view, the third color
+  is the second for the 'window count gradient' (default:
+  COLOR_GRADIENTINACTIVECAPTION) indicating ten or more windows, the color
+  indicating two to nine windows is calculated by bug.n. Beside defining
+  those three colors in the format "RRGGBB;RRGGBB;RRGGBB", you may also
+  explicitly define all ten colors. The default values are retrieved from
+  the "Window Color and Appearance" settings for the "Inactive Title
+  Bar".
+
+: **Config_normFgColor**=
+  Normal foreground (i. e. text) color of bar elements as described
+  above. The default values are retrieved from the "Window Color and
+  Appearance" settings for the "Inactive Title Bar".
+
+: **Config_selBgColor**=
+  Background colour of 'selected' or highlighted bar elements. The first
+  colour is used for the active view (default: COLOR_HIGHLIGHT), the
+  second color is used for the first status information field (default:
+  COLOR_ACTIVECAPTION), the third color is used for the status information
+  indicating a decreasing battery level, the layout symbol and the command
+  symbol, which is the last field in the status bar (default:
+  COLOR_GRADIENTACTIVECAPTION), the fourth color is used for an alarming
+  battery level (default: inverted COLOR_ACTIVECAPTION). The additional
+  status information fields get colors from the gradient calculated by
+  bug.n from the first and last status information field. The default
+  values are retrieved from the "Window Color and Appearance" settings for
+  the "Active Title Bar" and "Selected Items".
+
+: **Config_selFgColor**=
+  Foreground colour of 'selected' or highlighted bar elements as described
+  above. The default values are retrieved from the "Window Color and
+  Appearance" settings for the "Active Title Bar" and "Selected Items".
+
+: **Config_readinBat**=0
+  If true (=1), the system battery status is read in and displayed in
+  the status bar. This only makes sense, if you have a system battery
+  (notebook).
+
+: **Config_readinCpu**=0
+  If true (=1), the current CPU load is read in and displayed in the status bar.
+
+: **Config_readinDate**=1
+  If true (=1), the current date is read in (format: "WW, DD. MMM.
+  YYYY") and displayed in the status bar.
+
+: **Config_readinTime**=1
+  If true (=1), the current time is read in (format: "HH:MM") and
+  displayed in the status bar.
+
+: **Config_readinInterval**=30000
+  Time in milliseconds after which the above status values are refreshed.
+
+
+=== Windows UI ===
+
+: **Config_bbCompatibility**=0
+  If true (=1), bug.n looks for BlackBox components (bbLeanBar, bbSlit
+  and SystemBarEx) when calculating the work area. It is assumed that
+  the virtual desktop functionality of BlackBox and NOT bug.n is used
+  (**=> Hiding and showing windows is detected and acted upon).
+
+: **Config_borderWidth**=0
+  If > 0, the window border width is set to the integer value
+  Config_borderWidth.
+
+: **Config_borderPadding**=-1
+  If >= 0, the window border padding is set to the integer value
+  Config_borderPadding (only for Windows >**= Vista).
+
+: **Config_showTaskBar**=0
+  If false (=0), the task bar is hidden. It can be made visible or
+  hidden by hotkey (see below).
+
+: **Config_showBorder**=1
+  If false (=0), the window borders are hidden; therefor windows cannot
+  be resized manually by dragging the border, even if using the
+  according hotkey.
+
+: **Config_selBorderColor**=
+  Border colour of the active window; format: 0x00BBGGRR (e. g.
+  "0x006A240A", if empty, the system's window border colour is not
+  changed).
+
+
+=== View / Layout ===
+
+: **Config_viewCount**=9
+  The total number of views. This has effects on the displayed groups in
+  the bar, and should not be exceeded in the hotkeys below.
+
+: **Config_layoutAxis[1]**=1
+  The layout axis: 1 = x, 2 = y; negative values mirror the layout,
+  setting the master area to the right / bottom instead of left / top.
+
+: **Config_layoutAxis[2]**=2
+  The master axis: 1 = x (from left to right), 2 = y (from top to
+  bottom), 3 = z (monocle).
+
+: **Config_layoutAxis[3]**=2
+  The stack axis:  1 = x (from left to right), 2 = y (from top to
+  bottom), 3 = z (monocle).
+
+: **Config_layoutMFactor**=0.6
+  The factor for the size of the master area, which is multiplied by the
+  monitor size.
+
+
+=== Runtime ===
+
+: **Config_mouseFollowsFocus**=1
+  If true (=1), the mouse pointer is set over the focused window, if a
+  window is activated by bug.n.
+
+: **Config_shellMsgDelay**=350
+  The time bug.n waits after a shell message (a window is opened, closed
+  or the focus has been changed); if there are any problems recognizing,
+  when windows are opened or closed, try to increase this number.
+
+: **Config_viewFollowsTagged**=0
+  If true (=1), the view is set to, if a window is tagged with a single
+  tag.
+
+
+=== Rules ===
+
+: **Config_rules[1]**=.*;.*;;1;0;0;0;0;0
+  At first you may set a default rule (.*;.*;) for a default monitor,
+  view and / or showing window title bars. General format:
+  Config_rules[i]=<class (regular expression string)>;<title (regular
+  expression string)>;<window style (hexadecimal number or blank)>;<is
+  managed (1 = True or 0 = False)>;<monitor (0 <= integer <= total number
+  of monitors, 0 means the currently active monitor)>;<tags (binary mask
+  as integer >= 0, e. g. 17 for 1 and 5, 0 means the currently active
+  tag)>;<is floating (1 = True or 0 = False)>;<is decorated (1 = True or
+  0 = False)>;<hide title (1 = True or 0 = False)>" (";" is not allowed
+  as a character).
+
+: **Config_rules[2]**=.*;.*;0x80000000;0;0;0;1;1;1
+  Pop-up windows (style WS_POPUP=0x80000000) will not be managed, are
+  floating and the titles are hidden.
+
+: **Config_rules[3]**=SWT_Window0;.*;;1;0;0;0;0;0
+  Windows created by Java (SWT) e. g. Eclipse have the style WS_POPUP,
+  but should excluded from the above rule.
+
+: **Config_rules[4]**=Xming;.*;;1;0;0;0;0;0
+  Xming windows have the style WS_POPUP, but should be excluded from the
+  above rule.
+
+: **Config_rules[5]**=_sp;_sp;;1;0;0;1;0;1
+: **Config_rules[6]**=MozillaDialogClass;.*;;1;0;0;1;1;0
+: **Config_rules[7]**=MsiDialog(No)?CloseClass;.*;;1;0;0;1;1;0
+: **Config_rules[8]**=gdkWindowToplevel;GIMP-Start;;1;0;0;1;1;0
+: **Config_rules[9]**=gdkWindowToplevel;GNU Image Manipulation Program;;1;0;0;1;1;0
+: **Config_rules[10]**=gdkWindowToplevel;Werkzeugkasten;;1;0;0;1;1;0
+: **Config_rules[11]**=gdkWindowToplevel;Ebenen, .* - Pinsel, Muster, .*;;1;0;0;1;1;0
+: **Config_rules[12]**=gdkWindowToplevel;Toolbox;;1;0;0;1;1;0
+: **Config_rules[13]**=gdkWindowToplevel;Layers, Channels, Paths, .*;;1;0;0;1;1;0
+: **Config_rules[14]**=CalcFrame;.*;;1;0;0;1;1;0
+
+: **Config_rulesCount**=14
+  The total number of active rules above.
+  Using an indexing number less or equal to "Config_rulesCount" replaces
+  this rule. Additional rules need an increasing indexing number higher
+  than the value for "Config_rulesCount".
+
+
+=== Session management ===
+
+: **Config_autoSaveSession**=0
+  Automatically save the current state of monitors, views, layouts
+  (active view, layout, axes, mfact and msplit) to te session file (set
+  below) when quitting bug.n.
+
+
+=== Hotkeys ===
+
+: **Config_hotkey[i]**=<key name>::<command or function name>
+  You may overwrite default or add new hotkeys by using the above
+  format. The indexing numbers ("i") should start with 1 and be
+  sequential. "<key name>::<command or function name>" is the original
+  syntax from AutoHotkey as described in
+  http://www.autohotkey.com/docs/Hotkeys.htm.
+  - To deacivate a default hotkey as listed in %%LINK_hotkeys, add a new
+    line in the format "Config_hotkey[i]=<key name>::" (without a
+    function name).
+  - To assign an internal function of bug.n to a new hotkey, add a line
+    as documented in %%LINK_hotkeys, but with the new key name.
+  - To assign an external program to a new hotkey, add a line in the
+    general format using the "Run" command of AutoHotkey as described in
+    http://www.autohotkey.com/docs/commands/Run.htm ("Run, Target [,
+    WorkingDir, Max|Min|Hide]").
+  - You may also use the "Send" command of AutoHotkey as described in
+    http://www.autohotkey.com/docs/commands/Send.htm
+
+
+''<BR>''
+------------------------------------------------------------------------
+%%html: (c) 2010-2011 joten, last modified %%date(%d.%m.%Y) ([View txt2tags source %%infile]) [../images/jn.png]
+%%txt: (c) 2010-2011 joten, last modified %%date(%d.%m.%Y)
