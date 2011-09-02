@@ -1,2 +1,2 @@
 syntax: glob
-src/Session.ini
+src/Config.ini
