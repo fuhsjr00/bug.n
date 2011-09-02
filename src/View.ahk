@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *	@version 8.2.0.03 (24.07.2011)
+ *	@version 8.2.0.03 (11.08.2011)
  */
 
 View_init(m, v) {
@@ -74,7 +74,7 @@ View_getTiledWndIds(m, v, ByRef tiledWndIds) {
 	StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
 	Loop, PARSE, wndIds, `;
 	{
-		If Not Manager_#%A_LoopField%_isFloating {
+		If Not Manager_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) {
 			n += 1
 			tiledWndIds .= A_LoopField ";"
 		}
@@ -321,5 +321,6 @@ View_toggleFloating() {
 	If (Config_layoutFunction_#%l% And InStr(Manager_managedWndIds, aWndId ";")) {
 		Manager_#%aWndId%_isFloating := Not Manager_#%aWndId%_isFloating
 		View_arrange(Manager_aMonitor, v)
+		Bar_updateTitle()
 	}
 }

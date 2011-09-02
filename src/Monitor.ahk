@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *	@version 8.2.0.03 (27.07.2011)
+ *	@version 8.2.0.03 (21.08.2011)
  */
 
 Monitor_init(m) {
@@ -26,13 +26,13 @@ Monitor_init(m) {
 	Monitor_#%m%_showBar  := Config_showBar
 	Loop, % Config_viewCount
 		View_init(m, A_Index)
-	Session_restore("Monitor", m)
+	Config_restore("Monitor", m)
 	Monitor_getWorkArea(m)
 	Bar_init(m)
 }
 
 Monitor_activateView(v) {
-	Local aView, aWndClass, aWndId, wndId, wndIds
+	Local aView, aWndClass, aWndId, m, n, wndId, wndIds
 	
 	If (v = -1)
 		v := Monitor_#%Manager_aMonitor%_aView_#2
@@ -48,23 +48,36 @@ Monitor_activateView(v) {
 			If Not (aWndClass = "Progman") And Not (aWndClass = "AutoHotkeyGui") And Not (aWndClass = "DesktopBackgroundClass")
 				View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
 		}
-		Monitor_#%Manager_aMonitor%_aView_#2 := aView
-		Monitor_#%Manager_aMonitor%_aView_#1 := v
 		
-		Manager_hideShow := True
-		StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%aView%_wndIds, 1
-		Loop, PARSE, wndIds, `;
-			If Not (Manager_#%A_LoopField%_tags & (1 << v - 1))
-				WinHide, ahk_id %A_LoopField%
-		StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
-		Loop, PARSE, wndIds, `;
-			WinShow, ahk_id %A_LoopField%
-		Manager_hideShow := False
-		
-		Bar_updateView(Manager_aMonitor, aView)
-		Bar_updateView(Manager_aMonitor, v)
-		
-		View_arrange(Manager_aMonitor, v)
+		n := Config_syncMonitorViews
+		If (n = 1)
+			n := Manager_monitorCount
+		Else If (n < 1)
+			n := 1
+		Loop, % n {
+			If (n = 1)
+				m := Manager_aMonitor
+			Else
+				m := A_Index
+			
+			Monitor_#%m%_aView_#2 := aView
+			Monitor_#%m%_aView_#1 := v
+			
+			Manager_hideShow := True
+			StringTrimRight, wndIds, View_#%m%_#%aView%_wndIds, 1
+			Loop, PARSE, wndIds, `;
+				If Not (Manager_#%A_LoopField%_tags & (1 << v - 1))
+					WinHide, ahk_id %A_LoopField%
+			StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
+			Loop, PARSE, wndIds, `;
+				WinShow, ahk_id %A_LoopField%
+			Manager_hideShow := False
+			
+			Bar_updateView(m, aView)
+			Bar_updateView(m, v)
+			
+			View_arrange(m, v)
+		}
 		
 		wndId := View_#%Manager_aMonitor%_#%v%_aWndId
 		If Not (wndId And WinExist("ahk_id" wndId)) {
@@ -132,7 +145,7 @@ Monitor_getWorkArea(m) {
 		}
 	}
 	If Monitor_#%m%_showBar {
-		If (Config_verticalBarPos = "top") {
+		If (Config_verticalBarPos = "top" Or (Config_verticalBarPos = "tray" And Not m = Manager_taskBarMonitor)) {
 			bTop := monitorTop
 			monitorTop += Bar_height
 		} Else If (Config_verticalBarPos = "bottom") {

@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *	@version 8.2.0.01 (16.02.2011)
+ *	@version 8.2.0.03 (21.08.2011)
  */
 
 NAME	:= "bug.n"
@@ -33,7 +33,7 @@ SetWinDelay, 10
 
 ; pseudo main function
 	If 0 = 1
-		Config_sessionFilePath = %1%
+		Config_filePath = %1%
 	Config_init()
 	
 	Menu, Tray, Tip, %NAME% %VERSION%
@@ -53,7 +53,7 @@ Return					; end of the auto-execute section
  */
 Main_cleanup:			; The labels with "ExitApp" or "Return" at the end and hotkeys have to be after the auto-execute section.
 	If Config_autoSaveSession
-		Session_save()
+		Config_saveSession()
 	Manager_cleanup()
 ExitApp
 
@@ -73,5 +73,4 @@ Return
 #Include Config.ahk
 #Include Manager.ahk
 #Include Monitor.ahk
-#Include Session.ahk
 #Include View.ahk

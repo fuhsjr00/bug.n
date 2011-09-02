@@ -1,9 +1,9 @@
 
-%!encoding:       iso-8859-1
+%!encoding:       utf-8
 %!options(html):  --css-sugar -o help.html
 %!style(html):    ../styles.css
 %!preproc(html):  '%%html: ' ''
-%!postproc(html): '<HEAD>'  '<HEAD>\n<TITLE>joten @ AutoHotkey</TITLE>'
+%!postproc(html): '<HEAD>'  '<HEAD>\n<TITLE>bug.n help</TITLE>'
 %!postproc(html): '<HEAD>'  '<HEAD>\n<LINK REL="icon" HREF="../images/jn.ico" />'
 %!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="author" CONTENT="joten" />'
 %!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="keywords" CONTENT="AutoHotkey, joten, bug.n, tiling, window management" />'
@@ -77,7 +77,7 @@ There are three layouts.
 === Tagging ===
 
 bug.n features an extended implementation of virtual desktops:
-tagging.''<BR>''
+//tagging//.''<BR>''
 Windows are tagged with one or more numbers, which determine on which
 views they are shown. Selecting a view shows the windows tagged with the
 same number and hides all other windows.
@@ -93,54 +93,31 @@ internal variables for the current state of bug.n, e. g. the active view
 (saved for each monitor) and layout (saved for each view).
 
 
-== Preliminary note ==
-
-There are two forms in which you can run bug.n:
-+ the compiled executable
-+ the AutoHotkey script
-
-
-Depending on which form you choose, the following procedures
-(installing, running and customizing) are different. Using the compiled
-executable may be easier but is also less flexible for customization.
-
-
 == Installing and running bug.n ==
 
 There is no installation wizard for bug.n. If you downloaded this
 package and unpacked it, it should be in a directory, where you have
 read and write access. This is the only requirement for using bug.n (at
-least for saving the bug.n session file). Apart from that you may copy
-bug.n to any directory.
-+ If you choose to use the executable and want to save it to a
-  directory, to which you do not have write access, you will have to run
-  bug.n with a parameter indicating the file path to the session file
-  (<file path to the bug.n executable> <file path to the session file>),
-  e. g. "C:\Program Files\bugn\bugn.exe C:\Users\joten\bugn.ini".
-+ If you choose to use the AutoHotkey script, you will need a version of
-  AutoHotkey (available from http://www.autohotkey.com/download) and a
-  file association for AutoHotkey scripts to the AutoHotkey executable
-  (*.ahk -> <file path to AutoHotkey.exe>). You will than have to run
-  "Main.ahk" from within the "source" directory of bug.n.
+least for saving the bug.n configuration file). Apart from that you may
+copy bug.n to any directory.
+If you want to save it to a directory, to which you do not have write
+access, you will have to run bug.n with a parameter indicating the file
+path to the configuration file (<file path to the bug.n executable>
+<file path to the session file>), e. g.
+"C:\Program Files\bugn\bugn.exe C:\Users\joten\bugn.ini".
 
 
 === Microsoft Windows Vista / 7 and UAC ===
 
 If you are using bug.n on Microsoft Windows Vista or 7 you may use
 applications, which run with administrator privileges e. g.
-administrative tools and therefor are not managed by bug.n. If you want
+administrative tools and therefor are not managed by bug.n, if it is
+run with an account, which //is// not the administrator. If you want
 those applications to be managed, you need to run bug.n with
 administrator privileges, too.
-+ If you choose to use the executable, you can set the option "Run this
-  program as an administrator" on the "Compatiblity" tab, section
-  "Privilege level" of the bug.n executable file properties.
-+ If you choose to use the AutoHotkey script, you will have to use a
-  command script like "run.cmd" provided in the "source" directory of
-  bug.n. Please adjust the file pathes in this file depending on your
-  working environment and than create a link to the file. In the file
-  properties of this link you can set the option "Run this program as an
-  administrator" on the "Compatiblity" tab, section "Privilege level".
-  You will than have to run bug.n through this link.
+You can set the option "Run this program as an administrator" on the
+"Compatiblity" tab, section "Privilege level" of the bug.n executable
+file properties.
 
 
 == Customization ==
@@ -156,31 +133,19 @@ Customization can be done
 - for hotkeys (the key bindings for the bug.n functions)
 
 
-%%html: ''<P></P>''
-+ If you use the executable, you can not change the layout symbols and
-  the order of the layouts. The available configuration variables are
-  listed in %%LINK_configuration.''<BR>''
-  To change these, first create a session file by using the hotkey
-  "WIN+CTRL+S". The file is either saved in the directory you specified
-  with the parameter to the executable, or in the same directory where the
-  executable is saved. You may then edit the file with a text editor
-  ("WIN+CTRL+E" opens the file for editing) and add a new line for each
-  configuration variable with its value (format: <variable>=<value>, use
-  no quotation marks, 1 for true and 0 for false), e. g.
-  "Config_showBar=0". You will have to quit and run bug.n again for the
-  changes to take effect.
-+ If you use the AutoHotkey script you can directly edit the file
-  "Config.ahk" in the "source" directory of bug.n and reload the script
-  with the hotkey "WIN+CTRL+R". You can additionally use the
-  configuration file as described above. Please refer to the
-  documentation of AutoHotkey for more information about writing an
-  AutoHotkey script, especially
-  - http://www.autohotkey.com/docs/Hotkeys.htm
-  - http://www.autohotkey.com/docs/Variables.htm
-
-
-You may find a sample session file (Session_sample.ini) in the main
-directory of bug.n.
+The available configuration variables are listed in
+%%LINK_configuration.''<BR>''
+To change these, first create a session file by using the hotkey
+"WIN+CTRL+S". The file is either saved in the directory you specified
+with the parameter to the executable, or in the same directory where the
+executable is saved. You may then edit the file with a text editor
+("WIN+CTRL+E" opens the file for editing) and add a new line for each
+configuration variable with its value (format: <variable>=<value>, use
+no quotation marks, 1 for true and 0 for false), e. g.
+"Config_showBar=0". You will have to quit and run bug.n again for the
+changes to take effect.''<BR>''
+You may find a sample configuration file (Config_example.ini) in the
+main directory of bug.n.
 
 
 == Usage ==

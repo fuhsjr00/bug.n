@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *	@version 8.2.0.03 (27.07.2011)
+ *	@version 8.2.0.03 (02.09.2011)
  */
 
 Manager_init() {
@@ -71,15 +71,18 @@ Manager_init() {
 }
 
 Manager_activateMonitor(d) {
-	Local aView, aWndClass, aWndId, v, wndId
+	Local aView, aWndClass, aWndHeight, aWndId, aWndWidth, aWndX, aWndY, v, wndId
 	
 	If (Manager_monitorCount > 1) {
 		aView := Monitor_#%Manager_aMonitor%_aView_#1
 		WinGet, aWndId, ID, A
 		If WinExist("ahk_id" aWndId) {
 			WinGetClass, aWndClass, ahk_id %aWndId%
-			If Not (aWndClass = "Progman") And Not (aWndClass = "AutoHotkeyGui") And Not (aWndClass = "DesktopBackgroundClass")
-				View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
+			If Not (aWndClass = "Progman") And Not (aWndClass = "AutoHotkeyGui") And Not (aWndClass = "DesktopBackgroundClass") {
+				WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
+				If (Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2) = Manager_aMonitor)
+					View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
+			}
 		}
 		
 		Manager_aMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
@@ -111,8 +114,8 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
 	WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
 	WinGet, wndStyle, Style, ahk_id %wndId%
 	If wndClass And wndTitle And Not (wndX < -4999) And Not (wndY < -4999) {
-		Loop, % Config_rulesCount {
-			StringSplit, rule, Config_rules_#%A_index%, `;
+		Loop, % Config_ruleCount {
+			StringSplit, rule, Config_rule_#%A_index%, `;
 			If RegExMatch(wndClass . ";" . wndTitle, rule1 . ";" . rule2) And (rule3 = "" Or wndStyle & rule3) {	; The last matching rule is returned.
 				isManaged   := rule4
 				m           := rule5
@@ -122,13 +125,8 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
 				hideTitle   := rule9
 			}
 		}
-		If (m = 0) {
-			If Config_monitorFollowsMouse {
-				MouseGetPos, mouseX, mouseY
-				m := Monitor_get(mouseX, mouseY)
-			} Else
-				m := Manager_aMonitor
-		}
+		If (m = 0)
+			m := Manager_aMonitor
 		If (m > Manager_monitorCount)	; If the specified monitor is out of scope, set it to the max. monitor.
 			m := Manager_monitorCount
 		If (tags = 0)
@@ -195,7 +193,7 @@ Manager_closeWindow() {
 	WinGet, aWndId, ID, A
 	WinGetClass, aWndClass, ahk_id %aWndId%
 	WinGetTitle, aWndTitle, ahk_id %aWndId%
-	If Not (aWndClass = "AutoHotkeyGUI" And RegExMatch(aWndTitle, "BUGN_BAR_[0-9]+_[0-9]+"))
+	If Not (aWndClass = "AutoHotkeyGUI" And RegExMatch(aWndTitle, "bug.n_BAR_[0-9]+"))
 		WinClose, ahk_id %aWndId%
 }
 
@@ -330,7 +328,7 @@ Manager_moveWindow() {
 }
 
 Manager_onShellMessage(wParam, lParam) {
-	Local a, aWndHeight, aWndId, aWndWidth, aWndX, aWndY, flag, m, tags, wndClass, wndPName, wndTitle
+	Local a, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, flag, m, tags, wndClass, wndId, wndPName, wndTitle, x, y
 	
 	SetFormat, Integer, hex
 	lParam := lParam+0
@@ -339,21 +337,30 @@ Manager_onShellMessage(wParam, lParam) {
 	WinGetTitle, wndTitle, ahk_id %lParam%
 	WinGet, wndPName, ProcessName, ahk_id %lParam%
 	
+	WinGet, aWndId, ID, A
+	WinGetClass, aWndClass, ahk_id %aWndId%
+	WinGetTitle, aWndTitle, ahk_id %aWndId%
+	If ((wParam = 4 Or wParam = 32772) And lParam = 0 And aWndClass = "Progman" And aWndTitle = "Program Manager") {
+		MouseGetPos, x, y
+		m := Monitor_get(x, y)
+		If m
+			Manager_aMonitor := m
+		Bar_updateTitle()
+	}
+	
 	If (wParam = 1 Or wParam = 2 Or wParam = 4 Or wParam = 6 Or wParam = 32772) And lParam And Not Manager_hideShow And Not Manager_focus {
 		If Not (wParam = 4 Or wParam = 32772) {
 			If Not wndClass And Not (wParam = 2) {
-				;Loop {
-					WinGetClass, wndClass, ahk_id %lParam%
-					If wndClass {
-						If (wndClass = "Emacs")
-							Sleep, % 12 * Config_shellMsgDelay
-				;		Break
-					} Else
-						Sleep, %Config_shellMsgDelay%
+				WinGetClass, wndClass, ahk_id %lParam%
+				If wndClass {
+					If (wndClass = "Emacs")
+						Sleep, % 12 * Config_shellMsgDelay
+				} Else
+					Sleep, %Config_shellMsgDelay%
 			}
 		}
 		
-		If (wParam = 1 Or wParam = 6) And Not InStr(Manager_allWndIds, lParam . ";")
+		If (wParam = 1 Or wParam = 6) And Not InStr(Manager_allWndIds, lParam ";") And Not InStr(Manager_managedWndIds, lParam ";")
 			a := Manager_manage(lParam)
 		Else {
 			flag := True
@@ -366,15 +373,13 @@ Manager_onShellMessage(wParam, lParam) {
 			Bar_updateView(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
 		}
 		
-		If flag {
-			WinGet, aWndId, ID, A
+		If flag
 			If (Manager_monitorCount > 1) {
 				WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
-				m := Monitor_get(aWndX+aWndWidth/2, aWndY+aWndHeight/2)
+				m := Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2)
 				If m
 					Manager_aMonitor := m
 			}
-		}
 		
 		If tags
 			Loop, % Config_viewCount
@@ -529,7 +534,7 @@ Manager_unmanage(wndId) {
 	Manager_#%wndId%_tags        :=
 	Manager_#%wndId%_isDecorated :=
 	Manager_#%wndId%_isFloating  :=
-	StringReplace, Bar_hideTitleWndIds, Bar_hideTitleWndIds, %wndId%`;, , All
+	StringReplace, Bar_hideTitleWndIds, Bar_hideTitleWndIds, %wndId%`;, 
 	StringReplace, Manager_allWndIds, Manager_allWndIds, %wndId%`;, 
 	StringReplace, Manager_managedWndIds, Manager_managedWndIds, %wndId%`;, , All
 	

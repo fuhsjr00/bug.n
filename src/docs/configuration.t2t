@@ -1,9 +1,9 @@
 
-%!encoding:       iso-8859-1
+%!encoding:       utf-8
 %!options(html):  --css-sugar -o configuration.html
 %!style(html):    ../styles.css
 %!preproc(html):  '%%html: ' ''
-%!postproc(html): '<HEAD>'  '<HEAD>\n<TITLE>joten @ AutoHotkey</TITLE>'
+%!postproc(html): '<HEAD>'  '<HEAD>\n<TITLE>bug.n configuration variables</TITLE>'
 %!postproc(html): '<HEAD>'  '<HEAD>\n<LINK REL="icon" HREF="../images/jn.ico" />'
 %!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="author" CONTENT="joten" />'
 %!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="keywords" CONTENT="AutoHotkey, joten, bug.n, tiling, window management" />'
@@ -20,67 +20,85 @@
 === bug.n GUI ===
 
 : **Config_showBar**=1
-  If false (=0), the bar is hidden. It can be made visible or hidden by hotkey.
+  If false (=0), the bar is hidden. It can be made visible or hidden by
+  hotkey (see below).
 
-: **Config_topBar**=1
-  If false (=0), the bar is at the bottom.
+: **Config_horizontalBarPos**=left
+  The horizontal position of the bar: center, left or right side of the
+  monitor or an offset in pixel (px) from the left (>= 0) or right (< 0).
+
+: **Config_verticalBarPos**=top
+  The vertical position of the bar: top or bottom of the monitor,
+  tray = sub-window of the task bar.
+
+: **Config_barWidth**=100%
+  The width of the bar in pixel (px) or with a per cent sign (%) as a
+  percentage.
+
+: **Config_singleRowBar**=1
+  If false, the bar will have to rows, one for the window title and one
+  for all other GUI controls.
+
+: **Config_spaciousBar**=0
+  If true, the height of the bar will be set to a value equal to the
+  height of an edit control, else it will be set to the text height.
 
 : **Config_fontName**=Lucida Console
   A monospace font is preferable for bug.n to calculate the correct width
   of the bar and its elements (sub-windows).
 
-: **Config_fontSize**=
+: **Config_fontSize**=<fontsize_captiontext>
   Font size in pixel. The default value is retrieved from the "Window
   Color and Appearance" settings for the "Active Title Bar".
 
-: **Config_normBgColor**=
-  Normal background color of bar elements. The first color is the color
-  for views without windows and the title bar (default: COLOR_MENU), the
-  second color is the first for the 'window count gradient' (default:
-  COLOR_INACTIVECAPTION) indicating one window on a view, the third color
-  is the second for the 'window count gradient' (default:
-  COLOR_GRADIENTINACTIVECAPTION) indicating ten or more windows, the color
-  indicating two to nine windows is calculated by bug.n. Beside defining
-  those three colors in the format "RRGGBB;RRGGBB;RRGGBB", you may also
-  explicitly define all ten colors. The default values are retrieved from
-  the "Window Color and Appearance" settings for the "Inactive Title
-  Bar".
+: **Config_normBgColor**=<COLOR_MENU>;<COLOR_INACTIVECAPTION>;<COLOR_GRADIENTINACTIVECAPTION>;Red;<COLOR_GRADIENTINACTIVECAPTION>
+  The normal background color of bar elements. The first value is the
+  color for views without windows, the title bar and time. The second
+  value is the color for the layout symbol, the any-text (i. a. date) and
+  the button for the command GUI (#!). The third value is the background
+  color of the progress bar indicating an inactive view and a charging
+  battery, the fourth value is the background color of the progress bar
+  indicating a discharging battery with a remaining charge of less than
+  ten percent, the fifth value is the background color of the progress
+  bar indicating a charging battery. The default values are retrieved
+  from the "Window Color and Appearance" settings.
 
-: **Config_normFgColor**=
-  Normal foreground (i. e. text) color of bar elements as described
-  above. The default values are retrieved from the "Window Color and
-  Appearance" settings for the "Inactive Title Bar".
+: **Config_normFgColor**=<COLOR_MENUTEXT>;Default;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTIONTEXT>;<COLOR_HIGHLIGHT>;White;Default;<COLOR_INACTIVECAPTION>
+  The normal foreground color of bar elements. The first two values are
+  the text colors for the first two elements as described above. The
+  third value is the forground color of the progress bar and the fourth
+  value the text color indicating an inactive view and a charging
+  battery. The fifth value is the foreground color of a progress bar
+  indicating a discharging battery. The sixth value is the text color
+  indicating a dischargin battery with a remaining charge of less than
+  ten percent. The seventh value is the text color indicating a charging
+  battery. The eighth value is the foreground color of a progress bar
+  indicating a chargin battery. The default values are retrieved from the
+  "Window Color and Appearance" settings.
 
-: **Config_selBgColor**=
-  Background colour of 'selected' or highlighted bar elements. The first
-  colour is used for the active view (default: COLOR_HIGHLIGHT), the
-  second color is used for the first status information field (default:
-  COLOR_ACTIVECAPTION), the third color is used for the status information
-  indicating a decreasing battery level, the layout symbol and the command
-  symbol, which is the last field in the status bar (default:
-  COLOR_GRADIENTACTIVECAPTION), the fourth color is used for an alarming
-  battery level (default: inverted COLOR_ACTIVECAPTION). The additional
-  status information fields get colors from the gradient calculated by
-  bug.n from the first and last status information field. The default
-  values are retrieved from the "Window Color and Appearance" settings for
-  the "Active Title Bar" and "Selected Items".
+: **Config_selBgColor**=<COLOR_GRADIENTACTIVECAPTION>
+  The background color of a progress bar indicating an active view or
+  discharging battery status. The default values are retrieved from the
+  "Window Color and Appearance" settings.
 
-: **Config_selFgColor**=
-  Foreground colour of 'selected' or highlighted bar elements as described
-  above. The default values are retrieved from the "Window Color and
-  Appearance" settings for the "Active Title Bar" and "Selected Items".
+: **Config_selFgColor**=<COLOR_CAPTIONTEXT>;<COLOR_ACTIVECAPTION>
+  The first color is the text color, the second the foreground color of a
+  progress bar indicating an active view or discharging battery status.
+  The default values are retrieved from the "Window Color and Appearance"
+  settings.
 
 : **Config_readinBat**=0
-  If true (=1), the system battery status is read in and displayed in
-  the status bar. This only makes sense, if you have a system battery
+  If true (=1), the system battery status is read in and displayed in the
+  status bar. This only makes sense, if you have a system battery
   (notebook).
 
 : **Config_readinCpu**=0
-  If true (=1), the current CPU load is read in and displayed in the status bar.
+  If true (=1), the current CPU load is read in and displayed in the
+  status bar.
 
 : **Config_readinDate**=1
-  If true (=1), the current date is read in (format: "WW, DD. MMM.
-  YYYY") and displayed in the status bar.
+  If true (=1), the current date is read in (format: "WW, DD. MMM. YYYY")
+  and displayed in the status bar.
 
 : **Config_readinTime**=1
   If true (=1), the current time is read in (format: "HH:MM") and
@@ -94,9 +112,9 @@
 
 : **Config_bbCompatibility**=0
   If true (=1), bug.n looks for BlackBox components (bbLeanBar, bbSlit
-  and SystemBarEx) when calculating the work area. It is assumed that
-  the virtual desktop functionality of BlackBox and NOT bug.n is used
-  (**=> Hiding and showing windows is detected and acted upon).
+  and SystemBarEx) when calculating the work area. It is assumed that the
+  virtual desktop functionality of BlackBox and NOT bug.n is used
+  (=> Hiding and showing windows is detected and acted upon).
 
 : **Config_borderWidth**=0
   If > 0, the window border width is set to the integer value
@@ -104,21 +122,26 @@
 
 : **Config_borderPadding**=-1
   If >= 0, the window border padding is set to the integer value
-  Config_borderPadding (only for Windows >**= Vista).
+  Config_borderPadding (only for Windows >= Vista).
 
 : **Config_showTaskBar**=0
-  If false (=0), the task bar is hidden. It can be made visible or
-  hidden by hotkey (see below).
+  If false (=0), the task bar is hidden. It can be made visible or hidden
+  by hotkey (see below).
 
 : **Config_showBorder**=1
   If false (=0), the window borders are hidden; therefor windows cannot
-  be resized manually by dragging the border, even if using the
-  according hotkey.
+  be resized manually by dragging the border, even if using the according
+  hotkey.
 
 : **Config_selBorderColor**=
   Border colour of the active window; format: 0x00BBGGRR (e. g.
-  "0x006A240A", if empty, the system's window border colour is not
+  "0x006A240A", if = "", the system's window border colour is not
   changed).
+
+
+Config_borderWidth, Config_borderPadding and Config_selBorderColor are
+especially usefull, if you are not allowed to set the design in the system
+settings.
 
 
 === View / Layout ===
@@ -127,15 +150,25 @@
   The total number of views. This has effects on the displayed groups in
   the bar, and should not be exceeded in the hotkeys below.
 
-: **Config_layoutAxis[1]**=1
+: **Config_layout_#1**=[]=;tile
+  The layout symbol and arrange function (the first entry is set as the
+  default layout, no layout function means floating behavior)
+
+: **Config_layout_#2**=[M];monocle
+: **Config_layout_#3**=><>;
+
+: **Config_layoutCount**=3
+  Total number of layouts defined above.
+
+: **Config_layoutAxis_#1**=1
   The layout axis: 1 = x, 2 = y; negative values mirror the layout,
   setting the master area to the right / bottom instead of left / top.
 
-: **Config_layoutAxis[2]**=2
+: **Config_layoutAxis_#2**=2
   The master axis: 1 = x (from left to right), 2 = y (from top to
   bottom), 3 = z (monocle).
 
-: **Config_layoutAxis[3]**=2
+: **Config_layoutAxis_#3**=2
   The stack axis:  1 = x (from left to right), 2 = y (from top to
   bottom), 3 = z (monocle).
 
@@ -155,73 +188,79 @@
   or the focus has been changed); if there are any problems recognizing,
   when windows are opened or closed, try to increase this number.
 
+: **Config_syncMonitorViews**=0
+  The number of monitors (2 or more), for which views should be
+  activated, when using the accordant hotkey. If set to 1, the views are
+  actiated for all monitors. If set to 0, views are activated
+  independently (only on the active monitor).
+
 : **Config_viewFollowsTagged**=0
-  If true (=1), the view is set to, if a window is tagged with a single
-  tag.
+  If true (=1) and a window is tagged with a single tag, the view is
+  correspondingly set to the tag.
 
 
 === Rules ===
 
-: **Config_rules[1]**=.*;.*;;1;0;0;0;0;0
-  At first you may set a default rule (.*;.*;) for a default monitor,
-  view and / or showing window title bars. General format:
-  Config_rules[i]=<class (regular expression string)>;<title (regular
-  expression string)>;<window style (hexadecimal number or blank)>;<is
-  managed (1 = True or 0 = False)>;<monitor (0 <= integer <= total number
-  of monitors, 0 means the currently active monitor)>;<tags (binary mask
-  as integer >= 0, e. g. 17 for 1 and 5, 0 means the currently active
-  tag)>;<is floating (1 = True or 0 = False)>;<is decorated (1 = True or
-  0 = False)>;<hide title (1 = True or 0 = False)>" (";" is not allowed
-  as a character).
+: **Config_rule_#1**=.*;.*;;1;0;0;0;0;0
+  If you want to replace a default rule, you will have to use the
+  correct variable name, e. g. you may set a rule (.*;.*;) for a default
+  monitor, view and / or showing window title bars by setting the first
+  rule "Config_rule_#1=..." and therewith replacing the value.
+  If you want to add a rule you do not have to use a numbered variable,
+  but "Config_rule=..." (the numbering will be done automatically in the
+  order given in the configuration file). General format:
+  Config_rule[_#<i>]=<class (regular expression string)>;<title (regular
+    expression string)>;<window style (hexadecimal number or blank)>;
+    <is managed (1 = True or 0 = False)>;<monitor (0 <= integer <= total
+    number of monitors, 0 means the currently active monitor)>;<tags
+    (binary mask as integer >= 0, e. g. 17 for 1 and 5, 0 means the
+    currently active tag)>;<is floating (1 = True or 0 = False)>;
+    <is decorated (1 = True or 0 = False)>;<hide title (1 = True or
+    0 = False)>
+  (all in one line, ";" is not allowed as a character)
 
-: **Config_rules[2]**=.*;.*;0x80000000;0;0;0;1;1;1
+: **Config_rule_#2**=.*;.*;0x80000000;0;0;0;1;1;1
   Pop-up windows (style WS_POPUP=0x80000000) will not be managed, are
   floating and the titles are hidden.
 
-: **Config_rules[3]**=SWT_Window0;.*;;1;0;0;0;0;0
+: **Config_rule_#3**=SWT_Window0;.*;;1;0;0;0;0;0
   Windows created by Java (SWT) e. g. Eclipse have the style WS_POPUP,
   but should excluded from the above rule.
 
-: **Config_rules[4]**=Xming;.*;;1;0;0;0;0;0
-  Xming windows have the style WS_POPUP, but should be excluded from the
-  above rule.
+: **Config_rule_#4**=Xming;.*;;1;0;0;0;0;0
+  Xming windows have the style WS_POPUP, but should be excluded from
+  the above rule.
 
-: **Config_rules[5]**=_sp;_sp;;1;0;0;1;0;1
-: **Config_rules[6]**=MozillaDialogClass;.*;;1;0;0;1;1;0
-: **Config_rules[7]**=MsiDialog(No)?CloseClass;.*;;1;0;0;1;1;0
-: **Config_rules[8]**=gdkWindowToplevel;GIMP-Start;;1;0;0;1;1;0
-: **Config_rules[9]**=gdkWindowToplevel;GNU Image Manipulation Program;;1;0;0;1;1;0
-: **Config_rules[10]**=gdkWindowToplevel;Werkzeugkasten;;1;0;0;1;1;0
-: **Config_rules[11]**=gdkWindowToplevel;Ebenen, .* - Pinsel, Muster, .*;;1;0;0;1;1;0
-: **Config_rules[12]**=gdkWindowToplevel;Toolbox;;1;0;0;1;1;0
-: **Config_rules[13]**=gdkWindowToplevel;Layers, Channels, Paths, .*;;1;0;0;1;1;0
-: **Config_rules[14]**=CalcFrame;.*;;1;0;0;1;1;0
-
-: **Config_rulesCount**=14
-  The total number of active rules above.
-  Using an indexing number less or equal to "Config_rulesCount" replaces
-  this rule. Additional rules need an increasing indexing number higher
-  than the value for "Config_rulesCount".
+: **Config_rule_#5**=MsiDialog(No)?CloseClass;.*;;1;0;0;1;1;0"
+: **Config_rule_#6**=AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;1"
+: **Config_rule_#7**=CalcFrame;.*;;1;0;0;1;1;0"
+: **Config_rule_#8**=_sp;_sp;;1;0;0;1;0;1"
+: **Config_rule_#9**=MozillaDialogClass;.*;;1;0;0;1;1;0"
+: **Config_rule_#10**=gdkWindowToplevel;GIMP-Start;;1;0;0;1;1;0"
+: **Config_rule_#11**=gdkWindowToplevel;GNU Image Manipulation Program;;1;0;0;1;1;0"
+: **Config_rule_#12**=gdkWindowToplevel;Werkzeugkasten;;1;0;0;1;1;0"
+: **Config_rule_#13**=gdkWindowToplevel;Ebenen, .* - Pinsel, Muster, .*;;1;0;0;1;1;0"
+: **Config_rule_#14**=gdkWindowToplevel;Toolbox;;1;0;0;1;1;0"
+: **Config_rule_#15**=gdkWindowToplevel;Layers, Channels, Paths, .*;;1;0;0;1;1;0"
 
 
 === Session management ===
 
 : **Config_autoSaveSession**=0
-  Automatically save the current state of monitors, views, layouts
-  (active view, layout, axes, mfact and msplit) to te session file (set
-  below) when quitting bug.n.
+  Automatically save the current state of monitors, views, layouts (active
+  view, layout, axes, mfact and msplit) to the configuration file when
+  quitting bug.n.
 
 
 === Hotkeys ===
 
-: **Config_hotkey[i]**=<key name>::<command or function name>
+: **Config_hotkey**=<key name>::<command or function name>
   You may overwrite default or add new hotkeys by using the above
-  format. The indexing numbers ("i") should start with 1 and be
-  sequential. "<key name>::<command or function name>" is the original
+  format. "<key name>::<command or function name>" is the original
   syntax from AutoHotkey as described in
   http://www.autohotkey.com/docs/Hotkeys.htm.
   - To deacivate a default hotkey as listed in %%LINK_hotkeys, add a new
-    line in the format "Config_hotkey[i]=<key name>::" (without a
+    line in the format "Config_hotkey=<key name>::" (without a
     function name).
   - To assign an internal function of bug.n to a new hotkey, add a line
     as documented in %%LINK_hotkeys, but with the new key name.
