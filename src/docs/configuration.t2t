@@ -1,17 +1,19 @@
 
 %!encoding:       utf-8
 %!options(html):  --css-sugar -o configuration.html
-%!style(html):    ../styles.css
+%!style(html):    http://bugn.berlios.de/styles.css
 %!preproc(html):  '%%html: ' ''
 %!postproc(html): '<HEAD>'  '<HEAD>\n<TITLE>bug.n configuration variables</TITLE>'
-%!postproc(html): '<HEAD>'  '<HEAD>\n<LINK REL="icon" HREF="../images/jn.ico" />'
+%!postproc(html): '<HEAD>'  '<HEAD>\n<LINK REL="icon" HREF="http://bugn.berlios.de/images/jn.ico" />'
 %!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="author" CONTENT="joten" />'
 %!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="keywords" CONTENT="AutoHotkey, joten, bug.n, tiling, window management" />'
-%!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="description" CONTENT="AutoHotkey scripts by joten" />'
+%!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="description" CONTENT="bug.n - Tiling Window Manager" />'
 %!postproc(html): '<H1>'    '<H1 ID="bugn">'
+%!postproc(html): '%%LINK_hotkeys' '<A HREF="https://developer.berlios.de/docman/display_doc.php?docid=2054&group_id=12477">bug.n/hotkeys</A>'
 %!postproc(html): '\(c\)'   '&copy;'
 %!options(txt):   -o configuration.txt
 %!preproc(txt):   '%%txt: ' ''
+%!postproc(txt):  '%%LINK_hotkeys' 'docs/hotkeys.txt'
 %!postproc(txt):  '<BR>'    ''
 
 = bug.n/configuration =
@@ -274,5 +276,5 @@ settings.
 
 ''<BR>''
 ------------------------------------------------------------------------
-%%html: (c) 2010-2011 joten, last modified %%date(%d.%m.%Y) ([View txt2tags source %%infile]) [../images/jn.png]
+%%html: (c) 2010-2011 joten, last modified %%date(%d.%m.%Y) ([View txt2tags source %%infile]) [http://bugn.berlios.de/images/jn.png]
 %%txt: (c) 2010-2011 joten, last modified %%date(%d.%m.%Y)

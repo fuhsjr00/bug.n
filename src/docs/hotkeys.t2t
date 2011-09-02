@@ -1,13 +1,13 @@
 
 %!encoding:       utf-8
 %!options(html):  --css-sugar -o hotkeys.html
-%!style(html):    ../styles.css
+%!style(html):    http://bugn.berlios.de/styles.css
 %!preproc(html):  '%%html: ' ''
 %!postproc(html): '<HEAD>'  '<HEAD>\n<TITLE>bug.n hotkeys</TITLE>'
-%!postproc(html): '<HEAD>'  '<HEAD>\n<LINK REL="icon" HREF="../images/jn.ico" />'
+%!postproc(html): '<HEAD>'  '<HEAD>\n<LINK REL="icon" HREF="http://bugn.berlios.de/images/jn.ico" />'
 %!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="author" CONTENT="joten" />'
 %!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="keywords" CONTENT="AutoHotkey, joten, bug.n, tiling, window management" />'
-%!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="description" CONTENT="AutoHotkey scripts by joten" />'
+%!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="description" CONTENT="bug.n - Tiling Window Manager" />'
 %!postproc(html): '<H1>'    '<H1 ID="bugn">'
 %!postproc(html): '\(c\)'   '&copy;'
 %!options(txt):   -o hotkeys.txt
@@ -206,5 +206,5 @@ pressing the left Windows key and the shift key and the q key
 
 ''<BR>''
 ------------------------------------------------------------------------
-%%html: (c) 2010-2011 joten, last modified %%date(%d.%m.%Y) ([View txt2tags source %%infile]) [../images/jn.png]
+%%html: (c) 2010-2011 joten, last modified %%date(%d.%m.%Y) ([View txt2tags source %%infile]) [http://bugn.berlios.de/images/jn.png]
 %%txt: (c) 2010-2011 joten, last modified %%date(%d.%m.%Y)

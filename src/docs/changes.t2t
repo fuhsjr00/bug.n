@@ -1,12 +1,21 @@
 
+%!encoding:       utf-8
+%!target:         txt
+%!options(txt):   -o changes.txt
+%!preproc(txt):   '%%txt: ' ''
+%!postproc(txt):  '<BR>'    ''
+
 **Legend**
 (-) deleted
 (~) changed
 (+) added
 
+
 =8.2.0=
 
+
 ==Configuration==
+
 (-) 'Config_addRunCommands' (the 'Run' item in 'command GUI').
 (-) 'Config_sessionFilePath'
 (-) 'Config_topBar' (replaced by 'Config_verticalBarPos'.
@@ -38,7 +47,9 @@
     set to 0, views are activated independently (only on the active
     monitor).
 
+
 ==Hotkeys==
+
 (~) Changed hotkeys
     - #s  -> #^s::Config_saveSession()
     - #+r -> #^r::Reload
@@ -50,7 +61,9 @@
 (+) "<" and ">" as an argument for 'Monitor_activateView'.
 (+) "<" and ">" as an argument for 'Monitor_setWindowTag'.
 
+
 ==Debugging==
+
 (~) 'tile' function: resetting msplit
 (~) 'Manager_winActivate(wndId)' now does not activate 'Program
     Manager', if there is no window on the view, but sets the mouse
@@ -75,7 +88,9 @@
     registered as an AppBar and therewith changes the windows
     workspace.
 
+
 ==General==
+
 (~) The number of windows on a view is not indicated by different
     background colors anymore, but by a progress bar.
 (~) The battery status is also indicated with a progress bar.
@@ -100,3 +115,6 @@
     the views and 'View_setLayout(">")' for cycling through the
     layouts.
 
+
+------------------------------------------------------------------------
+%%txt: (c) 2010-2011 joten, last modified %%date(%d.%m.%Y)
