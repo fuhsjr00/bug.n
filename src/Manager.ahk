@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *	@version 8.2.0.03 (02.09.2011)
+ *	@version 8.2.1.01 (02.09.2011)
  */
 
 Manager_init() {
@@ -29,7 +29,7 @@ Manager_init() {
 		DllCall("SetSysColors", "Int", 1, "Int*", 10, "UInt*", Config_selBorderColor)
 	}
 	If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA) {
-		ncmSize := VarSetCapacity(ncm, 44 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
+		ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
 		NumPut(ncmSize, ncm, 0, "UInt")
 		DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
 		Manager_borderWidth := NumGet(ncm, 4, "Int")
@@ -147,7 +147,7 @@ Manager_cleanup() {
 	If Config_selBorderColor
 		DllCall("SetSysColors", "Int", 1, "Int*", 10, "UInt*", Manager_normBorderColor)
 	If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA) {
-		ncmSize := VarSetCapacity(ncm, 44 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
+		ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
 		NumPut(ncmSize, ncm, 0, "UInt")
 		DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
 		If (Config_borderWidth > 0)

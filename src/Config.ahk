@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *	@version 8.2.0.03 (02.09.2011)
+ *	@version 8.2.1.01 (14.09.2011)
  */
 
 Config_init() {
@@ -134,7 +134,7 @@ Config_getSystemSettings() {
 	Global Config_fontName, Config_fontSize, Config_normBgColor, Config_normFgColor, Config_selBgColor, Config_selFgColor
 	
 	If Not Config_fontName {
-		ncmSize := VarSetCapacity(ncm, 44 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
+		ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
 		NumPut(ncmSize, ncm, 0, "UInt")
 		DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
 		
@@ -145,7 +145,7 @@ Config_getSystemSettings() {
 		; maestrith: Script Writer (http://www.autohotkey.net/~maestrith/Script Writer/)
 	}
 	If Not Config_fontSize {
-		ncmSize := VarSetCapacity(ncm, 44 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
+		ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
 		NumPut(ncmSize, ncm, 0, "UInt")
 		DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
 		

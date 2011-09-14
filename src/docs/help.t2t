@@ -2,25 +2,33 @@
 %!encoding:       utf-8
 %!options(html):  --css-sugar -o help.html
 %!style(html):    http://bugn.berlios.de/styles.css
-%!preproc(html):  '%%html: ' ''
-%!postproc(html): '<HEAD>'  '<HEAD>\n<TITLE>bug.n help</TITLE>'
-%!postproc(html): '<HEAD>'  '<HEAD>\n<LINK REL="icon" HREF="http://bugn.berlios.de/images/jn.ico" />'
-%!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="author" CONTENT="joten" />'
-%!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="keywords" CONTENT="AutoHotkey, joten, bug.n, tiling, window management" />'
-%!postproc(html): '<HEAD>'  '<HEAD>\n<META NAME="description" CONTENT="bug.n - Tiling Window Manager" />'
-%!postproc(html): '<H1>'    '<H1 ID="bugn">'
+%!preproc(html):  '%%html: '             ''
+%!postproc(html): '<HEAD>'               '<HEAD>\n<TITLE>berliOS project: bug.n -- Help</TITLE>'
+%!postproc(html): '<HEAD>'               '<HEAD>\n<LINK REL="icon" HREF="http://bugn.berlios.de/images/bugn.ico" />'
+%!postproc(html): '<HEAD>'               '<HEAD>\n<META NAME="author" CONTENT="joten" />'
+%!postproc(html): '<HEAD>'               '<HEAD>\n<META NAME="keywords" CONTENT="AutoHotkey, joten, bug.n, tiling, window management" />'
+%!postproc(html): '<HEAD>'               '<HEAD>\n<META NAME="description" CONTENT="bug.n - Tiling Window Manager" />'
+%!postproc(html): '<TD><IMG ALIGN="middle" SRC="bugn.png"' '<TD ID="bugn"><IMG ALIGN="middle" SRC="http://bugn.berlios.de/images/bugn.png"'
+%!postproc(html): ' -- '                 ' &ndash; '
+%!postproc(html): 'help.png"'            'http://bugn.berlios.de/images/help.png"'
+%!postproc(html): 'jn.png"'              'http://bugn.berlios.de/images/jn.png"'
 %!postproc(html): '">http://www.autohotkey.com/' '" TARGET="_blank">http://www.autohotkey.com/'
 %!postproc(html): '%%LINK_configuration' '<A HREF="https://developer.berlios.de/docman/display_doc.php?docid=2052&group_id=12477">bug.n/configuration</A>'
-%!postproc(html): '%%LINK_hotkeys' '<A HREF="https://developer.berlios.de/docman/display_doc.php?docid=2054&group_id=12477">bug.n/hotkeys</A>'
-%!postproc(html): '\(c\)'   '&copy;'
+%!postproc(html): '%%LINK_hotkeys'       '<A HREF="https://developer.berlios.de/docman/display_doc.php?docid=2054&group_id=12477">bug.n/hotkeys</A>'
+%!postproc(html): '\(c\)'                '&copy;'
 %!options(txt):   -o help.txt
-%!preproc(txt):   '%%txt: ' ''
-%!postproc(txt):  '<BR>'    ''
+%!preproc(txt):   '%%txt: '              ''
+%!postproc(txt):  '<DIV ID="frame">'     ''
+%!postproc(txt):  '<BR>'                 ''
 %!postproc(txt):  '%%LINK_configuration' 'docs/configuration.txt'
-%!postproc(txt):  '%%LINK_hotkeys' 'docs/hotkeys.txt'
+%!postproc(txt):  '%%LINK_hotkeys'       'docs/hotkeys.txt'
 
-= bug.n/help =
-------------------------------------------------------------------------
+''' <DIV ID="frame">
+%%html: ''' <DIV CLASS="header">
+%%html: | [bugn.png]  | bug.n -- Help  |                              [help.png]
+%%txt: =bug.n -- Help=
+%%html: ------------------------------------------------------------------------
+%%html: ''' </DIV>
 
 bug.n is a tiling window manager for Microsoft Windows.''<BR>''
 The advantages of tiling window management over the standard stacking
@@ -171,7 +179,11 @@ The following functions can also be controlled with the mouse:
 - A function can be selected from a list in the command GUI, which is
   accessible by cklickig on "#!" on the right end of the status bar.
 
+
 ''<BR>''
+%%html: ''' <DIV CLASS="footer">
 ------------------------------------------------------------------------
-%%html: (c) 2010-2011 joten, last modified %%date(%d.%m.%Y) ([View txt2tags source %%infile]) [http://bugn.berlios.de/images/jn.png]
 %%txt: (c) 2010-2011 joten, last modified %%date(%d.%m.%Y)
+%%html: | (c) 2010-2011 joten, last modified %%date(%d.%m.%Y)  |  [jn.png]
+%%html: ''' </DIV>
+%%html: ''' </DIV>
