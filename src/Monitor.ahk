@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *	@version 8.2.1.01 (21.08.2011)
+ *	@version 8.2.1.01 (18.09.2011)
  */
 
 Monitor_init(m) {
@@ -32,7 +32,7 @@ Monitor_init(m) {
 }
 
 Monitor_activateView(v) {
-	Local aView, aWndClass, aWndId, m, n, wndId, wndIds
+	Local aView, aWndClass, aWndId, aWndTitle, m, n, wndId, wndIds
 	
 	If (v = -1)
 		v := Monitor_#%Manager_aMonitor%_aView_#2
@@ -45,7 +45,8 @@ Monitor_activateView(v) {
 		WinGet, aWndId, ID, A
 		If WinExist("ahk_id" aWndId) {
 			WinGetClass, aWndClass, ahk_id %aWndId%
-			If Not (aWndClass = "Progman") And Not (aWndClass = "AutoHotkeyGui") And Not (aWndClass = "DesktopBackgroundClass")
+			WinGetTitle, aWndTitle, ahk_id %aWndId%
+			If Not (aWndClass = "Progman") And Not (aWndClass = "AutoHotkeyGui" And SubStr(aWndTitle, 1, 10) = "bug.n_BAR_") And Not (aWndClass = "DesktopBackgroundClass")
 				View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
 		}
 		
