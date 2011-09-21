@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *	@version 8.2.1.01 (02.09.2011)
+ *	@version 8.2.1.01 (21.09.2011)
  */
 
 Manager_init() {
@@ -212,7 +212,9 @@ Manager_getWindowInfo() {
 	text .= "`nprocess:`t" aWndProcessName "`nstyle:`t" aWndStyle "`nmetrics:`tx: " aWndX ", y: " aWndY ", width: " aWndWidth ", height: " aWndHeight "`ntags:`t" Manager_#%aWndId%_tags
 	If Manager_#%aWndId%_isFloating
 		text .= " (floating)"
-	MsgBox, , bug.n: Window Information, % text
+	MsgBox, 260, bug.n: Window Information, % text "`n`nCopy text to clipboard?"
+	IfMsgBox Yes
+		Clipboard := text
 }
 
 Manager_getWindowList() {
@@ -231,7 +233,9 @@ Manager_getWindowList() {
 		text .= "`n" A_LoopField ":`t" wndTitle
 	}
 	
-	MsgBox, , bug.n: Window List, % text
+	MsgBox, 260, bug.n: Window List, % text "`n`nCopy text to clipboard?"
+	IfMsgBox Yes
+		Clipboard := text
 }
 
 Manager_loop(index, increment, lowerBound, upperBound) {
