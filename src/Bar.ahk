@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *	@version 8.2.1.01 (31.08.2011)
+ *	@version 8.2.1.02 (05.12.2011)
  */
 
 Bar_init(m) {
@@ -23,7 +23,7 @@ Bar_init(m) {
 	
 	If (SubStr(Config_barWidth, 0) = "%") {
 		StringTrimRight, wndWidth, Config_barWidth, 1
-		wndWidth := Monitor_#%m%_width * wndWidth / 100
+		wndWidth := Round(Monitor_#%m%_width * wndWidth / 100)
 	} Else
 		wndWidth := Config_barWidth
 	Monitor_#%m%_barWidth := wndWidth
@@ -135,9 +135,9 @@ Bar_init(m) {
 	y1 := Monitor_#%m%_barY
 	
 	If Monitor_#%m%_showBar
-		Gui, Show, +NoActivate x%x1% y%y1% w%wndWidth% h%Bar_height%, %wndTitle%
+		Gui, Show, NoActivate x%x1% y%y1% w%wndWidth% h%Bar_height%, %wndTitle%
 	Else
-		Gui, Show, +NoActivate Hide x%x1% y%y1% w%wndWidth% h%Bar_height%, %wndTitle%
+		Gui, Show, NoActivate Hide x%x1% y%y1% w%wndWidth% h%Bar_height%, %wndTitle%
 	wndId := WinExist(wndTitle)
 	If (Config_verticalBarPos = "tray" And m = Manager_taskBarMonitor) {
 		trayWndId := WinExist("ahk_class Shell_TrayWnd")
@@ -342,7 +342,7 @@ Bar_evaluateCommand() {
 			Else If (Bar_command_#1 = "activate prev")
 				Manager_activateMonitor(-1)
 		} Else If (Bar_command_#1 = "Reload")
-			Reload
+			Main_reload()
 		Else If (Bar_command_#1 = "Quit")
 			ExitApp
 		

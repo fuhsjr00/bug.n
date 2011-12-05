@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *	@version 8.2.1.01 (18.09.2011)
+ *	@version 8.2.1.02 (18.09.2011)
  */
 
 Monitor_init(m) {

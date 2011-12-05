@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *	@version 8.2.1.01 (21.09.2011)
+ *	@version 8.2.1.02 (24.09.2011)
  */
 
 Manager_init() {
@@ -332,7 +332,7 @@ Manager_moveWindow() {
 }
 
 Manager_onShellMessage(wParam, lParam) {
-	Local a, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, flag, m, tags, wndClass, wndId, wndPName, wndTitle, x, y
+	Local a, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, flag, m, t, wndClass, wndId, wndIds, wndPName, wndTitle, x, y
 	
 	SetFormat, Integer, hex
 	lParam := lParam+0
@@ -353,7 +353,7 @@ Manager_onShellMessage(wParam, lParam) {
 	}
 	
 	If (wParam = 1 Or wParam = 2 Or wParam = 4 Or wParam = 6 Or wParam = 32772) And lParam And Not Manager_hideShow And Not Manager_focus {
-		If Not (wParam = 4 Or wParam = 32772) {
+		If Not (wParam = 4 Or wParam = 32772)
 			If Not wndClass And Not (wParam = 2) {
 				WinGetClass, wndClass, ahk_id %lParam%
 				If wndClass {
@@ -362,14 +362,13 @@ Manager_onShellMessage(wParam, lParam) {
 				} Else
 					Sleep, %Config_shellMsgDelay%
 			}
-		}
 		
 		If (wParam = 1 Or wParam = 6) And Not InStr(Manager_allWndIds, lParam ";") And Not InStr(Manager_managedWndIds, lParam ";")
 			a := Manager_manage(lParam)
 		Else {
 			flag := True
-			a := Manager_sync(tags)
-			If tags
+			a := Manager_sync(wndIds)
+			If wndIds
 				a := False
 		}
 		If a {
@@ -385,12 +384,33 @@ Manager_onShellMessage(wParam, lParam) {
 					Manager_aMonitor := m
 			}
 		
-		If tags
-			Loop, % Config_viewCount
-				If (tags & 1 << A_Index - 1) {
-					Monitor_activateView(A_Index)
-					Break
+		If wndIds {
+			If (Config_onActiveHiddenWnds = "view") {
+				wndId := SubStr(wndIds, 1, InStr(wndIds, ";") - 1)
+				Loop, % Config_viewCount
+					If (Manager_#%wndId%_tags & 1 << A_Index - 1) {
+						Monitor_activateView(A_Index)
+						Break
+					}
+			} Else {
+				StringTrimRight, wndIds, wndIds, 1
+				StringSplit, wndId, wndIds, `;
+				If (Config_onActiveHiddenWnds = "hide") {
+					Loop, % wndId0
+						WinHide, % "ahk_id " wndId%A_Index%
+				} Else If (Config_onActiveHiddenWnds = "tag") {
+					t := Monitor_#%Manager_aMonitor%_aView_#1
+					Loop, % wndId0 {
+						wndId := wndId%A_Index%
+						View_#%Manager_aMonitor%_#%t%_wndIds := wndId ";" View_#%Manager_aMonitor%_#%t%_wndIds
+						View_#%Manager_aMonitor%_#%t%_aWndId := wndId
+						Manager_#%wndId%_tags += 1 << t - 1
+					}
+					Bar_updateView(Manager_aMonitor, t)
+					View_arrange(Manager_aMonitor, t)
 				}
+			}
+		}
 		
 		Bar_updateTitle()
 	}
@@ -478,8 +498,8 @@ Manager_sizeWindow() {
 	SendMessage, WM_SYSCOMMAND, SC_SIZE, , , ahk_id %aWndId%
 }
 
-Manager_sync(ByRef tags = 0) {
-	Local a, aWndId, flag, shownWndIds, v, visibleWndIds, wndId
+Manager_sync(ByRef wndIds = "") {
+	Local a, flag, shownWndIds, v, visibleWndIds, wndId
 	
 	Loop, % Manager_monitorCount {
 		v := Monitor_#%A_Index%_aView_#1
@@ -493,10 +513,8 @@ Manager_sync(ByRef tags = 0) {
 				flag := Manager_manage(wndId%A_Index%)
 				If flag
 					a := flag
-			} Else {
-				aWndId := wndId%A_Index%
-				tags := Manager_#%aWndId%_tags
-			}
+			} Else
+				wndIds .= wndId%A_Index% ";"
 		}
 		visibleWndIds := visibleWndIds wndId%A_Index% ";"
 	}

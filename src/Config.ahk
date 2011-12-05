@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *	@version 8.2.1.01 (14.09.2011)
+ *	@version 8.2.1.02 (24.09.2011)
  */
 
 Config_init() {
@@ -29,6 +29,11 @@ Config_init() {
 	Config_singleRowBar     := True							; If false, the bar will have to rows, one for the window title and one for all other GUI controls.
 	Config_spaciousBar      := False						; If true, the height of the bar will be set to a value equal to the height of an edit control, else it will be set to the text height.
 	Config_fontName			:= "Lucida Console"				; A monospace font is preferable for bug.n to calculate the correct width of the bar and its elements (sub-windows).
+	Config_fontSize			:= 
+	Config_normBgColor		:= 
+	Config_normFgColor		:= 
+	Config_selBgColor		:= 
+	Config_selFgColor		:= 
 	Config_readinBat		:= False						; If true, the system battery status is read in and displayed in the status bar. This only makes sense, if you have a system battery (notebook).
 	Config_readinCpu		:= False						; If true, the current CPU load is read in and displayed in the status bar.
 	Config_readinDate		:= True							; If true, the current date is read in (format: "WW, DD. MMM. YYYY") and displayed in the status bar.
@@ -44,19 +49,20 @@ Config_init() {
 	Config_selBorderColor	:= ""							; Border colour of the active window; format: 0x00BBGGRR (e. g. "0x006A240A", if = "", the system's window border colour is not changed).
 															; Config_borderWidth, Config_borderPadding and Config_selBorderColor are especially usefull, if you are not allowed to set the design in the system settings.	
 	; window arrangement
-	Config_viewCount			:= 9						; The total number of views. This has effects on the displayed groups in the bar, and should not be exceeded in the hotkeys below.
-	Config_layout_#1			:= "[]=;tile"				; The layout symbol and arrange function (the first entry is set as the default layout, no layout function means floating behavior)
-	Config_layout_#2			:= "[M];monocle"	
-	Config_layout_#3			:= "><>;"
-	Config_layoutCount			:= 3						; Total number of layouts defined above.
-	Config_layoutAxis_#1		:= 1						; The layout axis: 1 = x, 2 = y; negative values mirror the layout, setting the master area to the right / bottom instead of left / top.
-	Config_layoutAxis_#2		:= 2						; The master axis: 1 = x (from left to right), 2 = y (from top to bottom), 3 = z (monocle).
-	Config_layoutAxis_#3		:= 2						; The stack axis:  1 = x (from left to right), 2 = y (from top to bottom), 3 = z (monocle).
-	Config_layoutMFactor		:= 0.6						; The factor for the size of the master area, which is multiplied by the monitor size.
-	Config_mouseFollowsFocus	:= True						; If true, the mouse pointer is set over the focused window, if a window is activated by bug.n.
-	Config_shellMsgDelay		:= 350						; The time bug.n waits after a shell message (a window is opened, closed or the focus has been changed); if there are any problems recognizing, when windows are opened or closed, try to increase this number.
-	Config_syncMonitorViews 	:= 0						; The number of monitors (2 or more), for which views should be activated, when using the accordant hotkey. If set to 1, the views are actiated for all monitors. If set to 0, views are activated independently (only on the active monitor).
-	Config_viewFollowsTagged	:= False					; If true and a window is tagged with a single tag, the view is correspondingly set to the tag.
+	Config_viewCount		  := 9							; The total number of views. This has effects on the displayed groups in the bar, and should not be exceeded in the hotkeys below.
+	Config_layout_#1		  := "[]=;tile"					; The layout symbol and arrange function (the first entry is set as the default layout, no layout function means floating behavior)
+	Config_layout_#2		  := "[M];monocle"
+	Config_layout_#3		  := "><>;"
+	Config_layoutCount		  := 3							; Total number of layouts defined above.
+	Config_layoutAxis_#1	  := 1							; The layout axis: 1 = x, 2 = y; negative values mirror the layout, setting the master area to the right / bottom instead of left / top.
+	Config_layoutAxis_#2	  := 2							; The master axis: 1 = x (from left to right), 2 = y (from top to bottom), 3 = z (monocle).
+	Config_layoutAxis_#3	  := 2							; The stack axis:  1 = x (from left to right), 2 = y (from top to bottom), 3 = z (monocle).
+	Config_layoutMFactor	  := 0.6						; The factor for the size of the master area, which is multiplied by the monitor size.
+	Config_mouseFollowsFocus  := True						; If true, the mouse pointer is set over the focused window, if a window is activated by bug.n.
+	Config_onActiveHiddenWnds := "view"						; The action, which will be taken, if a window e. g. should be activated, but is not visible; "view": show the view accordng to the first tag of the window in question, "tag": add the window in question to the current visible view, "hide": hide the window again ignoring the activation.
+	Config_shellMsgDelay	  := 350						; The time bug.n waits after a shell message (a window is opened, closed or the focus has been changed); if there are any problems recognizing, when windows are opened or closed, try to increase this number.
+	Config_syncMonitorViews	  := 0							; The number of monitors (2 or more), for which views should be activated, when using the accordant hotkey. If set to 1, the views are actiated for all monitors. If set to 0, views are activated independently (only on the active monitor).
+	Config_viewFollowsTagged  := False						; If true and a window is tagged with a single tag, the view is correspondingly set to the tag.
 	
 	; Config_rule_#i	:= "<class (regular expression string)>;<title (regular expression string)>;<window style (hexadecimal number or blank)>;
 	;                       <is managed (1 = True or 0 = False)>;
@@ -413,4 +419,7 @@ Config_saveSession() {
 #y::Bar_toggleCommandGui()					; Open the command GUI for executing programmes or bug.n functions.
 #^e::Run, edit %Config_filePath%			; Open the configuration file in the standard text editor.
 #^s::Config_saveSession()					; Save the current state of monitors, views, layouts to the configuration file.
+#^r::Main_reload()							; Reload bug.n (i. e. the configuration and its dependent settings) without deleting the window lists of bug.n and restoring windows.
+											; It does not reset internal configuration variables, the tray icon or menu, hotkeys (unless set explicitly in Config.ini), individual window settings like Config_showBorder (since windows might be hidden) or hiding the title bar, the monitor count or views.
+											; It does not reload functions. Changed rules are only applied to new windows.
 #^q::ExitApp								; Quit bug.n, restore the default Windows UI and show all windows.
