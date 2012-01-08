@@ -11,8 +11,25 @@
 (+) added
 
 
-=8.2.0=
+=8.2.1=
 
+(+) feature #005446: Reload function (reloading bug.n without changing
+    the current association of windows to views/tags)
+(+) workaround bug #018364: (Evernote: new note) Introducing the
+    configuration variable "Config_onActiveHiddenWnds" to set the
+    behaviour of bug.n for already existing but hidden windows on redraw
+(+) Update of the Manager_getWindow*-functions to allow copying of the
+    text to the clipboard.
+(~) fixed bug #18356: Missing bar elements on Windows XP. (calculation
+    of the element width depending on the font size)
+(~) fixed bug: Support for saving another AutoHotkeyGUI as the active
+    window of a view.
+(~) fixed bug #018431: Immediate run-time errors running bug.n built
+    from source with AutoHotkey_L version 1.1.05.03 onwards
+(~) debugging related to AutoHotkey_L and 32-/64-Bit-Windows
+
+
+=8.2.0=
 
 ==Configuration==
 

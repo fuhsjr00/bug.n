@@ -193,6 +193,13 @@ settings.
   If true (=1), the mouse pointer is set over the focused window, if a
   window is activated by bug.n.
 
+: **Config_onActiveHiddenWnds**=view
+  The action, which will be taken, if a window e. g. should be
+  activated, but is not visible; "view": show the view accordng to the
+  first tag of the window in question, "tag": add the window in question
+  to the current visible view, "hide": hide the window again ignoring the
+  activation.
+
 : **Config_shellMsgDelay**=350
   The time bug.n waits after a shell message (a window is opened, closed
   or the focus has been changed); if there are any problems recognizing,
