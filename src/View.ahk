@@ -1,6 +1,6 @@
 /**
  *	bug.n - tiling window management
- *	Copyright (c) 2010-2011 joten
+ *	Copyright (c) 2010-2012 joten
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *	@version 8.2.1.02 (11.08.2011)
+ *	@version 8.2.2.01 (11.08.2011)
  */
 
 View_init(m, v) {

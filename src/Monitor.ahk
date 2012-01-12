@@ -1,6 +1,6 @@
 /**
  *	bug.n - tiling window management
- *	Copyright (c) 2010-2011 joten
+ *	Copyright (c) 2010-2012 joten
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *	@version 8.2.1.02 (18.09.2011)
+ *	@version 8.2.2.01 (12.01.2012)
  */
 
 Monitor_init(m) {
@@ -43,7 +43,7 @@ Monitor_activateView(v) {
 	If (v > 0) And (v <= Config_viewCount) And Not Manager_hideShow And Not (v = Monitor_#%Manager_aMonitor%_aView_#1) {
 		aView := Monitor_#%Manager_aMonitor%_aView_#1
 		WinGet, aWndId, ID, A
-		If WinExist("ahk_id" aWndId) {
+		If WinExist("ahk_id" aWndId) And InStr(View_#%Manager_aMonitor%_#%aView%_wndIds, aWndId ";") {
 			WinGetClass, aWndClass, ahk_id %aWndId%
 			WinGetTitle, aWndTitle, ahk_id %aWndId%
 			If Not (aWndClass = "Progman") And Not (aWndClass = "AutoHotkeyGui" And SubStr(aWndTitle, 1, 10) = "bug.n_BAR_") And Not (aWndClass = "DesktopBackgroundClass")
@@ -82,9 +82,10 @@ Monitor_activateView(v) {
 		
 		wndId := View_#%Manager_aMonitor%_#%v%_aWndId
 		If Not (wndId And WinExist("ahk_id" wndId)) {
-			If View_#%Manager_aMonitor%_#%v%_wndIds
+			If View_#%Manager_aMonitor%_#%v%_wndIds {
 				wndId := SubStr(View_#%Manager_aMonitor%_#%v%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%v%_wndIds, ";")-1)
-			Else
+				View_#%Manager_aMonitor%_#%v%_aWndId := wndId
+			} Else
 				wndId := 0
 		}
 		Manager_winActivate(wndId)
