@@ -15,11 +15,11 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *	@version 8.2.2.01 (12.01.2012)
+ *	@version 8.3.0
  */
 
 NAME	:= "bug.n"
-VERSION := "8.2.2"
+VERSION := "8.3.0"
 
 ; script settings
 OnExit, Main_cleanup

@@ -15,7 +15,7 @@
  *	You should have received a copy of the GNU General Public License
  *	along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
- *	@version 8.2.2.01 (24.09.2011)
+ *	@version 8.3.0
  */
 
 Config_init() {
@@ -306,7 +306,7 @@ Config_restore(section, m = 0) {
 Config_saveSession() {
 	Local m, text
 	
-	text := "; bug.n - tiling window management`n; @version " VERSION " (" A_DD "." A_MM "." A_YYYY ")`n`n"
+	text := "; bug.n - tiling window management`n; @version " VERSION "`n`n"
 	If FileExist(Config_filePath) {
 		Loop, READ, %Config_filePath%
 			If (SubStr(A_LoopReadLine, 1, 7) = "Config_")
