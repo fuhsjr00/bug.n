@@ -42,7 +42,7 @@ Bar_init(m) {
 	IfWinExist, %wndTitle%
 		Gui, Destroy
 	Gui, +AlwaysOnTop -Caption +LabelBar_Gui +LastFound +ToolWindow
-	Gui, Color, %Config_normBgColor2%
+	Gui, Color, %Config_normBgColor1%
 	Gui, Font, c%Config_normFgColor1% s%Config_fontSize%, %Config_fontName%
 	
 	; tags
@@ -52,9 +52,9 @@ Bar_init(m) {
 		w := Bar_getTextWidth(text)
 		Gui, Add, Text, x%x1% y%y1% w%w% h%h1% BackgroundTrans vBar_#%m%_#%i%_view gBar_GuiClick, 
 		If (w <= h1)
-			Gui, Add, Progress, x%x1% y%y1% w%w% h%h1% Vertical vBar_#%m%_#%i%_tagged
+			Gui, Add, Progress, x%x1% y%y1% w%w% h%h1% Background%Config_normBgColor1% Vertical vBar_#%m%_#%i%_tagged
 		Else
-			Gui, Add, Progress, x%x1% y%y1% w%w% h%h1% vBar_#%m%_#%i%_tagged
+			Gui, Add, Progress, x%x1% y%y1% w%w% h%h1% Background%Config_normBgColor1% vBar_#%m%_#%i%_tagged
 		Gui, Add, Text, x%x1% y%y2% w%w% h%h2% -Wrap Center BackgroundTrans vBar_#%m%_#%i%, %text%
 		titleWidth -= w
 		x1 += w
@@ -63,8 +63,10 @@ Bar_init(m) {
 	i := Config_viewCount + 1
 	text := " ??? "
 	w := Bar_getTextWidth(text)
+    Gui, Add, Text, x%x1% y%y1% w%w% h%h1% BackgroundTrans vBar_#%m%_#%i%_layout gBar_GuiClick, 
+    Gui, Add, Progress, x%x1% y%y1% w%w% h%h1% Background%Config_normBgColor2%
 	Gui, Font, c%Config_normFgColor2%
-	Gui, Add, Text, x%x1% y%y2% w%w% h%h2% -Wrap Center vBar_#%m%_#%i% gBar_GuiClick, %text%
+	Gui, Add, Text, x%x1% y%y2% w%w% h%h2% -Wrap Center BackgroundTrans vBar_#%m%_#%i%, %text%
 	titleWidth -= w
 	x1 += w
 	
@@ -77,14 +79,16 @@ Bar_init(m) {
 			w := Bar_getTextWidth(" ?? ")
 			x2 -= w
 			titleWidth -= w
-			Gui, Add, Text, x%x2% y%y2% w%w% h%h2% Center gBar_toggleCommandGui vBar_#%m%_#%i%, #!
+            Gui, Add, Text, x%x2% y%y1% w%w% h%h1% BackgroundTrans vBar_#%m%_#%i% gBar_toggleCommandGui, 
+            Gui, Add, Progress, x%x2% y%y1% w%w% h%h1% Background%Config_normBgColor2%
+			Gui, Add, Text, x%x2% y%y2% w%w% h%h2% Center BackgroundTrans, #!
 		} Else If (i = Config_viewCount + 5) And Config_readinTime {							; time
 			w  := Bar_getTextWidth(" ??:?? ")
 			x2 -= w
 			titleWidth -= w
 			If Config_readinAny() Or Config_readinBat {
 				Gui, Font, c%Config_normFgColor1%
-				Gui, Add, Text, x%x2% y%y1% w%w% h%h1% -Background, 
+				Gui, Add, Text, x%x2% y%y1% w%w% h%h1%, 
 			}
 			Gui, Add, Text, x%x2% y%y2% w%w% h%h2% BackgroundTrans Center vBar_#%m%_#%i%, ??:??
 		} Else If (i = Config_viewCount + 4) And Config_readinAny() {							; any
@@ -92,8 +96,9 @@ Bar_init(m) {
 			w := Bar_getTextWidth(text)
 			x2 -= w
 			titleWidth -= w
+            Gui, Add, Progress, x%x2% y%y1% w%w% h%h1% Background%Config_normBgColor2%
 			Gui, Font, c%Config_normFgColor2%
-			Gui, Add, Text, x%x2% y%y2% w%w% h%h2% Center vBar_#%m%_#%i%, %text%
+			Gui, Add, Text, x%x2% y%y2% w%w% h%h2% Center BackgroundTrans vBar_#%m%_#%i%, %text%
 		} Else If (i = Config_viewCount + 3) And Config_readinBat {								; battery level
 			w := Bar_getTextWidth(" BAT: ???% ")
 			x2 -= w
@@ -105,7 +110,7 @@ Bar_init(m) {
 	}
 	
 	; window title (remaining space)
-	Gui, Add, Text, x%x1% y%y1% w%titleWidth% h%h1% -Background, 
+	Gui, Add, Text, x%x1% y%y1% w%titleWidth% h%h1%, 
 	If Not Config_singleRowBar {
 		titleWidth := wndWidth
 		x1 := 0
@@ -114,7 +119,7 @@ Bar_init(m) {
 	}
 	i := Config_viewCount + 2
 	Gui, Font, c%Config_normFgColor1%
-	Gui, Add, Text, x%x1% y%y1% w%titleWidth% h%h1% -Background, 
+	Gui, Add, Text, x%x1% y%y1% w%titleWidth% h%h1%, 
 	Gui, Add, Text, x%x1% y%y2% w%titleWidth% h%h2% BackgroundTrans Center vBar_#%m%_#%i%, 
 	
 	If (Config_horizontalBarPos = "left")
@@ -463,7 +468,7 @@ Bar_GuiClick:
 	If (A_GuiEvent = "Normal") {
 		If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
 			Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) - Manager_aMonitor)
-		If (SubStr(A_GuiControl, -2) = "_#6")
+		If (SubStr(A_GuiControl, -6) = "_layout")
 			View_setLayout(-1)
 		Else If (SubStr(A_GuiControl, -4) = "_view")
 			Monitor_activateView(SubStr(A_GuiControl, InStr(A_GuiControl, "_#", False, 0) + 2, 1))
@@ -473,7 +478,7 @@ Return
 Bar_GuiContextMenu:
 	Manager_winActivate(Bar_aWndId)
 	If (A_GuiEvent = "RightClick") {
-		If (SubStr(A_GuiControl, -2) = "_#6") {
+		If (SubStr(A_GuiControl, -6) = "_layout") {
 			If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
 				Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) - Manager_aMonitor)
 			View_setLayout(">")
