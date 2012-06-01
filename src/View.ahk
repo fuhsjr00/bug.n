@@ -21,16 +21,17 @@
 View_init(m, v) {
 	Global
 	
-	View_#%m%_#%v%_aWndId        := 0
-	View_#%m%_#%v%_layout_#1     := 1
-	View_#%m%_#%v%_layout_#2     := 1
-	View_#%m%_#%v%_layoutAxis_#1 := Config_layoutAxis_#1
-	View_#%m%_#%v%_layoutAxis_#2 := Config_layoutAxis_#2
-	View_#%m%_#%v%_layoutAxis_#3 := Config_layoutAxis_#3
-	View_#%m%_#%v%_layoutMFact   := Config_layoutMFactor
-	View_#%m%_#%v%_layoutMSplit  := 1
-	View_#%m%_#%v%_layoutSymbol  := Config_layoutSymbol_#1
-	View_#%m%_#%v%_wndIds        := ""
+	View_#%m%_#%v%_aWndId         := 0
+	View_#%m%_#%v%_layout_#1      := 1
+	View_#%m%_#%v%_layout_#2      := 1
+	View_#%m%_#%v%_layoutAxis_#1  := Config_layoutAxis_#1
+	View_#%m%_#%v%_layoutAxis_#2  := Config_layoutAxis_#2
+	View_#%m%_#%v%_layoutAxis_#3  := Config_layoutAxis_#3
+    View_#%m%_#%v%_layoutGapWidth := Config_layoutGapWidth
+	View_#%m%_#%v%_layoutMFact    := Config_layoutMFactor
+	View_#%m%_#%v%_layoutMSplit   := 1
+	View_#%m%_#%v%_layoutSymbol   := Config_layoutSymbol_#1
+	View_#%m%_#%v%_wndIds         := ""
 }
 
 View_activateWindow(d) {
@@ -109,6 +110,24 @@ View_rotateLayoutAxis(i, d) {
 		} Else
 			View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% := Manager_loop(View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%, d, 1, 3)
 		View_arrange(Manager_aMonitor, v)
+	}
+}
+
+View_setGapWidth(d) {
+	Local l, v, w
+	
+	v := Monitor_#%Manager_aMonitor%_aView_#1
+	l := View_#%Manager_aMonitor%_#%v%_layout_#1
+	If (Config_layoutFunction_#%l% = "tile") {
+        If (d < 0)
+            d := Floor(d / 2) * 2
+        Else
+            d := Ceil(d / 2) * 2
+        w := View_#%Manager_aMonitor%_#%v%_layoutGapWidth + d
+		If (w >= 0 And w < Monitor_#%Manager_aMonitor%_height And w < Monitor_#%Manager_aMonitor%_width) {
+			View_#%Manager_aMonitor%_#%v%_layoutGapWidth := w
+			View_arrange(Manager_aMonitor, v)
+		}
 	}
 }
 
@@ -201,11 +220,12 @@ View_shuffleWindow(d) {
 }
 
 View_tile(m, v, wndIds) {
-	Local axis1, axis2, axis3, h1, h2, i, mfact, msplit, n1, n2, sym1, sym3, w1, w2, wndId0, x1, x2, y1, y2
+	Local axis1, axis2, axis3, gapW, h1, h2, i, mfact, msplit, n1, n2, sym1, sym3, w1, w2, wndId0, x1, x2, y1, y2
 	
 	axis1  := View_#%m%_#%v%_layoutAxis_#1
 	axis2  := View_#%m%_#%v%_layoutAxis_#2
 	axis3  := View_#%m%_#%v%_layoutAxis_#3
+    gapW   := View_#%m%_#%v%_layoutGapWidth
 	mfact  := View_#%m%_#%v%_layoutMFact
 	msplit := View_#%m%_#%v%_layoutMSplit
 	
@@ -249,14 +269,14 @@ View_tile(m, v, wndIds) {
 	
 	If (wndId0 > 0) {
 		; master and stack area
-		h1 := Monitor_#%m%_height
-		h2 := Monitor_#%m%_height
-		w1 := Monitor_#%m%_width
-		w2 := Monitor_#%m%_width
-		x1 := Monitor_#%m%_x
-		x2 := Monitor_#%m%_x
-		y1 := Monitor_#%m%_y
-		y2 := Monitor_#%m%_y
+		h1 := Monitor_#%m%_height - gapW
+		h2 := Monitor_#%m%_height - gapW
+		w1 := Monitor_#%m%_width - gapW
+		w2 := Monitor_#%m%_width - gapW
+		x1 := Monitor_#%m%_x + gapW / 2
+		x2 := Monitor_#%m%_x + gapW / 2
+		y1 := Monitor_#%m%_y + gapW / 2
+		y2 := Monitor_#%m%_y + gapW / 2
 		If (Abs(axis1) = 1 And wndId0 > msplit) {
 			w1 *= mfact
 			w2 -= w1
@@ -271,7 +291,7 @@ View_tile(m, v, wndIds) {
 				y1 += h2
 			Else
 				y2 += h1
-		}
+        }
 		
 		; master
 		If (axis2 != 1 Or w1 / msplit < 161)
@@ -283,7 +303,7 @@ View_tile(m, v, wndIds) {
 		Else
 			n2 := msplit
 		Loop, % msplit {
-			Manager_winMove(wndId%A_Index%, x1, y1, w1 / n1, h1 / n2)
+			Manager_winMove(wndId%A_Index%, x1 + gapW / 2, y1 + gapW / 2, w1 / n1 - gapW, h1 / n2 - gapW)
 			If (n1 > 1)
 				x1 += w1 / n1
 			If (n2 > 1)
@@ -302,7 +322,7 @@ View_tile(m, v, wndIds) {
 				n2 := wndId0 - msplit
 			Loop, % wndId0 - msplit {
 				i := msplit + A_Index
-				Manager_winMove(wndId%i%, x2, y2, w2 / n1, h2 / n2)
+				Manager_winMove(wndId%i%, x2 + gapW / 2, y2 + gapW / 2, w2 / n1 - gapW, h2 / n2 - gapW)
 				If (n1 > 1)
 					x2 += w2 / n1
 				If (n2 > 1)
