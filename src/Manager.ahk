@@ -238,6 +238,16 @@ Manager_getWindowList() {
 		Clipboard := text
 }
 
+Manager_lockWorkStation() {
+    Global Config_shellMsgDelay
+    
+    RegWrite, REG_DWORD, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Policies\System, DisableLockWorkstation, 0
+    Sleep, % Config_shellMsgDelay
+    DllCall("LockWorkStation")
+    Sleep, % 4 * Config_shellMsgDelay
+    RegWrite, REG_DWORD, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Policies\System, DisableLockWorkstation, 1
+}
+
 Manager_loop(index, increment, lowerBound, upperBound) {
 	index += increment
 	If (index > upperBound)
