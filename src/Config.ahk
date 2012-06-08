@@ -22,31 +22,33 @@ Config_init() {
 	Local i, key, layout0, layout1, layout2
 	
 	; status bar
-	Config_showBar			:= True							; If false, the bar is hidden. It can be made visible or hidden by hotkey (see below).
-	Config_horizontalBarPos := "left"						; The horizontal position of the bar: "center", "left" or "right" side of the monitor or an offset in pixel (px) from the left (>= 0) or right (< 0).
-	Config_verticalBarPos   := "top"						; The vertical position of the bar: "top" or "bottom" of the monitor, "tray" = sub-window of the task bar.
-	Config_barWidth         := "100%"						; The width of the bar in pixel (px) or with a per cent sign (%) as a percentage.
-	Config_singleRowBar     := True							; If false, the bar will have to rows, one for the window title and one for all other GUI controls.
-	Config_spaciousBar      := False						; If true, the height of the bar will be set to a value equal to the height of an edit control, else it will be set to the text height.
-	Config_fontName			:= "Lucida Console"				; A monospace font is preferable for bug.n to calculate the correct width of the bar and its elements (sub-windows).
-	Config_fontSize			:= 
-	Config_normBgColor		:= 
-	Config_normFgColor		:= 
-	Config_selBgColor		:= 
-	Config_selFgColor		:= 
-	Config_readinBat		:= False						; If true, the system battery status is read in and displayed in the status bar. This only makes sense, if you have a system battery (notebook).
-	Config_readinCpu		:= False						; If true, the current CPU load is read in and displayed in the status bar.
-	Config_readinDate		:= True							; If true, the current date is read in (format: "WW, DD. MMM. YYYY") and displayed in the status bar.
-	Config_readinTime		:= True							; If true, the current time is read in (format: "HH:MM") and displayed in the status bar.
-	Config_readinInterval	:= 30000						; Time in milliseconds after which the above status values are refreshed.
+	Config_showBar			 := True						; If false, the bar is hidden. It can be made visible or hidden by hotkey (see below).
+	Config_horizontalBarPos  := "left"						; The horizontal position of the bar: "center", "left" or "right" side of the monitor or an offset in pixel (px) from the left (>= 0) or right (< 0).
+	Config_verticalBarPos    := "top"						; The vertical position of the bar: "top" or "bottom" of the monitor, "tray" = sub-window of the task bar.
+	Config_barWidth          := "100%"						; The width of the bar in pixel (px) or with a per cent sign (%) as a percentage.
+	Config_singleRowBar      := True						; If false, the bar will have to rows, one for the window title and one for all other GUI controls.
+	Config_spaciousBar       := False						; If true, the height of the bar will be set to a value equal to the height of an edit control, else it will be set to the text height.
+	Config_fontName			 := "Lucida Console"			; A monospace font is preferable for bug.n to calculate the correct width of the bar and its elements (sub-windows).
+	Config_fontSize			 := 
+	Config_normBgColor		 := 
+	Config_normFgColor		 := 
+	Config_selBgColor		 := 
+	Config_selFgColor		 := 
+	Config_readinBat		 := False						; If true, the system battery status is read in and displayed in the status bar. This only makes sense, if you have a system battery (notebook).
+	Config_readinCpu		 := False						; If true, the current CPU load is read in and displayed in the status bar.
+	Config_readinDate		 := True						; If true, the current date is read in (format: "WW, DD. MMM. YYYY") and displayed in the status bar.
+	Config_readinDiskLoad    := False						; If true, the current disk usage (read and write) is read in and displayed in the status bar.
+	Config_readinMemoryUsage := False						; If true, the system memory status is read in and displayed in the status bar.
+	Config_readinTime		 := True						; If true, the current time is read in (format: "HH:MM") and displayed in the status bar.
+	Config_readinInterval	 := 30000						; Time in milliseconds after which the above status values are refreshed.
 	
 	; Windows ui elements
-	Config_bbCompatibility	:= False						; If true, bug.n looks for BlackBox components (bbLeanBar, bbSlit and SystemBarEx) when calculating the work area. It is assumed that the virtual desktop functionality of BlackBox and NOT bug.n is used (=> Hiding and showing windows is detected and acted upon).
-	Config_borderWidth		:= 0							; If > 0, the window border width is set to the integer value Config_borderWidth.
-	Config_borderPadding	:= -1							; If >= 0, the window border padding is set to the integer value Config_borderPadding (only for Windows >= Vista).
-	Config_showTaskBar		:= False						; If false, the task bar is hidden. It can be made visible or hidden by hotkey (see below).
-	Config_showBorder		:= True							; If false, the window borders are hidden; therefor windows cannot be resized manually by dragging the border, even if using the according hotkey.
-	Config_selBorderColor	:= ""							; Border colour of the active window; format: 0x00BBGGRR (e. g. "0x006A240A", if = "", the system's window border colour is not changed).
+	Config_bbCompatibility := False						    ; If true, bug.n looks for BlackBox components (bbLeanBar, bbSlit and SystemBarEx) when calculating the work area. It is assumed that the virtual desktop functionality of BlackBox and NOT bug.n is used (=> Hiding and showing windows is detected and acted upon).
+	Config_borderWidth	   := 0							    ; If > 0, the window border width is set to the integer value Config_borderWidth.
+	Config_borderPadding   := -1							; If >= 0, the window border padding is set to the integer value Config_borderPadding (only for Windows >= Vista).
+	Config_showTaskBar	   := False						    ; If false, the task bar is hidden. It can be made visible or hidden by hotkey (see below).
+	Config_showBorder	   := True							; If false, the window borders are hidden; therefor windows cannot be resized manually by dragging the border, even if using the according hotkey.
+	Config_selBorderColor  := ""							; Border colour of the active window; format: 0x00BBGGRR (e. g. "0x006A240A", if = "", the system's window border colour is not changed).
 															; Config_borderWidth, Config_borderPadding and Config_selBorderColor are especially usefull, if you are not allowed to set the design in the system settings.	
 	; window arrangement
 	Config_viewCount		  := 9							; The total number of views. This has effects on the displayed groups in the bar, and should not be exceeded in the hotkeys below.
@@ -202,15 +204,27 @@ Config_hotkeyLabel:
 Return
 
 Config_readinAny() {										; Add information to the variable "text" in this function to display it in the status bar.
-	Global Config_readinCpu, Config_readinDate
+	Global Config_readinCpu, Config_readinDate, Config_readinDiskLoad, Config_readinMemoryUsage
 	
 	text := ""
 	If Config_readinCpu
 		text .= " CPU: " Bar_getSystemTimes() "% "
-	If Config_readinDate And Config_readinCpu
-		text .= "|"
-	If Config_readinDate
+	If Config_readinMemoryUsage {
+		If Config_readinCpu
+            text .= "|"
+		text .= " RAM: " Bar_getMemoryUsage() "% "
+    }
+	If Config_readinDiskLoad {
+        If (Config_readinCpu Or Config_readinMemoryUsage)
+            text .= "|"
+		Bar_getDiskLoad(rLoad, wLoad)
+		text .= " Dr: " rLoad "% | Dw: " wLoad "% "
+    }
+	If Config_readinDate {
+        If (Config_readinCpu Or Config_readinMemoryUsage Or Config_readinDiskLoad)
+            text .= "|"
 		text .= " " A_DDD ", " A_DD ". " A_MMM ". " A_YYYY " "
+    }
 	
 	Return, text
 }

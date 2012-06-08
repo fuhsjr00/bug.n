@@ -55,6 +55,7 @@ Main_cleanup:			; The labels with "ExitApp" or "Return" at the end and hotkeys h
 	If Config_autoSaveSession
 		Config_saveSession()
 	Manager_cleanup()
+    DllCall("CloseHandle", "UInt", Bar_hDrive)    ; used in Bar_getDiskLoad
 ExitApp
 
 Main_help:

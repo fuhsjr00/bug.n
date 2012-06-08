@@ -247,6 +247,7 @@ Manager_lockWorkStation() {
     Sleep, % 4 * Config_shellMsgDelay
     RegWrite, REG_DWORD, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Policies\System, DisableLockWorkstation, 1
 }
+; Unambiguous: Re-use WIN+L as a hotkey in bug.n (http://www.autohotkey.com/community/viewtopic.php?p=500903&sid=eb3c7a119259b4015ff045ef80b94a81#p500903)
 
 Manager_loop(index, increment, lowerBound, upperBound) {
 	index += increment

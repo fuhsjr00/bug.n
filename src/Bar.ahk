@@ -167,6 +167,8 @@ Bar_init(m) {
 		DllCall("Shell32.dll\SHAppBarMessage", "UInt", (ABM_SETPOS := 0x3)  , "UInt", &Bar_appBarData)
 		; SKAN: Crazy Scripting : Quick Launcher for Portable Apps (http://www.autohotkey.com/forum/topic22398.html)
 	}
+    
+    Bar_hDrive := DllCall("CreateFile", "Str", "\\.\PhysicalDrive0", "UInt", 0, "UInt", 3, "UInt", 0, "UInt", 3, "UInt", 0, "UInt", 0)
 }
 
 Bar_initCmdGui() {	
@@ -379,6 +381,23 @@ Bar_getBatteryStatus(ByRef batteryLifePercent, ByRef acLineStatus) {
 }
 ; PhiLho: AC/Battery status (http://www.autohotkey.com/forum/topic7633.html)
 
+Bar_getDiskLoad(ByRef readLoad, ByRef writeLoad) {
+    Global Bar_hDrive
+    Static oldReadCount, oldWriteCount
+    
+    dpSize := 5 * 8 + 4 + 4 + 4 + 4 + 8 + 4 + 8 * (A_IsUnicode ? 2 : 1) + 12    ; 88?
+    VarSetCapacity(dp, dpSize)
+	DllCall("DeviceIoControl", "UInt", Bar_hDrive, "UInt", 0x00070020, "UInt", 0, "UInt", 0, "UInt", &dp, "UInt", dpSize, "UIntP", nReturn, "UInt", 0)    ; IOCTL_DISK_PERFORMANCE
+    
+	newReadCount  := NumGet(dp, 40)
+	newWriteCount := NumGet(dp, 44)
+    readLoad  := SubStr("  " Round((1 - 1 / (1 +  newReadCount -  oldReadCount)) * 100), -2)
+    writeLoad := SubStr("  " Round((1 - 1 / (1 + newWriteCount - oldWriteCount)) * 100), -2)
+    oldReadCount  := newReadCount
+    oldWriteCount := newWriteCount
+}
+; fures: System + Network monitor - with net history graph (http://www.autohotkey.com/community/viewtopic.php?p=260329)
+
 Bar_getHeight() {
 	Global Bar_#0_#1, Bar_#0_#1H, Bar_#0_#2, Bar_#0_#2H, Bar_ctrlHeight, Bar_height, Bar_textHeight
 	Global Config_fontName, Config_fontSize, Config_singleRowBar, Config_spaciousBar, Config_verticalBarPos
@@ -412,6 +431,13 @@ Bar_getHeight() {
 			Bar_ctrlHeight := Bar_height / 2
 	}
 }
+
+Bar_getMemoryUsage() {
+    VarSetCapacity(memoryStatus, 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4)
+    DllCall("kernel32.dll\GlobalMemoryStatus", "UInt", &memoryStatus)
+    Return, SubStr("  " Round(*(&memoryStatus + 4)), -2)    ; LS byte is enough, 0..100
+}
+; fures: System + Network monitor - with net history graph (http://www.autohotkey.com/community/viewtopic.php?p=260329)
 
 Bar_getSystemTimes() {	; Total CPU Load
 	Static oldIdleTime, oldKrnlTime, oldUserTime
