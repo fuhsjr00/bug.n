@@ -360,12 +360,12 @@ Bar_evaluateCommand() {
 Bar_getBatteryStatus(ByRef batteryLifePercent, ByRef acLineStatus) {
 	VarSetCapacity(powerStatus, (1 + 1 + 1 + 1 + 4 + 4))
 	success := DllCall("GetSystemPowerStatus", "UInt", &powerStatus)
-	If (ErrorLevel != 0 OR success = 0) {
+	If (ErrorLevel != 0 Or success = 0) {
 		MsgBox 16, Power Status, Can't get the power status...
 		Return
 	}
-	acLineStatus	   := Bar_getInteger(powerStatus, 0, false, 1)
-	batteryLifePercent := Bar_getInteger(powerStatus, 2, false, 1)
+	acLineStatus	   := NumGet(powerStatus, 0, "Char")
+	batteryLifePercent := NumGet(powerStatus, 2, "Char")
 
 	If acLineStatus = 0
 		acLineStatus = off
@@ -413,16 +413,6 @@ Bar_getHeight() {
 	}
 }
 
-Bar_getInteger(ByRef @source, _offset = 0, _bIsSigned = false, _size = 4) {
-	Loop %_size%		; Build the integer by adding up its bytes.
-		result += *(&@source + _offset + A_Index-1) << 8*(A_Index-1)
-	If (!_bIsSigned OR _size > 4 OR result < 0x80000000)
-		Return result	; Signed vs. unsigned doesn't matter in these cases.
-	; Otherwise, convert the value (now known to be 32-bit & negative) to its signed counterpart:
-	return -(0xFFFFFFFF - result + 1)
-}
-; PhiLho: AC/Battery status (http://www.autohotkey.com/forum/topic7633.html)
-
 Bar_getSystemTimes() {	; Total CPU Load
 	Static oldIdleTime, oldKrnlTime, oldUserTime
 	Static newIdleTime, newKrnlTime, newUserTime
@@ -431,8 +421,8 @@ Bar_getSystemTimes() {	; Total CPU Load
 	oldKrnlTime := newKrnlTime
 	oldUserTime := newUserTime
 
-	DllCall("GetSystemTimes", "int64P", newIdleTime, "int64P", newKrnlTime, "int64P", newUserTime)
-	sysTime := SubStr("  " . Round((1-(newIdleTime-oldIdleTime)/(newKrnlTime-oldKrnlTime+newUserTime-oldUserTime))*100), -2)
+	DllCall("GetSystemTimes", "Int64P", newIdleTime, "Int64P", newKrnlTime, "Int64P", newUserTime)
+	sysTime := SubStr("  " . Round((1 - (newIdleTime - oldIdleTime) / (newKrnlTime - oldKrnlTime+newUserTime - oldUserTime)) * 100), -2)
 	Return, sysTime		; system time in percent
 }
 ; Sean: CPU LoadTimes (http://www.autohotkey.com/forum/topic18913.html)
