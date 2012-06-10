@@ -37,8 +37,9 @@ Config_init() {
 	Config_readinBat		 := False						; If true, the system battery status is read in and displayed in the status bar. This only makes sense, if you have a system battery (notebook).
 	Config_readinCpu		 := False						; If true, the current CPU load is read in and displayed in the status bar.
 	Config_readinDate		 := True						; If true, the current date is read in (format: "WW, DD. MMM. YYYY") and displayed in the status bar.
-	Config_readinDiskLoad    := False						; If true, the current disk usage (read and write) is read in and displayed in the status bar.
-	Config_readinMemoryUsage := False						; If true, the system memory status is read in and displayed in the status bar.
+	Config_readinDiskLoad    := False						; If true, the current disk load (read and write) is read in and displayed in the status bar.
+	Config_readinMemoryUsage := False						; If true, the system memory usage is read in and displayed in the status bar.
+	Config_readinNetworkLoad := False						; If true, the current network load (up and down) is read in and displayed in the status bar.
 	Config_readinTime		 := True						; If true, the current time is read in (format: "HH:MM") and displayed in the status bar.
 	Config_readinInterval	 := 30000						; Time in milliseconds after which the above status values are refreshed.
 	
@@ -204,7 +205,7 @@ Config_hotkeyLabel:
 Return
 
 Config_readinAny() {										; Add information to the variable "text" in this function to display it in the status bar.
-	Global Config_readinCpu, Config_readinDate, Config_readinDiskLoad, Config_readinMemoryUsage
+	Global Config_readinCpu, Config_readinDate, Config_readinDiskLoad, Config_readinMemoryUsage, Config_readinNetworkLoad
 	
 	text := ""
 	If Config_readinCpu
@@ -220,8 +221,14 @@ Config_readinAny() {										; Add information to the variable "text" in this f
 		Bar_getDiskLoad(rLoad, wLoad)
 		text .= " Dr: " rLoad "% | Dw: " wLoad "% "
     }
-	If Config_readinDate {
+    If Config_readinNetworkLoad {
         If (Config_readinCpu Or Config_readinMemoryUsage Or Config_readinDiskLoad)
+            text .= "|"
+		Bar_getNetworkLoad(upLoad, dnLoad)
+		text .= " UP: " upLoad " KB/s | dn: " dnLoad " KB/s "
+    }
+	If Config_readinDate {
+        If (Config_readinCpu Or Config_readinMemoryUsage Or Config_readinDiskLoad Or Config_readinNetworkLoad)
             text .= "|"
 		text .= " " A_DDD ", " A_DD ". " A_MMM ". " A_YYYY " "
     }
