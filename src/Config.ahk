@@ -401,8 +401,8 @@ Config_saveSession() {
 #^+Tab::View_rotateLayoutAxis(3, +1)		; Rotate the stack axis (i. e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 = y-axis = vertical stack, 2 -> 3 = z-axis = monocle, only for the "tile" layout).
 #^Left::View_setMSplit(+1)					; Move the master splitter, i. e. decrease the number of windows in the master area (only for the "tile" layout).
 #^Right::View_setMSplit(-1)					; Move the master splitter, i. e. increase the number of windows in the master area (only for the "tile" layout).
-#<::View_setGapWidth(-2)                    ; Decrease the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
-#+<::View_setGapWidth(+2)                   ; Increase the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
+#+Left::View_setGapWidth(-2)                ; Decrease the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
+#+Right::View_setGapWidth(+2)               ; Increase the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
 
 #BackSpace::Monitor_activateView(-1)		; Activate the previously activated view. You may also use Monitor_activateView("<") or Monitor_activateView(">") for activating the previous or next adjacent view.
 #+0::Monitor_setWindowTag(0)				; Tag the active window with all tags (1 ... Config_viewCount). You may also use Monitor_setWindowTag("<") or Monitor_setWindowTag(">") for setting the tag of the previous or next adjacent to the current view.
