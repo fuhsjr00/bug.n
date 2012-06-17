@@ -375,8 +375,8 @@ Config_saveSession() {
  *	format: <modifier><key>::<function>(<argument>)
  *	modifier: ! = Alt (Mod1Mask), ^ = Ctrl (ControlMask), + = Shift (ShiftMask), # = LWin (Mod4Mask)
  */
-#Down::View_activateWindow(+1)				; Activate the next window in the active view.
-#Up::View_activateWindow(-1)				; Activate the previous window in the active view.
+#m::View_activateWindow(+1)				; Activate the next window in the active view.
+#n::View_activateWindow(-1)				; Activate the previous window in the active view.
 #+Down::View_shuffleWindow(+1)				; Move the active window to the next position in the window list of the view.
 #+Up::View_shuffleWindow(-1)				; Move the active window to the previous position in the window list of the view.
 #+Enter::View_shuffleWindow(0)				; Move the active window to the first position in the window list of the view.
@@ -390,9 +390,9 @@ Config_saveSession() {
 #+i::Manager_getWindowList()				; Get a window list for the active view (id, title and class).
 
 #Tab::View_setLayout(-1)					; Set the previously set layout. You may also use View_setLayout(">") for setting the next layout in the layout array.
-#f::View_setLayout(3)						; Set the 3rd defined layout (i. e. floating layout in the default configuration).
-#m::View_setLayout(2)						; Set the 2nd defined layout (i. e. monocle layout in the default configuration).
-#t::View_setLayout(1)						; Set the 1st defined layout (i. e. tile layout in the default configuration).
+#\::View_setLayout(3)						; Set the 3rd defined layout (i. e. floating layout in the default configuration).
+#]::View_setLayout(2)						; Set the 2nd defined layout (i. e. monocle layout in the default configuration).
+#[::View_setLayout(1)						; Set the 1st defined layout (i. e. tile layout in the default configuration).
 #Left::View_setMFactor(-0.05)				; Reduce the size of the master area in the active view (only for the "tile" layout).
 #Right::View_setMFactor(+0.05)				; Enlarge the size of the master area in the active view (only for the "tile" layout).
 #^t::View_rotateLayoutAxis(1, +1)			; Rotate the layout axis (i. e. 2 -> 1 = vertical layout, 1 -> 2 = horizontal layout, only for the "tile" layout).
@@ -449,4 +449,4 @@ Config_saveSession() {
 #^r::Main_reload()							; Reload bug.n (i. e. the configuration and its dependent settings) without deleting the window lists of bug.n and restoring windows.
 											; It does not reset internal configuration variables, the tray icon or menu, hotkeys (unless set explicitly in Config.ini), individual window settings like Config_showBorder (since windows might be hidden) or hiding the title bar, the monitor count or views.
 											; It does not reload functions. Changed rules are only applied to new windows.
-#^q::ExitApp								; Quit bug.n, restore the default Windows UI and show all windows.
+#Esc::ExitApp								; Quit bug.n, restore the default Windows UI and show all windows.
