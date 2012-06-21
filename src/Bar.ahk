@@ -697,28 +697,34 @@ Bar_updateTitle(debugMsg = "") {
 	Bar_aWndId := aWndId
 }
 
+; Update the view portion of the status bar.
 Bar_updateView(m, v) {
-	Local managedWndId0, wndId0, wndIds
+	Local IdsLen, ViewIdsLen
 	
-	StringTrimRight, wndIds, Manager_managedWndIds, 1
-	StringSplit, managedWndId, wndIds, `;
 	GuiN := (m - 1) + 1
 	Gui, %GuiN%: Default
+	
+	IdsLen := StrLen(Manager_managedWndIds)
+	
+	If (v = Monitor_#%m%_aView_#1) {
+		; Set foreground/background colors if the view is the current view.
+		GuiControl, +Background%Config_selBgColor1% +c%Config_selFgColor2%, Bar_#%m%_#%v%_tagged
+		GuiControl, +c%Config_selFgColor1%, Bar_#%m%_#%v%
+	} Else If StrLen(View_#%m%_#%v%_wndIds) > 0 {
+		; Set foreground/background colors if the view contains windows.
+		GuiControl, +Background%Config_normBgColor5% +c%Config_normFgColor8%, Bar_#%m%_#%v%_tagged
+		GuiControl, +c%Config_normFgColor7%, Bar_#%m%_#%v%
+	} Else {
+		; Set foreground/background colors if the view is empty.
+		GuiControl, +Background%Config_normBgColor1% +c%Config_normFgColor8%, Bar_#%m%_#%v%_tagged
+		GuiControl, +c%Config_normFgColor1%, Bar_#%m%_#%v%
+	}
+	
 	Loop, %Config_viewCount% {
-		StringTrimRight, wndIds, View_#%m%_#%A_Index%_wndIds, 1
-		StringSplit, wndId, wndIds, `;
-		If (A_Index = v)
-			If (v = Monitor_#%m%_aView_#1) {
-				GuiControl, +Background%Config_selBgColor1% +c%Config_selFgColor2%, Bar_#%m%_#%v%_tagged
-				GuiControl, +c%Config_selFgColor1%, Bar_#%m%_#%v%
-			} Else If wndId0 {
-				GuiControl, +Background%Config_normBgColor5% +c%Config_normFgColor8%, Bar_#%m%_#%v%_tagged
-				GuiControl, +c%Config_normFgColor7%, Bar_#%m%_#%v%
-			} Else {
-				GuiControl, +Background%Config_normBgColor1% +c%Config_normFgColor8%, Bar_#%m%_#%v%_tagged
-				GuiControl, +c%Config_normFgColor1%, Bar_#%m%_#%v%
-			}
-		GuiControl, , Bar_#%m%_#%A_Index%_tagged, % wndId0 / managedWndId0 * 100
+		ViewIdsLen := StrLen( View_#%m%_#%A_Index%_wndIds )
+		; Update the percentage fill for the view.
+		GuiControl, , Bar_#%m%_#%A_Index%_tagged, % ViewIdsLen / IdsLen * 100
+		; Refresh the number on the bar.
 		GuiControl, , Bar_#%m%_#%A_Index%, %A_Index%
 	}
 }
