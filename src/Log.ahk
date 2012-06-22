@@ -22,4 +22,7 @@ Log_msg( message ) {
 	FormatTime, CurrentTime, , yyyyMMddHHmmss
 	FileAppend, %CurrentTime%  %message%`r`n, bugn_log.txt
 }
- 
+
+Log_bare( message ) {
+	FileAppend, %message%`r`n, bugn_log.txt
+}
