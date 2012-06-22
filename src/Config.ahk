@@ -383,7 +383,7 @@ Config_saveSession() {
 #c::Manager_closeWindow()					; Close the active window.
 #+d::Manager_toggleDecor()					; Show / Hide the title bar of the active window.
 #+f::View_toggleFloating()					; Toggle the floating status of the active window (i. e. dis- / regard it when tiling).
-#+m::Manager_moveWindow()					; Move the active window by key (only floating windows).
+#+q::Manager_moveWindow()					; Move the active window by key (only floating windows).
 #+s::Manager_sizeWindow()					; Resize the active window by key (only floating windows).
 #+x::Manager_maximizeWindow()				; Move and resize the active window to the size of the work area (only floating windows).
 #i::Manager_getWindowInfo()					; Get information for the active window (id, title, class, process name, style, geometry, tags and floating state).
