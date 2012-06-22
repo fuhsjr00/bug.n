@@ -238,6 +238,48 @@ Manager_getWindowList() {
 		Clipboard := text
 }
 
+Manager_logWindowInfo( w ) {
+	Local av, aWndId, aIsWinFocus, aIsBugnActive, aIsFloating, aIsHidden, aWndTitle, aWndStyle, aWndX, aWndY, aWndW, aWndH
+	
+	WinGet, aWndId, ID, A
+	If aWndId = %w%
+		aIsWinFocus := "*"
+	Else
+		aIsWinFocus := " "
+	av := Monitor_#%Manager_aMonitor%_aView_#1
+	If View_#%Manager_aMonitor%_#%av%_aWndId = %w%
+		aIsBugnActive := "*"
+	Else
+		aIsBugnActive := " "
+	WinGetTitle, aWndTitle, ahk_id %w%
+	If InStr(Bar_hiddenWndIds, w)
+		aIsHidden := "*"
+	Else 
+		aIsHidden := " "
+	If Manager_#%w%_isFloating
+		aIsFloating := "*"
+	Else
+		aIsFloating := " "
+	WinGet, aWndStyle, Style, ahk_id %w%
+	WinGetPos, aWndX, aWndY, aWndW, aWndH, ahk_id %w%
+
+	Log_bare("    " . w . "`t" . aIsBugnActive . " " . aIsFloating . " " . aIsHidden . " " aIsWinFocus . "`t" . aWndX . "`t" . aWndY . "`t" . aWndW . "`t" . aWndH . "`t" . aWndStyle . "`t" . aWndTitle)
+}
+
+Manager_logWindowList() {
+	Local text, v, aWndId, wndIds, aWndTitle
+	
+	v := Monitor_#%Manager_aMonitor%_aView_#1
+	Log_msg( "Window dump for active view (" . Manager_aMonitor . ", " . v . ")" )
+	Log_bare( "    ID`t`tA F H W`tX`tY`tW`tH`tStyle`t`tTitle")
+	
+	StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
+	Loop, PARSE, wndIds, `;
+	{
+		Manager_logWindowInfo( A_LoopField )
+	}
+}
+
 Manager_lockWorkStation() {
     Global Config_shellMsgDelay
     
@@ -536,6 +578,7 @@ Manager_sync(ByRef wndIds = "") {
 		shownWndIds .= View_#%A_Index%_#%v%_wndIds
 	}
 	; check all visible windows against the known windows
+	; DetectHiddenWindows, On
 	WinGet, wndId, List, , , 
 	Loop, % wndId {
 		If Not InStr(shownWndIds, wndId%A_Index% ";") {
