@@ -60,11 +60,11 @@ Config_init() {
 	Config_layoutAxis_#1	  := 1							; The layout axis: 1 = x, 2 = y; negative values mirror the layout, setting the master area to the right / bottom instead of left / top.
 	Config_layoutAxis_#2	  := 2							; The master axis: 1 = x (from left to right), 2 = y (from top to bottom), 3 = z (monocle).
 	Config_layoutAxis_#3	  := 2							; The stack axis:  1 = x (from left to right), 2 = y (from top to bottom), 3 = z (monocle).
-	Config_layoutGapWidth	  := 0							; The default gap width in px (only even numbers) of the "tile" layout, i. e. the space between windows and around the layout.
+	Config_layoutGapWidth	  := -4							; The default gap width in px (only even numbers) of the "tile" layout, i. e. the space between windows and around the layout.
 	Config_layoutMFactor	  := 0.6						; The factor for the size of the master area, which is multiplied by the monitor size.
 	Config_mouseFollowsFocus  := True						; If true, the mouse pointer is set over the focused window, if a window is activated by bug.n.
 	Config_onActiveHiddenWnds := "view"						; The action, which will be taken, if a window e. g. should be activated, but is not visible; "view": show the view accordng to the first tag of the window in question, "tag": add the window in question to the current visible view, "hide": hide the window again ignoring the activation.
-	Config_newWndPosition	  := "top"						; The position of a new window in a view; "top": at the beginning of the window list and the master area (default), "masterBottom": at the end of the master area, "stackTop": on top of the stack area, "bottom": at the end of the window list and the stack area.
+	Config_newWndPosition	  := "bottom"						; The position of a new window in a view; "top": at the beginning of the window list and the master area (default), "masterBottom": at the end of the master area, "stackTop": on top of the stack area, "bottom": at the end of the window list and the stack area.
 	Config_shellMsgDelay	  := 350						; The time bug.n waits after a shell message (a window is opened, closed or the focus has been changed); if there are any problems recognizing, when windows are opened or closed, try to increase this number.
 	Config_syncMonitorViews	  := 0							; The number of monitors (2 or more), for which views should be activated, when using the accordant hotkey. If set to 1, the views are activated for all monitors. If set to 0, views are activated independently (only on the active monitor).
 	Config_viewFollowsTagged  := False						; If true and a window is tagged with a single tag, the view is correspondingly set to the tag.
@@ -377,8 +377,8 @@ Config_saveSession() {
  */
 #m::View_activateWindow(+1)				; Activate the next window in the active view.
 #n::View_activateWindow(-1)				; Activate the previous window in the active view.
-#+Down::View_shuffleWindow(+1)				; Move the active window to the next position in the window list of the view.
-#+Up::View_shuffleWindow(-1)				; Move the active window to the previous position in the window list of the view.
+#+m::View_shuffleWindow(+1)				; Move the active window to the next position in the window list of the view.
+#+n::View_shuffleWindow(-1)				; Move the active window to the previous position in the window list of the view.
 #+Enter::View_shuffleWindow(0)				; Move the active window to the first position in the window list of the view.
 #c::Manager_closeWindow()					; Close the active window.
 #+d::Manager_toggleDecor()					; Show / Hide the title bar of the active window.
