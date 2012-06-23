@@ -18,11 +18,42 @@
  *	@version 8.3.0
  */
 
+Log_init() {
+	Global
+	Log_debug_enabled := 0
+}
+ 
 Log_msg( message ) {
 	FormatTime, CurrentTime, , yyyyMMddHHmmss
 	FileAppend, %CurrentTime%  %message%`r`n, bugn_log.txt
 }
 
 Log_bare( message ) {
-	FileAppend, %message%`r`n, bugn_log.txt
+	Local padded_message
+	padded_message := "    " . message . "`r`n"
+	FileAppend, %padded_message% , bugn_log.txt
+}
+
+Log_toggleDebugEnabled() {
+	Global
+	If (Log_debug_enabled = 1)
+		Log_debug_enabled := 0
+	Else
+		Log_debug_enabled := 1
+	If (Log_debug_enabled = 1)
+		Log_msg("Debug log enabled (" . Log_debug_enabled . ")")
+	Else
+		Log_msg("Debug log disabled (" . Log_debug_enabled . ")")
+}
+
+Log_dbg_msg( message ) {
+	Global
+	If (Log_debug_enabled = 1)
+		Log_msg( "DEBUG:  " . message )
+}
+
+Log_dbg_bare( message ) {
+	Global
+	If (Log_debug_enabled = 1)
+		Log_msg( "DEBUG:  " . message )
 }
