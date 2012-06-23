@@ -304,6 +304,7 @@ View_arrange_tile(m, v, wndIds) {
 	
 	StringTrimRight, wndIds, wndIds, 1
 	StringSplit, wndId, wndIds, `;
+	Log_dbg_msg(1, "View_arrange_tile: (" . wndId0 . ") " . wndIds)
 	If (wndId0 = 0)
 		Return
 
