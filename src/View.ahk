@@ -291,85 +291,87 @@ View_updateLayout_tile(m, v) {
 }
 
 View_arrange_tile(m, v, wndIds) {
-	Local axis1, axis2, axis3, gapW, h1, h2, i, mfact, msplit, n1, n2, w1, w2, wndId0, x1, x2, y1, y2
-	
-	axis1  := View_#%m%_#%v%_layoutAxis_#1
-	axis2  := View_#%m%_#%v%_layoutAxis_#2
-	axis3  := View_#%m%_#%v%_layoutAxis_#3
-	gapW   := View_#%m%_#%v%_layoutGapWidth
-	mfact  := View_#%m%_#%v%_layoutMFact
-	msplit := View_#%m%_#%v%_layoutMSplit
+	Local axis1, axis2, axis3, gapW, gapW_2, h1, h2, i, mfact, msplit, n1, n2, w1, w2, wndId0, x1, x2, y1, y2, oriented
 	
 	StringTrimRight, wndIds, wndIds, 1
 	StringSplit, wndId, wndIds, `;
+	If (wndId0 = 0)
+		Return
+
+	axis1  := Abs(View_#%m%_#%v%_layoutAxis_#1)
+	axis2  := View_#%m%_#%v%_layoutAxis_#2
+	axis3  := View_#%m%_#%v%_layoutAxis_#3
+	oriented := View_#%m%_#%v%_layoutAxis_#1 > 0
+	gapW   := View_#%m%_#%v%_layoutGapWidth
+	gapW_2 := gapW/2
+	mfact  := View_#%m%_#%v%_layoutMFact
+	msplit := View_#%m%_#%v%_layoutMSplit
+
 	If (msplit > wndId0) {
-		If (wndId0 < 1)
-			msplit := 1
-		Else
-			msplit := wndId0
+		msplit := wndId0
 	}
 	
-	If (wndId0 > 0) {
-		; master and stack area
-		h1 := Monitor_#%m%_height - gapW
-		h2 := Monitor_#%m%_height - gapW
-		w1 := Monitor_#%m%_width - gapW
-		w2 := Monitor_#%m%_width - gapW
-		x1 := Monitor_#%m%_x + gapW / 2
-		x2 := Monitor_#%m%_x + gapW / 2
-		y1 := Monitor_#%m%_y + gapW / 2
-		y2 := Monitor_#%m%_y + gapW / 2
-		If (Abs(axis1) = 1 And wndId0 > msplit) {
+	; master and stack area
+	h1 := Monitor_#%m%_height - gapW
+	h2 := h1
+	w1 := Monitor_#%m%_width - gapW
+	w2 := w1
+	x1 := Monitor_#%m%_x + gapW_2
+	x2 := x1
+	y1 := Monitor_#%m%_y + gapW_2
+	y2 := y1
+	If (wndId0 > msplit) {
+		If (axis1 = 1) {
 			w1 *= mfact
 			w2 -= w1
-			If (axis1 < 0)
+			If (Not oriented)
 				x1 += w2
 			Else
 				x2 += w1
-		} Else If (Abs(axis1) = 2 And wndId0 > msplit) {
+		} Else If (axis1 = 2) {
 			h1 *= mfact
 			h2 -= h1
-			If (axis1 < 0)
+			If (Not oriented)
 				y1 += h2
 			Else
 				y2 += h1
-        }
-		
-		; master
-		If (axis2 != 1 Or w1 / msplit < 161)
-			n1 := 1
-		Else
-			n1 := msplit
-		If (axis2 != 2 Or h1 / msplit < Bar_height)
-			n2 := 1
-		Else
-			n2 := msplit
-		Loop, % msplit {
-			Manager_winMove(wndId%A_Index%, x1 + gapW / 2, y1 + gapW / 2, w1 / n1 - gapW, h1 / n2 - gapW)
-			If (n1 > 1)
-				x1 += w1 / n1
-			If (n2 > 1)
-				y1 += h1 / n2
 		}
-		
-		; stack
-		If (wndId0 > msplit) {
-			If (axis3 != 1 Or w2 / (wndId0 - msplit) < 161)
-				n1 := 1
-			Else
-				n1 := wndId0 - msplit
-			If (axis3 != 2 Or h2 / (wndId0 - msplit) < Bar_height)
-				n2 := 1
-			Else
-				n2 := wndId0 - msplit
-			Loop, % wndId0 - msplit {
-				i := msplit + A_Index
-				Manager_winMove(wndId%i%, x2 + gapW / 2, y2 + gapW / 2, w2 / n1 - gapW, h2 / n2 - gapW)
-				If (n1 > 1)
-					x2 += w2 / n1
-				If (n2 > 1)
-					y2 += h2 / n2
-			}
+	}
+	
+	; master
+	If (axis2 != 1 Or w1 / msplit < 161)
+		n1 := w1
+	Else
+		n1 := w1/msplit
+	If (axis2 != 2 Or h1 / msplit < Bar_height)
+		n2 := h1
+	Else
+		n2 := h1/msplit
+	Loop, % msplit {
+		Manager_winMove(wndId%A_Index%, x1 + gapW_2, y1 + gapW_2, n1 - gapW, n2 - gapW)
+		If (n1 < w1)
+			x1 += n1
+		If (n2 < h1)
+			y1 += n2
+	}
+	
+	; stack
+	If (wndId0 > msplit) {
+		If (axis3 != 1 Or w2 / (wndId0 - msplit) < 161)
+			n1 := w2
+		Else
+			n1 := w2/(wndId0 - msplit)
+		If (axis3 != 2 Or h2 / (wndId0 - msplit) < Bar_height)
+			n2 := h2
+		Else
+			n2 := h2/(wndId0 - msplit)
+		Loop, % wndId0 - msplit {
+			i := msplit + A_Index
+			Manager_winMove(wndId%i%, x2 + gapW_2, y2 + gapW_2, n1 - gapW, n2 - gapW)
+			If (n1 < w2)
+				x2 += n1
+			If (n2 < h2)
+				y2 += n2
 		}
 	}
 }
