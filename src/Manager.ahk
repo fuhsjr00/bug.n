@@ -403,8 +403,18 @@ Manager_moveWindow() {
 	SendMessage, WM_SYSCOMMAND, SC_MOVE, , , ahk_id %aWndId%
 }
 
+HSHELL_WINDOWCREATED := 1
+; Seems to get sent every time 
+HSHELL_WINDOWDESTROYED := 2
+HSHELL_WINDOWACTIVATED := 4
+HSHELL_REDRAW := 6
+; Full-screen app activated?
+HSHELL_RUDEAPPACTIVATED := 32772
+
 Manager_onShellMessage(wParam, lParam) {
 	Local a, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, flag, m, t, wndClass, wndId, wndIds, wndPName, wndTitle, x, y
+	
+	Log_dbg_msg(1, "Manager_onShellMessage(wParam: " . wParam . ", lParam: " . lParam)
 	
 	SetFormat, Integer, hex
 	lParam := lParam+0
@@ -578,7 +588,6 @@ Manager_sync(ByRef wndIds = "") {
 		shownWndIds .= View_#%A_Index%_#%v%_wndIds
 	}
 	; check all visible windows against the known windows
-	; DetectHiddenWindows, On
 	WinGet, wndId, List, , , 
 	Loop, % wndId {
 		If Not InStr(shownWndIds, wndId%A_Index% ";") {

@@ -389,7 +389,8 @@ Config_saveSession() {
 #i::Manager_getWindowInfo()					; Get information for the active window (id, title, class, process name, style, geometry, tags and floating state).
 #+i::Manager_getWindowList()				; Get a window list for the active view (id, title and class).
 #^i::Manager_logWindowList()
-#^d::Log_toggleDebugEnabled()
+#^d::Log_decDebugLevel()
+#^e::Log_incDebugLevel()
 
 #Tab::View_setLayout(-1)					; Set the previously set layout. You may also use View_setLayout(">") for setting the next layout in the layout array.
 #\::View_setLayout(3)						; Set the 3rd defined layout (i. e. floating layout in the default configuration).
@@ -446,7 +447,7 @@ Config_saveSession() {
 #+Space::Monitor_toggleBar()				; Hide / Show the bar (bug.n status bar) on the active monitor.
 #Space::Monitor_toggleTaskBar()				; Hide / Show the task bar.
 #y::Bar_toggleCommandGui()					; Open the command GUI for executing programmes or bug.n functions.
-#^e::Run, edit %Config_filePath%			; Open the configuration file in the standard text editor.
+;#^e::Run, edit %Config_filePath%			; Open the configuration file in the standard text editor.
 #^s::Config_saveSession()					; Save the current state of monitors, views, layouts to the configuration file.
 #^r::Main_reload()							; Reload bug.n (i. e. the configuration and its dependent settings) without deleting the window lists of bug.n and restoring windows.
 											; It does not reset internal configuration variables, the tray icon or menu, hotkeys (unless set explicitly in Config.ini), individual window settings like Config_showBorder (since windows might be hidden) or hiding the title bar, the monitor count or views.

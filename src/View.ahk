@@ -36,23 +36,23 @@ View_init(m, v) {
 
 View_activateWindow(d) {
 	Local aWndId, i, j, v, wndId, wndId0, wndIds
-	Log_dbg_msg("View_activateWindow(" . d . ")")
+	Log_dbg_msg(1, "View_activateWindow(" . d . ")")
 	WinGet, aWndId, ID, A
-	Log_dbg_bare("Active Windows ID: " . aWndId)
+	Log_dbg_bare(2, "Active Windows ID: " . aWndId)
 	v := Monitor_#%Manager_aMonitor%_aView_#1
-	Log_dbg_bare("View (" . v . ") wndIds: " . View_#%Manager_aMonitor%_#%v%_wndIds)
+	Log_dbg_bare(2, "View (" . v . ") wndIds: " . View_#%Manager_aMonitor%_#%v%_wndIds)
 	StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
 	StringSplit, wndId, wndIds, `;
-	Log_dbg_bare("wndId count: " . wndId0)
+	Log_dbg_bare(2, "wndId count: " . wndId0)
 	If (wndId0 > 1) {
 		Loop, % wndId0
 			If (wndId%A_Index% = aWndId) {
 				i := A_Index
 				Break
 			}
-		Log_dbg_bare("Current wndId index: " . i)
+		Log_dbg_bare(2, "Current wndId index: " . i)
 		j := Manager_loop(i, d, 1, wndId0)
-		Log_dbg_bare("Next wndId index: " . j)
+		Log_dbg_bare(2, "Next wndId index: " . j)
 		wndId := wndId%j%
 		WinSet, AlwaysOnTop, On, ahk_id %wndId%
 		WinSet, AlwaysOnTop, Off, ahk_id %wndId%

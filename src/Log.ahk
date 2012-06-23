@@ -31,28 +31,37 @@ Log_bare( message ) {
 	FileAppend, %padded_message% , bugn_log.txt
 }
 
-Log_debug_enabled := 0
+Log_debug_level := 0
 
-Log_toggleDebugEnabled() {
+Log_incDebugLevel() {
 	Global
-	If (Log_debug_enabled = 1)
-		Log_debug_enabled := 0
-	Else
-		Log_debug_enabled := 1
-	If (Log_debug_enabled = 1)
-		Log_msg("Debug log enabled (" . Log_debug_enabled . ")")
-	Else
-		Log_msg("Debug log disabled (" . Log_debug_enabled . ")")
+	If ( Log_debug_level < 9 )
+	{
+		Log_debug_level += 1
+		Log_msg("Debug logging level incremented to " . Log_debug_level )
+	}
 }
 
-Log_dbg_msg( message ) {
+Log_decDebugLevel() {
 	Global
-	If (Log_debug_enabled = 1)
-		Log_msg( "DEBUG:  " . message )
+	If ( Log_debug_level > 0 ) {
+		Log_debug_level -= 1
+		If ( Log_debug_level = 0 )
+			Log_msg("Debug logging is disabled")
+		Else
+			Log_msg("Debug logging level decremented to " . Log_debug_level)
+	}
 }
 
-Log_dbg_bare( message ) {
+
+Log_dbg_msg( level, message ) {
 	Global
-	If (Log_debug_enabled = 1)
-		Log_bare( "DEBUG:  " . message )
+	If (level > 0 And Log_debug_level >= level)
+		Log_msg( "DBG " . level . ":  " . message )
+}
+
+Log_dbg_bare( level, message ) {
+	Global
+	If (level > 0 And Log_debug_level >= level)
+		Log_bare( "DBG " . level . ":  " . message )
 }
