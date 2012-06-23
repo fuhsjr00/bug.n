@@ -61,7 +61,7 @@ Bar_init(m) {
 	}
 	; layout
 	i := Config_viewCount + 1
-	text := " ??? "
+	text := " 1x9|=- "
 	w := Bar_getTextWidth(text)
     Gui, Add, Text, x%x1% y%y1% w%w% h%h1% BackgroundTrans vBar_#%m%_#%i%_layout gBar_GuiClick, 
     Gui, Add, Progress, x%x1% y%y1% w%w% h%h1% Background%Config_normBgColor2%
