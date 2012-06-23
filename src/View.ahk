@@ -116,7 +116,7 @@ View_arrange_monocle(m, v, wndIds) {
 	StringTrimRight, wndIds, wndIds, 1
 	StringSplit, wndId, wndIds, `;
 	Loop, % wndId0
-	   Manager_winMove(wndId%A_Index%, Monitor_#%m%_x + gw/2, Monitor_#%m%_y + gw/2, Monitor_#%m%_width - gw, Monitor_#%m%_height - gw)
+	   Manager_winMove(wndId%A_Index%, Monitor_#%m%_x + gw, Monitor_#%m%_y + gw, Monitor_#%m%_width - 2*gw, Monitor_#%m%_height - 2*gw)
 }
 
 View_rotateLayoutAxis(i, d) {
