@@ -18,11 +18,8 @@
  *	@version 8.3.0
  */
 
-Log_init() {
-	Global
-	Log_debug_enabled := 0
-}
- 
+
+
 Log_msg( message ) {
 	FormatTime, CurrentTime, , yyyyMMddHHmmss
 	FileAppend, %CurrentTime%  %message%`r`n, bugn_log.txt
@@ -33,6 +30,8 @@ Log_bare( message ) {
 	padded_message := "    " . message . "`r`n"
 	FileAppend, %padded_message% , bugn_log.txt
 }
+
+Log_debug_enabled := 0
 
 Log_toggleDebugEnabled() {
 	Global
@@ -55,5 +54,5 @@ Log_dbg_msg( message ) {
 Log_dbg_bare( message ) {
 	Global
 	If (Log_debug_enabled = 1)
-		Log_msg( "DEBUG:  " . message )
+		Log_bare( "DEBUG:  " . message )
 }

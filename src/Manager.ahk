@@ -263,7 +263,7 @@ Manager_logWindowInfo( w ) {
 	WinGet, aWndStyle, Style, ahk_id %w%
 	WinGetPos, aWndX, aWndY, aWndW, aWndH, ahk_id %w%
 
-	Log_bare("    " . w . "`t" . aIsBugnActive . " " . aIsFloating . " " . aIsHidden . " " aIsWinFocus . "`t" . aWndX . "`t" . aWndY . "`t" . aWndW . "`t" . aWndH . "`t" . aWndStyle . "`t" . aWndTitle)
+	Log_bare(w . "`t" . aIsBugnActive . " " . aIsFloating . " " . aIsHidden . " " aIsWinFocus . "`t" . aWndX . "`t" . aWndY . "`t" . aWndW . "`t" . aWndH . "`t" . aWndStyle . "`t" . aWndTitle)
 }
 
 Manager_logWindowList() {
@@ -271,7 +271,7 @@ Manager_logWindowList() {
 	
 	v := Monitor_#%Manager_aMonitor%_aView_#1
 	Log_msg( "Window dump for active view (" . Manager_aMonitor . ", " . v . ")" )
-	Log_bare( "    ID`t`tA F H W`tX`tY`tW`tH`tStyle`t`tTitle")
+	Log_bare( "ID`t`tA F H W`tX`tY`tW`tH`tStyle`t`tTitle")
 	
 	StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
 	Loop, PARSE, wndIds, `;

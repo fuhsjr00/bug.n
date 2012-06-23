@@ -389,6 +389,7 @@ Config_saveSession() {
 #i::Manager_getWindowInfo()					; Get information for the active window (id, title, class, process name, style, geometry, tags and floating state).
 #+i::Manager_getWindowList()				; Get a window list for the active view (id, title and class).
 #^i::Manager_logWindowList()
+#^d::Log_toggleDebugEnabled()
 
 #Tab::View_setLayout(-1)					; Set the previously set layout. You may also use View_setLayout(">") for setting the next layout in the layout array.
 #\::View_setLayout(3)						; Set the 3rd defined layout (i. e. floating layout in the default configuration).
