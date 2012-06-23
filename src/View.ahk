@@ -57,15 +57,21 @@ View_activateWindow(d) {
 	}
 }
 
+View_updateLayout(m, v) {
+	Local fn, l, wndIds
+	l := View_#%m%_#%v%_layout_#1
+	fn := Config_layoutFunction_#%l%
+	View_updateLayout_%fn%(m, v)
+}
+
 View_arrange(m, v) {
 	Local fn, l, wndIds
 	
 	l := View_#%m%_#%v%_layout_#1
 	fn := Config_layoutFunction_#%l%
-	If fn And (View_getTiledWndIds(m, v, wndIds) Or fn = "tile")
-		View_%fn%(m, v, wndIds)
-	Else
-		View_#%m%_#%v%_layoutSymbol := Config_layoutSymbol_#%l%
+	View_getTiledWndIds(m, v, wndIds)
+	View_arrange_%fn%(m, v, wndIds)
+	View_updateLayout(m, v)
 	Bar_updateLayout(m)
 }
 
@@ -84,14 +90,33 @@ View_getTiledWndIds(m, v, ByRef tiledWndIds) {
 	Return, n
 }
 
-View_monocle(m, v, wndIds) {
-	Local wndId0
+View_updateLayout_(m, v)
+{
+	View_#%m%_#%v%_layoutSymbol := "><>"
+}
+
+View_arrange_(m, v)
+{
+	; Place-holder
+}
+
+View_updateLayout_monocle(m, v)
+{
+	Local wndIds, wndId, wndId0
+	StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
+	StringSplit, wndId, wndIds, `;
+	View_#%m%_#%v%_layoutSymbol := "[" wndId0 "]"
+}
+
+View_arrange_monocle(m, v, wndIds) {
+	Local wndId0, gw
+	
+	gw := View_#%m%_#%v%_layoutGapWidth
 	
 	StringTrimRight, wndIds, wndIds, 1
 	StringSplit, wndId, wndIds, `;
 	Loop, % wndId0
-	   Manager_winMove(wndId%A_Index%, Monitor_#%m%_x, Monitor_#%m%_y, Monitor_#%m%_width, Monitor_#%m%_height)
-	View_#%m%_#%v%_layoutSymbol := "[" wndId0 "]"
+	   Manager_winMove(wndId%A_Index%, Monitor_#%m%_x - gw/2, Monitor_#%m%_y - gw/2, Monitor_#%m%_width + gw, Monitor_#%m%_height + gw)
 }
 
 View_rotateLayoutAxis(i, d) {
@@ -219,13 +244,59 @@ View_shuffleWindow(d) {
 	}
 }
 
-View_tile(m, v, wndIds) {
-	Local axis1, axis2, axis3, gapW, h1, h2, i, mfact, msplit, n1, n2, sym1, sym3, w1, w2, wndId0, x1, x2, y1, y2
+View_updateLayout_tile(m, v) {
+	Local axis1, axis2, axis3, msplit, sym1, sym3, master_div, master_sym, stack_sym
+	
+	; Main axis
+	; 1 - vertical divider, master left
+	; 2 - horizontal divider, master top
+	; -1 - vertical divider, master right
+	; -2 - horizontal divider, master bottom
+	axis1  := View_#%m%_#%v%_layoutAxis_#1
+	; Master axis
+	; 1 - vertical divider
+	; 2 - horizontal divider
+	; 3 - monocle
+	axis2  := View_#%m%_#%v%_layoutAxis_#2
+	; Stack axis
+	; 1 - vertical divider
+	; 2 - horizontal divider
+	; 3 - monocle
+	axis3  := View_#%m%_#%v%_layoutAxis_#3
+	msplit := View_#%m%_#%v%_layoutMSplit
+	
+	If ( Abs(axis1) = 1 )
+		master_div := "|"
+	Else
+		master_div := "="
+	
+	If ( axis2 = 1 )
+		master_sym := "" . msplit . "x1|"
+	Else If ( axis2 = 2 )
+		master_sym := "1x" . msplit . "-"
+	Else 
+		master_sym := "[" . msplit . "]"
+	
+	If ( axis3 = 1 )
+		stack_sym := "|"
+	Else If ( axis3 = 2 )
+		stack_sym := "-"
+	Else
+		stack_sym := "o"
+	
+	If ( axis1 > 0 )
+		View_#%m%_#%v%_layoutSymbol := master_sym . master_div . stack_sym
+	Else
+		View_#%m%_#%v%_layoutSymbol := stack_sym . master_div . master_sym
+}
+
+View_arrange_tile(m, v, wndIds) {
+	Local axis1, axis2, axis3, gapW, h1, h2, i, mfact, msplit, n1, n2, w1, w2, wndId0, x1, x2, y1, y2
 	
 	axis1  := View_#%m%_#%v%_layoutAxis_#1
 	axis2  := View_#%m%_#%v%_layoutAxis_#2
 	axis3  := View_#%m%_#%v%_layoutAxis_#3
-    gapW   := View_#%m%_#%v%_layoutGapWidth
+	gapW   := View_#%m%_#%v%_layoutGapWidth
 	mfact  := View_#%m%_#%v%_layoutMFact
 	msplit := View_#%m%_#%v%_layoutMSplit
 	
@@ -233,39 +304,10 @@ View_tile(m, v, wndIds) {
 	StringSplit, wndId, wndIds, `;
 	If (msplit > wndId0) {
 		If (wndId0 < 1)
-			View_#%m%_#%v%_layoutMSplit := 1
+			msplit := 1
 		Else
-			View_#%m%_#%v%_layoutMSplit := wndId0
-		msplit := View_#%m%_#%v%_layoutMSplit
+			msplit := wndId0
 	}
-	
-	; layout symbol
-	sym1 := "="
-	If (axis2 = Abs(axis1))
-		sym1 := "|"
-	If (axis2 = 3)
-		If (wndId0 = 0)
-			sym1 := 0
-		Else
-			sym1 := msplit
-	sym3 := "="
-	If (axis3 = Abs(axis1))
-		sym3 := "|"
-	If (axis3 = 3)
-		If (wndId0 = 0)
-			sym3 := 0
-		Else
-			sym3 := wndId0 - msplit
-	If (axis1 < 0)
-		If (msplit = 1)
-			View_#%m%_#%v%_layoutSymbol := sym3 "[]"
-		Else
-			View_#%m%_#%v%_layoutSymbol := sym3 "[" sym1
-	Else
-		If (msplit = 1)
-			View_#%m%_#%v%_layoutSymbol := "[]" sym3
-		Else
-			View_#%m%_#%v%_layoutSymbol := sym1 "]" sym3
 	
 	If (wndId0 > 0) {
 		; master and stack area
