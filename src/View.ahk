@@ -36,18 +36,23 @@ View_init(m, v) {
 
 View_activateWindow(d) {
 	Local aWndId, i, j, v, wndId, wndId0, wndIds
-	
+	Log_dbg_msg("View_activateWindow(" . d . ")")
 	WinGet, aWndId, ID, A
+	Log_dbg_bare("Active Windows ID: " . aWndId)
 	v := Monitor_#%Manager_aMonitor%_aView_#1
+	Log_dbg_bare("View (" . v . ") wndIds: " . View_#%Manager_aMonitor%_#%v%_wndIds)
 	StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
 	StringSplit, wndId, wndIds, `;
+	Log_dbg_bare("wndId count: " . wndId0)
 	If (wndId0 > 1) {
 		Loop, % wndId0
 			If (wndId%A_Index% = aWndId) {
 				i := A_Index
 				Break
 			}
+		Log_dbg_bare("Current wndId index: " . i)
 		j := Manager_loop(i, d, 1, wndId0)
+		Log_dbg_bare("Next wndId index: " . j)
 		wndId := wndId%j%
 		WinSet, AlwaysOnTop, On, ahk_id %wndId%
 		WinSet, AlwaysOnTop, Off, ahk_id %wndId%
@@ -245,7 +250,7 @@ View_shuffleWindow(d) {
 }
 
 View_updateLayout_tile(m, v) {
-	Local axis1, axis2, axis3, msplit, sym1, sym3, master_div, master_sym, stack_sym
+	Local axis1, axis2, axis3, msplit, sym1, sym3, master_div, master_dim, master_sym, stack_sym
 	
 	; Main axis
 	; 1 - vertical divider, master left
@@ -270,10 +275,14 @@ View_updateLayout_tile(m, v) {
 	Else
 		master_div := "="
 	
-	If ( axis2 = 1 )
-		master_sym := "" . msplit . "x1|"
-	Else If ( axis2 = 2 )
-		master_sym := "1x" . msplit . "-"
+	If ( axis2 = 1 ) {
+		master_sym := "|"
+		master_dim := "" . msplit . "x1"
+	}
+	Else If ( axis2 = 2 ) {
+		master_sym := "-"
+		master_dim := "1x" . msplit
+	}
 	Else 
 		master_sym := "[" . msplit . "]"
 	
@@ -285,9 +294,9 @@ View_updateLayout_tile(m, v) {
 		stack_sym := "o"
 	
 	If ( axis1 > 0 )
-		View_#%m%_#%v%_layoutSymbol := master_sym . master_div . stack_sym
+		View_#%m%_#%v%_layoutSymbol := master_dim . master_sym . master_div . stack_sym
 	Else
-		View_#%m%_#%v%_layoutSymbol := stack_sym . master_div . master_sym
+		View_#%m%_#%v%_layoutSymbol := stack_sym . master_div . master_sym . master_dim
 }
 
 View_arrange_tile(m, v, wndIds) {
