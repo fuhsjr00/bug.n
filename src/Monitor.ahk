@@ -73,6 +73,10 @@ Monitor_activateView(v) {
 		Monitor_#%m%_aView_#1 := v
 		
 		Manager_hideShow := True
+		; Most of the operations here are dispersed to multiple _different_ windows.
+		; Delays in this part of the code are extremely noticeable and the users
+		; do a lot of view switching.
+		SetWinDelay, 0
 		StringTrimRight, wndIds, View_#%m%_#%aView%_wndIds, 1
 		Loop, PARSE, wndIds, `;
 			If Not (Manager_#%A_LoopField%_tags & (1 << v - 1))
@@ -83,7 +87,7 @@ Monitor_activateView(v) {
 		StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
 		Loop, PARSE, wndIds, `;
 			WinShow, ahk_id %A_LoopField%
-
+		SetWinDelay, 10
 		Manager_hideShow := False
 		
 		Bar_updateView(m, aView)
