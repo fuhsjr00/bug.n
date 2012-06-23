@@ -78,15 +78,14 @@ Monitor_activateView(v) {
 			If Not (Manager_#%A_LoopField%_tags & (1 << v - 1))
 				WinHide, ahk_id %A_LoopField%
 		StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
-		DetectHiddenWindows, On
-		View_arrange(m, v)
-		DetectHiddenWindows, Off
 		Loop, PARSE, wndIds, `;
 			WinShow, ahk_id %A_LoopField%
 		Manager_hideShow := False
 		
 		Bar_updateView(m, aView)
 		Bar_updateView(m, v)
+
+		View_arrange(m, v)
 	}
 	
 	wndId := View_#%Manager_aMonitor%_#%v%_aWndId
