@@ -403,7 +403,7 @@ HSHELL_RUDEAPPACTIVATED := 32772
 Manager_onShellMessage(wParam, lParam) {
 	Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, m, t, wndClass, wndId, wndIds, wndPName, wndTitle, x, y
 	
-	Log_dbg_msg(1, "Manager_onShellMessage(wParam: " . wParam . ", lParam: " . lParam)
+	Log_dbg_msg(2, "Manager_onShellMessage(wParam: " . wParam . ", lParam: " . lParam)
 	
 	SetFormat, Integer, hex
 	lParam := lParam+0
