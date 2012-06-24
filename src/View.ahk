@@ -220,11 +220,7 @@ View_setMFactor(d) {
 	v := Monitor_#%Manager_aMonitor%_aView_#1
 	l := View_#%Manager_aMonitor%_#%v%_layout_#1
 	If (Config_layoutFunction_#%l% = "tile") {
-		mfact := 0
-		If (d >= 1.05)
-			mfact := d
-		Else
-			mfact := View_#%Manager_aMonitor%_#%v%_layoutMFact + d
+		mfact := View_#%Manager_aMonitor%_#%v%_layoutMFact + d
 		If (mfact >= 0.05 And mfact <= 0.95) {
 			View_#%Manager_aMonitor%_#%v%_layoutMFact := mfact
 			View_arrange(Manager_aMonitor, v)
@@ -238,9 +234,11 @@ View_setMSplit(d) {
 	v := Monitor_#%Manager_aMonitor%_aView_#1
 	l := View_#%Manager_aMonitor%_#%v%_layout_#1
 	If (Config_layoutFunction_#%l% = "tile") {
-		n := View_getTiledWndIds(Manager_aMonitor, v, wndIds)
-		View_#%Manager_aMonitor%_#%v%_layoutMSplit := Manager_loop(View_#%Manager_aMonitor%_#%v%_layoutMSplit, d, 1, n)
-		View_arrange(Manager_aMonitor, v)
+		n := View_#%Manager_aMonitor%_#%v%_layoutMSplit + d
+		If ( n > 0 And n < 10 ) {
+			View_#%Manager_aMonitor%_#%v%_layoutMSplit := n
+			View_arrange(Manager_aMonitor, v)
+		}
 	}
 }
 
