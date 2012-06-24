@@ -297,7 +297,12 @@ Manager_loop(index, increment, lowerBound, upperBound) {
 	Return, index
 }
 
-Manager_manage(wndId) {
+; Accept a window to be added to the system for management.
+; Provide a monitor, view preference, but don't override the config.
+; pm - Preferred monitor
+; pv - Preferred view
+; wndId - Window to add to the manager.
+Manager_manage(pm, pv, wndId) {
 	Local a, c0, hideTitle, i, isDecorated, isFloating, isManaged, l, m, n, replace, search, tags
     Local wndControlList0, wndId0, wndIds, wndX, wndY, wndWidth, wndHeight, wndProcessName
 	
@@ -306,13 +311,13 @@ Manager_manage(wndId) {
 	Manager_applyRules(wndId, isManaged, m, tags, isFloating, isDecorated, hideTitle)
 	
 	If (m = 0)
-		m := Manager_aMonitor
+		m := pm
 	If (m < 0)
 		m := 1
 	If (m > Manager_monitorCount)	; If the specified monitor is out of scope, set it to the max. monitor.
 		m := Manager_monitorCount
 	If (tags = 0)
-		tags := 1 << Monitor_#%m%_aView_#1 - 1
+		tags := 1 << (pv - 1)
 	
 	WinGet, wndProcessName, ProcessName, ahk_id %wndId%
 	If (wndProcessName = "chrome.exe") {
@@ -573,7 +578,7 @@ Manager_sync(ByRef wndIds = "") {
 	Loop, % wndId {
 		If Not InStr(shownWndIds, wndId%A_Index% ";") {
 			If Not InStr(Manager_managedWndIds, wndId%A_Index% ";") {
-				flag := Manager_manage(wndId%A_Index%)
+				flag := Manager_manage(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, wndId%A_Index%)
 				If flag
 					a := flag
 			} Else
