@@ -102,3 +102,10 @@ List_size(l) {
 	StringSplit arr, l, `;
 	Return (arr0 - 1)
 }
+
+List_toArray(l, arrName) {
+	Local trimmedList
+	StringTrimRight, trimmedList, l, 1
+	StringSplit %arrName%, trimmedList, `;
+	Return (%arrName%0)
+}
