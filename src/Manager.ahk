@@ -329,26 +329,7 @@ Manager_manage(wndId) {
 		
 		Loop, % Config_viewCount
 			If (Manager_#%wndId%_tags & 1 << A_Index - 1) {
-	            l := View_#%m%_#%A_Index%_layout_#1
-	            If (Config_layoutFunction_#%l% = "tile") And ((Config_newWndPosition = "masterBottom") Or (Config_newWndPosition = "stackTop")) {
-                    n := View_getTiledWndIds(m, A_Index, wndIds)
-                    If (n > 1) {
-                        StringSplit, wndId, wndIds, `;
-                        If (wndId0 < View_#%m%_#%A_Index%_layoutMSplit)
-                            View_#%m%_#%A_Index%_layoutMSplit := wndId0
-                        i := View_#%m%_#%A_Index%_layoutMSplit
-                        search  := wndId%i% ";"
-                        replace := search wndId ";"
-                        StringReplace, View_#%m%_#%A_Index%_wndIds, View_#%m%_#%A_Index%_wndIds, %search%, %replace%
-                    } Else
-                        View_#%m%_#%A_Index%_wndIds .= wndId ";"
-                    If (Config_newWndPosition = "masterBottom") And (n > 0)
-                        View_#%m%_#%A_Index%_layoutMSplit += 1
-                } Else If (Config_newWndPosition = "bottom")
-                    View_#%m%_#%A_Index%_wndIds .= wndId ";"
-                Else
-                	View_#%m%_#%A_Index%_wndIds := wndId ";" View_#%m%_#%A_Index%_wndIds
-				Bar_updateView(m, A_Index)
+				View_addWnd(m, A_Index, wndId)
 			}
 		
 		If Not Config_showBorder

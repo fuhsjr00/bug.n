@@ -69,6 +69,36 @@ View_updateLayout(m, v) {
 	View_updateLayout_%fn%(m, v)
 }
 
+View_addWnd(m, v, wndId) {
+	Local l, msplit, i, wndIds, n
+	
+	l := View_#%m%_#%v%_layout_#1
+	If (Config_layoutFunction_#%l% = "tile") And ((Config_newWndPosition = "masterBottom") Or (Config_newWndPosition = "stackTop")) {
+		n := View_getTiledWndIds(m, v, wndIds)
+		msplit := View_#%m%_#%v%_layoutMSplit
+		If ( msplit = 1 And Config_newWndPosition="masterBottom" ) {
+			View_#%m%_#%v%_wndIds := wndId ";" . View_#%m%_#%v%_wndIds
+		}
+		Else If ( (Config_newWndPosition="masterBottom" And n < msplit) Or (Config_newWndPosition="stackTop" And n <= msplit) ) {
+			View_#%m%_#%v%_wndIds .= wndId ";"
+		}
+		Else {
+			If (Config_newWndPosition="masterBottom")
+				i := msplit - 1
+			Else
+				i := msplit
+			StringSplit, wndId, wndIds, `;
+			search  := wndId%i% ";"
+			replace := search wndId ";"
+			StringReplace, View_#%m%_#%v%_wndIds, View_#%m%_#%v%_wndIds, %search%, %replace%
+		}
+	}
+	Else If (Config_newWndPosition = "bottom")
+		View_#%m%_#%v%_wndIds .= wndId ";"
+	Else
+		View_#%m%_#%v%_wndIds := wndId ";" View_#%m%_#%v%_wndIds
+}
+
 View_arrange(m, v) {
 	Local fn, l, wndIds
 	
