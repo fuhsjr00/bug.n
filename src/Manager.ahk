@@ -57,7 +57,7 @@ Manager_init() {
 	Bar_hideTitleWndIds		:= ""
 	Manager_allWndIds		:= ""
 	Manager_managedWndIds	:= ""
-	Manager_sync()
+	Manager_initial_sync()
 	
 	Bar_updateStatus()
 	Bar_updateTitle()
@@ -599,6 +599,46 @@ Manager_sync(ByRef wndIds = "") {
 	}
 	
 	Return, a
+}
+
+; No windows are known to the system yet.
+; Try to do something smart with the initial layout.
+Manager_initial_sync() {
+	Local wndId0, wnd, wndX, wndY, wndW, wndH, x, y, m, len
+	
+	; Initialize lists
+	; Note that these variables make this function non-reentrant.
+	Loop, % Manager_monitorCount
+		Manager_initial_sync_m#%A_Index%_wndList := List_new()
+	
+	; check all visible windows against the known windows
+	WinGet, wndId, List, , , 
+	Loop, % wndId {
+		; Based on some analysis here, determine which monitors and layouts would best 
+		; serve existing windows. Do not override configuration settings.
+		
+		; Which monitor is it on?
+		
+		wnd := wndId%A_Index%
+		WinGetPos, wndX, wndY, wndW, wndH, ahk_id %wnd%
+		
+		x := wndX + wndW/2
+		y := wndY + wndH/2
+		
+		m := Monitor_get(x, y)
+		If m > 0
+			List_append(Manager_initial_sync_m#%m%_wndList, wndId%A_index%)
+		
+		; @todo: What percentage of the monitor area is it occupying? (Suggest layout)
+		; @todo: What part of the monitor is it on? (Ordering of windows)
+	}
+
+	Loop, % Manager_monitorCount {
+		m := A_Index
+		len := List_toArray(Manager_initial_sync_m#%m%_wndList, "Manager_initial_sync_tmpArray")
+		Loop, % len
+			Manager_manage(m, 1, Manager_initial_sync_tmpArray%A_Index%)
+	}
 }
 
 Manager_toggleDecor() {
