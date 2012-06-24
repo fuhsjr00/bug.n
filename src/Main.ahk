@@ -32,6 +32,7 @@ SetWinDelay, 10
 #WinActivateForce
 
 ; pseudo main function
+	Log_init("bugn_log.txt", False)
 	Log_msg("====== Initializing ======")
 	If 0 = 1
 		Config_filePath = %1%

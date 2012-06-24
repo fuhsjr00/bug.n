@@ -1,6 +1,6 @@
 /**
- *	bug.n - tiling window management
- *	Copyright (c) 2010-2012 joten
+ *	AHK Debug log implementation
+ *	Copyright (c) 2012 Joshua Fuhs
  *
  *	This program is free software: you can redistribute it and/or modify
  *	it under the terms of the GNU General Public License as published by
@@ -18,23 +18,36 @@
  *	@version 8.3.0
  */
 
+Log_debug_level := 0
 
+Log_init(name, truncate) {
+	Global
+	If truncate 
+		IfExist, %name%
+			FileDelete, %name%
+	Log_name := name
+}
 
 Log_msg( message ) {
+	Local CurrentTime
+	If Not Log_name 
+		Return
 	FormatTime, CurrentTime, , yyyyMMddHHmmss
-	FileAppend, %CurrentTime%  %message%`r`n, bugn_log.txt
+	FileAppend, %CurrentTime%  %message%`r`n, %Log_name%
 }
 
 Log_bare( message ) {
 	Local padded_message
+	If Not Log_name 
+		Return
 	padded_message := "    " . message . "`r`n"
-	FileAppend, %padded_message% , bugn_log.txt
+	FileAppend, %padded_message% , %Log_name%
 }
-
-Log_debug_level := 0
 
 Log_incDebugLevel() {
 	Global
+	If Not Log_name 
+		Return
 	If ( Log_debug_level < 9 )
 	{
 		Log_debug_level += 1
@@ -44,6 +57,8 @@ Log_incDebugLevel() {
 
 Log_decDebugLevel() {
 	Global
+	If Not Log_name 
+		Return
 	If ( Log_debug_level > 0 ) {
 		Log_debug_level -= 1
 		If ( Log_debug_level = 0 )
