@@ -125,12 +125,6 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
 				hideTitle   := rule9
 			}
 		}
-		If (m = 0)
-			m := Manager_aMonitor
-		If (m > Manager_monitorCount)	; If the specified monitor is out of scope, set it to the max. monitor.
-			m := Manager_monitorCount
-		If (tags = 0)
-			tags := 1 << Monitor_#%m%_aView_#1 - 1
 	} Else {
 		isManaged := False
 		If wndTitle
@@ -311,6 +305,15 @@ Manager_manage(wndId) {
 		Manager_allWndIds .= wndId ";"
 	Manager_applyRules(wndId, isManaged, m, tags, isFloating, isDecorated, hideTitle)
 	
+	If (m = 0)
+		m := Manager_aMonitor
+	If (m < 0)
+		m := 1
+	If (m > Manager_monitorCount)	; If the specified monitor is out of scope, set it to the max. monitor.
+		m := Manager_monitorCount
+	If (tags = 0)
+		tags := 1 << Monitor_#%m%_aView_#1 - 1
+	
 	WinGet, wndProcessName, ProcessName, ahk_id %wndId%
 	If (wndProcessName = "chrome.exe") {
 		WinGet, wndControlList, ControlList, ahk_id %wndId%
@@ -393,7 +396,7 @@ HSHELL_REDRAW := 6
 HSHELL_RUDEAPPACTIVATED := 32772
 
 Manager_onShellMessage(wParam, lParam) {
-	Local a, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, flag, m, t, wndClass, wndId, wndIds, wndPName, wndTitle, x, y
+	Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, m, t, wndClass, wndId, wndIds, wndPName, wndTitle, x, y
 	
 	Log_dbg_msg(1, "Manager_onShellMessage(wParam: " . wParam . ", lParam: " . lParam)
 	
@@ -426,26 +429,23 @@ Manager_onShellMessage(wParam, lParam) {
 					Sleep, %Config_shellMsgDelay%
 			}
 		
-		If (wParam = 1 Or wParam = 6) And Not InStr(Manager_allWndIds, lParam ";") And Not InStr(Manager_managedWndIds, lParam ";")
-			a := Manager_manage(lParam)
-		Else {
-			flag := True
-			a := Manager_sync(wndIds)
-			If wndIds
-				a := False
-		}
-		If a {
+		isChanged := Manager_sync(wndIds)
+		If wndIds
+			isChanged := False
+
+		If a Or isChanged {
+			SetWinDelay, 0
 			View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
+			SetWinDelay, 10
 			Bar_updateView(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
 		}
 		
-		If flag
-			If (Manager_monitorCount > 1) {
-				WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
-				m := Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2)
-				If m
-					Manager_aMonitor := m
-			}
+		If (Manager_monitorCount > 1) {
+			WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
+			m := Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2)
+			If m
+				Manager_aMonitor := m
+		}
 		
 		If wndIds {
 			If (Config_onActiveHiddenWnds = "view") {
@@ -613,7 +613,7 @@ Manager_unmanage(wndId) {
 	a := Manager_#%wndId%_tags & 1 << Monitor_#%Manager_aMonitor%_aView_#1 - 1
 	Loop, % Config_viewCount
 		If (Manager_#%wndId%_tags & 1 << A_Index - 1) {
-			StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %wndId%`;, 
+			View_delWnd( Manager_aMonitor, A_Index, wndId )
 			Bar_updateView(Manager_aMonitor, A_Index)
 		}
 	Manager_#%wndId%_tags        :=

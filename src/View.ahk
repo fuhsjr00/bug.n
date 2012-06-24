@@ -69,6 +69,7 @@ View_updateLayout(m, v) {
 	View_updateLayout_%fn%(m, v)
 }
 
+; Add a window to the view in question.
 View_addWnd(m, v, wndId) {
 	Local l, msplit, i, wndIds, n
 	
@@ -97,6 +98,11 @@ View_addWnd(m, v, wndId) {
 		View_#%m%_#%v%_wndIds .= wndId ";"
 	Else
 		View_#%m%_#%v%_wndIds := wndId ";" View_#%m%_#%v%_wndIds
+}
+
+; Remove a window from the view in question.
+View_delWnd(m, v, wndId) {
+	StringReplace, View_#%m%_#%v%_wndIds, View_#%m%_#%v%_wndIds, %wndId%`;, 
 }
 
 View_arrange(m, v) {
