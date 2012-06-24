@@ -150,14 +150,13 @@ View_updateLayout_monocle(m, v)
 }
 
 View_arrange_monocle(m, v, wndIds) {
-	Local wndId0, gw
+	Local gw
 	
 	gw := View_#%m%_#%v%_layoutGapWidth
 	
 	StringTrimRight, wndIds, wndIds, 1
-	StringSplit, wndId, wndIds, `;
-	Loop, % wndId0
-	   Manager_winMove(wndId%A_Index%, Monitor_#%m%_x + gw, Monitor_#%m%_y + gw, Monitor_#%m%_width - 2*gw, Monitor_#%m%_height - 2*gw)
+	StringSplit, View_arrange_monocle_wndId, wndIds, `;
+	View_draw_stack("View_arrange_monocle_wndId", 1, View_arrange_monocle_wndId0, 0, Monitor_#%m%_x, Monitor_#%m%_y, Monitor_#%m%_width, Monitor_#%m%_height, gw/2)
 }
 
 View_rotateLayoutAxis(i, d) {
@@ -333,38 +332,132 @@ View_updateLayout_tile(m, v) {
 		View_#%m%_#%v%_layoutSymbol := stack_sym . master_div . master_sym . master_dim
 }
 
+; Stack a bunch of windows on top of each other.
+;
+; arrName - Name of a globally stored array of windows:
+;   %arrName%1, %arrName%2, ...
+; off - Offset into the array from which to start drawing.
+; len - Number of windows from the array to draw.
+; dir - Determines the direction through which we traverse arrName
+; x - View x-position
+; y - View y-position
+; w - View width
+; h - View height
+; margin - Number of pixels to put between the windows.
+View_draw_stack( arrName, off, len, dir, x, y, w, h, margin ) {
+	Local base, inc
+	If (dir = 0) {
+		base := off
+		inc := 1
+	}
+	Else {
+		base := off + len - 1
+		inc := -1
+	}
+	x += margin
+	y += margin
+	w -= 2 * margin
+	h -= 2 * margin
+	
+	Loop, % len {
+		Manager_winMove(%arrName%%base%, x, y, w, h)
+		base += inc
+	}
+}
+
+; Draw a row of windows.
+; 
+; arrName - Name of a globally stored array of windows:
+;   %arrName%1, %arrName%2, ...
+; off - Offset into the array from which to start drawing.
+; len - Number of windows from the array to draw.
+; dir - Determines the direction through which we traverse arrName
+; axis - X/Y <=> 0/1
+; x - View x-position
+; y - View y-position
+; w - View width
+; h - View height
+; margin - Number of pixels to put between the windows.
+View_draw_row( arrName, off, len, dir, axis, x, y, w, h, margin ) {
+	Local base, inc, x_inc, y_inc, wHeight, wWidth
+	Log_bare("View_draw_row(" . arrName . ", " . off . ", " . len . ", " . dir . ", " . axis . ", " . x . ", " . y . ", " . w . ", " . h . ", " . margin . ")")
+	If (dir = 0) {
+		; Left-to-right and top-to-bottom, depending on axis
+		base := off
+		inc := 1
+	}
+	Else {
+		; Right-to-left and bottom-to-top, depending on axis
+		base := off + len - 1
+		inc := -1
+	}
+	If (axis = 0) {
+		; Create row along X
+		x_inc := w / len
+		y_inc := 0
+		wWidth := x_inc - 2 * margin
+		wHeight := h - 2 * margin
+	}
+	Else {
+		; Create row along Y
+		x_inc := 0
+		y_inc := h / len
+		wWidth := w - 2 * margin
+		wHeight := y_inc - 2 * margin
+	}
+	
+	; Set original positions with respect to the margins.
+	x += margin
+	y += margin
+	
+	Loop, % len {
+		Manager_winMove(%arrName%%base%, x, y, wWidth, wHeight)
+		x += x_inc
+		y += y_inc
+		base += inc
+	}
+}
+
+View_arrange_tile_action(arrName, off, len, bugn_axis, x, y, w, h, m) {
+	; 161 is a magic number determined somewhere. Maybe make this configurable.
+	; Same with 2*Bar_height.
+	If (bugn_axis = 3 Or (bugn_axis = 1 And w/len < 161) Or (bugn_axis = 2 And h/len < (2*Bar_height))) 
+		View_draw_stack(arrName, off, len, 0, x, y, w, h, m)
+	Else
+		View_draw_row(arrName, off, len, 0, bugn_axis - 1, x, y, w, h, m)
+}
+
 View_arrange_tile(m, v, wndIds) {
-	Local axis1, axis2, axis3, gapW, gapW_2, h1, h2, i, mfact, msplit, n1, n2, w1, w2, wndId0, x1, x2, y1, y2, oriented
+	Local axis1, axis2, axis3, gapW_2, h1, h2, i, mfact, msplit, n1, n2, w1, w2, x1, x2, y1, y2, oriented, stack_len
 	
 	StringTrimRight, wndIds, wndIds, 1
-	StringSplit, wndId, wndIds, `;
-	Log_dbg_msg(1, "View_arrange_tile: (" . wndId0 . ") " . wndIds)
-	If (wndId0 = 0)
+	StringSplit, View_arrange_tile_wndId, wndIds, `;
+	Log_dbg_msg(1, "View_arrange_tile: (" . View_arrange_tile_wndId0 . ") " . wndIds)
+	If (View_arrange_tile_wndId0 = 0)
 		Return
 
 	axis1  := Abs(View_#%m%_#%v%_layoutAxis_#1)
 	axis2  := View_#%m%_#%v%_layoutAxis_#2
 	axis3  := View_#%m%_#%v%_layoutAxis_#3
 	oriented := View_#%m%_#%v%_layoutAxis_#1 > 0
-	gapW   := View_#%m%_#%v%_layoutGapWidth
-	gapW_2 := gapW/2
+	gapW_2 := View_#%m%_#%v%_layoutGapWidth/2
 	mfact  := View_#%m%_#%v%_layoutMFact
 	msplit := View_#%m%_#%v%_layoutMSplit
 
-	If (msplit > wndId0) {
-		msplit := wndId0
+	If (msplit > View_arrange_tile_wndId0) {
+		msplit := View_arrange_tile_wndId0
 	}
 	
 	; master and stack area
-	h1 := Monitor_#%m%_height - gapW
+	h1 := Monitor_#%m%_height
 	h2 := h1
-	w1 := Monitor_#%m%_width - gapW
+	w1 := Monitor_#%m%_width
 	w2 := w1
-	x1 := Monitor_#%m%_x + gapW_2
+	x1 := Monitor_#%m%_x
 	x2 := x1
-	y1 := Monitor_#%m%_y + gapW_2
+	y1 := Monitor_#%m%_y
 	y2 := y1
-	If (wndId0 > msplit) {
+	If (View_arrange_tile_wndId0 > msplit) {
 		If (axis1 = 1) {
 			w1 *= mfact
 			w2 -= w1
@@ -383,41 +476,14 @@ View_arrange_tile(m, v, wndIds) {
 	}
 	
 	; master
-	If (axis2 != 1 Or w1 / msplit < 161)
-		n1 := w1
-	Else
-		n1 := w1/msplit
-	If (axis2 != 2 Or h1 / msplit < Bar_height)
-		n2 := h1
-	Else
-		n2 := h1/msplit
-	Loop, % msplit {
-		Manager_winMove(wndId%A_Index%, x1 + gapW_2, y1 + gapW_2, n1 - gapW, n2 - gapW)
-		If (n1 < w1)
-			x1 += n1
-		If (n2 < h1)
-			y1 += n2
-	}
+	View_arrange_tile_action("View_arrange_tile_wndId", 1, msplit, axis2, x1, y1, w1, h1, gapW_2)
 	
 	; stack
-	If (wndId0 > msplit) {
-		If (axis3 != 1 Or w2 / (wndId0 - msplit) < 161)
-			n1 := w2
-		Else
-			n1 := w2/(wndId0 - msplit)
-		If (axis3 != 2 Or h2 / (wndId0 - msplit) < Bar_height)
-			n2 := h2
-		Else
-			n2 := h2/(wndId0 - msplit)
-		Loop, % wndId0 - msplit {
-			i := msplit + A_Index
-			Manager_winMove(wndId%i%, x2 + gapW_2, y2 + gapW_2, n1 - gapW, n2 - gapW)
-			If (n1 < w2)
-				x2 += n1
-			If (n2 < h2)
-				y2 += n2
-		}
-	}
+	If (View_arrange_tile_wndId0 <= msplit) 
+		Return
+	
+	stack_len := View_arrange_tile_wndId0 - msplit
+	View_arrange_tile_action("View_arrange_tile_wndId", msplit + 1, stack_len, axis3, x2, y2, w2, h2, gapW_2)
 }
 
 View_toggleFloating() {
