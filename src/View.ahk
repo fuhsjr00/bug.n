@@ -109,12 +109,15 @@ View_delWnd(m, v, wndId) {
 View_arrange(m, v) {
 	Local fn, l, wndIds
 	
+	; All window actions are performed on independent windows. A delay won't help.
+	SetWinDelay, 0
 	l := View_#%m%_#%v%_layout_#1
 	fn := Config_layoutFunction_#%l%
 	View_getTiledWndIds(m, v, wndIds)
 	View_arrange_%fn%(m, v, wndIds)
 	View_updateLayout(m, v)
 	Bar_updateLayout(m)
+	SetWinDelay, 10
 }
 
 View_getTiledWndIds(m, v, ByRef tiledWndIds) {

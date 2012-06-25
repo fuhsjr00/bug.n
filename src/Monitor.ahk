@@ -81,10 +81,12 @@ Monitor_activateView(v) {
 		Loop, PARSE, wndIds, `;
 			If Not (Manager_#%A_LoopField%_tags & (1 << v - 1))
 				WinHide, ahk_id %A_LoopField%
+		SetWinDelay, 10
 		DetectHiddenWindows, On
 		View_arrange(m, v)
 		DetectHiddenWindows, Off
 		StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
+		SetWinDelay, 0
 		Loop, PARSE, wndIds, `;
 			WinShow, ahk_id %A_LoopField%
 		SetWinDelay, 10
@@ -177,19 +179,9 @@ Monitor_getWorkArea(m) {
 }
 
 Monitor_moveWindow(m, wndId) {
-	Local fX, fY, monitor, wndHeight, wndWidth, wndX, wndY
+	Global
 	
-	WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
-	monitor := Monitor_get(wndX+wndWidth/2, wndY+wndHeight/2)
-	If Not (m = monitor) {
-		; move the window to the target monitor and scale it, if it does not fit on the monitor
-		fX := Monitor_#%m%_width / Monitor_#%monitor%_width
-		fY := Monitor_#%m%_height / Monitor_#%monitor%_height
-		If (wndX-Monitor_#%monitor%_x+wndWidth > Monitor_#%m%_width) Or (wndY-Monitor_#%monitor%_y+wndHeight > Monitor_#%m%_height)
-			Manager_winMove(wndId, Monitor_#%m%_x+fX*(wndX-Monitor_#%monitor%_x), Monitor_#%m%_y+fY*(wndY-Monitor_#%monitor%_y), fX*wndWidth, fY*wndHeight)
-		Else
-			Manager_winMove(wndId, Monitor_#%m%_x+(wndX-Monitor_#%monitor%_x), Monitor_#%m%_y+(wndY-Monitor_#%monitor%_y), wndWidth, wndHeight)
-	}
+	Manager_#%wndId%_monitor = m
 }
 
 Monitor_setWindowTag(t) {

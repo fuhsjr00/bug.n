@@ -331,6 +331,7 @@ Manager_manage(pm, pv, wndId) {
 		Monitor_moveWindow(m, wndId)
 
 		Manager_managedWndIds .= wndId ";"
+		Manager_#%wndId%_monitor     := m
 		Manager_#%wndId%_tags        := tags
 		Manager_#%wndId%_isDecorated := isDecorated
 		Manager_#%wndId%_isFloating  := isFloating
@@ -439,9 +440,7 @@ Manager_onShellMessage(wParam, lParam) {
 			isChanged := False
 
 		If a Or isChanged {
-			SetWinDelay, 0
 			View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
-			SetWinDelay, 10
 			Bar_updateView(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
 		}
 		
@@ -454,19 +453,24 @@ Manager_onShellMessage(wParam, lParam) {
 		
 		If wndIds {
 			If (Config_onActiveHiddenWnds = "view") {
+				; Grab the first of such windows and make it visible.
+				; All others get forgotten (until the next round?)
 				wndId := SubStr(wndIds, 1, InStr(wndIds, ";") - 1)
 				Loop, % Config_viewCount
 					If (Manager_#%wndId%_tags & 1 << A_Index - 1) {
+						Manager_aMonitor := Manager_#%wndId%_monitor
 						Monitor_activateView(A_Index)
 						Break
 					}
 			} Else {
 				StringTrimRight, wndIds, wndIds, 1
 				StringSplit, wndId, wndIds, `;
+				; Otherwise re-hide them.
 				If (Config_onActiveHiddenWnds = "hide") {
 					Loop, % wndId0
 						WinHide, % "ahk_id " wndId%A_Index%
 				} Else If (Config_onActiveHiddenWnds = "tag") {
+					; Or tag all of them for the current view.
 					t := Monitor_#%Manager_aMonitor%_aView_#1
 					Loop, % wndId0 {
 						wndId := wndId%A_Index%
@@ -661,6 +665,7 @@ Manager_unmanage(wndId) {
 			View_delWnd( Manager_aMonitor, A_Index, wndId )
 			Bar_updateView(Manager_aMonitor, A_Index)
 		}
+	Manager_#%wndId%_monitor     :=
 	Manager_#%wndId%_tags        :=
 	Manager_#%wndId%_isDecorated :=
 	Manager_#%wndId%_isFloating  :=
