@@ -361,8 +361,10 @@ Config_saveSession() {
 				text .= "View_#" m "_#" A_Index "_layoutGapWidth=" View_#%m%_#%A_Index%_layoutGapWidth "`n"
 			If Not (View_#%m%_#%A_Index%_layoutMFact = Config_layoutMFactor)
 				text .= "View_#" m "_#" A_Index "_layoutMFact=" View_#%m%_#%A_Index%_layoutMFact "`n"
-			If Not (View_#%m%_#%A_Index%_layoutMSplit = 1)
-				text .= "View_#" m "_#" A_Index "_layoutMSplit=" View_#%m%_#%A_Index%_layoutMSplit "`n"
+			If Not (View_#%m%_#%A_Index%_layoutMPri = 1)
+				text .= "View_#" m "_#" A_Index "_layoutMPri=" View_#%m%_#%A_Index%_layoutMPri "`n"
+			If Not (View_#%m%_#%A_Index%_layoutMSec = 1)
+				text .= "View_#" m "_#" A_Index "_layoutMSec=" View_#%m%_#%A_Index%_layoutMSec "`n"
 		}
 	}
 	
@@ -402,10 +404,12 @@ Config_saveSession() {
 #^Enter::View_rotateLayoutAxis(1, +2)		; Mirror the layout axis (i. e. -1 -> 1 / 1 -> -1 = master on the left / right side, -2 -> 2 / 2 -> -2 = master at top / bottom, only for the "tile" layout).
 #^Tab::View_rotateLayoutAxis(2, +1)			; Rotate the master axis (i. e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 = y-axis = vertical stack, 2 -> 3 = z-axis = monocle, only for the "tile" layout).
 #^+Tab::View_rotateLayoutAxis(3, +1)		; Rotate the stack axis (i. e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 = y-axis = vertical stack, 2 -> 3 = z-axis = monocle, only for the "tile" layout).
-#^Left::View_setMSplit(+1)					; Move the master splitter, i. e. decrease the number of windows in the master area (only for the "tile" layout).
-#^Right::View_setMSplit(-1)					; Move the master splitter, i. e. increase the number of windows in the master area (only for the "tile" layout).
-#<::View_setGapWidth(-2)                    ; Decrease the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
-#+<::View_setGapWidth(+2)                   ; Increase the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
+#^Up::View_setMY(+1)						; Move the master splitter, i. e. decrease the number of windows in the master area (only for the "tile" layout).
+#^Down::View_setMY(-1)						; Move the master splitter, i. e. increase the number of windows in the master area (only for the "tile" layout).
+#^Right::View_setMX(+1)
+#^Left::View_setMX(-1)
+#Up::View_setGapWidth(-2)					; Decrease the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
+#Down::View_setGapWidth(+2)					; Increase the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
 
 #BackSpace::Monitor_activateView(-1)		; Activate the previously activated view. You may also use Monitor_activateView("<") or Monitor_activateView(">") for activating the previous or next adjacent view.
 #+0::Monitor_setWindowTag(0)				; Tag the active window with all tags (1 ... Config_viewCount). You may also use Monitor_setWindowTag("<") or Monitor_setWindowTag(">") for setting the tag of the previous or next adjacent to the current view.
