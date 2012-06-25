@@ -513,7 +513,7 @@ View_arrange_tile(m, v, wndIds) {
 		If( flipped = 0)
 			View_split_region( axis1 - 1, mfact, Monitor_#%m%_x, Monitor_#%m%_y, Monitor_#%m%_width, Monitor_#%m%_height, x1, y1, w1, h1, x2, y2, w2, h2)
 		Else
-			View_split_region( axis1 - 1, mfact, Monitor_#%m%_x, Monitor_#%m%_y, Monitor_#%m%_width, Monitor_#%m%_height, x2, y2, w2, h2, x1, y1, w1, h1)
+			View_split_region( axis1 - 1, 1 - mfact, Monitor_#%m%_x, Monitor_#%m%_y, Monitor_#%m%_width, Monitor_#%m%_height, x2, y2, w2, h2, x1, y1, w1, h1)
 	}
 	Else {
 		x1 := Monitor_#%m%_x
