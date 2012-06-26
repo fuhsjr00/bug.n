@@ -41,7 +41,7 @@ Monitor_activateView(v) {
 	Else If (v = "<")
 		v := Manager_loop(Monitor_#%Manager_aMonitor%_aView_#1, -1, 1, Config_viewCount)
 	
-	;Log_msg("Monitor_activateView(" . v . ") wndIds: " . View_#%m%_#%aView%_wndIds)
+	Log_dbg_msg(1, "Monitor_activateView(" . v . ") Manager_aMonitor: " . Manager_aMonitor . "; wndIds: " . View_#%m%_#%aView%_wndIds)
 	
 	If (v <= 0) Or (v > Config_viewCount) Or Manager_hideShow
 		Return

@@ -390,7 +390,9 @@ Config_saveSession() {
 #+x::Manager_maximizeWindow()				; Move and resize the active window to the size of the work area (only floating windows).
 #i::Manager_getWindowInfo()					; Get information for the active window (id, title, class, process name, style, geometry, tags and floating state).
 #+i::Manager_getWindowList()				; Get a window list for the active view (id, title and class).
-#^i::Manager_logWindowList()
+#^i::Manager_logViewWindowList()
+;#+^::Manager_logWindowList()
+#^h::Manager_logHelp()
 #^d::Log_decDebugLevel()
 #^e::Log_incDebugLevel()
 

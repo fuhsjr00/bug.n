@@ -108,7 +108,7 @@ View_delWnd(m, v, wndId) {
 
 View_arrange(m, v) {
 	Local fn, l, wndIds
-	
+	Log_dbg_msg(1, "View_arrange(" . m . ", " . v . ")")
 	; All window actions are performed on independent windows. A delay won't help.
 	SetWinDelay, 0
 	l := View_#%m%_#%v%_layout_#1

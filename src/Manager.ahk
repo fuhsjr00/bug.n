@@ -232,8 +232,12 @@ Manager_getWindowList() {
 		Clipboard := text
 }
 
+Manager_logViewLayout() {
+
+}
+
 Manager_logWindowInfo( w ) {
-	Local av, aWndId, aIsWinFocus, aIsBugnActive, aIsFloating, aIsHidden, aWndTitle, aWndStyle, aWndX, aWndY, aWndW, aWndH
+	Local av, aWndId, aIsWinFocus, aIsBugnActive, aIsFloating, aIsHidden, aIsDecorated, aWndTitle, aWndStyle, aWndX, aWndY, aWndW, aWndH
 	
 	WinGet, aWndId, ID, A
 	If aWndId = %w%
@@ -254,24 +258,50 @@ Manager_logWindowInfo( w ) {
 		aIsFloating := "*"
 	Else
 		aIsFloating := " "
+	If Manager_#%w%_isDecorated
+		aIsDecorated := "*"
+	Else
+		aIsDecorated := " "
 	WinGet, aWndStyle, Style, ahk_id %w%
 	WinGetPos, aWndX, aWndY, aWndW, aWndH, ahk_id %w%
-
-	Log_bare(w . "`t" . aIsBugnActive . " " . aIsFloating . " " . aIsHidden . " " aIsWinFocus . "`t" . aWndX . "`t" . aWndY . "`t" . aWndW . "`t" . aWndH . "`t" . aWndStyle . "`t" . aWndTitle)
+	;Manager_#%wndId%_monitor     := m
+	;Manager_#%wndId%_tags        := tags
+	;Manager_#%wndId%_isDecorated := isDecorated
+	;Manager_#%wndId%_isFloating  := isFloating
+	Log_bare(w . "`t" . aIsHidden . " " aIsWinFocus . " " . aIsBugnActive . " " . aIsFloating . " " . aIsDecorated . " " . Manager_#%w%_monitor . "`t" . Manager_#%w%_tags . "`t" . aWndX . "`t" . aWndY . "`t" . aWndW . "`t" . aWndH . "`t" . aWndStyle . "`t" . aWndTitle)
 }
 
-Manager_logWindowList() {
+Manager_logViewWindowList() {
 	Local text, v, aWndId, wndIds, aWndTitle
 	
 	v := Monitor_#%Manager_aMonitor%_aView_#1
 	Log_msg( "Window dump for active view (" . Manager_aMonitor . ", " . v . ")" )
-	Log_bare( "ID`t`tA F H W`tX`tY`tW`tH`tStyle`t`tTitle")
+	Log_bare( "ID`t`tH W A F D M`tTags`tX`tY`tW`tH`tStyle`t`tTitle")
 	
 	StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
 	Loop, PARSE, wndIds, `;
 	{
 		Manager_logWindowInfo( A_LoopField )
 	}
+}
+
+Manager_logHelp() {
+	Log_msg("Help Display")
+	Log_bare("Window list columns")
+	Log_bare("    ID - Windows ID")
+	Log_bare("    H - Hidden")
+	Log_bare("    W - Windows active")
+	Log_bare("    A - View active")
+	Log_bare("    F - Floating")
+	Log_bare("    D - Decorated")
+	Log_bare("    M - Monitor")
+	Log_bare("    Tags - Bit-mask of the views in which the window is active")
+	Log_bare("    X - Windows X position")
+	Log_bare("    Y - Windows Y position")
+	Log_bare("    W - Windows width")
+	Log_bare("    H - Windows height")
+	Log_bare("    Style - Windows style")
+	Log_bare("    Title - Title of the window")
 }
 
 Manager_lockWorkStation() {
@@ -394,12 +424,15 @@ Manager_moveWindow() {
 }
 
 HSHELL_WINDOWCREATED := 1
-; Seems to get sent every time 
+; Seems to get sent sometimes when windows are deactivated.
 HSHELL_WINDOWDESTROYED := 2
 HSHELL_WINDOWACTIVATED := 4
+; At least title change.
 HSHELL_REDRAW := 6
-; Full-screen app activated?
+; Full-screen app activated? Root-privileged window activated?
 HSHELL_RUDEAPPACTIVATED := 32772
+; When a window is signalling an application update.
+WINDOW_NOTICE := 32774
 
 Manager_onShellMessage(wParam, lParam) {
 	Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, m, t, wndClass, wndId, wndIds, wndPName, wndTitle, x, y
