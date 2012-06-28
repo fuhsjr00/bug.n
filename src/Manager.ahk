@@ -491,6 +491,7 @@ Manager_onShellMessage(wParam, lParam) {
 				wndId := SubStr(wndIds, 1, InStr(wndIds, ";") - 1)
 				Loop, % Config_viewCount
 					If (Manager_#%wndId%_tags & 1 << A_Index - 1) {
+						Log_dbg_msg(3, "Switching views because " . wndId . " is considered hidden and active")
 						Manager_aMonitor := Manager_#%wndId%_monitor
 						Monitor_activateView(A_Index)
 						Break
@@ -719,23 +720,31 @@ Manager_winActivate(wndId) {
 		} Else
 			DllCall("SetCursorPos", "Int", Round(Monitor_#%Manager_aMonitor%_x + Monitor_#%Manager_aMonitor%_width / 2), "Int", Round(Monitor_#%Manager_aMonitor%_y + Monitor_#%Manager_aMonitor%_height / 2))
 	}
-	WinActivate, ahk_id %wndId%
+	SendMessage, 0, , , , ahk_id %wndId%
+	If ErrorLevel
+		Log_msg("Manager_winActivate: Potentially hung window " . wndId)
+	Else
+		WinActivate, ahk_id %wndId%
 	Bar_updateTitle()
 }
 
 Manager_winMove(wndId, x, y, width, height) {
 	WM_NULL := 0
 	SendMessage, WM_NULL, , , , ahk_id %wndId%
-	If ErrorLevel
+	If ErrorLevel {
 		Log_msg("Manager_winMove: Potentially hung window " . wndId)
+		Return 1
+	}
 	Else
 		WinRestore, ahk_id %wndId%
 	WM_ENTERSIZEMOVE = 0x0231
 	WM_EXITSIZEMOVE  = 0x0232
 	SendMessage, WM_ENTERSIZEMOVE, , , , ahk_id %wndId%
 	tmp_errorlevel := ErrorLevel
-	If ErrorLevel 
+	If ErrorLevel {
 		Log_msg("Manager_winMove: Potentially hung window " . wndId)
+		Return 1
+	}
 	Else {
 		WinMove, ahk_id %wndId%, , %x%, %y%, %width%, %height%
 		SendMessage, WM_EXITSIZEMOVE, , , , ahk_id %wndId%
@@ -745,39 +754,51 @@ Manager_winMove(wndId, x, y, width, height) {
 Manager_winHide(wndId) {
 	WM_NULL := 0
 	SendMessage, WM_NULL, , , , ahk_id %wndId%
-	If ErrorLevel
+	If ErrorLevel {
 		Log_msg("Manager_winHide: Potentially hung window " . wndId)
+		Return 1
+	}
 	Else {
 		WinHide, ahk_id %wndId%
+		Return 0
 	}
 }
 
 Manager_winShow(wndId) {
 	WM_NULL := 0
 	SendMessage, WM_NULL, , , , ahk_id %wndId%
-	If ErrorLevel
+	If ErrorLevel {
 		Log_msg("Manager_winShow: Potentially hung window " . wndId)
+		Return 1
+	}
 	Else {
 		WinShow, ahk_id %wndId%
+		Return 0
 	}
 }
 
 Manager_winClose(wndId) {
 	WM_NULL := 0
 	SendMessage, WM_NULL, , , , ahk_id %wndId%
-	If ErrorLevel
+	If ErrorLevel {
 		Log_msg("Manager_winClose: Potentially hung window " . wndId)
+		Return 1
+	}
 	Else {
 		WinClose, ahk_id %wndId%
+		Return 0
 	}
 }
 
 Manager_winSet(type, value, wndId) {
 	WM_NULL := 0
 	SendMessage, WM_NULL, , , , ahk_id %wndId%
-	If ErrorLevel
+	If ErrorLevel {
 		Log_msg("Manager_winSet: Potentially hung window " . wndId)
+		Return 1
+	}
 	Else {
 		WinSet, %type%, %value%, ahk_id %wndId%
+		Return 0
 	}
 }

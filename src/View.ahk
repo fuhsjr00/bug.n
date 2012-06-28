@@ -36,8 +36,13 @@ View_init(m, v) {
 }
 
 View_activateWindow(d) {
-	Local aWndId, i, j, v, wndId, wndId0, wndIds
+	Local aWndId, i, j, v, wndId, wndId0, wndIds, success, direction
+	
 	Log_dbg_msg(1, "View_activateWindow(" . d . ")")
+	
+	If (d = 0)
+		Return
+	
 	WinGet, aWndId, ID, A
 	Log_dbg_bare(2, "Active Windows ID: " . aWndId)
 	v := Monitor_#%Manager_aMonitor%_aView_#1
@@ -51,12 +56,21 @@ View_activateWindow(d) {
 				i := A_Index
 				Break
 			}
+		If (d > 0) 
+			direction = 1
+		Else
+			direction = -1
 		Log_dbg_bare(2, "Current wndId index: " . i)
 		j := Manager_loop(i, d, 1, wndId0)
-		Log_dbg_bare(2, "Next wndId index: " . j)
-		wndId := wndId%j%
-		Manager_winSet("AlwaysOnTop", "On", wndId)
-		Manager_winSet("AlwaysOnTop", "Off", wndId)
+		Loop, % wndId0 {
+			Log_dbg_bare(2, "Next wndId index: " . j)
+			wndId := wndId%j%
+			Manager_winSet("AlwaysOnTop", "On", wndId)
+			success := Manager_winSet("AlwaysOnTop", "Off", wndId)
+			If (success = 0)
+				Break
+			j := Manager_loop(j, direction, 1, wndId0)
+		}
 		If Manager_#%aWndId%_isFloating
 			Manager_winSet("Bottom", "", aWndId)
 		Manager_winActivate(wndId)
