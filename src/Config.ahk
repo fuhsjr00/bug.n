@@ -458,4 +458,4 @@ Config_saveSession() {
 #^r::Main_reload()							; Reload bug.n (i. e. the configuration and its dependent settings) without deleting the window lists of bug.n and restoring windows.
 											; It does not reset internal configuration variables, the tray icon or menu, hotkeys (unless set explicitly in Config.ini), individual window settings like Config_showBorder (since windows might be hidden) or hiding the title bar, the monitor count or views.
 											; It does not reload functions. Changed rules are only applied to new windows.
-#Esc::ExitApp								; Quit bug.n, restore the default Windows UI and show all windows.
+#^Del::ExitApp								; Quit bug.n, restore the default Windows UI and show all windows.
