@@ -237,38 +237,51 @@ Manager_logViewLayout() {
 }
 
 Manager_logWindowInfo( w ) {
-	Local av, aWndId, aIsWinFocus, aIsBugnActive, aIsFloating, aIsHidden, aIsDecorated, aWndTitle, aWndStyle, aWndX, aWndY, aWndW, aWndH
+	Local v, wndId, isWinFocus, isBugnActive, isFloating, isHidden, isDecorated, isResponsive, wndTitle, wndProc, wndClass, wndStyle, wndX, wndY, wndW, wndH, detect_state
 	
-	WinGet, aWndId, ID, A
-	If aWndId = %w%
-		aIsWinFocus := "*"
+	detect_state := A_DetectHiddenWindows
+	DetectHiddenWindows, On
+	WinGet, wndId, ID, A
+	If wndId = %w%
+		isWinFocus := "*"
 	Else
-		aIsWinFocus := " "
-	av := Monitor_#%Manager_aMonitor%_aView_#1
-	If View_#%Manager_aMonitor%_#%av%_aWndId = %w%
-		aIsBugnActive := "*"
+		isWinFocus := " "
+	v := Monitor_#%Manager_aMonitor%_aView_#1
+	If View_#%Manager_aMonitor%_#%v%_aWndId = %w%
+		isBugnActive := "*"
 	Else
-		aIsBugnActive := " "
-	WinGetTitle, aWndTitle, ahk_id %w%
+		isBugnActive := " "
+	WinGetTitle, wndTitle, ahk_id %w%
+	WinGetClass, wndClass, ahk_id %w%
+	WinGet, wndProc, ProcessName, ahk_id %w%
 	If InStr(Bar_hiddenWndIds, w)
-		aIsHidden := "*"
+		isHidden := "*"
 	Else 
-		aIsHidden := " "
+		isHidden := " "
 	If Manager_#%w%_isFloating
-		aIsFloating := "*"
+		isFloating := "*"
 	Else
-		aIsFloating := " "
+		isFloating := " "
 	If Manager_#%w%_isDecorated
-		aIsDecorated := "*"
+		isDecorated := "*"
 	Else
-		aIsDecorated := " "
-	WinGet, aWndStyle, Style, ahk_id %w%
-	WinGetPos, aWndX, aWndY, aWndW, aWndH, ahk_id %w%
-	;Manager_#%wndId%_monitor     := m
-	;Manager_#%wndId%_tags        := tags
-	;Manager_#%wndId%_isDecorated := isDecorated
-	;Manager_#%wndId%_isFloating  := isFloating
-	Log_bare(w . "`t" . aIsHidden . " " aIsWinFocus . " " . aIsBugnActive . " " . aIsFloating . " " . aIsDecorated . " " . Manager_#%w%_monitor . "`t" . Manager_#%w%_tags . "`t" . aWndX . "`t" . aWndY . "`t" . aWndW . "`t" . aWndH . "`t" . aWndStyle . "`t" . aWndTitle)
+		isDecorated := " "
+	WinGet, wndStyle, Style, ahk_id %w%
+	WinGetPos, wndX, wndY, wndW, wndH, ahk_id %w%
+	
+	DetectHiddenWindows, %detect_state%
+	
+	; Intentionally don't detect hidden windows here to see what Manager_hungTest does
+	If Manager_hungTest(w)
+		isResponsive := " "
+	Else
+		isResponsive := "*"
+	
+	Log_bare(w . "`t" . isHidden . " " isWinFocus . " " . isBugnActive . " " . isFloating . " " . isDecorated . " " . isResponsive . " " . Manager_#%w%_monitor . "`t" . Manager_#%w%_tags . "`t" . wndX . "`t" . wndY . "`t" . wndW . "`t" . wndH . "`t" . wndStyle . "`t" . wndProc . " / " . wndClass . " / " . wndTitle)
+}
+
+Manager_logHeader() {
+	Log_bare( "ID`t`tH W A F D R M`tTags`tX`tY`tW`tH`tStyle`t`tProc / Class / Title")
 }
 
 Manager_logViewWindowList() {
@@ -276,12 +289,25 @@ Manager_logViewWindowList() {
 	
 	v := Monitor_#%Manager_aMonitor%_aView_#1
 	Log_msg( "Window dump for active view (" . Manager_aMonitor . ", " . v . ")" )
-	Log_bare( "ID`t`tH W A F D M`tTags`tX`tY`tW`tH`tStyle`t`tTitle")
+	Manager_logHeader()
 	
 	StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
 	Loop, PARSE, wndIds, `;
 	{
 		Manager_logWindowInfo( A_LoopField )
+	}
+}
+
+Manager_logManagedWindowList() {
+	Local wndIds
+	
+	Log_msg( "Window dump for manager" )
+	Manager_logHeader()
+	
+	StringTrimRight, wndIds, Manager_managedWndIds, 1
+	Loop, PARSE, wndIds, `;
+	{
+		Manager_logWindowInfo( A_LoopField)
 	}
 }
 
@@ -294,6 +320,7 @@ Manager_logHelp() {
 	Log_bare("    A - View active")
 	Log_bare("    F - Floating")
 	Log_bare("    D - Decorated")
+	Log_bare("    R - Responsive")
 	Log_bare("    M - Monitor")
 	Log_bare("    Tags - Bit-mask of the views in which the window is active")
 	Log_bare("    X - Windows X position")
@@ -301,7 +328,7 @@ Manager_logHelp() {
 	Log_bare("    W - Windows width")
 	Log_bare("    H - Windows height")
 	Log_bare("    Style - Windows style")
-	Log_bare("    Title - Title of the window")
+	Log_bare("    Proc / Class / Title - Process/Class/Title of the window")
 }
 
 Manager_lockWorkStation() {
@@ -720,8 +747,7 @@ Manager_winActivate(wndId) {
 		} Else
 			DllCall("SetCursorPos", "Int", Round(Monitor_#%Manager_aMonitor%_x + Monitor_#%Manager_aMonitor%_width / 2), "Int", Round(Monitor_#%Manager_aMonitor%_y + Monitor_#%Manager_aMonitor%_height / 2))
 	}
-	SendMessage, 0, , , , ahk_id %wndId%
-	If ErrorLevel
+	If Manager_hungTest(wndId)
 		Log_msg("Manager_winActivate: Potentially hung window " . wndId)
 	Else
 		WinActivate, ahk_id %wndId%
@@ -729,9 +755,7 @@ Manager_winActivate(wndId) {
 }
 
 Manager_winMove(wndId, x, y, width, height) {
-	WM_NULL := 0
-	SendMessage, WM_NULL, , , , ahk_id %wndId%
-	If ErrorLevel {
+	If Manager_hungTest(wndId) {
 		Log_msg("Manager_winMove: Potentially hung window " . wndId)
 		Return 1
 	}
@@ -740,7 +764,6 @@ Manager_winMove(wndId, x, y, width, height) {
 	WM_ENTERSIZEMOVE = 0x0231
 	WM_EXITSIZEMOVE  = 0x0232
 	SendMessage, WM_ENTERSIZEMOVE, , , , ahk_id %wndId%
-	tmp_errorlevel := ErrorLevel
 	If ErrorLevel {
 		Log_msg("Manager_winMove: Potentially hung window " . wndId)
 		Return 1
@@ -752,9 +775,8 @@ Manager_winMove(wndId, x, y, width, height) {
 }
 
 Manager_winHide(wndId) {
-	WM_NULL := 0
-	SendMessage, WM_NULL, , , , ahk_id %wndId%
-	If ErrorLevel {
+	
+	If Manager_hungTest(wndId) {
 		Log_msg("Manager_winHide: Potentially hung window " . wndId)
 		Return 1
 	}
@@ -765,9 +787,8 @@ Manager_winHide(wndId) {
 }
 
 Manager_winShow(wndId) {
-	WM_NULL := 0
-	SendMessage, WM_NULL, , , , ahk_id %wndId%
-	If ErrorLevel {
+	
+	If Manager_hungTest(wndId) {
 		Log_msg("Manager_winShow: Potentially hung window " . wndId)
 		Return 1
 	}
@@ -778,9 +799,8 @@ Manager_winShow(wndId) {
 }
 
 Manager_winClose(wndId) {
-	WM_NULL := 0
-	SendMessage, WM_NULL, , , , ahk_id %wndId%
-	If ErrorLevel {
+	
+	If Manager_hungTest(wndId) {
 		Log_msg("Manager_winClose: Potentially hung window " . wndId)
 		Return 1
 	}
@@ -791,9 +811,8 @@ Manager_winClose(wndId) {
 }
 
 Manager_winSet(type, value, wndId) {
-	WM_NULL := 0
-	SendMessage, WM_NULL, , , , ahk_id %wndId%
-	If ErrorLevel {
+	
+	If Manager_hungTest(wndId) {
 		Log_msg("Manager_winSet: Potentially hung window " . wndId)
 		Return 1
 	}
@@ -801,4 +820,21 @@ Manager_winSet(type, value, wndId) {
 		WinSet, %type%, %value%, ahk_id %wndId%
 		Return 0
 	}
+}
+
+; 0 - Not hung
+; 1 - Hung
+Manager_hungTest(wndId) {
+	Local result, detect_setting, WM_NULL
+	WM_NULL := 0
+	detect_setting := A_DetectHiddenWindows
+	DetectHiddenWindows, On
+	SendMessage, WM_NULL, , , , ahk_id %wndId%
+	result := ErrorLevel
+	DetectHiddenWindows, %detect_setting%
+	
+	If result
+		Return 1
+	Else
+		Return 0
 }

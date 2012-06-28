@@ -391,7 +391,7 @@ Config_saveSession() {
 #i::Manager_getWindowInfo()					; Get information for the active window (id, title, class, process name, style, geometry, tags and floating state).
 #+i::Manager_getWindowList()				; Get a window list for the active view (id, title and class).
 #^i::Manager_logViewWindowList()
-;#+^::Manager_logWindowList()
+#+^i::Manager_logManagedWindowList()
 #^h::Manager_logHelp()
 #^d::Log_decDebugLevel()
 #^e::Log_incDebugLevel()
