@@ -80,7 +80,7 @@ Monitor_activateView(v) {
 		StringTrimRight, wndIds, View_#%m%_#%aView%_wndIds, 1
 		Loop, PARSE, wndIds, `;
 			If Not (Manager_#%A_LoopField%_tags & (1 << v - 1))
-				WinHide, ahk_id %A_LoopField%
+				Manager_winHide(A_LoopField)
 		SetWinDelay, 10
 		DetectHiddenWindows, On
 		View_arrange(m, v)
@@ -88,7 +88,7 @@ Monitor_activateView(v) {
 		StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
 		SetWinDelay, 0
 		Loop, PARSE, wndIds, `;
-			WinShow, ahk_id %A_LoopField%
+			Manager_winShow(A_LoopField)
 		SetWinDelay, 10
 		Manager_hideShow := False
 		
@@ -225,7 +225,7 @@ Monitor_setWindowTag(t) {
 					Monitor_activateView(t)
 				Else {
 					Manager_hideShow := True
-					WinHide, ahk_id %aWndId%
+					Manager_winHide(aWndId)
 					Manager_hideShow := False
 					View_arrange(Manager_aMonitor, aView)
 					Bar_updateView(Manager_aMonitor, t)
@@ -278,7 +278,7 @@ Monitor_toggleWindowTag(t) {
 				Bar_updateView(Manager_aMonitor, t)
 				If (t = Monitor_#%Manager_aMonitor%_aView_#1) {
 					Manager_hideShow := True
-					WinHide, ahk_id %aWndId%
+					Manager_winHide(aWndId)
 					Manager_hideShow := False
 					wndId := SubStr(View_#%Manager_aMonitor%_#%t%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%t%_wndIds, ";")-1)
 					Manager_winActivate(wndId)

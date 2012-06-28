@@ -156,10 +156,10 @@ Manager_cleanup() {
 	Manager_hideShow := True
 	Loop, PARSE, wndIds, `;
 	{
-		WinShow, ahk_id %A_LoopField%
+		Manager_winShow(A_LoopField)
 		If Not Config_showBorder
-			WinSet, Style, +0x40000, ahk_id %A_LoopField%
-		WinSet, Style, +0xC00000, ahk_id %A_LoopField%
+			Manager_winSet("Style", "+0x40000", A_LoopField)
+		Manager_winSet("Style", "+0xC00000", A_LoopField)
 	}
 	
 	; Show the task bar.
@@ -176,8 +176,8 @@ Manager_cleanup() {
 		Loop, % Config_viewCount
 			View_arrange(m, A_Index)
 	}
-	WinSet, AlwaysOnTop, On, ahk_id %aWndId%
-	WinSet, AlwaysOnTop, Off, ahk_id %aWndId%
+	Manager_winSet("AlwaysOnTop", "On", aWndId)
+	Manager_winSet("AlwaysOnTop", "Off", aWndId)
 	
 	DllCall("Shell32.dll\SHAppBarMessage", "UInt", (ABM_REMOVE := 0x1), "UInt", &Bar_appBarData)
 	; SKAN: Crazy Scripting : Quick Launcher for Portable Apps (http://www.autohotkey.com/forum/topic22398.html)
@@ -188,7 +188,7 @@ Manager_closeWindow() {
 	WinGetClass, aWndClass, ahk_id %aWndId%
 	WinGetTitle, aWndTitle, ahk_id %aWndId%
 	If Not (aWndClass = "AutoHotkeyGUI" And RegExMatch(aWndTitle, "bug.n_BAR_[0-9]+"))
-		WinClose, ahk_id %aWndId%
+		Manager_winClose(aWndId)
 }
 
 Manager_getWindowInfo() {
@@ -372,9 +372,9 @@ Manager_manage(pm, pv, wndId) {
 			}
 		
 		If Not Config_showBorder
-			WinSet, Style, -0x40000, ahk_id %wndId%
+			Manager_winSet("Style", "-0x40000", wndId)
 		If Not Manager_#%wndId%_isDecorated
-			WinSet, Style, -0xC00000, ahk_id %wndId%
+			Manager_winSet("Style", "-0xC00000", wndId)
 		
 		a := Manager_#%wndId%_tags & 1 << Monitor_#%m%_aView_#1 - 1
 		If a {
@@ -382,7 +382,7 @@ Manager_manage(pm, pv, wndId) {
 			Manager_winActivate(wndId)
 		} Else {
 			Manager_hideShow := True
-			WinHide, ahk_id %wndId%
+			Manager_winHide(wndId)
 			Manager_hideShow := False
 		}
 	}
@@ -403,7 +403,7 @@ Manager_maximizeWindow() {
 	l := View_#%Manager_aMonitor%_#%v%_layout_#1
 	If Not Manager_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
 		View_toggleFloating()
-	WinSet, Top,, ahk_id %aWndId%
+	Manager_winSet("Top", "", aWndId)
 	
 	Manager_winMove(aWndId, Monitor_#%Manager_aMonitor%_x, Monitor_#%Manager_aMonitor%_y, Monitor_#%Manager_aMonitor%_width, Monitor_#%Manager_aMonitor%_height)
 }
@@ -416,7 +416,7 @@ Manager_moveWindow() {
 	l := View_#%Manager_aMonitor%_#%v%_layout_#1
 	If Not Manager_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
 		View_toggleFloating()
-	WinSet, Top,, ahk_id %aWndId%
+	Manager_winSet("Top", "", aWndId)
 	
 	WM_SYSCOMMAND = 0x112
 	SC_MOVE = 0xF010
@@ -501,7 +501,7 @@ Manager_onShellMessage(wParam, lParam) {
 				; Otherwise re-hide them.
 				If (Config_onActiveHiddenWnds = "hide") {
 					Loop, % wndId0
-						WinHide, % "ahk_id " wndId%A_Index%
+						Manager_winHide(wndId%A_Index%)
 				} Else If (Config_onActiveHiddenWnds = "tag") {
 					; Or tag all of them for the current view.
 					t := Monitor_#%Manager_aMonitor%_aView_#1
@@ -596,7 +596,7 @@ Manager_sizeWindow() {
 	l := View_#%Manager_aMonitor%_#%v%_layout_#1
 	If Not Manager_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
 		View_toggleFloating()
-	WinSet, Top,, ahk_id %aWndId%
+	Manager_winSet("Top", "", aWndId)
 	
 	WM_SYSCOMMAND = 0x112
 	SC_SIZE	= 0xF000
@@ -684,9 +684,9 @@ Manager_toggleDecor() {
 	WinGet, aWndId, ID, A
 	Manager_#%aWndId%_isDecorated := Not Manager_#%aWndId%_isDecorated
 	If Manager_#%aWndId%_isDecorated
-		WinSet, Style, +0xC00000, ahk_id %aWndId%
+		Manager_winSet("Style", "+0xC00000", aWndId)
 	Else
-		WinSet, Style, -0xC00000, ahk_id %aWndId%
+		Manager_winSet("Style", "-0xC00000", aWndId)
 }
 
 Manager_unmanage(wndId) {
@@ -724,10 +724,60 @@ Manager_winActivate(wndId) {
 }
 
 Manager_winMove(wndId, x, y, width, height) {
-	WinRestore, ahk_id %wndId%
+	WM_NULL := 0
+	SendMessage, WM_NULL, , , , ahk_id %wndId%
+	If ErrorLevel
+		Log_msg("Manager_winMove: Potentially hung window " . wndId)
+	Else
+		WinRestore, ahk_id %wndId%
 	WM_ENTERSIZEMOVE = 0x0231
 	WM_EXITSIZEMOVE  = 0x0232
 	SendMessage, WM_ENTERSIZEMOVE, , , , ahk_id %wndId%
-	WinMove, ahk_id %wndId%, , %x%, %y%, %width%, %height%
-	SendMessage, WM_EXITSIZEMOVE, , , , ahk_id %wndId%
+	tmp_errorlevel := ErrorLevel
+	If ErrorLevel 
+		Log_msg("Manager_winMove: Potentially hung window " . wndId)
+	Else {
+		WinMove, ahk_id %wndId%, , %x%, %y%, %width%, %height%
+		SendMessage, WM_EXITSIZEMOVE, , , , ahk_id %wndId%
+	}
+}
+
+Manager_winHide(wndId) {
+	WM_NULL := 0
+	SendMessage, WM_NULL, , , , ahk_id %wndId%
+	If ErrorLevel
+		Log_msg("Manager_winHide: Potentially hung window " . wndId)
+	Else {
+		WinHide, ahk_id %wndId%
+	}
+}
+
+Manager_winShow(wndId) {
+	WM_NULL := 0
+	SendMessage, WM_NULL, , , , ahk_id %wndId%
+	If ErrorLevel
+		Log_msg("Manager_winShow: Potentially hung window " . wndId)
+	Else {
+		WinShow, ahk_id %wndId%
+	}
+}
+
+Manager_winClose(wndId) {
+	WM_NULL := 0
+	SendMessage, WM_NULL, , , , ahk_id %wndId%
+	If ErrorLevel
+		Log_msg("Manager_winClose: Potentially hung window " . wndId)
+	Else {
+		WinClose, ahk_id %wndId%
+	}
+}
+
+Manager_winSet(type, value, wndId) {
+	WM_NULL := 0
+	SendMessage, WM_NULL, , , , ahk_id %wndId%
+	If ErrorLevel
+		Log_msg("Manager_winSet: Potentially hung window " . wndId)
+	Else {
+		WinSet, %type%, %value%, ahk_id %wndId%
+	}
 }

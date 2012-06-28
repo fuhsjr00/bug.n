@@ -55,10 +55,10 @@ View_activateWindow(d) {
 		j := Manager_loop(i, d, 1, wndId0)
 		Log_dbg_bare(2, "Next wndId index: " . j)
 		wndId := wndId%j%
-		WinSet, AlwaysOnTop, On, ahk_id %wndId%
-		WinSet, AlwaysOnTop, Off, ahk_id %wndId%
+		Manager_winSet("AlwaysOnTop", "On", wndId)
+		Manager_winSet("AlwaysOnTop", "Off", wndId)
 		If Manager_#%aWndId%_isFloating
-			WinSet, Bottom, , ahk_id %aWndId%
+			Manager_winSet("Bottom", "", aWndId)
 		Manager_winActivate(wndId)
 	}
 }
