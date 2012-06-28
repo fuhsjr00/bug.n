@@ -1,0 +1,17 @@
+8.2.2
+--------
+
+Features
+	- NxM master area tiling.
+	- Split windows between multiple monitors on startup based on their
+	  starting positions (has no effect on configured positions).
+	- Faster view drawing.
+	- Logging and debug logging capabilities.
+	- Layout and content are now distinct. View layouts may be manipulated
+	  in the absence of windows.
+
+Bugs
+	- Cycling through windows on a view no longer gets stuck.
+	- Prevent windows from switching to different monitors under odd
+	  circumstances.
+	- Gap width usage is now consistent between tile and monocle layouts.
