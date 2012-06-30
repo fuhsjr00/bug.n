@@ -36,7 +36,7 @@ View_init(m, v) {
 }
 
 View_activateWindow(d) {
-	Local aWndId, i, j, v, wndId, wndId0, wndIds, success, direction
+	Local aWndId, i, j, v, wndId, wndId0, wndIds, failure, direction
 	
 	Log_dbg_msg(1, "View_activateWindow(" . d . ")")
 	
@@ -51,6 +51,8 @@ View_activateWindow(d) {
 	StringSplit, wndId, wndIds, `;
 	Log_dbg_bare(2, "wndId count: " . wndId0)
 	If (wndId0 > 1) {
+		If Manager_#%aWndId%_isFloating
+			Manager_winSet("Bottom", "", aWndId)
 		Loop, % wndId0
 			If (wndId%A_Index% = aWndId) {
 				i := A_Index
@@ -66,14 +68,17 @@ View_activateWindow(d) {
 			Log_dbg_bare(2, "Next wndId index: " . j)
 			wndId := wndId%j%
 			Manager_winSet("AlwaysOnTop", "On", wndId)
-			success := Manager_winSet("AlwaysOnTop", "Off", wndId)
-			If (success = 0)
+			Manager_winSet("AlwaysOnTop", "Off", wndId)
+			; This is a lot of extra work in case there are hung windows on the screen.
+			; We still want to be able to cycle through them.
+			failure := Manager_winActivate(wndId)
+			If Not failure {
 				Break
+			}
+			
 			j := Manager_loop(j, direction, 1, wndId0)
 		}
-		If Manager_#%aWndId%_isFloating
-			Manager_winSet("Bottom", "", aWndId)
-		Manager_winActivate(wndId)
+		
 	}
 }
 
@@ -115,6 +120,14 @@ View_addWnd(m, v, wndId) {
 		View_#%m%_#%v%_wndIds := wndId ";" View_#%m%_#%v%_wndIds
 }
 
+View_ghostWnd(m, v, bodyWndId, ghostWndId) {
+	Local search, replace
+	
+	search := bodyWndId ";"
+	replace := search ghostWndId ";"
+	StringReplace, View_#%m%_#%v%_wndIds, View_#%m%_#%v%_wndIds, %search%, %replace%
+}
+
 ; Remove a window from the view in question.
 View_delWnd(m, v, wndId) {
 	StringReplace, View_#%m%_#%v%_wndIds, View_#%m%_#%v%_wndIds, %wndId%`;, 
@@ -140,7 +153,7 @@ View_getTiledWndIds(m, v, ByRef tiledWndIds) {
 	StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
 	Loop, PARSE, wndIds, `;
 	{
-		If Not Manager_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) {
+		If Not Manager_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) and Not Manager_isHung(A_LoopField) {
 			n += 1
 			tiledWndIds .= A_LoopField ";"
 		}
