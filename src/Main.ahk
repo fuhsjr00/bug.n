@@ -32,7 +32,22 @@ SetWinDelay, 10
 #WinActivateForce
 
 ; pseudo main function
-	Log_init("bugn_log.txt", False)
+
+	
+	EnvGet, appDir, APPDATA
+	bugnDir := appDir . "\bug.n"
+	IfNotExist, %bugnDir%
+		FileCreateDir, %bugnDir%
+	FileGetAttrib, attrib, %bugnDir%
+	IfNotInString, attrib, D 
+	{
+		MsgBox, The file path '%appDir%' already exists and is not a directory. Aborting.
+		Return
+	}
+	logFile := bugnDir . "\bugn_log.txt"
+	Log_init(logFile, False)
+	
+	
 	Log_msg("====== Initializing ======")
 	If 0 = 1
 		Config_filePath = %1%
