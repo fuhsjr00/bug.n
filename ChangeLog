@@ -11,6 +11,8 @@ Features
 	  in the absence of windows.
 
 Bugs
+	- BID 018641: Freezing problem. This problem has been largely mitigated,
+	  but it is still possible.
 	- Cycling through windows on a view no longer gets stuck.
 	- Prevent windows from switching to different monitors under odd
 	  circumstances.
