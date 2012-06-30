@@ -134,13 +134,21 @@ pressing the left Windows key and the shift key and the q key
   1 -> 2 = y-axis = vertical stack, 2 -> 3 = z-axis = monocle, only for
   the "tile" layout).
 
-: #^Left::**View_setMSplit(+1)**
-  Move the master splitter, i. e. decrease the number of windows in the
-  master area (only for the "tile" layout).
+: #^Left::**View_setMX(-1)**
+  Decrease the master X dimension by 1, i. e. decrease the number of 
+  windows in the master area by Y. Minimum of 1.
 
-: #^Right::**View_setMSplit(-1)**
-  Move the master splitter, i. e. increase the number of windows in the
-  master area (only for the "tile" layout).
+: #^Right::**View_setMX(+1)
+  Increase the master X dimension by 1, i. e. increase the number of 
+  windows in the master area by Y. Maximum of 9.
+
+: #^Down::**View_setMY(-1)**
+  Decrease the master Y dimension by 1, i.e. decrease the number of 
+  windows in the master area by X. Minimum of 1.
+
+: #^Up::**View_setMY(+1)**
+  Increase the master Y dimension by 1, i.e. increase the number of
+  windows in the master area by X. Maximum of 9.
 
 
 === Tag / View related hotkeys ===
@@ -195,6 +203,25 @@ pressing the left Windows key and the shift key and the q key
 
 : #Space::**Monitor_toggleTaskBar()**
   Hide / Show the task bar.
+
+
+=== Logging/Debugging related hotkeys ===
+
+: #^i::**Manager_logViewWindowList()**
+  Dump the contents of the current view to the bug.n log.
+
+: #+^i::**Manager_logManagedWindowList()**
+  Dump the contents of the managed window list to the bug.n log.
+
+: #^h::**Manager_logHelp()**
+  Print to the log a description of the formatting used in the 
+  previous two log messages.
+
+: #^[::**Log_decDebugLevel()**
+  Decrement the debug log level. Show fewer debug messages.
+
+: #^]::**Log_incDebugLevel()**
+  Increment the debug log level. Show more debug messages.
 
 
 === Application related hotkeys ===
