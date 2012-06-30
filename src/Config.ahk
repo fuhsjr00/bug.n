@@ -361,10 +361,10 @@ Config_saveSession() {
 				text .= "View_#" m "_#" A_Index "_layoutGapWidth=" View_#%m%_#%A_Index%_layoutGapWidth "`n"
 			If Not (View_#%m%_#%A_Index%_layoutMFact = Config_layoutMFactor)
 				text .= "View_#" m "_#" A_Index "_layoutMFact=" View_#%m%_#%A_Index%_layoutMFact "`n"
-			If Not (View_#%m%_#%A_Index%_layoutMPri = 1)
-				text .= "View_#" m "_#" A_Index "_layoutMPri=" View_#%m%_#%A_Index%_layoutMPri "`n"
-			If Not (View_#%m%_#%A_Index%_layoutMSec = 1)
-				text .= "View_#" m "_#" A_Index "_layoutMSec=" View_#%m%_#%A_Index%_layoutMSec "`n"
+			If Not (View_#%m%_#%A_Index%_layoutMX = 1)
+				text .= "View_#" m "_#" A_Index "_layoutMX=" View_#%m%_#%A_Index%_layoutMX "`n"
+			If Not (View_#%m%_#%A_Index%_layoutMY = 1)
+				text .= "View_#" m "_#" A_Index "_layoutMY=" View_#%m%_#%A_Index%_layoutMY "`n"
 		}
 	}
 	

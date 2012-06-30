@@ -29,8 +29,8 @@ View_init(m, v) {
 	View_#%m%_#%v%_layoutAxis_#3  := Config_layoutAxis_#3
     View_#%m%_#%v%_layoutGapWidth := Config_layoutGapWidth
 	View_#%m%_#%v%_layoutMFact    := Config_layoutMFactor
-	View_#%m%_#%v%_layoutMPri     := 1
-	View_#%m%_#%v%_layoutMSec     := 1
+	View_#%m%_#%v%_layoutMX       := 1
+	View_#%m%_#%v%_layoutMY       := 1
 	View_#%m%_#%v%_layoutSymbol   := Config_layoutSymbol_#1
 	View_#%m%_#%v%_wndIds         := ""
 }
@@ -96,7 +96,7 @@ View_addWnd(m, v, wndId) {
 	l := View_#%m%_#%v%_layout_#1
 	If (Config_layoutFunction_#%l% = "tile") And ((Config_newWndPosition = "masterBottom") Or (Config_newWndPosition = "stackTop")) {
 		n := View_getTiledWndIds(m, v, wndIds)
-		msplit := View_#%m%_#%v%_layoutMPri * View_#%m%_#%v%_layoutMSec
+		msplit := View_#%m%_#%v%_layoutMX * View_#%m%_#%v%_layoutMY
 		If ( msplit = 1 And Config_newWndPosition="masterBottom" ) {
 			View_#%m%_#%v%_wndIds := wndId ";" . View_#%m%_#%v%_wndIds
 		}
@@ -191,7 +191,7 @@ View_arrange_monocle(m, v, wndIds) {
 }
 
 View_rotateLayoutAxis(i, d) {
-	Local f, l, v
+	Local f, l, v, n, tmp
 	
 	v := Monitor_#%Manager_aMonitor%_aView_#1
 	l := View_#%Manager_aMonitor%_#%v%_layout_#1
@@ -203,8 +203,16 @@ View_rotateLayoutAxis(i, d) {
 				f := View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% / Abs(View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%)
 				View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% := f * Manager_loop(Abs(View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%), d, 1, 2)
 			}
-		} Else
-			View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% := Manager_loop(View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%, d, 1, 3)
+		} Else {
+			n := Manager_loop(View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%, d, 1, 3)
+			; When we rotate the axis, we may need to swap the X and Y dimensions.
+			If Not (n = View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%) And (n = 1) Or (View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% = 1) {
+				tmp := View_#%Manager_aMonitor%_#%v%_layoutMX
+				View_#%Manager_aMonitor%_#%v%_layoutMX := View_#%Manager_aMonitor%_#%v%_layoutMY
+				View_#%Manager_aMonitor%_#%v%_layoutMY := tmp
+			}
+			View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% := n
+		}
 		View_arrange(Manager_aMonitor, v)
 	}
 }
@@ -258,52 +266,38 @@ View_setMFactor(d) {
 	}
 }
 
-View_setMPrimary(d) {
-	Local l, n, v, wndIds
-
-	v := Monitor_#%Manager_aMonitor%_aView_#1
-	l := View_#%Manager_aMonitor%_#%v%_layout_#1
-	If (Config_layoutFunction_#%l% = "tile") {
-		n := View_#%Manager_aMonitor%_#%v%_layoutMPri + d
-		If ( n > 0 And n < 10 ) {
-			View_#%Manager_aMonitor%_#%v%_layoutMPri := n
-			View_arrange(Manager_aMonitor, v)
-		}
-	}
-}
-
-View_setMSecondary(d) {
-	Local l, n, v, wndIds
-
-	v := Monitor_#%Manager_aMonitor%_aView_#1
-	l := View_#%Manager_aMonitor%_#%v%_layout_#1
-	If (Config_layoutFunction_#%l% = "tile") {
-		n := View_#%Manager_aMonitor%_#%v%_layoutMSec + d
-		If ( n > 0 And n < 10 ) {
-			View_#%Manager_aMonitor%_#%v%_layoutMSec := n
-			View_arrange(Manager_aMonitor, v)
-		}
-	}
-}
-
 View_setMX(d) {
-	Local a, v
-	v := Monitor_#%Manager_aMonitor%_aView_#1
-	a := View_#%Manager_aMonitor%_#%v%_layoutAxis_#2
-	If ( a = 1 )
-		View_setMPrimary(d)
-	Else
-		View_setMSecondary(d)
+	Local l, n, m, v
+	
+	m := Manager_aMonitor
+	v := Monitor_#%m%_aView_#1
+	l := View_#%m%_#%v%_layout_#1
+	Log_msg("View_setMX(): l: " . l)
+	If Not (Config_layoutFunction_#%l% = "tile")
+		Return
+	
+	n := View_#%m%_#%v%_layoutMX + d
+	If (n >= 1) And (n <= 9) {
+		View_#%m%_#%v%_layoutMX := n
+		View_arrange(m, v)
+	}
 }
 
 View_setMY(d) {
-	Local a, v
-	v := Monitor_#%Manager_aMonitor%_aView_#1
-	a := View_#%Manager_aMonitor%_#%v%_layoutAxis_#2
-	If ( a = 1 )
-		View_setMSecondary(d)
-	Else
-		View_setMPrimary(d)
+	Local l, n, m, v
+	
+	m := Manager_aMonitor
+	v := Monitor_#%m%_aView_#1
+	l := View_#%m%_#%v%_layout_#1
+	Log_msg("View_setMY(): l: " . l)
+	If Not (Config_layoutFunction_#%l% = "tile")
+		Return
+	
+	n := View_#%m%_#%v%_layoutMY + d
+	If (n >= 1) And (n <= 9) {
+		View_#%m%_#%v%_layoutMY := n
+		View_arrange(m, v)
+	}
 }
 
 View_shuffleWindow(d) {
@@ -366,8 +360,8 @@ View_updateLayout_tile(m, v) {
 	; 2 - horizontal divider
 	; 3 - monocle
 	axis3  := View_#%m%_#%v%_layoutAxis_#3
-	mp := View_#%m%_#%v%_layoutMPri
-	ms := View_#%m%_#%v%_layoutMSec
+	mx := View_#%m%_#%v%_layoutMX
+	my := View_#%m%_#%v%_layoutMY
 	
 	If ( Abs(axis1) = 1 )
 		master_div := "|"
@@ -376,14 +370,14 @@ View_updateLayout_tile(m, v) {
 	
 	If ( axis2 = 1 ) {
 		master_sym := "|"
-		master_dim := mp . "x" . ms
+		master_dim := mx . "x" . my
 		}
 	Else If ( axis2 = 2 ) {
 		master_sym := "-"
-		master_dim := ms . "x" . mp
+		master_dim := mx . "x" . my
 	}
 	Else 
-		master_sym := "[" . (mp * ms) . "]"
+		master_sym := "[" . (mx * my) . "]"
 	
 	If ( axis3 = 1 )
 		stack_sym := "|"
@@ -530,9 +524,9 @@ View_arrange_tile(m, v, wndIds) {
 	flipped := View_#%m%_#%v%_layoutAxis_#1 < 0
 	gapW_2 := View_#%m%_#%v%_layoutGapWidth/2
 	mfact  := View_#%m%_#%v%_layoutMFact
-	mp := View_#%m%_#%v%_layoutMPri
-	ms := View_#%m%_#%v%_layoutMSec
-	msplit := mp * ms
+	dimAligned := (axis2 = 1) ? View_#%m%_#%v%_layoutMX : View_#%m%_#%v%_layoutMY
+	dimOrtho := (axis2 = 1) ? View_#%m%_#%v%_layoutMY : View_#%m%_#%v%_layoutMX
+	msplit := dimAligned * dimOrtho
 
 	If (msplit > View_arrange_tile_wndId0) {
 		msplit := View_arrange_tile_wndId0
@@ -560,14 +554,14 @@ View_arrange_tile(m, v, wndIds) {
 	}
 	Else
 	{
-		secondary_areas := Ceil(msplit / mp)
+		secondary_areas := Ceil(msplit / dimAligned)
 		areas_remaining := secondary_areas
 		windows_remaining := msplit
-		;Log_bare("msplit: " . msplit . "; layoutMPri: " . mp . "; secondary_areas: " . secondary_areas . "; areas_remaining: " . areas_remaining . "; windows_remaining: " . windows_remaining)
+		;Log_bare("msplit: " . msplit . "; layoutMX/Y: " . dimAligned . "; secondary_areas: " . secondary_areas . "; areas_remaining: " . areas_remaining . "; windows_remaining: " . windows_remaining)
 		Loop, % secondary_areas {
 			View_split_region(Not (axis2 - 1), (1/areas_remaining), x1, y1, w1, h1, mx1, my1, mw1, mh1, x1, y1, w1, h1)
-			draw_windows := mp
-			If (windows_remaining < mp) {
+			draw_windows := dimAligned
+			If (windows_remaining < dimAligned) {
 				draw_windows := windows_remaining
 			}
 			View_draw_row("View_arrange_tile_wndId", msplit - windows_remaining + 1, draw_windows, 0, axis2 - 1, mx1, my1, mw1, mh1, gapW_2)
