@@ -49,7 +49,7 @@ int WinMain(HINSTANCE hInst,HINSTANCE,LPSTR,int nCmdShow)
 } 
 
 
-int maintain_bomb = 30;
+int maintain_bomb = 60;
 int activate_bomb = 5;
 
 LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -76,7 +76,7 @@ LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
       if(activate_bomb == 0)
 	while(maintain_bomb) {
 	  Sleep(1000);
-	  //maintain_bomb--;
+	  maintain_bomb--;
 	}
       activate_bomb--;
 
