@@ -60,11 +60,11 @@ Config_init() {
 	Config_layoutAxis_#1	  := 1							; The layout axis: 1 = x, 2 = y; negative values mirror the layout, setting the master area to the right / bottom instead of left / top.
 	Config_layoutAxis_#2	  := 2							; The master axis: 1 = x (from left to right), 2 = y (from top to bottom), 3 = z (monocle).
 	Config_layoutAxis_#3	  := 2							; The stack axis:  1 = x (from left to right), 2 = y (from top to bottom), 3 = z (monocle).
-	Config_layoutGapWidth	  := -4							; The default gap width in px (only even numbers) of the "tile" layout, i. e. the space between windows and around the layout.
+	Config_layoutGapWidth	  := 0							; The default gap width in px (only even numbers) of the "tile" layout, i. e. the space between windows and around the layout.
 	Config_layoutMFactor	  := 0.6						; The factor for the size of the master area, which is multiplied by the monitor size.
 	Config_mouseFollowsFocus  := True						; If true, the mouse pointer is set over the focused window, if a window is activated by bug.n.
 	Config_onActiveHiddenWnds := "view"						; The action, which will be taken, if a window e. g. should be activated, but is not visible; "view": show the view accordng to the first tag of the window in question, "tag": add the window in question to the current visible view, "hide": hide the window again ignoring the activation.
-	Config_newWndPosition	  := "bottom"						; The position of a new window in a view; "top": at the beginning of the window list and the master area (default), "masterBottom": at the end of the master area, "stackTop": on top of the stack area, "bottom": at the end of the window list and the stack area.
+	Config_newWndPosition	  := "top"						; The position of a new window in a view; "top": at the beginning of the window list and the master area (default), "masterBottom": at the end of the master area, "stackTop": on top of the stack area, "bottom": at the end of the window list and the stack area.
 	Config_shellMsgDelay	  := 350						; The time bug.n waits after a shell message (a window is opened, closed or the focus has been changed); if there are any problems recognizing, when windows are opened or closed, try to increase this number.
 	Config_syncMonitorViews	  := 0							; The number of monitors (2 or more), for which views should be activated, when using the accordant hotkey. If set to 1, the views are activated for all monitors. If set to 0, views are activated independently (only on the active monitor).
 	Config_viewFollowsTagged  := False						; If true and a window is tagged with a single tag, the view is correspondingly set to the tag.
@@ -377,41 +377,41 @@ Config_saveSession() {
  *	format: <modifier><key>::<function>(<argument>)
  *	modifier: ! = Alt (Mod1Mask), ^ = Ctrl (ControlMask), + = Shift (ShiftMask), # = LWin (Mod4Mask)
  */
-#m::View_activateWindow(+1)				; Activate the next window in the active view.
-#n::View_activateWindow(-1)				; Activate the previous window in the active view.
-#+m::View_shuffleWindow(+1)				; Move the active window to the next position in the window list of the view.
-#+n::View_shuffleWindow(-1)				; Move the active window to the previous position in the window list of the view.
+#Down::View_activateWindow(+1)				; Activate the next window in the active view.
+#Up::View_activateWindow(-1)				; Activate the previous window in the active view.
+#+Down::View_shuffleWindow(+1)				; Move the active window to the next position in the window list of the view.
+#+Up::View_shuffleWindow(-1)				; Move the active window to the previous position in the window list of the view.
 #+Enter::View_shuffleWindow(0)				; Move the active window to the first position in the window list of the view.
 #c::Manager_closeWindow()					; Close the active window.
 #+d::Manager_toggleDecor()					; Show / Hide the title bar of the active window.
 #+f::View_toggleFloating()					; Toggle the floating status of the active window (i. e. dis- / regard it when tiling).
-#+q::Manager_moveWindow()					; Move the active window by key (only floating windows).
+#+m::Manager_moveWindow()					; Move the active window by key (only floating windows).
 #+s::Manager_sizeWindow()					; Resize the active window by key (only floating windows).
 #+x::Manager_maximizeWindow()				; Move and resize the active window to the size of the work area (only floating windows).
 #i::Manager_getWindowInfo()					; Get information for the active window (id, title, class, process name, style, geometry, tags and floating state).
 #+i::Manager_getWindowList()				; Get a window list for the active view (id, title and class).
-#^i::Manager_logViewWindowList()
-#+^i::Manager_logManagedWindowList()
-#^h::Manager_logHelp()
-#^d::Log_decDebugLevel()
-#^e::Log_incDebugLevel()
+#^i::Manager_logViewWindowList()			; Dump window information for the active view.
+#+^i::Manager_logManagedWindowList()		; Dump window information for every managed window.
+#^h::Manager_logHelp()						; Dump to the log an explanation of some of the other more cryptic log messages.
+#^[::Log_decDebugLevel()					; Decrement the log debug level.
+#^]::Log_incDebugLevel()					; Increment the log debug level.
 
 #Tab::View_setLayout(-1)					; Set the previously set layout. You may also use View_setLayout(">") for setting the next layout in the layout array.
-#\::View_setLayout(3)						; Set the 3rd defined layout (i. e. floating layout in the default configuration).
-#]::View_setLayout(2)						; Set the 2nd defined layout (i. e. monocle layout in the default configuration).
-#[::View_setLayout(1)						; Set the 1st defined layout (i. e. tile layout in the default configuration).
+#f::View_setLayout(3)						; Set the 3rd defined layout (i. e. floating layout in the default configuration).
+#m::View_setLayout(2)						; Set the 2nd defined layout (i. e. monocle layout in the default configuration).
+#t::View_setLayout(1)						; Set the 1st defined layout (i. e. tile layout in the default configuration).
 #Left::View_setMFactor(-0.05)				; Reduce the size of the master area in the active view (only for the "tile" layout).
 #Right::View_setMFactor(+0.05)				; Enlarge the size of the master area in the active view (only for the "tile" layout).
 #^t::View_rotateLayoutAxis(1, +1)			; Rotate the layout axis (i. e. 2 -> 1 = vertical layout, 1 -> 2 = horizontal layout, only for the "tile" layout).
 #^Enter::View_rotateLayoutAxis(1, +2)		; Mirror the layout axis (i. e. -1 -> 1 / 1 -> -1 = master on the left / right side, -2 -> 2 / 2 -> -2 = master at top / bottom, only for the "tile" layout).
 #^Tab::View_rotateLayoutAxis(2, +1)			; Rotate the master axis (i. e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 = y-axis = vertical stack, 2 -> 3 = z-axis = monocle, only for the "tile" layout).
 #^+Tab::View_rotateLayoutAxis(3, +1)		; Rotate the stack axis (i. e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 = y-axis = vertical stack, 2 -> 3 = z-axis = monocle, only for the "tile" layout).
-#^Up::View_setMY(+1)						; Move the master splitter, i. e. decrease the number of windows in the master area (only for the "tile" layout).
-#^Down::View_setMY(-1)						; Move the master splitter, i. e. increase the number of windows in the master area (only for the "tile" layout).
-#^Right::View_setMX(+1)
-#^Left::View_setMX(-1)
-#Up::View_setGapWidth(-2)					; Decrease the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
-#Down::View_setGapWidth(+2)					; Increase the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
+#^Up::View_setMY(+1)						; Increase the master Y dimension [1,9] (only for the "tile" layout).
+#^Down::View_setMY(-1)						; Decrease the master Y dimension [1,9] (only for the "tile" layout).
+#^Right::View_setMX(+1)						; Increase the master X dimension [1,9] (only for the "tile" layout).
+#^Left::View_setMX(-1)						; Decrease the master X dimension [1,9] (only for the "tile" layout).
+#<::View_setGapWidth(-2)					; Decrease the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
+#+<::View_setGapWidth(+2)					; Increase the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
 
 #BackSpace::Monitor_activateView(-1)		; Activate the previously activated view. You may also use Monitor_activateView("<") or Monitor_activateView(">") for activating the previous or next adjacent view.
 #+0::Monitor_setWindowTag(0)				; Tag the active window with all tags (1 ... Config_viewCount). You may also use Monitor_setWindowTag("<") or Monitor_setWindowTag(">") for setting the tag of the previous or next adjacent to the current view.
@@ -453,9 +453,9 @@ Config_saveSession() {
 #+Space::Monitor_toggleBar()				; Hide / Show the bar (bug.n status bar) on the active monitor.
 #Space::Monitor_toggleTaskBar()				; Hide / Show the task bar.
 #y::Bar_toggleCommandGui()					; Open the command GUI for executing programmes or bug.n functions.
-;#^e::Run, edit %Config_filePath%			; Open the configuration file in the standard text editor.
+#^e::Run, edit %Config_filePath%			; Open the configuration file in the standard text editor.
 #^s::Config_saveSession()					; Save the current state of monitors, views, layouts to the configuration file.
 #^r::Main_reload()							; Reload bug.n (i. e. the configuration and its dependent settings) without deleting the window lists of bug.n and restoring windows.
 											; It does not reset internal configuration variables, the tray icon or menu, hotkeys (unless set explicitly in Config.ini), individual window settings like Config_showBorder (since windows might be hidden) or hiding the title bar, the monitor count or views.
 											; It does not reload functions. Changed rules are only applied to new windows.
-#^Del::ExitApp								; Quit bug.n, restore the default Windows UI and show all windows.
+#^q::ExitApp								; Quit bug.n, restore the default Windows UI and show all windows.
