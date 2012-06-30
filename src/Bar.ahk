@@ -363,9 +363,9 @@ Bar_evaluateCommand() {
 				Manager_activateMonitor(-1)
 		} Else If (Bar_command_#2 = "Log") {
 			If (Bar_command_#1 = "increment debug level")
-				Manager_incDebugLevel()
+				Log_incDebugLevel()
 			If (Bar_command_#1 = "decrement debug level")
-				Manager_decDebugLevel()
+				Log_decDebugLevel()
 			If (Bar_command_#1 = "log help info")
 				Manager_logHelp()
 			If (Bar_command_#1 = "log view window info")
