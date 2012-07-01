@@ -410,8 +410,9 @@ Config_saveSession() {
 #^Down::View_setMY(-1)						; Decrease the master Y dimension [1,9] (only for the "tile" layout).
 #^Right::View_setMX(+1)						; Increase the master X dimension [1,9] (only for the "tile" layout).
 #^Left::View_setMX(-1)						; Decrease the master X dimension [1,9] (only for the "tile" layout).
-#<::View_setGapWidth(-2)					; Decrease the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
-#+<::View_setGapWidth(+2)					; Increase the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
+#+Left::View_setGapWidth(-2)                ; Decrease the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
+#+Right::View_setGapWidth(+2)               ; Increase the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
+
 
 #BackSpace::Monitor_activateView(-1)		; Activate the previously activated view. You may also use Monitor_activateView("<") or Monitor_activateView(">") for activating the previous or next adjacent view.
 #+0::Monitor_setWindowTag(0)				; Tag the active window with all tags (1 ... Config_viewCount). You may also use Monitor_setWindowTag("<") or Monitor_setWindowTag(">") for setting the tag of the previous or next adjacent to the current view.
