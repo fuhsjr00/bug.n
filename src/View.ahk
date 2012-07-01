@@ -272,7 +272,6 @@ View_setMX(d) {
 	m := Manager_aMonitor
 	v := Monitor_#%m%_aView_#1
 	l := View_#%m%_#%v%_layout_#1
-	Log_msg("View_setMX(): l: " . l)
 	If Not (Config_layoutFunction_#%l% = "tile")
 		Return
 	
@@ -289,7 +288,6 @@ View_setMY(d) {
 	m := Manager_aMonitor
 	v := Monitor_#%m%_aView_#1
 	l := View_#%m%_#%v%_layout_#1
-	Log_msg("View_setMY(): l: " . l)
 	If Not (Config_layoutFunction_#%l% = "tile")
 		Return
 	
