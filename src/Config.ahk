@@ -260,6 +260,8 @@ Config_redirectHotkey(key) {
 				Send % SubStr(Config_hotkey_#%A_index%_command, 6)
 			Else If (type = "Reloa")
 				Reload
+			Else If (Config_hotkey_#%A_Index%_command = "ExitApp")
+				ExitApp
 			Else {
 				i := InStr(Config_hotkey_#%A_index%_command, "(")
 				j := InStr(Config_hotkey_#%A_index%_command, ")", False, i)
