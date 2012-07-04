@@ -57,7 +57,7 @@ Manager_init() {
 	Bar_hideTitleWndIds		:= ""
 	Manager_allWndIds		:= ""
 	Manager_managedWndIds	:= ""
-	Manager_sync()
+	Manager_initial_sync()
 	
 	Bar_updateStatus()
 	Bar_updateTitle()
@@ -125,12 +125,6 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
 				hideTitle   := rule9
 			}
 		}
-		If (m = 0)
-			m := Manager_aMonitor
-		If (m > Manager_monitorCount)	; If the specified monitor is out of scope, set it to the max. monitor.
-			m := Manager_monitorCount
-		If (tags = 0)
-			tags := 1 << Monitor_#%m%_aView_#1 - 1
 	} Else {
 		isManaged := False
 		If wndTitle
@@ -162,10 +156,10 @@ Manager_cleanup() {
 	Manager_hideShow := True
 	Loop, PARSE, wndIds, `;
 	{
-		WinShow, ahk_id %A_LoopField%
+		Manager_winShow(A_LoopField)
 		If Not Config_showBorder
-			WinSet, Style, +0x40000, ahk_id %A_LoopField%
-		WinSet, Style, +0xC00000, ahk_id %A_LoopField%
+			Manager_winSet("Style", "+0x40000", A_LoopField)
+		Manager_winSet("Style", "+0xC00000", A_LoopField)
 	}
 	
 	; Show the task bar.
@@ -182,8 +176,8 @@ Manager_cleanup() {
 		Loop, % Config_viewCount
 			View_arrange(m, A_Index)
 	}
-	WinSet, AlwaysOnTop, On, ahk_id %aWndId%
-	WinSet, AlwaysOnTop, Off, ahk_id %aWndId%
+	Manager_winSet("AlwaysOnTop", "On", aWndId)
+	Manager_winSet("AlwaysOnTop", "Off", aWndId)
 	
 	DllCall("Shell32.dll\SHAppBarMessage", "UInt", (ABM_REMOVE := 0x1), "UInt", &Bar_appBarData)
 	; SKAN: Crazy Scripting : Quick Launcher for Portable Apps (http://www.autohotkey.com/forum/topic22398.html)
@@ -194,7 +188,7 @@ Manager_closeWindow() {
 	WinGetClass, aWndClass, ahk_id %aWndId%
 	WinGetTitle, aWndTitle, ahk_id %aWndId%
 	If Not (aWndClass = "AutoHotkeyGUI" And RegExMatch(aWndTitle, "bug.n_BAR_[0-9]+"))
-		WinClose, ahk_id %aWndId%
+		Manager_winClose(aWndId)
 }
 
 Manager_getWindowInfo() {
@@ -238,6 +232,112 @@ Manager_getWindowList() {
 		Clipboard := text
 }
 
+Manager_logViewLayout() {
+
+}
+
+Manager_logWindowInfo( w ) {
+	Local v, wndId, isWinFocus, isBugnActive, isFloating, isHidden, isDecorated, isResponsive, isGhost, wndTitle, wndProc, wndClass, wndStyle, wndX, wndY, wndW, wndH, detect_state
+	
+	detect_state := A_DetectHiddenWindows
+	DetectHiddenWindows, On
+	WinGet, wndId, ID, A
+	If wndId = %w%
+		isWinFocus := "*"
+	Else
+		isWinFocus := " "
+	v := Monitor_#%Manager_aMonitor%_aView_#1
+	If View_#%Manager_aMonitor%_#%v%_aWndId = %w%
+		isBugnActive := "*"
+	Else
+		isBugnActive := " "
+	WinGetTitle, wndTitle, ahk_id %w%
+	WinGetClass, wndClass, ahk_id %w%
+	WinGet, wndProc, ProcessName, ahk_id %w%
+	If InStr(Bar_hiddenWndIds, w)
+		isHidden := "*"
+	Else 
+		isHidden := " "
+	If Manager_#%w%_isFloating
+		isFloating := "*"
+	Else
+		isFloating := " "
+	If Manager_#%w%_isDecorated
+		isDecorated := "*"
+	Else
+		isDecorated := " "
+	WinGet, wndStyle, Style, ahk_id %w%
+	WinGetPos, wndX, wndY, wndW, wndH, ahk_id %w%
+	
+	If Manager_isGhost(w)
+		isGhost := "*"
+	Else
+		isGhost := " "
+	
+	DetectHiddenWindows, %detect_state%
+	
+	; Intentionally don't detect hidden windows here to see what Manager_hungTest does
+	If Manager_isHung(w)
+		isResponsive := " "
+	Else
+		isResponsive := "*"
+		
+	
+	Log_bare(w . "`t" . isHidden . " " isWinFocus . " " . isBugnActive . " " . isFloating . " " . isDecorated . " " . isResponsive . " " . isGhost . " " . Manager_#%w%_monitor . "`t" . Manager_#%w%_tags . "`t" . wndX . "`t" . wndY . "`t" . wndW . "`t" . wndH . "`t" . wndStyle . "`t" . wndProc . " / " . wndClass . " / " . wndTitle)
+}
+
+Manager_logHeader() {
+	Log_bare( "ID`t`tH W A F D R G M`tTags`tX`tY`tW`tH`tStyle`t`tProc / Class / Title")
+}
+
+Manager_logViewWindowList() {
+	Local text, v, aWndId, wndIds, aWndTitle
+	
+	v := Monitor_#%Manager_aMonitor%_aView_#1
+	Log_msg( "Window dump for active view (" . Manager_aMonitor . ", " . v . ")" )
+	Manager_logHeader()
+	
+	StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
+	Loop, PARSE, wndIds, `;
+	{
+		Manager_logWindowInfo( A_LoopField )
+	}
+}
+
+Manager_logManagedWindowList() {
+	Local wndIds
+	
+	Log_msg( "Window dump for manager" )
+	Manager_logHeader()
+	
+	StringTrimRight, wndIds, Manager_managedWndIds, 1
+	Loop, PARSE, wndIds, `;
+	{
+		Manager_logWindowInfo( A_LoopField)
+	}
+}
+
+Manager_logHelp() {
+	Log_msg("Help Display")
+	Log_bare("Window list columns")
+	Log_bare("    ID - Windows ID. Unique, OS-assigned ID")
+	Log_bare("    H - Hidden. Whether bug.n thinks this window is hidden.")
+	Log_bare("    W - Windows active. This window is active according to Windows.")
+	Log_bare("    A - View active. This window is active according to bug.n.")
+	Log_bare("    F - Floating. This window should not be positioned and resized by the layout.")
+	Log_bare("    D - Decorated. Does the window have a title bar?")
+	Log_bare("    R - Responsive. Is responding to messages?")
+	Log_bare("    G - Ghost. Is this window a ghost of another hung window?")
+	Log_bare("    M - Monitor number.")
+	Log_bare("    Tags - Bit-mask of the views in which the window is active.")
+	Log_bare("    X - Windows X position.")
+	Log_bare("    Y - Windows Y position.")
+	Log_bare("    W - Windows width.")
+	Log_bare("    H - Windows height.")
+	Log_bare("    Style - Windows style.")
+	Log_bare("    Proc / Class / Title - Process/Class/Title of the window.")
+}
+
 Manager_lockWorkStation() {
     Global Config_shellMsgDelay
     
@@ -261,13 +361,50 @@ Manager_loop(index, increment, lowerBound, upperBound) {
 	Return, index
 }
 
-Manager_manage(wndId) {
-	Local a, c0, hideTitle, i, isDecorated, isFloating, isManaged, l, m, n, replace, search, tags
+; Accept a window to be added to the system for management.
+; Provide a monitor, view preference, but don't override the config.
+; pm - Preferred monitor
+; pv - Preferred view
+; wndId - Window to add to the manager.
+Manager_manage(pm, pv, wndId) {
+	Local a, c0, hideTitle, i, isDecorated, isFloating, isManaged, l, m, n, replace, search, tags, body
     Local wndControlList0, wndId0, wndIds, wndX, wndY, wndWidth, wndHeight, wndProcessName
 	
 	If Not InStr(Manager_allWndIds, wndId ";")
 		Manager_allWndIds .= wndId ";"
-	Manager_applyRules(wndId, isManaged, m, tags, isFloating, isDecorated, hideTitle)
+	
+	body := 0
+	If Manager_isGhost( wndId ) {
+		Log_dbg_msg(2, "A window has given up the ghost (Ghost wndId: " . wndId . ")")
+		; Ghosts need special attention.
+		; Say a quick prayer and try to reattach it to its body.
+		body := Manager_findHung( wndId )
+		If body {
+			isManaged := InStr(Manager_managedWndIds, body ";")
+			m := Manager_#%body%_monitor
+			tags := Manager_#%body%_tags
+			isDecorated := Manager_#%body%_isDecorated
+			isFloating := Manager_#%body%_isFloating
+			hideTitle := InStr(Bar_hideTitleWndIds, body ";")
+		}
+		Else {
+			Log_dbg_msg(1, "No body could be found for ghost wndId: " . wndId)
+		}
+	}
+	
+	; Apply rules if the window is either a normal window or a ghost without a body.
+	If ( body = 0 ) {
+		Manager_applyRules(wndId, isManaged, m, tags, isFloating, isDecorated, hideTitle)
+		
+		If (m = 0)
+			m := pm
+		If (m < 0)
+			m := 1
+		If (m > Manager_monitorCount)	; If the specified monitor is out of scope, set it to the max. monitor.
+			m := Manager_monitorCount
+		If (tags = 0)
+			tags := 1 << (pv - 1)
+	}
 	
 	WinGet, wndProcessName, ProcessName, ahk_id %wndId%
 	If (wndProcessName = "chrome.exe") {
@@ -281,38 +418,26 @@ Manager_manage(wndId) {
 		Monitor_moveWindow(m, wndId)
 
 		Manager_managedWndIds .= wndId ";"
+		Manager_#%wndId%_monitor     := m
 		Manager_#%wndId%_tags        := tags
 		Manager_#%wndId%_isDecorated := isDecorated
 		Manager_#%wndId%_isFloating  := isFloating
 		
 		Loop, % Config_viewCount
 			If (Manager_#%wndId%_tags & 1 << A_Index - 1) {
-	            l := View_#%m%_#%A_Index%_layout_#1
-	            If (Config_layoutFunction_#%l% = "tile") And ((Config_newWndPosition = "masterBottom") Or (Config_newWndPosition = "stackTop")) {
-                    n := View_getTiledWndIds(m, A_Index, wndIds)
-                    If (n > 1) {
-                        StringSplit, wndId, wndIds, `;
-                        If (wndId0 < View_#%m%_#%A_Index%_layoutMSplit)
-                            View_#%m%_#%A_Index%_layoutMSplit := wndId0
-                        i := View_#%m%_#%A_Index%_layoutMSplit
-                        search  := wndId%i% ";"
-                        replace := search wndId ";"
-                        StringReplace, View_#%m%_#%A_Index%_wndIds, View_#%m%_#%A_Index%_wndIds, %search%, %replace%
-                    } Else
-                        View_#%m%_#%A_Index%_wndIds .= wndId ";"
-                    If (Config_newWndPosition = "masterBottom") And (n > 0)
-                        View_#%m%_#%A_Index%_layoutMSplit += 1
-                } Else If (Config_newWndPosition = "bottom")
-                    View_#%m%_#%A_Index%_wndIds .= wndId ";"
-                Else
-                	View_#%m%_#%A_Index%_wndIds := wndId ";" View_#%m%_#%A_Index%_wndIds
-				Bar_updateView(m, A_Index)
+				If (body) {
+					; Try to position near the body.
+					View_ghostWnd(m, A_Index, body, wndId)
+				}
+				Else {
+					View_addWnd(m, A_Index, wndId)
+				}
 			}
 		
 		If Not Config_showBorder
-			WinSet, Style, -0x40000, ahk_id %wndId%
+			Manager_winSet("Style", "-0x40000", wndId)
 		If Not Manager_#%wndId%_isDecorated
-			WinSet, Style, -0xC00000, ahk_id %wndId%
+			Manager_winSet("Style", "-0xC00000", wndId)
 		
 		a := Manager_#%wndId%_tags & 1 << Monitor_#%m%_aView_#1 - 1
 		If a {
@@ -320,7 +445,7 @@ Manager_manage(wndId) {
 			Manager_winActivate(wndId)
 		} Else {
 			Manager_hideShow := True
-			WinHide, ahk_id %wndId%
+			Manager_winHide(wndId)
 			Manager_hideShow := False
 		}
 	}
@@ -341,7 +466,7 @@ Manager_maximizeWindow() {
 	l := View_#%Manager_aMonitor%_#%v%_layout_#1
 	If Not Manager_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
 		View_toggleFloating()
-	WinSet, Top,, ahk_id %aWndId%
+	Manager_winSet("Top", "", aWndId)
 	
 	Manager_winMove(aWndId, Monitor_#%Manager_aMonitor%_x, Monitor_#%Manager_aMonitor%_y, Monitor_#%Manager_aMonitor%_width, Monitor_#%Manager_aMonitor%_height)
 }
@@ -354,19 +479,61 @@ Manager_moveWindow() {
 	l := View_#%Manager_aMonitor%_#%v%_layout_#1
 	If Not Manager_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
 		View_toggleFloating()
-	WinSet, Top,, ahk_id %aWndId%
+	Manager_winSet("Top", "", aWndId)
 	
 	WM_SYSCOMMAND = 0x112
 	SC_MOVE = 0xF010
 	SendMessage, WM_SYSCOMMAND, SC_MOVE, , , ahk_id %aWndId%
 }
 
+HSHELL_WINDOWCREATED := 1
+; Seems to get sent sometimes when windows are deactivated.
+HSHELL_WINDOWDESTROYED := 2
+HSHELL_WINDOWACTIVATED := 4
+; At least title change.
+HSHELL_REDRAW := 6
+; The following two are seen when a hung window recovers. 
+; lParam notes the ghost process
+HSHELL_WINDOWREPLACED := 13
+; lParam notes the recovered process
+;14
+; Full-screen app activated? Root-privileged window activated?
+HSHELL_RUDEAPPACTIVATED := 32772
+; When a window is signalling an application update.
+WINDOW_NOTICE := 32774
+
+;
+; Reliable messages and their meanings (note that any message may be missed if bug.n is hung):
+;   1 - Window shown (shown ID)
+;   2 - Window destroyed or hidden, same message for both (destroyed or hidden ID)
+;   4 - Window activated via mouse, alt+tab, or hotkey (sometimes 32772, but always one of them)
+;   6 - Window title change (ID of redrawn window)
+;   13 - Hung window recovers and replaces ghost window (ghost window ID is provided)
+;   14 - Hung window recovered (ID of previously hung window) 
+;   32772 - Window activated via mouse, alt+tab, or hotkey (sometimes 4, but always one of them)
+;   32774 - Window is flashing due to some event, one message for each flash
+;
+; Indications of:
+;   New windows - cmd/shell may be starting a new window on message 6
+;       Win+e indicates a new window with message 6 as long as the button
+;       presses are below a certain frequency.
+;       Message 1 may indicate a new window started from Windows Explorer
+;       There doesn't seem to be a reliable way to get all application starts.
+;   Closed windows - 13 always indicates closed ghost window
+;       2 always indicates closed standard window
+;   Focus change - 4 or 32772 always catch this
+;   Window event - 6 indicates when title changes which can be used 
+;       in the case of some applications, 32774 works for others
+;
 Manager_onShellMessage(wParam, lParam) {
-	Local a, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, flag, m, t, wndClass, wndId, wndIds, wndPName, wndTitle, x, y
+	Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, m, t, wndClass, wndId, wndIds, wndPName, wndTitle, x, y
 	
 	SetFormat, Integer, hex
 	lParam := lParam+0
 	SetFormat, Integer, d
+	
+	Log_dbg_msg(2, "Manager_onShellMessage( wParam: " . wParam . ", lParam: " . lParam . " )")
+	
 	WinGetClass, wndClass, ahk_id %lParam%
 	WinGetTitle, wndTitle, ahk_id %lParam%
 	WinGet, wndPName, ProcessName, ahk_id %lParam%
@@ -382,6 +549,15 @@ Manager_onShellMessage(wParam, lParam) {
 		Bar_updateTitle()
 	}
 	
+	If ( wParam = HSHELL_WINDOWREPLACED ) {
+		; This shouldn't need a redraw because the window was supposedly replaced.
+		Manager_unmanage(lParam)
+	}
+	
+	If ( wParam = 14 ) {
+		; Window recovered from being hung. Maybe force a redraw.
+	}
+	
 	If (wParam = 1 Or wParam = 2 Or wParam = 4 Or wParam = 6 Or wParam = 32772) And lParam And Not Manager_hideShow And Not Manager_focus {
 		If Not (wParam = 4 Or wParam = 32772)
 			If Not wndClass And Not (wParam = 2) {
@@ -393,42 +569,41 @@ Manager_onShellMessage(wParam, lParam) {
 					Sleep, %Config_shellMsgDelay%
 			}
 		
-		If (wParam = 1 Or wParam = 6) And Not InStr(Manager_allWndIds, lParam ";") And Not InStr(Manager_managedWndIds, lParam ";")
-			a := Manager_manage(lParam)
-		Else {
-			flag := True
-			a := Manager_sync(wndIds)
-			If wndIds
-				a := False
-		}
-		If a {
+		isChanged := Manager_sync(wndIds)
+		If wndIds
+			isChanged := False
+
+		If a Or isChanged {
 			View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
 			Bar_updateView(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
 		}
 		
-		If flag
-			If (Manager_monitorCount > 1) {
-				WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
-				m := Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2)
-				If m
-					Manager_aMonitor := m
-			}
+		If (Manager_monitorCount > 1) {
+			WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
+			m := Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2)
+			If m
+				Manager_aMonitor := m
+		}
 		
 		If wndIds {
 			If (Config_onActiveHiddenWnds = "view") {
 				wndId := SubStr(wndIds, 1, InStr(wndIds, ";") - 1)
 				Loop, % Config_viewCount
 					If (Manager_#%wndId%_tags & 1 << A_Index - 1) {
+						Log_dbg_msg(3, "Switching views because " . wndId . " is considered hidden and active")
+						Manager_aMonitor := Manager_#%wndId%_monitor
 						Monitor_activateView(A_Index)
 						Break
 					}
 			} Else {
 				StringTrimRight, wndIds, wndIds, 1
 				StringSplit, wndId, wndIds, `;
+				; Otherwise re-hide them.
 				If (Config_onActiveHiddenWnds = "hide") {
 					Loop, % wndId0
-						WinHide, % "ahk_id " wndId%A_Index%
+						Manager_winHide(wndId%A_Index%)
 				} Else If (Config_onActiveHiddenWnds = "tag") {
+					; Or tag all of them for the current view.
 					t := Monitor_#%Manager_aMonitor%_aView_#1
 					Loop, % wndId0 {
 						wndId := wndId%A_Index%
@@ -521,7 +696,7 @@ Manager_sizeWindow() {
 	l := View_#%Manager_aMonitor%_#%v%_layout_#1
 	If Not Manager_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
 		View_toggleFloating()
-	WinSet, Top,, ahk_id %aWndId%
+	Manager_winSet("Top", "", aWndId)
 	
 	WM_SYSCOMMAND = 0x112
 	SC_SIZE	= 0xF000
@@ -540,11 +715,14 @@ Manager_sync(ByRef wndIds = "") {
 	Loop, % wndId {
 		If Not InStr(shownWndIds, wndId%A_Index% ";") {
 			If Not InStr(Manager_managedWndIds, wndId%A_Index% ";") {
-				flag := Manager_manage(wndId%A_Index%)
+				flag := Manager_manage(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, wndId%A_Index%)
 				If flag
 					a := flag
-			} Else
+			} Else If Not Manager_isHung(wndId%A_Index%) {
+				; This is a window that is already managed but was brought into focus by something. Maybe it
+				; would be useful to do something with it.
 				wndIds .= wndId%A_Index% ";"
+			}
 		}
 		visibleWndIds := visibleWndIds wndId%A_Index% ";"
 	}
@@ -563,15 +741,55 @@ Manager_sync(ByRef wndIds = "") {
 	Return, a
 }
 
+; No windows are known to the system yet.
+; Try to do something smart with the initial layout.
+Manager_initial_sync() {
+	Local wndId0, wnd, wndX, wndY, wndW, wndH, x, y, m, len
+	
+	; Initialize lists
+	; Note that these variables make this function non-reentrant.
+	Loop, % Manager_monitorCount
+		Manager_initial_sync_m#%A_Index%_wndList := List_new()
+	
+	; check all visible windows against the known windows
+	WinGet, wndId, List, , , 
+	Loop, % wndId {
+		; Based on some analysis here, determine which monitors and layouts would best 
+		; serve existing windows. Do not override configuration settings.
+		
+		; Which monitor is it on?
+		
+		wnd := wndId%A_Index%
+		WinGetPos, wndX, wndY, wndW, wndH, ahk_id %wnd%
+		
+		x := wndX + wndW/2
+		y := wndY + wndH/2
+		
+		m := Monitor_get(x, y)
+		If m > 0
+			List_append(Manager_initial_sync_m#%m%_wndList, wndId%A_index%)
+		
+		; @todo: What percentage of the monitor area is it occupying? (Suggest layout)
+		; @todo: What part of the monitor is it on? (Ordering of windows)
+	}
+
+	Loop, % Manager_monitorCount {
+		m := A_Index
+		len := List_toArray(Manager_initial_sync_m#%m%_wndList, "Manager_initial_sync_tmpArray")
+		Loop, % len
+			Manager_manage(m, 1, Manager_initial_sync_tmpArray%A_Index%)
+	}
+}
+
 Manager_toggleDecor() {
 	Local aWndId
 	
 	WinGet, aWndId, ID, A
 	Manager_#%aWndId%_isDecorated := Not Manager_#%aWndId%_isDecorated
 	If Manager_#%aWndId%_isDecorated
-		WinSet, Style, +0xC00000, ahk_id %aWndId%
+		Manager_winSet("Style", "+0xC00000", aWndId)
 	Else
-		WinSet, Style, -0xC00000, ahk_id %aWndId%
+		Manager_winSet("Style", "-0xC00000", aWndId)
 }
 
 Manager_unmanage(wndId) {
@@ -580,9 +798,10 @@ Manager_unmanage(wndId) {
 	a := Manager_#%wndId%_tags & 1 << Monitor_#%Manager_aMonitor%_aView_#1 - 1
 	Loop, % Config_viewCount
 		If (Manager_#%wndId%_tags & 1 << A_Index - 1) {
-			StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %wndId%`;, 
+			View_delWnd( Manager_aMonitor, A_Index, wndId )
 			Bar_updateView(Manager_aMonitor, A_Index)
 		}
+	Manager_#%wndId%_monitor     :=
 	Manager_#%wndId%_tags        :=
 	Manager_#%wndId%_isDecorated :=
 	Manager_#%wndId%_isFloating  :=
@@ -594,7 +813,7 @@ Manager_unmanage(wndId) {
 }
 
 Manager_winActivate(wndId) {
-	Local wndHeight, wndWidth, wndX, wndY
+	Local wndHeight, wndWidth, wndX, wndY, newWnd
 	
 	If Config_mouseFollowsFocus {
 		If wndId {
@@ -603,15 +822,135 @@ Manager_winActivate(wndId) {
 		} Else
 			DllCall("SetCursorPos", "Int", Round(Monitor_#%Manager_aMonitor%_x + Monitor_#%Manager_aMonitor%_width / 2), "Int", Round(Monitor_#%Manager_aMonitor%_y + Monitor_#%Manager_aMonitor%_height / 2))
 	}
-	WinActivate, ahk_id %wndId%
+	If Manager_isHung(wndId) {
+		Log_dbg_msg(2, "Manager_winActivate: Potentially hung window " . wndId)
+		Return 1
+	}
+	Else {
+		WinActivate, ahk_id %wndId%
+		WinGet, newWin, ID, A
+		If (wndId != newWin)
+			Return 1
+	}
 	Bar_updateTitle()
+	Return 0
 }
 
 Manager_winMove(wndId, x, y, width, height) {
-	WinRestore, ahk_id %wndId%
+	If Manager_isHung(wndId) {
+		Log_dbg_msg(2, "Manager_winMove: Potentially hung window " . wndId)
+		Return 1
+	}
+	Else
+		WinRestore, ahk_id %wndId%
 	WM_ENTERSIZEMOVE = 0x0231
 	WM_EXITSIZEMOVE  = 0x0232
 	SendMessage, WM_ENTERSIZEMOVE, , , , ahk_id %wndId%
-	WinMove, ahk_id %wndId%, , %x%, %y%, %width%, %height%
-	SendMessage, WM_EXITSIZEMOVE, , , , ahk_id %wndId%
+	If ErrorLevel {
+		Log_dbg_msg(2, "Manager_winMove: Potentially hung window " . wndId)
+		Return 1
+	}
+	Else {
+		WinMove, ahk_id %wndId%, , %x%, %y%, %width%, %height%
+		SendMessage, WM_EXITSIZEMOVE, , , , ahk_id %wndId%
+	}
+}
+
+Manager_winHide(wndId) {
+	
+	If Manager_isHung(wndId) {
+		Log_dbg_msg(2, "Manager_winHide: Potentially hung window " . wndId)
+		Return 1
+	}
+	Else {
+		WinHide, ahk_id %wndId%
+		Return 0
+	}
+}
+
+Manager_winShow(wndId) {
+	
+	If Manager_isHung(wndId) {
+		Log_dbg_msg(2, "Manager_winShow: Potentially hung window " . wndId)
+		Return 1
+	}
+	Else {
+		WinShow, ahk_id %wndId%
+		Return 0
+	}
+}
+
+Manager_winClose(wndId) {
+	
+	If Manager_isHung(wndId) {
+		Log_dbg_msg(2, "Manager_winClose: Potentially hung window " . wndId)
+		Return 1
+	}
+	Else {
+		WinClose, ahk_id %wndId%
+		Return 0
+	}
+}
+
+Manager_winSet(type, value, wndId) {
+	
+	If Manager_isHung(wndId) {
+		Log_dbg_msg(2, "Manager_winSet: Potentially hung window " . wndId)
+		Return 1
+	}
+	Else {
+		WinSet, %type%, %value%, ahk_id %wndId%
+		Return 0
+	}
+}
+
+; 0 - Not hung
+; 1 - Hung
+Manager_isHung(wndId) {
+	Local result, detect_setting, WM_NULL
+	WM_NULL := 0
+	detect_setting := A_DetectHiddenWindows
+	DetectHiddenWindows, On
+	SendMessage, WM_NULL, , , , ahk_id %wndId%
+	result := ErrorLevel
+	DetectHiddenWindows, %detect_setting%
+	
+	If result
+		Return 1
+	Else
+		Return 0
+}
+
+; Given a ghost window, try to find its body.
+; This is only known to work on Windows 7
+Manager_findHung( ghostWnd ) {
+	Local expectedTitle, expectedX, expectedY, expectedW, expectedH, wndTitle, wndX, wndY, wndW, wndH, wndIds
+	;Log_dbg_msg(3, "Manager_findHung(" . ghostWnd . ")")
+	WinGetTitle, expectedTitle, ahk_id %ghostWnd%
+	StringReplace, expectedTitle, expectedTitle, " (Not Responding)", ""
+	WinGetPos, expectedX, expectedY, expectedW, expectedH, ahk_id %ghostWnd%
+	
+	SetTitleMatchMode, 2
+	WinGet, wndIds, List, %expectedTitle%
+	Loop, % wndIds {
+		If (A_Index = ghostWnd)
+			Continue
+		WinGetPos, wndX, wndY, wndW, wndH, % "ahk_id" wndIDs%A_Index%
+
+		If (wndX = expectedX) And (wndY = expectedY) And (wndW = expectedW) And (wndH = expectedH)
+			Return wndIds%A_Index%
+	}
+	Return 0
+}
+
+Manager_isGhost(wndId) {
+	Local wndClass, wndProc
+	
+	WinGet, wndProc, ProcessName, ahk_id %wndId%
+	WinGetClass, wndClass, ahk_id %wndId%
+	
+	If (wndProc = "dwm.exe") And (wndClass = "Ghost")
+		Return 1
+	Else
+		Return 0
 }

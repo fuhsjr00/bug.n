@@ -40,56 +40,71 @@ Monitor_activateView(v) {
 		v := Manager_loop(Monitor_#%Manager_aMonitor%_aView_#1, +1, 1, Config_viewCount)
 	Else If (v = "<")
 		v := Manager_loop(Monitor_#%Manager_aMonitor%_aView_#1, -1, 1, Config_viewCount)
-	If (v > 0) And (v <= Config_viewCount) And Not Manager_hideShow And Not (v = Monitor_#%Manager_aMonitor%_aView_#1) {
-		aView := Monitor_#%Manager_aMonitor%_aView_#1
-		WinGet, aWndId, ID, A
-		If WinExist("ahk_id" aWndId) And InStr(View_#%Manager_aMonitor%_#%aView%_wndIds, aWndId ";") {
-			WinGetClass, aWndClass, ahk_id %aWndId%
-			WinGetTitle, aWndTitle, ahk_id %aWndId%
-			If Not (aWndClass = "Progman") And Not (aWndClass = "AutoHotkeyGui" And SubStr(aWndTitle, 1, 10) = "bug.n_BAR_") And Not (aWndClass = "DesktopBackgroundClass")
-				View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
-		}
-		
-		n := Config_syncMonitorViews
-		If (n = 1)
-			n := Manager_monitorCount
-		Else If (n < 1)
-			n := 1
-		Loop, % n {
-			If (n = 1)
-				m := Manager_aMonitor
-			Else
-				m := A_Index
-			
-			Monitor_#%m%_aView_#2 := aView
-			Monitor_#%m%_aView_#1 := v
-			
-			Manager_hideShow := True
-			StringTrimRight, wndIds, View_#%m%_#%aView%_wndIds, 1
-			Loop, PARSE, wndIds, `;
-				If Not (Manager_#%A_LoopField%_tags & (1 << v - 1))
-					WinHide, ahk_id %A_LoopField%
-			StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
-			Loop, PARSE, wndIds, `;
-				WinShow, ahk_id %A_LoopField%
-			Manager_hideShow := False
-			
-			Bar_updateView(m, aView)
-			Bar_updateView(m, v)
-			
-			View_arrange(m, v)
-		}
-		
-		wndId := View_#%Manager_aMonitor%_#%v%_aWndId
-		If Not (wndId And WinExist("ahk_id" wndId)) {
-			If View_#%Manager_aMonitor%_#%v%_wndIds {
-				wndId := SubStr(View_#%Manager_aMonitor%_#%v%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%v%_wndIds, ";")-1)
-				View_#%Manager_aMonitor%_#%v%_aWndId := wndId
-			} Else
-				wndId := 0
-		}
-		Manager_winActivate(wndId)
+	
+	Log_dbg_msg(1, "Monitor_activateView(" . v . ") Manager_aMonitor: " . Manager_aMonitor . "; wndIds: " . View_#%m%_#%aView%_wndIds)
+	
+	If (v <= 0) Or (v > Config_viewCount) Or Manager_hideShow
+		Return
+	; Re-arrange the windows on the view.
+	If (v = Monitor_#%Manager_aMonitor%_aView_#1) {
+		View_arrange(Manager_aMonitor, v)
+		Return
 	}
+	
+	aView := Monitor_#%Manager_aMonitor%_aView_#1
+	WinGet, aWndId, ID, A
+	If WinExist("ahk_id" aWndId) And InStr(View_#%Manager_aMonitor%_#%aView%_wndIds, aWndId ";") {
+		WinGetClass, aWndClass, ahk_id %aWndId%
+		WinGetTitle, aWndTitle, ahk_id %aWndId%
+		If Not (aWndClass = "Progman") And Not (aWndClass = "AutoHotkeyGui" And SubStr(aWndTitle, 1, 10) = "bug.n_BAR_") And Not (aWndClass = "DesktopBackgroundClass")
+			View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
+	}
+	
+	n := 1
+	If (Config_syncMonitorViews > 0)
+		n := Manager_monitorCount
+	Loop, % n {
+		If (n = 1)
+			m := Manager_aMonitor
+		Else
+			m := A_Index
+		
+		Monitor_#%m%_aView_#2 := aView
+		Monitor_#%m%_aView_#1 := v
+		
+		Manager_hideShow := True
+		; Most of the operations here are dispersed to multiple _different_ windows.
+		; Delays in this part of the code are extremely noticeable and the users
+		; do a lot of view switching.
+		SetWinDelay, 0
+		StringTrimRight, wndIds, View_#%m%_#%aView%_wndIds, 1
+		Loop, PARSE, wndIds, `;
+			If Not (Manager_#%A_LoopField%_tags & (1 << v - 1))
+				Manager_winHide(A_LoopField)
+		SetWinDelay, 10
+		DetectHiddenWindows, On
+		View_arrange(m, v)
+		DetectHiddenWindows, Off
+		StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
+		SetWinDelay, 0
+		Loop, PARSE, wndIds, `;
+			Manager_winShow(A_LoopField)
+		SetWinDelay, 10
+		Manager_hideShow := False
+		
+		Bar_updateView(m, aView)
+		Bar_updateView(m, v)
+	}
+	
+	wndId := View_#%Manager_aMonitor%_#%v%_aWndId
+	If Not (wndId And WinExist("ahk_id" wndId)) {
+		If View_#%Manager_aMonitor%_#%v%_wndIds {
+			wndId := SubStr(View_#%Manager_aMonitor%_#%v%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%v%_wndIds, ";")-1)
+			View_#%Manager_aMonitor%_#%v%_aWndId := wndId
+		} Else
+			wndId := 0
+	}
+	Manager_winActivate(wndId)
 }
 
 Monitor_get(x, y) {
@@ -164,19 +179,9 @@ Monitor_getWorkArea(m) {
 }
 
 Monitor_moveWindow(m, wndId) {
-	Local fX, fY, monitor, wndHeight, wndWidth, wndX, wndY
+	Global
 	
-	WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
-	monitor := Monitor_get(wndX+wndWidth/2, wndY+wndHeight/2)
-	If Not (m = monitor) {
-		; move the window to the target monitor and scale it, if it does not fit on the monitor
-		fX := Monitor_#%m%_width / Monitor_#%monitor%_width
-		fY := Monitor_#%m%_height / Monitor_#%monitor%_height
-		If (wndX-Monitor_#%monitor%_x+wndWidth > Monitor_#%m%_width) Or (wndY-Monitor_#%monitor%_y+wndHeight > Monitor_#%m%_height)
-			Manager_winMove(wndId, Monitor_#%m%_x+fX*(wndX-Monitor_#%monitor%_x), Monitor_#%m%_y+fY*(wndY-Monitor_#%monitor%_y), fX*wndWidth, fY*wndHeight)
-		Else
-			Manager_winMove(wndId, Monitor_#%m%_x+(wndX-Monitor_#%monitor%_x), Monitor_#%m%_y+(wndY-Monitor_#%monitor%_y), wndWidth, wndHeight)
-	}
+	Manager_#%wndId%_monitor = m
 }
 
 Monitor_setWindowTag(t) {
@@ -220,7 +225,7 @@ Monitor_setWindowTag(t) {
 					Monitor_activateView(t)
 				Else {
 					Manager_hideShow := True
-					WinHide, ahk_id %aWndId%
+					Manager_winHide(aWndId)
 					Manager_hideShow := False
 					View_arrange(Manager_aMonitor, aView)
 					Bar_updateView(Manager_aMonitor, t)
@@ -273,7 +278,7 @@ Monitor_toggleWindowTag(t) {
 				Bar_updateView(Manager_aMonitor, t)
 				If (t = Monitor_#%Manager_aMonitor%_aView_#1) {
 					Manager_hideShow := True
-					WinHide, ahk_id %aWndId%
+					Manager_winHide(aWndId)
 					Manager_hideShow := False
 					wndId := SubStr(View_#%Manager_aMonitor%_#%t%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%t%_wndIds, ";")-1)
 					Manager_winActivate(wndId)

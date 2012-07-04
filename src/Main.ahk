@@ -32,6 +32,23 @@ SetWinDelay, 10
 #WinActivateForce
 
 ; pseudo main function
+
+	
+	EnvGet, appDir, APPDATA
+	bugnDir := appDir . "\bug.n"
+	IfNotExist, %bugnDir%
+		FileCreateDir, %bugnDir%
+	FileGetAttrib, attrib, %bugnDir%
+	IfNotInString, attrib, D 
+	{
+		MsgBox, The file path '%appDir%' already exists and is not a directory. Aborting.
+		Return
+	}
+	logFile := bugnDir . "\bugn_log.txt"
+	Log_init(logFile, False)
+	
+	
+	Log_msg("====== Initializing ======")
 	If 0 = 1
 		Config_filePath = %1%
 	Config_init()
@@ -52,6 +69,7 @@ Return					; end of the auto-execute section
  *	function & label definitions
  */
 Main_cleanup:			; The labels with "ExitApp" or "Return" at the end and hotkeys have to be after the auto-execute section.
+	Log_msg("====== Cleaning up ======")
 	If Config_autoSaveSession
 		Config_saveSession()
 	Manager_cleanup()
@@ -129,6 +147,8 @@ Main_toggleBar:
 	Monitor_toggleBar()
 Return
 
+#Include Log.ahk
+#Include List.ahk
 #Include Bar.ahk
 #Include Config.ahk
 #Include Manager.ahk

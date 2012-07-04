@@ -23,11 +23,11 @@ Config_init() {
 	
 	; status bar
 	Config_showBar			 := True						; If false, the bar is hidden. It can be made visible or hidden by hotkey (see below).
-	Config_horizontalBarPos  := "left"						; The horizontal position of the bar: "center", "left" or "right" side of the monitor or an offset in pixel (px) from the left (>= 0) or right (< 0).
-	Config_verticalBarPos    := "top"						; The vertical position of the bar: "top" or "bottom" of the monitor, "tray" = sub-window of the task bar.
-	Config_barWidth          := "100%"						; The width of the bar in pixel (px) or with a per cent sign (%) as a percentage.
-	Config_singleRowBar      := True						; If false, the bar will have to rows, one for the window title and one for all other GUI controls.
-	Config_spaciousBar       := False						; If true, the height of the bar will be set to a value equal to the height of an edit control, else it will be set to the text height.
+	Config_horizontalBarPos	 := "left"						; The horizontal position of the bar: "center", "left" or "right" side of the monitor or an offset in pixel (px) from the left (>= 0) or right (< 0).
+	Config_verticalBarPos	 := "top"						; The vertical position of the bar: "top" or "bottom" of the monitor, "tray" = sub-window of the task bar.
+	Config_barWidth			 := "100%"						; The width of the bar in pixel (px) or with a per cent sign (%) as a percentage.
+	Config_singleRowBar		 := True						; If false, the bar will have to rows, one for the window title and one for all other GUI controls.
+	Config_spaciousBar		 := False						; If true, the height of the bar will be set to a value equal to the height of an edit control, else it will be set to the text height.
 	Config_fontName			 := "Lucida Console"			; A monospace font is preferable for bug.n to calculate the correct width of the bar and its elements (sub-windows).
 	Config_fontSize			 := 
 	Config_normBgColor		 := 
@@ -37,7 +37,7 @@ Config_init() {
 	Config_readinBat		 := False						; If true, the system battery status is read in and displayed in the status bar. This only makes sense, if you have a system battery (notebook).
 	Config_readinCpu		 := False						; If true, the current CPU load is read in and displayed in the status bar.
 	Config_readinDate		 := True						; If true, the current date is read in (format: "WW, DD. MMM. YYYY") and displayed in the status bar.
-	Config_readinDiskLoad    := False						; If true, the current disk load (read and write) is read in and displayed in the status bar.
+	Config_readinDiskLoad	 := False						; If true, the current disk load (read and write) is read in and displayed in the status bar.
 	Config_readinMemoryUsage := False						; If true, the system memory usage is read in and displayed in the status bar.
 	Config_readinNetworkLoad := False						; If true, the current network load (up and down) is read in and displayed in the status bar.
 	Config_readinTime		 := True						; If true, the current time is read in (format: "HH:MM") and displayed in the status bar.
@@ -60,13 +60,13 @@ Config_init() {
 	Config_layoutAxis_#1	  := 1							; The layout axis: 1 = x, 2 = y; negative values mirror the layout, setting the master area to the right / bottom instead of left / top.
 	Config_layoutAxis_#2	  := 2							; The master axis: 1 = x (from left to right), 2 = y (from top to bottom), 3 = z (monocle).
 	Config_layoutAxis_#3	  := 2							; The stack axis:  1 = x (from left to right), 2 = y (from top to bottom), 3 = z (monocle).
-    Config_layoutGapWidth     := 0                          ; The default gap width in px (only even numbers) of the "tile" layout, i. e. the space between windows and around the layout.
+	Config_layoutGapWidth	  := 0							; The default gap width in px (only even numbers) of the "tile" layout, i. e. the space between windows and around the layout.
 	Config_layoutMFactor	  := 0.6						; The factor for the size of the master area, which is multiplied by the monitor size.
 	Config_mouseFollowsFocus  := True						; If true, the mouse pointer is set over the focused window, if a window is activated by bug.n.
 	Config_onActiveHiddenWnds := "view"						; The action, which will be taken, if a window e. g. should be activated, but is not visible; "view": show the view accordng to the first tag of the window in question, "tag": add the window in question to the current visible view, "hide": hide the window again ignoring the activation.
-    Config_newWndPosition     := "top"                      ; The position of a new window in a view; "top": at the beginning of the window list and the master area (default), "masterBottom": at the end of the master area, "stackTop": on top of the stack area, "bottom": at the end of the window list and the stack area.
+	Config_newWndPosition	  := "top"						; The position of a new window in a view; "top": at the beginning of the window list and the master area (default), "masterBottom": at the end of the master area, "stackTop": on top of the stack area, "bottom": at the end of the window list and the stack area.
 	Config_shellMsgDelay	  := 350						; The time bug.n waits after a shell message (a window is opened, closed or the focus has been changed); if there are any problems recognizing, when windows are opened or closed, try to increase this number.
-	Config_syncMonitorViews	  := 0							; The number of monitors (2 or more), for which views should be activated, when using the accordant hotkey. If set to 1, the views are actiated for all monitors. If set to 0, views are activated independently (only on the active monitor).
+	Config_syncMonitorViews	  := 0							; The number of monitors (2 or more), for which views should be activated, when using the accordant hotkey. If set to 1, the views are activated for all monitors. If set to 0, views are activated independently (only on the active monitor).
 	Config_viewFollowsTagged  := False						; If true and a window is tagged with a single tag, the view is correspondingly set to the tag.
 	
 	; Config_rule_#i	:= "<class (regular expression string)>;<title (regular expression string)>;<window style (hexadecimal number or blank)>;
@@ -363,8 +363,10 @@ Config_saveSession() {
 				text .= "View_#" m "_#" A_Index "_layoutGapWidth=" View_#%m%_#%A_Index%_layoutGapWidth "`n"
 			If Not (View_#%m%_#%A_Index%_layoutMFact = Config_layoutMFactor)
 				text .= "View_#" m "_#" A_Index "_layoutMFact=" View_#%m%_#%A_Index%_layoutMFact "`n"
-			If Not (View_#%m%_#%A_Index%_layoutMSplit = 1)
-				text .= "View_#" m "_#" A_Index "_layoutMSplit=" View_#%m%_#%A_Index%_layoutMSplit "`n"
+			If Not (View_#%m%_#%A_Index%_layoutMX = 1)
+				text .= "View_#" m "_#" A_Index "_layoutMX=" View_#%m%_#%A_Index%_layoutMX "`n"
+			If Not (View_#%m%_#%A_Index%_layoutMY = 1)
+				text .= "View_#" m "_#" A_Index "_layoutMY=" View_#%m%_#%A_Index%_layoutMY "`n"
 		}
 	}
 	
@@ -390,6 +392,11 @@ Config_saveSession() {
 #+x::Manager_maximizeWindow()				; Move and resize the active window to the size of the work area (only floating windows).
 #i::Manager_getWindowInfo()					; Get information for the active window (id, title, class, process name, style, geometry, tags and floating state).
 #+i::Manager_getWindowList()				; Get a window list for the active view (id, title and class).
+#^i::Manager_logViewWindowList()			; Dump window information for the active view.
+#+^i::Manager_logManagedWindowList()		; Dump window information for every managed window.
+#^h::Manager_logHelp()						; Dump to the log an explanation of some of the other more cryptic log messages.
+#^[::Log_decDebugLevel()					; Decrement the log debug level.
+#^]::Log_incDebugLevel()					; Increment the log debug level.
 
 #Tab::View_setLayout(-1)					; Set the previously set layout. You may also use View_setLayout(">") for setting the next layout in the layout array.
 #f::View_setLayout(3)						; Set the 3rd defined layout (i. e. floating layout in the default configuration).
@@ -401,10 +408,13 @@ Config_saveSession() {
 #^Enter::View_rotateLayoutAxis(1, +2)		; Mirror the layout axis (i. e. -1 -> 1 / 1 -> -1 = master on the left / right side, -2 -> 2 / 2 -> -2 = master at top / bottom, only for the "tile" layout).
 #^Tab::View_rotateLayoutAxis(2, +1)			; Rotate the master axis (i. e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 = y-axis = vertical stack, 2 -> 3 = z-axis = monocle, only for the "tile" layout).
 #^+Tab::View_rotateLayoutAxis(3, +1)		; Rotate the stack axis (i. e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 = y-axis = vertical stack, 2 -> 3 = z-axis = monocle, only for the "tile" layout).
-#^Left::View_setMSplit(+1)					; Move the master splitter, i. e. decrease the number of windows in the master area (only for the "tile" layout).
-#^Right::View_setMSplit(-1)					; Move the master splitter, i. e. increase the number of windows in the master area (only for the "tile" layout).
-#<::View_setGapWidth(-2)                    ; Decrease the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
-#+<::View_setGapWidth(+2)                   ; Increase the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
+#^Up::View_setMY(+1)						; Increase the master Y dimension [1,9] (only for the "tile" layout).
+#^Down::View_setMY(-1)						; Decrease the master Y dimension [1,9] (only for the "tile" layout).
+#^Right::View_setMX(+1)						; Increase the master X dimension [1,9] (only for the "tile" layout).
+#^Left::View_setMX(-1)						; Decrease the master X dimension [1,9] (only for the "tile" layout).
+#+Left::View_setGapWidth(-2)                ; Decrease the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
+#+Right::View_setGapWidth(+2)               ; Increase the gap width by 2 px (only for the "tile" layout and even numbers; see the variable "Config_layoutGapWidth").
+
 
 #BackSpace::Monitor_activateView(-1)		; Activate the previously activated view. You may also use Monitor_activateView("<") or Monitor_activateView(">") for activating the previous or next adjacent view.
 #+0::Monitor_setWindowTag(0)				; Tag the active window with all tags (1 ... Config_viewCount). You may also use Monitor_setWindowTag("<") or Monitor_setWindowTag(">") for setting the tag of the previous or next adjacent to the current view.

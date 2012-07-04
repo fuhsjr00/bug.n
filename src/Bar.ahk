@@ -61,7 +61,7 @@ Bar_init(m) {
 	}
 	; layout
 	i := Config_viewCount + 1
-	text := " ??? "
+	text := " 1x9|=- "
 	w := Bar_getTextWidth(text)
     Gui, Add, Text, x%x1% y%y1% w%w% h%h1% BackgroundTrans vBar_#%m%_#%i%_layout gBar_GuiClick, 
     Gui, Add, Progress, x%x1% y%y1% w%w% h%h1% Background%Config_normBgColor2%
@@ -214,8 +214,10 @@ Bar_initCmdGui() {
 	  TV_Add("rotate master axis", itemId20)
 	  TV_Add("rotate stack axis", itemId20)
 	  TV_Add("mirror tile layout", itemId20)
-	  TV_Add("increase master split", itemId20)
-	  TV_Add("decrease master split", itemId20)
+	  TV_Add("increase master X", itemId20)
+	  TV_Add("decrease master X", itemId20)
+	  TV_Add("increase master Y", itemId20)
+	  TV_Add("decrease master Y", itemId20)
 	  TV_Add("increase master factor", itemId20)
 	  TV_Add("decrease master factor", itemId20)
 	itemId30 := TV_Add("View")
@@ -229,6 +231,12 @@ Bar_initCmdGui() {
 	  TV_Add("toggle task bar", itemId40)
 	  TV_Add("activate next", itemId40)
 	  TV_Add("activate prev", itemId40)
+	;itemId50 := TV_add("Log")
+	;  TV_Add("increment debug level", itemId50)
+	;  TV_Add("decrement debug level", itemId50)
+	;  TV_Add("log help info", itemId50)
+	;  TV_Add("log view window info", itemId50)
+	;  TV_Add("log managed window info", itemId50)
 	TV_Add("Reload")
 	TV_Add("Quit")
 	GuiControl, +Redraw, Bar_#0_#0
@@ -320,10 +328,14 @@ Bar_evaluateCommand() {
 				View_rotateLayoutAxis(3, +1)
 			Else If (Bar_command_#1 = "mirror tile layout")
 				View_rotateLayoutAxis(1, +2)
-			Else If (Bar_command_#1 = "increase master split")
-				View_setMSplit(+1)
-			Else If (Bar_command_#1 = "decrease master split")
-				View_setMSplit(-1)
+			Else If (Bar_command_#1 = "increase master X")
+				View_setMX(+1)
+			Else If (Bar_command_#1 = "decrease master X")
+				View_setMX(-1)
+			Else If (Bar_command_#1 = "increase master Y")
+				View_setMY(+1)
+			Else If (Bar_command_#1 = "decrease master Y")
+				View_setMY(-1)
 			Else If (Bar_command_#1 = "increase master factor")
 				View_setMFactor(+0.05)
 			Else If (Bar_command_#1 = "decrease master factor")
@@ -349,6 +361,17 @@ Bar_evaluateCommand() {
 				Manager_activateMonitor(+1)
 			Else If (Bar_command_#1 = "activate prev")
 				Manager_activateMonitor(-1)
+		} Else If (Bar_command_#2 = "Log") {
+			If (Bar_command_#1 = "increment debug level")
+				Log_incDebugLevel()
+			If (Bar_command_#1 = "decrement debug level")
+				Log_decDebugLevel()
+			If (Bar_command_#1 = "log help info")
+				Manager_logHelp()
+			If (Bar_command_#1 = "log view window info")
+				Manager_logViewWindowList()
+			If (Bar_command_#1 = "log managed window info")
+				Manager_logManagedWindowList()
 		} Else If (Bar_command_#1 = "Reload")
 			Main_reload()
 		Else If (Bar_command_#1 = "Quit")
@@ -697,28 +720,34 @@ Bar_updateTitle(debugMsg = "") {
 	Bar_aWndId := aWndId
 }
 
+; Update the view portion of the status bar.
 Bar_updateView(m, v) {
-	Local managedWndId0, wndId0, wndIds
+	Local IdsLen, ViewIdsLen
 	
-	StringTrimRight, wndIds, Manager_managedWndIds, 1
-	StringSplit, managedWndId, wndIds, `;
 	GuiN := (m - 1) + 1
 	Gui, %GuiN%: Default
+	
+	IdsLen := StrLen(Manager_managedWndIds)
+	
+	If (v = Monitor_#%m%_aView_#1) {
+		; Set foreground/background colors if the view is the current view.
+		GuiControl, +Background%Config_selBgColor1% +c%Config_selFgColor2%, Bar_#%m%_#%v%_tagged
+		GuiControl, +c%Config_selFgColor1%, Bar_#%m%_#%v%
+	} Else If StrLen(View_#%m%_#%v%_wndIds) > 0 {
+		; Set foreground/background colors if the view contains windows.
+		GuiControl, +Background%Config_normBgColor5% +c%Config_normFgColor8%, Bar_#%m%_#%v%_tagged
+		GuiControl, +c%Config_normFgColor7%, Bar_#%m%_#%v%
+	} Else {
+		; Set foreground/background colors if the view is empty.
+		GuiControl, +Background%Config_normBgColor1% +c%Config_normFgColor8%, Bar_#%m%_#%v%_tagged
+		GuiControl, +c%Config_normFgColor1%, Bar_#%m%_#%v%
+	}
+	
 	Loop, %Config_viewCount% {
-		StringTrimRight, wndIds, View_#%m%_#%A_Index%_wndIds, 1
-		StringSplit, wndId, wndIds, `;
-		If (A_Index = v)
-			If (v = Monitor_#%m%_aView_#1) {
-				GuiControl, +Background%Config_selBgColor1% +c%Config_selFgColor2%, Bar_#%m%_#%v%_tagged
-				GuiControl, +c%Config_selFgColor1%, Bar_#%m%_#%v%
-			} Else If wndId0 {
-				GuiControl, +Background%Config_normBgColor5% +c%Config_normFgColor8%, Bar_#%m%_#%v%_tagged
-				GuiControl, +c%Config_normFgColor7%, Bar_#%m%_#%v%
-			} Else {
-				GuiControl, +Background%Config_normBgColor1% +c%Config_normFgColor8%, Bar_#%m%_#%v%_tagged
-				GuiControl, +c%Config_normFgColor1%, Bar_#%m%_#%v%
-			}
-		GuiControl, , Bar_#%m%_#%A_Index%_tagged, % wndId0 / managedWndId0 * 100
+		ViewIdsLen := StrLen( View_#%m%_#%A_Index%_wndIds )
+		; Update the percentage fill for the view.
+		GuiControl, , Bar_#%m%_#%A_Index%_tagged, % ViewIdsLen / IdsLen * 100
+		; Refresh the number on the bar.
 		GuiControl, , Bar_#%m%_#%A_Index%, %A_Index%
 	}
 }

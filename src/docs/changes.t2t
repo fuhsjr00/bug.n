@@ -10,6 +10,23 @@
 (~) changed
 (+) added
 
+=8.2.2(?)=
+
+(+) Multi-dimensional tiling of the master area. The user may now specify
+    X and Y dimensions independently up to 9 x 9.
+(+) Initially assign windows to the monitor on which they appear if 
+    nothing is specified in the configuration.
+(~) Improved view arranging runtime.
+(+) Created bug.n log to record major and debugging events.
+(~) Fixed bug #18641: Freezing problem. In most cases, bug.n will no 
+    longer hang when one of its managed windows hangs.
+(~) Fixed bug: Sometimes cycling through the windows in a view would 
+    get stuck on a particular window.
+(~) Fixed bug: Activating a window on a non-active view on 
+    a non-active monitor could cause both monitors to change views.
+(~) Gap widths are now treated identically on both "tile" and "monocle"
+    layouts.
+
 
 =8.2.1=
 
