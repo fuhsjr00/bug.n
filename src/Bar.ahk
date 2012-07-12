@@ -38,6 +38,7 @@ Bar_init(m) {
 	; Create the GUI window
 	wndTitle := "bug.n_BAR_" m
 	GuiN := (m - 1) + 1
+	Log_msg_dbg(3, "Bar_init(): Gui, " . GuiN . ": Default")
 	Gui, %GuiN%: Default
 	IfWinExist, %wndTitle%
 		Gui, Destroy
@@ -651,6 +652,7 @@ Bar_updateStatus() {
 	Loop, % Manager_monitorCount {
 		m := A_Index
 		GuiN := (m - 1) + 1
+		Log_msg_dbg(3, "Bar_updateStatus(): Gui, " . GuiN . ": Default")
 		Gui, %GuiN%: Default
 		If Config_readinBat {
 			Bar_getBatteryStatus(b1, b2)
@@ -709,6 +711,7 @@ Bar_updateTitle(debugMsg = "") {
 	i := Config_viewCount + 2
 	Loop, % Manager_monitorCount {
 		GuiN := (A_Index - 1) + 1
+		Log_msg_dbg(3, "Bar_updateTitle(): Gui, " . GuiN . ": Default")
 		Gui, %GuiN%: Default
 		GuiControlGet, content, , Bar_#%A_Index%_#%i%
 		If (A_Index = Manager_aMonitor) {
@@ -725,6 +728,7 @@ Bar_updateView(m, v) {
 	Local IdsLen, ViewIdsLen
 	
 	GuiN := (m - 1) + 1
+	Log_msg_dbg(3, "Bar_updateView(): Gui, " . GuiN . ": Default")
 	Gui, %GuiN%: Default
 	
 	IdsLen := StrLen(Manager_managedWndIds)
