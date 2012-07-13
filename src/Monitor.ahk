@@ -181,7 +181,7 @@ Monitor_getWorkArea(m) {
 Monitor_moveWindow(m, wndId) {
 	Global
 	
-	Manager_#%wndId%_monitor = m
+	Manager_#%wndId%_monitor := m
 }
 
 Monitor_setWindowTag(t) {
