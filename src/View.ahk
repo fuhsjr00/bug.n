@@ -206,7 +206,10 @@ View_rotateLayoutAxis(i, d) {
 		} Else {
 			n := Manager_loop(View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%, d, 1, 3)
 			; When we rotate the axis, we may need to swap the X and Y dimensions.
-			If Not (n = View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%) And (n = 1) Or (View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% = 1) {
+			; We only need to check this when the master axis changes (i = 2)
+			; If the axis doesn't change, there's no need to adjust (Not (n = View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%))
+			; If the original axis was 1 (X) or the new axis is 1 (X)  (Y and Z are defined to be the same)
+			If (i = 2) And Not (n = View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%) And ((n = 1) Or (View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% = 1)) {
 				tmp := View_#%Manager_aMonitor%_#%v%_layoutMX
 				View_#%Manager_aMonitor%_#%v%_layoutMX := View_#%Manager_aMonitor%_#%v%_layoutMY
 				View_#%Manager_aMonitor%_#%v%_layoutMY := tmp
