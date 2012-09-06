@@ -156,9 +156,11 @@ settings.
 
 === View / Layout ===
 
-: **Config_viewCount**=9
-  The total number of views. This has effects on the displayed groups in
-  the bar, and should not be exceeded in the hotkeys below.
+: **Config_viewNames**=1;2;3;4;5;6;7;8;9
+  The names of the views in use separated by a semicolon. With the number 
+  of fields in this list the total number of views is given. This has 
+  effects on the displayed groups in the bar, and should not be exceeded in
+  the hotkeys section of the configuration.
 
 : **Config_layout_#1**=[]=;tile
   The layout symbol and arrange function (the first entry is set as the

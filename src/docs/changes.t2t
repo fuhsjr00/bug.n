@@ -10,7 +10,7 @@
 (~) changed
 (+) added
 
-=8.2.2(?)=
+=8.3.0=
 
 (+) Multi-dimensional tiling of the master area. The user may now specify
     X and Y dimensions independently up to 9 x 9.
@@ -26,6 +26,10 @@
     a non-active monitor could cause both monitors to change views.
 (~) Gap widths are now treated identically on both "tile" and "monocle"
     layouts.
+(+) Added the configuration variable "Config_viewNames", with which views 
+    can be named and the number of views can be set. The configuration 
+    variable "Config_viewCount" therewith becomes obsolete.
+(-) Removed the configuration variable "Config_viewCount".
 
 
 =8.2.1=

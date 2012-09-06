@@ -19,7 +19,7 @@
  */
 
 Config_init() {
-	Local i, key, layout0, layout1, layout2
+	Local i, key, layout0, layout1, layout2, vNames0, vNames1, vNames2, vNames3, vNames4, vNames5, vNames6, vNames7, vNames8, vNames9
 	
 	; status bar
 	Config_showBar			 := True						; If false, the bar is hidden. It can be made visible or hidden by hotkey (see below).
@@ -52,7 +52,7 @@ Config_init() {
 	Config_selBorderColor  := ""							; Border colour of the active window; format: 0x00BBGGRR (e. g. "0x006A240A", if = "", the system's window border colour is not changed).
 															; Config_borderWidth, Config_borderPadding and Config_selBorderColor are especially usefull, if you are not allowed to set the design in the system settings.	
 	; window arrangement
-	Config_viewCount		  := 9							; The total number of views. This has effects on the displayed groups in the bar, and should not be exceeded in the hotkeys below.
+        Config_viewNames          := "1;2;3;4;5;6;7;8;9"                                ; The names of the views separated by a semicolon. This variable sets the names of the views shown in the status bar and determines the nummber of views (Config_viewCount); the total number of names given, i. e. views, should not be exceeded in the hotkeys section below.
 	Config_layout_#1		  := "[]=;tile"					; The layout symbol and arrange function (the first entry is set as the default layout, no layout function means floating behavior)
 	Config_layout_#2		  := "[M];monocle"
 	Config_layout_#3		  := "><>;"
@@ -104,9 +104,14 @@ Config_init() {
 		StringSplit, layout, Config_layout_#%A_Index%, `;
 		Config_layoutFunction_#%A_Index% := layout2
 		Config_layoutSymbol_#%A_Index%   := layout1
-	}
-	If (Config_viewCount > 9)
-		Config_viewCount := 9
+        }
+        StringSplit, vNames, Config_viewNames, `;
+        If vNames0 > 9
+          Config_viewCount := 9
+        Else
+          Config_viewCount := vNames0
+        Loop, % Config_viewCount
+          Config_viewNames_#%A_Index% := vNames%A_Index%
 }
 
 Config_initColors() {

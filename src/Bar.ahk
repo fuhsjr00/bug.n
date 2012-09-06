@@ -49,7 +49,7 @@ Bar_init(m) {
 	; tags
 	Loop, % Config_viewCount {
 		i := A_Index
-		text := " " i " "
+		text := " " Config_viewNames_#%i% " "
 		w := Bar_getTextWidth(text)
 		Gui, Add, Text, x%x1% y%y1% w%w% h%h1% BackgroundTrans vBar_#%m%_#%i%_view gBar_GuiClick, 
 		If (w <= h1)
@@ -80,8 +80,8 @@ Bar_init(m) {
 			w := Bar_getTextWidth(" ?? ")
 			x2 -= w
 			titleWidth -= w
-            Gui, Add, Text, x%x2% y%y1% w%w% h%h1% BackgroundTrans vBar_#%m%_#%i% gBar_toggleCommandGui, 
-            Gui, Add, Progress, x%x2% y%y1% w%w% h%h1% Background%Config_normBgColor2%
+                        Gui, Add, Text, x%x2% y%y1% w%w% h%h1% BackgroundTrans vBar_#%m%_#%i% gBar_toggleCommandGui, 
+                        Gui, Add, Progress, x%x2% y%y1% w%w% h%h1% Background%Config_normBgColor2%
 			Gui, Add, Text, x%x2% y%y2% w%w% h%h2% Center BackgroundTrans, #!
 		} Else If (i = Config_viewCount + 5) And Config_readinTime {							; time
 			w  := Bar_getTextWidth(" ??:?? ")
@@ -752,6 +752,6 @@ Bar_updateView(m, v) {
 		; Update the percentage fill for the view.
 		GuiControl, , Bar_#%m%_#%A_Index%_tagged, % ViewIdsLen / IdsLen * 100
 		; Refresh the number on the bar.
-		GuiControl, , Bar_#%m%_#%A_Index%, %A_Index%
+		GuiControl, , Bar_#%m%_#%A_Index%, % Config_viewNames_#%A_Index%
 	}
 }
