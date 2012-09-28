@@ -51,8 +51,8 @@ SetWinDelay, 10
   Config_init()
   
   Menu, Tray, Tip, %NAME% %VERSION%
-  IfExist %A_ScriptDir%\images\kfm.ico
-    Menu, Tray, Icon, %A_ScriptDir%\images\kfm.ico
+  IfExist %A_ScriptDir%\logo.ico
+    Menu, Tray, Icon, %A_ScriptDir%\logo.ico
   Menu, Tray, NoStandard
   Menu, Tray, Add, Toggle bar, Main_toggleBar
   Menu, Tray, Add, Help, Main_help
