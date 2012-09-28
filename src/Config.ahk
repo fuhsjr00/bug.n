@@ -94,8 +94,6 @@ Config_init() {
   
   ; configuration management
   Config_autoSaveSession := False  ; Automatically save the current state of monitors, views, layouts (active view, layout, axes, mfact and msplit) to the configuration file (set below) when quitting bug.n.
-  If Not Config_filePath           ; The file path, to which the configuration and session is saved. This target directory must be writable by the user (%A_ScriptDir% is the diretory, in which "Main.ahk" or the executable of bug.n is saved).
-    Config_filePath := A_ScriptDir "\Config.ini"
   
   Config_restore("Config")
   Config_getSystemSettings()

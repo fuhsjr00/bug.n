@@ -32,22 +32,13 @@ SetWinDelay, 10
 #WinActivateForce
 
 ; pseudo main function
-  EnvGet, appDir, APPDATA
-  bugnDir := appDir . "\bug.n"
-  IfNotExist, %bugnDir%
-    FileCreateDir, %bugnDir%
-  FileGetAttrib, attrib, %bugnDir%
-  IfNotInString, attrib, D 
-  {
-    MsgBox, The file path '%appDir%' already exists and is not a directory. Aborting.
-    Return
-  }
-  logFile := bugnDir . "\bugn_log.txt"
-  Log_init(logFile, False)
-  
-  Log_msg("====== Initializing ======")
   If 0 = 1
-    Config_filePath = %1%
+    Main_dataDir = %1%
+  Else
+    Main_dataDir = %A_ScriptDir%    ;; %A_ScriptDir% is the directory, in which 'Main.ahk' or the executable of bug.n is saved.
+  Log_init(Main_dataDir "\log.txt", False)
+  Log_msg("====== Initializing ======")
+  Config_filePath := Main_dataDir "\config.ini"
   Config_init()
   
   Menu, Tray, Tip, %NAME% %VERSION%
