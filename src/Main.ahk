@@ -145,7 +145,6 @@ Main_toggleBar:
 Return
 
 #Include Log.ahk
-#Include List.ahk
 #Include Bar.ahk
 #Include Config.ahk
 #Include Manager.ahk

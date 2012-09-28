@@ -161,6 +161,7 @@ Monitor_getWorkArea(m) {
       }
     }
   }
+  bTop := 0
   If Monitor_#%m%_showBar {
     If (Config_verticalBarPos = "top" Or (Config_verticalBarPos = "tray" And Not m = Manager_taskBarMonitor)) {
       bTop := monitorTop
