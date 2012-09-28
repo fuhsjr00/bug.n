@@ -36,8 +36,7 @@ SetWinDelay, 10
     Main_dataDir = %1%
   Else
     Main_dataDir = %A_ScriptDir%    ;; %A_ScriptDir% is the directory, in which 'Main.ahk' or the executable of bug.n is saved.
-  Log_init(Main_dataDir "\log.txt", False)
-  Log_msg("====== Initializing ======")
+  Debug_initLog(Main_dataDir "\log.txt", 0, False)
   Config_filePath := Main_dataDir "\config.ini"
   Config_init()
   
@@ -57,11 +56,12 @@ Return          ; end of the auto-execute section
  *  function & label definitions
  */
 Main_cleanup:      ; The labels with "ExitApp" or "Return" at the end and hotkeys have to be after the auto-execute section.
-  Log_msg("====== Cleaning up ======")
+  Debug_logMessage("Cleaning up", 0)
   If Config_autoSaveSession
     Config_saveSession()
   Manager_cleanup()
   DllCall("CloseHandle", "UInt", Bar_hDrive)    ; used in Bar_getDiskLoad
+  Debug_logMessage("Exiting bug.n", 0)
 ExitApp
 
 Main_help:
@@ -135,9 +135,9 @@ Main_toggleBar:
   Monitor_toggleBar()
 Return
 
-#Include Log.ahk
 #Include Bar.ahk
 #Include Config.ahk
+#Include Debug.ahk
 #Include Manager.ahk
 #Include Monitor.ahk
 #Include View.ahk

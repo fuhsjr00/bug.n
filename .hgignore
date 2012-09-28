@@ -1,4 +1,4 @@
 syntax: glob
-src/Config.ini
-src/Config_test.ini
 01_administration.org
+syntax: regexp
+.*[cC]onfig.*\.ini

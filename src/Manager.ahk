@@ -283,18 +283,18 @@ Manager_logWindowInfo( w ) {
     isResponsive := "*"
     
   
-  Log_bare(w . "`t" . isHidden . " " isWinFocus . " " . isBugnActive . " " . isFloating . " " . isDecorated . " " . isResponsive . " " . isGhost . " " . Manager_#%w%_monitor . "`t" . Manager_#%w%_tags . "`t" . wndX . "`t" . wndY . "`t" . wndW . "`t" . wndH . "`t" . wndStyle . "`t" . wndProc . " / " . wndClass . " / " . wndTitle)
+  Debug_logMessage(w . "`t" . isHidden . " " isWinFocus . " " . isBugnActive . " " . isFloating . " " . isDecorated . " " . isResponsive . " " . isGhost . " " . Manager_#%w%_monitor . "`t" . Manager_#%w%_tags . "`t" . wndX . "`t" . wndY . "`t" . wndW . "`t" . wndH . "`t" . wndStyle . "`t" . wndProc . " / " . wndClass . " / " . wndTitle, 0, False)
 }
 
 Manager_logHeader() {
-  Log_bare( "ID`t`tH W A F D R G M`tTags`tX`tY`tW`tH`tStyle`t`tProc / Class / Title")
+  Debug_logMessage( "ID`t`tH W A F D R G M`tTags`tX`tY`tW`tH`tStyle`t`tProc / Class / Title", 0, False)
 }
 
 Manager_logViewWindowList() {
   Local text, v, aWndId, wndIds, aWndTitle
   
   v := Monitor_#%Manager_aMonitor%_aView_#1
-  Log_msg( "Window dump for active view (" . Manager_aMonitor . ", " . v . ")" )
+  Debug_logMessage( "Window dump for active view (" . Manager_aMonitor . ", " . v . ")" )
   Manager_logHeader()
   
   StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
@@ -307,7 +307,7 @@ Manager_logViewWindowList() {
 Manager_logManagedWindowList() {
   Local wndIds
   
-  Log_msg( "Window dump for manager" )
+  Debug_logMessage( "Window dump for manager" )
   Manager_logHeader()
   
   StringTrimRight, wndIds, Manager_managedWndIds, 1
@@ -318,24 +318,24 @@ Manager_logManagedWindowList() {
 }
 
 Manager_logHelp() {
-  Log_msg("Help Display")
-  Log_bare("Window list columns")
-  Log_bare("    ID - Windows ID. Unique, OS-assigned ID")
-  Log_bare("    H - Hidden. Whether bug.n thinks this window is hidden.")
-  Log_bare("    W - Windows active. This window is active according to Windows.")
-  Log_bare("    A - View active. This window is active according to bug.n.")
-  Log_bare("    F - Floating. This window should not be positioned and resized by the layout.")
-  Log_bare("    D - Decorated. Does the window have a title bar?")
-  Log_bare("    R - Responsive. Is responding to messages?")
-  Log_bare("    G - Ghost. Is this window a ghost of another hung window?")
-  Log_bare("    M - Monitor number.")
-  Log_bare("    Tags - Bit-mask of the views in which the window is active.")
-  Log_bare("    X - Windows X position.")
-  Log_bare("    Y - Windows Y position.")
-  Log_bare("    W - Windows width.")
-  Log_bare("    H - Windows height.")
-  Log_bare("    Style - Windows style.")
-  Log_bare("    Proc / Class / Title - Process/Class/Title of the window.")
+  Debug_logMessage("Help Display")
+  Debug_logMessage("Window list columns", 0)
+  Debug_logMessage("    ID - Windows ID. Unique, OS-assigned ID", 0)
+  Debug_logMessage("    H - Hidden. Whether bug.n thinks this window is hidden.", 0)
+  Debug_logMessage("    W - Windows active. This window is active according to Windows.", 0)
+  Debug_logMessage("    A - View active. This window is active according to bug.n.", 0)
+  Debug_logMessage("    F - Floating. This window should not be positioned and resized by the layout.", 0)
+  Debug_logMessage("    D - Decorated. Does the window have a title bar?", 0)
+  Debug_logMessage("    R - Responsive. Is responding to messages?", 0)
+  Debug_logMessage("    G - Ghost. Is this window a ghost of another hung window?", 0)
+  Debug_logMessage("    M - Monitor number.", 0)
+  Debug_logMessage("    Tags - Bit-mask of the views in which the window is active.", 0)
+  Debug_logMessage("    X - Windows X position.", 0)
+  Debug_logMessage("    Y - Windows Y position.", 0)
+  Debug_logMessage("    W - Windows width.", 0)
+  Debug_logMessage("    H - Windows height.", 0)
+  Debug_logMessage("    Style - Windows style.", 0)
+  Debug_logMessage("    Proc / Class / Title - Process/Class/Title of the window.", 0)
 }
 
 Manager_lockWorkStation() {
@@ -375,7 +375,7 @@ Manager_manage(pm, pv, wndId) {
   
   body := 0
   If Manager_isGhost( wndId ) {
-    Log_dbg_msg(2, "A window has given up the ghost (Ghost wndId: " . wndId . ")")
+    Debug_logMessage("DEBUG[2] A window has given up the ghost (Ghost wndId: " . wndId . ")", 2)
     ; Ghosts need special attention.
     ; Say a quick prayer and try to reattach it to its body.
     body := Manager_findHung( wndId )
@@ -388,7 +388,7 @@ Manager_manage(pm, pv, wndId) {
       hideTitle := InStr(Bar_hideTitleWndIds, body ";")
     }
     Else {
-      Log_dbg_msg(1, "No body could be found for ghost wndId: " . wndId)
+      Debug_logMessage("DEBUG[1] No body could be found for ghost wndId: " . wndId, 1)
     }
   }
   
@@ -532,7 +532,7 @@ Manager_onShellMessage(wParam, lParam) {
   lParam := lParam+0
   SetFormat, Integer, d
   
-  Log_dbg_msg(2, "Manager_onShellMessage( wParam: " . wParam . ", lParam: " . lParam . " )")
+  Debug_logMessage("DEBUG[2] Manager_onShellMessage( wParam: " . wParam . ", lParam: " . lParam . " )", 2)
   
   WinGetClass, wndClass, ahk_id %lParam%
   WinGetTitle, wndTitle, ahk_id %lParam%
@@ -590,7 +590,7 @@ Manager_onShellMessage(wParam, lParam) {
         wndId := SubStr(wndIds, 1, InStr(wndIds, ";") - 1)
         Loop, % Config_viewCount
           If (Manager_#%wndId%_tags & 1 << A_Index - 1) {
-            Log_dbg_msg(3, "Switching views because " . wndId . " is considered hidden and active")
+            Debug_logMessage("DEBUG[3] Switching views because " . wndId . " is considered hidden and active", 3)
             Manager_aMonitor := Manager_#%wndId%_monitor
             Monitor_activateView(A_Index)
             Break
@@ -825,7 +825,7 @@ Manager_winActivate(wndId) {
       DllCall("SetCursorPos", "Int", Round(Monitor_#%Manager_aMonitor%_x + Monitor_#%Manager_aMonitor%_width / 2), "Int", Round(Monitor_#%Manager_aMonitor%_y + Monitor_#%Manager_aMonitor%_height / 2))
   }
   If Manager_isHung(wndId) {
-    Log_dbg_msg(2, "Manager_winActivate: Potentially hung window " . wndId)
+    Debug_logMessage("DEBUG[2] Manager_winActivate: Potentially hung window " . wndId, 2)
     Return 1
   }
   Else {
@@ -840,7 +840,7 @@ Manager_winActivate(wndId) {
 
 Manager_winMove(wndId, x, y, width, height) {
   If Manager_isHung(wndId) {
-    Log_dbg_msg(2, "Manager_winMove: Potentially hung window " . wndId)
+    Debug_logMessage("DEBUG[2] Manager_winMove: Potentially hung window " . wndId, 2)
     Return 1
   }
   Else
@@ -849,7 +849,7 @@ Manager_winMove(wndId, x, y, width, height) {
   WM_EXITSIZEMOVE  = 0x0232
   SendMessage, WM_ENTERSIZEMOVE, , , , ahk_id %wndId%
   If ErrorLevel {
-    Log_dbg_msg(2, "Manager_winMove: Potentially hung window " . wndId)
+    Debug_logMessage("DEBUG[2] Manager_winMove: Potentially hung window " . wndId, 1)
     Return 1
   }
   Else {
@@ -860,7 +860,7 @@ Manager_winMove(wndId, x, y, width, height) {
 
 Manager_winHide(wndId) {
   If Manager_isHung(wndId) {
-    Log_dbg_msg(2, "Manager_winHide: Potentially hung window " . wndId)
+    Debug_logMessage("DEBUG[2] Manager_winHide: Potentially hung window " . wndId, 2)
     Return 1
   }
   Else {
@@ -871,7 +871,7 @@ Manager_winHide(wndId) {
 
 Manager_winShow(wndId) {
   If Manager_isHung(wndId) {
-    Log_dbg_msg(2, "Manager_winShow: Potentially hung window " . wndId)
+    Debug_logMessage("DEBUG[2] Manager_winShow: Potentially hung window " . wndId, 2)
     Return 1
   }
   Else {
@@ -882,7 +882,7 @@ Manager_winShow(wndId) {
 
 Manager_winClose(wndId) {
   If Manager_isHung(wndId) {
-    Log_dbg_msg(2, "Manager_winClose: Potentially hung window " . wndId)
+    Debug_logMessage("DEBUG[2] Manager_winClose: Potentially hung window " . wndId, 2)
     Return 1
   }
   Else {
@@ -893,7 +893,7 @@ Manager_winClose(wndId) {
 
 Manager_winSet(type, value, wndId) {
   If Manager_isHung(wndId) {
-    Log_dbg_msg(2, "Manager_winSet: Potentially hung window " . wndId)
+    Debug_logMessage("DEBUG[2] Manager_winSet: Potentially hung window " . wndId, 2)
     Return 1
   }
   Else {
@@ -923,7 +923,6 @@ Manager_isHung(wndId) {
 ; This is only known to work on Windows 7
 Manager_findHung( ghostWnd ) {
   Local expectedTitle, expectedX, expectedY, expectedW, expectedH, wndTitle, wndX, wndY, wndW, wndH, wndIds
-  ;Log_dbg_msg(3, "Manager_findHung(" . ghostWnd . ")")
   WinGetTitle, expectedTitle, ahk_id %ghostWnd%
   StringReplace, expectedTitle, expectedTitle, " (Not Responding)", ""
   WinGetPos, expectedX, expectedY, expectedW, expectedH, ahk_id %ghostWnd%

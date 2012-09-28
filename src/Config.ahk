@@ -398,8 +398,8 @@ Config_saveSession() {
 #^i::Manager_logViewWindowList()       ; Dump window information for the active view.
 #+^i::Manager_logManagedWindowList()   ; Dump window information for every managed window.
 #^h::Manager_logHelp()                 ; Dump to the log an explanation of some of the other more cryptic log messages.
-#^[::Log_decDebugLevel()               ; Decrement the log debug level.
-#^]::Log_incDebugLevel()               ; Increment the log debug level.
+#^l::Debug_setLogLevel(-1)             ; Decrement the log debug level.
+#^+l::Debug_setLogLevel(+1)            ; Increment the log debug level.
 
 #Tab::View_setLayout(-1)               ; Set the previously set layout. You may also use View_setLayout(">") for setting the next layout in the layout array.
 #f::View_setLayout(3)                  ; Set the 3rd defined layout (i. e. floating layout in the default configuration).

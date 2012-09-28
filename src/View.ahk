@@ -38,18 +38,18 @@ View_init(m, v) {
 View_activateWindow(d) {
   Local aWndId, i, j, v, wndId, wndId0, wndIds, failure, direction
   
-  Log_dbg_msg(1, "View_activateWindow(" . d . ")")
+  Debug_logMessage("DEBUG[1] View_activateWindow(" . d . ")", 1)
   
   If (d = 0)
     Return
   
   WinGet, aWndId, ID, A
-  Log_dbg_bare(2, "Active Windows ID: " . aWndId)
+  Debug_logMessage("DEBUG[2] Active Windows ID: " . aWndId, 2, False)
   v := Monitor_#%Manager_aMonitor%_aView_#1
-  Log_dbg_bare(2, "View (" . v . ") wndIds: " . View_#%Manager_aMonitor%_#%v%_wndIds)
+  Debug_logMessage("DEBUG[2] View (" . v . ") wndIds: " . View_#%Manager_aMonitor%_#%v%_wndIds, 2, False)
   StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
   StringSplit, wndId, wndIds, `;
-  Log_dbg_bare(2, "wndId count: " . wndId0)
+  Debug_logMessage("DEBUG[2] wndId count: " . wndId0, 2, False)
   If (wndId0 > 1) {
     If Manager_#%aWndId%_isFloating
       Manager_winSet("Bottom", "", aWndId)
@@ -62,10 +62,10 @@ View_activateWindow(d) {
       direction = 1
     Else
       direction = -1
-    Log_dbg_bare(2, "Current wndId index: " . i)
+    Debug_logMessage("DEBUG[2] Current wndId index: " . i, 2, False)
     j := Manager_loop(i, d, 1, wndId0)
     Loop, % wndId0 {
-      Log_dbg_bare(2, "Next wndId index: " . j)
+      Debug_logMessage("DEBUG[2] Next wndId index: " . j, 2, False)
       wndId := wndId%j%
       Manager_winSet("AlwaysOnTop", "On", wndId)
       Manager_winSet("AlwaysOnTop", "Off", wndId)
@@ -135,7 +135,7 @@ View_delWnd(m, v, wndId) {
 
 View_arrange(m, v) {
   Local fn, l, wndIds
-  Log_dbg_msg(1, "View_arrange(" . m . ", " . v . ")")
+  Debug_logMessage("DEBUG[1] View_arrange(" . m . ", " . v . ")", 1)
   ; All window actions are performed on independent windows. A delay won't help.
   SetWinDelay, 0
   l := View_#%m%_#%v%_layout_#1
@@ -441,7 +441,6 @@ View_draw_stack( arrName, off, len, dir, x, y, w, h, margin ) {
 ; margin - Number of pixels to put between the windows.
 View_draw_row( arrName, off, len, dir, axis, x, y, w, h, margin ) {
   Local base, inc, x_inc, y_inc, wHeight, wWidth
-  ;Log_bare("View_draw_row(" . arrName . ", " . off . ", " . len . ", " . dir . ", " . axis . ", " . x . ", " . y . ", " . w . ", " . h . ", " . margin . ")")
   If (dir = 0) {
     ; Left-to-right and top-to-bottom, depending on axis
     base := off
@@ -515,7 +514,7 @@ View_arrange_tile(m, v, wndIds) {
   
   StringTrimRight, wndIds, wndIds, 1
   StringSplit, View_arrange_tile_wndId, wndIds, `;
-  Log_dbg_msg(1, "View_arrange_tile: (" . View_arrange_tile_wndId0 . ") " . wndIds)
+  Debug_logMessage("DEBUG[1] View_arrange_tile: (" . View_arrange_tile_wndId0 . ") " . wndIds, 1)
   If (View_arrange_tile_wndId0 = 0)
     Return
 
@@ -558,7 +557,6 @@ View_arrange_tile(m, v, wndIds) {
     secondary_areas := Ceil(msplit / dimAligned)
     areas_remaining := secondary_areas
     windows_remaining := msplit
-    ;Log_bare("msplit: " . msplit . "; layoutMX/Y: " . dimAligned . "; secondary_areas: " . secondary_areas . "; areas_remaining: " . areas_remaining . "; windows_remaining: " . windows_remaining)
     Loop, % secondary_areas {
       View_split_region(Not (axis2 - 1), (1/areas_remaining), x1, y1, w1, h1, mx1, my1, mw1, mh1, x1, y1, w1, h1)
       draw_windows := dimAligned
