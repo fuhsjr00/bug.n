@@ -744,12 +744,12 @@ Manager_sync(ByRef wndIds = "") {
 ; No windows are known to the system yet.
 ; Try to do something smart with the initial layout.
 Manager_initial_sync() {
-  Local wndId0, wnd, wndX, wndY, wndW, wndH, x, y, m, len
+  Local m, wnd, wndH, wndId, wndId0, wndIds, wndW, wndX, wndY, x, y
   
   ; Initialize lists
   ; Note that these variables make this function non-reentrant.
   Loop, % Manager_monitorCount
-    Manager_initial_sync_m#%A_Index%_wndList := List_new()
+    Manager_initial_sync_m#%A_Index%_wndList := ""
   
   ; check all visible windows against the known windows
   WinGet, wndId, List, , , 
@@ -767,17 +767,19 @@ Manager_initial_sync() {
     
     m := Monitor_get(x, y)
     If m > 0
-      List_append(Manager_initial_sync_m#%m%_wndList, wndId%A_index%)
+      Manager_initial_sync_m#%m%_wndList .= wndId%A_Index% ";"
     
     ; @todo: What percentage of the monitor area is it occupying? (Suggest layout)
     ; @todo: What part of the monitor is it on? (Ordering of windows)
   }
 
-  Loop, % Manager_monitorCount {
+  Loop, % Manager_monitorCount 
+  {
     m := A_Index
-    len := List_toArray(Manager_initial_sync_m#%m%_wndList, "Manager_initial_sync_tmpArray")
-    Loop, % len
-      Manager_manage(m, 1, Manager_initial_sync_tmpArray%A_Index%)
+    StringTrimRight, wndIds, Manager_initial_sync_m#%m%_wndList, 1
+    StringSplit, wndId, wndIds, `;
+    Loop, % wndId0
+      Manager_manage(m, 1, wndId%A_Index%)
   }
 }
 
