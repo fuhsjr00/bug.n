@@ -19,28 +19,9 @@
 */
 
 Manager_init() {
-  Local ncm, ncmSize
+  Global
   
-  ; Windows UI
-  If Config_selBorderColor {
-    SetFormat, Integer, hex
-    Manager_normBorderColor := DllCall("GetSysColor", "Int", 10)
-    SetFormat, Integer, d
-    DllCall("SetSysColors", "Int", 1, "Int*", 10, "UInt*", Config_selBorderColor)
-  }
-  If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA) {
-    ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
-    NumPut(ncmSize, ncm, 0, "UInt")
-    DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
-    Manager_borderWidth := NumGet(ncm, 4, "Int")
-    Manager_borderPadding := NumGet(ncm, 40 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), "Int")
-    If (Config_borderWidth > 0)
-      NumPut(Config_borderWidth, ncm, 4, "Int")
-    If (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA)
-      NumPut(Config_borderPadding, ncm, 40 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), "Int")
-    DllCall("SystemParametersInfo", "UInt", 0x002a, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
-  }
-  
+  Manager_setWindowBorder()
   Bar_getHeight()
   Manager_aMonitor := 1
   Manager_taskBarMonitor := ""
@@ -137,19 +118,7 @@ Manager_cleanup() {
   
   WinGet, aWndId, ID, A
   
-  ; Reset border color, padding and witdh.
-  If Config_selBorderColor
-    DllCall("SetSysColors", "Int", 1, "Int*", 10, "UInt*", Manager_normBorderColor)
-  If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA) {
-    ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
-    NumPut(ncmSize, ncm, 0, "UInt")
-    DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
-    If (Config_borderWidth > 0)
-      NumPut(Manager_borderWidth, ncm, 4, "Int")
-    If (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA)
-      NumPut(Manager_borderPadding, ncm, 40 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), "Int")
-    DllCall("SystemParametersInfo", "UInt", 0x002a, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
-  }
+  Manager_resetWindowBorder()
   
   ; Show borders and title bars.
   StringTrimRight, wndIds, Manager_managedWndIds, 1
@@ -630,6 +599,24 @@ Manager_registerShellHook() {
 }
 ; SKAN: How to Hook on to Shell to receive its messages? (http://www.autohotkey.com/forum/viewtopic.php?p=123323#123323)
 
+Manager_resetWindowBorder() 
+{
+  Local ncm, ncmSize
+  
+  If Config_selBorderColor
+    DllCall("SetSysColors", "Int", 1, "Int*", 10, "UInt*", Manager_normBorderColor)
+  If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA) {
+    ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
+    NumPut(ncmSize, ncm, 0, "UInt")
+    DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
+    If (Config_borderWidth > 0)
+      NumPut(Manager_borderWidth, ncm, 4, "Int")
+    If (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA)
+      NumPut(Manager_borderPadding, ncm, 40 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), "Int")
+    DllCall("SystemParametersInfo", "UInt", 0x002a, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
+  }
+}
+
 Manager_setViewMonitor(d) {
   Local aView, m, v, wndIds
   
@@ -660,6 +647,30 @@ Manager_setViewMonitor(d) {
       Bar_updateTitle()
       Bar_updateView(m, v)
     }
+  }
+}
+
+Manager_setWindowBorder() 
+{
+  Local ncm, ncmSize
+  
+  If Config_selBorderColor {
+    SetFormat, Integer, hex
+    Manager_normBorderColor := DllCall("GetSysColor", "Int", 10)
+    SetFormat, Integer, d
+    DllCall("SetSysColors", "Int", 1, "Int*", 10, "UInt*", Config_selBorderColor)
+  }
+  If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA) {
+    ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
+    NumPut(ncmSize, ncm, 0, "UInt")
+    DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
+    Manager_borderWidth := NumGet(ncm, 4, "Int")
+    Manager_borderPadding := NumGet(ncm, 40 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), "Int")
+    If (Config_borderWidth > 0)
+      NumPut(Config_borderWidth, ncm, 4, "Int")
+    If (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA)
+      NumPut(Config_borderPadding, ncm, 40 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), "Int")
+    DllCall("SystemParametersInfo", "UInt", 0x002a, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
   }
 }
 

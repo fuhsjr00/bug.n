@@ -21,7 +21,7 @@
 NAME  := "bug.n"
 VERSION := "8.3.0"
 
-; script settings
+;; Script settings
 OnExit, Main_cleanup
 SetBatchLines, -1
 SetTitleMatchMode, 3
@@ -31,11 +31,11 @@ SetWinDelay, 10
 #SingleInstance force
 #WinActivateForce
 
-; pseudo main function
+;; Pseudo main function
   If 0 = 1
     Main_dataDir = %1%
   Else
-    Main_dataDir = %A_ScriptDir%    ;; %A_ScriptDir% is the directory, in which 'Main.ahk' or the executable of bug.n is saved.
+    Main_dataDir = %A_ScriptDir%
   Debug_initLog(Main_dataDir "\log.txt", 0, False)
   Config_filePath := Main_dataDir "\config.ini"
   Config_init()
@@ -50,17 +50,15 @@ SetWinDelay, 10
   Menu, Tray, Add, Exit, Main_quit
   
   Manager_init()
-Return          ; end of the auto-execute section
+Return          ;; end of the auto-execute section
 
-/**
- *  function & label definitions
- */
-Main_cleanup:      ; The labels with "ExitApp" or "Return" at the end and hotkeys have to be after the auto-execute section.
+;; Function & label definitions
+Main_cleanup:
   Debug_logMessage("Cleaning up", 0)
   If Config_autoSaveSession
     Config_saveSession()
   Manager_cleanup()
-  DllCall("CloseHandle", "UInt", Bar_hDrive)    ; used in Bar_getDiskLoad
+  DllCall("CloseHandle", "UInt", Bar_hDrive)    ;; used in Bar_getDiskLoad
   Debug_logMessage("Exiting bug.n", 0)
 ExitApp
 
@@ -72,47 +70,20 @@ Main_quit:
   ExitApp
 Return
 
-Main_reload() {
-  Local i, ncm, ncmSize
+Main_reload() 
+{
+  Local i
   
-  ; Reset border color, padding and witdh.
-  If Config_selBorderColor
-    DllCall("SetSysColors", "Int", 1, "Int*", 10, "UInt*", Manager_normBorderColor)
-  If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA) {
-    ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
-    NumPut(ncmSize, ncm, 0, "UInt")
-    DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
-    If (Config_borderWidth > 0)
-      NumPut(Manager_borderWidth, ncm, 4, "Int")
-    If (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA)
-      NumPut(Manager_borderPadding, ncm, 40 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), "Int")
-    DllCall("SystemParametersInfo", "UInt", 0x002a, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
-  }
+  Manager_resetWindowBorder()
+  
   DllCall("Shell32.dll\SHAppBarMessage", "UInt", (ABM_REMOVE := 0x1), "UInt", &Bar_appBarData)
-  ; SKAN: Crazy Scripting : Quick Launcher for Portable Apps (http://www.autohotkey.com/forum/topic22398.html)
+  ;; SKAN: Crazy Scripting : Quick Launcher for Portable Apps (http://www.autohotkey.com/forum/topic22398.html)
 
-  Config_init()  
-  ; Windows UI
-  If Config_selBorderColor {
-    SetFormat, Integer, hex
-    Manager_normBorderColor := DllCall("GetSysColor", "Int", 10)
-    SetFormat, Integer, d
-    DllCall("SetSysColors", "Int", 1, "Int*", 10, "UInt*", Config_selBorderColor)
-  }
-  If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA) {
-    ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
-    NumPut(ncmSize, ncm, 0, "UInt")
-    DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
-    Manager_borderWidth := NumGet(ncm, 4, "Int")
-    Manager_borderPadding := NumGet(ncm, 40 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), "Int")
-    If (Config_borderWidth > 0)
-      NumPut(Config_borderWidth, ncm, 4, "Int")
-    If (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA)
-      NumPut(Config_borderPadding, ncm, 40 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), "Int")
-    DllCall("SystemParametersInfo", "UInt", 0x002a, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
-  }
+  Config_init()
+  Manager_setWindowBorder()
   Bar_getHeight()
-  Loop, % Manager_monitorCount {
+  Loop, % Manager_monitorCount 
+  {
     Monitor_getWorkArea(A_Index)
     Bar_init(A_Index)
   }
@@ -121,10 +92,13 @@ Main_reload() {
     Monitor_toggleTaskBar()
   Bar_updateStatus()
   Bar_updateTitle()
-  Loop, % Manager_monitorCount {
+  Loop, % Manager_monitorCount 
+  {
     i := A_Index
-    Loop, % Config_viewCount
+    Loop, % Config_viewCount 
+    {
       Bar_updateView(i, A_Index)
+    }
     View_arrange(i, Monitor_#%i%_aView_#1)
   }
   Manager_registerShellHook()
