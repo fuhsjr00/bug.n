@@ -49,6 +49,7 @@ SetWinDelay, 10
   Menu, Tray, Add, 
   Menu, Tray, Add, Exit, Main_quit
   
+  ResourceMonitor_init()
   Manager_init()
 Return          ;; end of the auto-execute section
 
@@ -58,7 +59,7 @@ Main_cleanup:
   If Config_autoSaveSession
     Config_saveSession()
   Manager_cleanup()
-  DllCall("CloseHandle", "UInt", Bar_hDrive)    ;; used in Bar_getDiskLoad
+  ResourceMonitor_cleanup()
   Debug_logMessage("Exiting bug.n", 0)
 ExitApp
 
