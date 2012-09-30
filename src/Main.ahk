@@ -114,4 +114,5 @@ Return
 #Include Debug.ahk
 #Include Manager.ahk
 #Include Monitor.ahk
+#Include ResourceMonitor.ahk
 #Include View.ahk

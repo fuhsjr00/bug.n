@@ -210,37 +210,12 @@ Return
 
 Config_readinAny() 
 { ;; Add information to the variable 'text' in this function to display it in the status bar.
-  Global Config_readinCpu, Config_readinDate, Config_readinDiskLoad, Config_readinMemoryUsage, Config_readinNetworkLoad
+  Global Config_readinDate
   
   text := ""
-  If Config_readinCpu
-    text .= " CPU: " Bar_getSystemTimes() "% "
-  If Config_readinMemoryUsage 
-  {
-    If Config_readinCpu
-      text .= "|"
-    text .= " RAM: " Bar_getMemoryUsage() "% "
-  }
-  If Config_readinDiskLoad 
-  {
-    If (Config_readinCpu Or Config_readinMemoryUsage)
-      text .= "|"
-    Bar_getDiskLoad(rLoad, wLoad)
-    text .= " Dr: " rLoad "% | Dw: " wLoad "% "
-  }
-  If Config_readinNetworkLoad 
-  {
-    If (Config_readinCpu Or Config_readinMemoryUsage Or Config_readinDiskLoad)
-      text .= "|"
-    Bar_getNetworkLoad(upLoad, dnLoad)
-    text .= " UP: " upLoad " KB/s | dn: " dnLoad " KB/s "
-  }
-  If Config_readinDate 
-  {
-    If (Config_readinCpu Or Config_readinMemoryUsage Or Config_readinDiskLoad Or Config_readinNetworkLoad)
-      text .= "|"
+  text .= ResourceMonitor_getText()
+  If Config_readinDate
     text .= " " A_DDD ", " A_DD ". " A_MMM ". " A_YYYY " "
-  }
   
   Return, text
 }
