@@ -62,7 +62,7 @@ Bar_init(m) {
   }
   ; layout
   i := Config_viewCount + 1
-  text := " 1x9|=- "
+  text := " ?????? "
   w := Bar_getTextWidth(text)
   Gui, Add, Text, x%x1% y%y1% w%w% h%h1% BackgroundTrans vBar_#%m%_#%i%_layout gBar_GuiClick, 
   Gui, Add, Progress, x%x1% y%y1% w%w% h%h1% Background%Config_normBgColor2%
@@ -631,35 +631,38 @@ Bar_updateTitle(debugMsg = "") {
   Bar_aWndId := aWndId
 }
 
-; Update the view portion of the status bar.
-Bar_updateView(m, v) {
-  Local IdsLen, ViewIdsLen
+Bar_updateView(m, v) 
+{
+  Local managedWndId0, wndId0, wndIds
   
   GuiN := (m - 1) + 1
-  Debug_logMessage("DEBUG[6] Bar_updateView(): m: " . m . "; Gui, " . GuiN . ": Default", 6)
   Gui, %GuiN%: Default
+  Debug_logMessage("DEBUG[6] Bar_updateView(): m: " . m . "; Gui, " . GuiN . ": Default", 6)
   
-  IdsLen := StrLen(Manager_managedWndIds)
+  StringTrimRight, wndIds, Manager_managedWndIds, 1
+  StringSplit, managedWndId, wndIds, `;
   
-  If (v = Monitor_#%m%_aView_#1) {
-    ; Set foreground/background colors if the view is the current view.
+  If (v = Monitor_#%m%_aView_#1) 
+  { ;; Set foreground/background colors if the view is the current view.
     GuiControl, +Background%Config_selBgColor1% +c%Config_selFgColor2%, Bar_#%m%_#%v%_tagged
     GuiControl, +c%Config_selFgColor1%, Bar_#%m%_#%v%
-  } Else If StrLen(View_#%m%_#%v%_wndIds) > 0 {
-    ; Set foreground/background colors if the view contains windows.
+  } 
+  Else If wndId0 
+  { ;; Set foreground/background colors if the view contains windows.
     GuiControl, +Background%Config_normBgColor5% +c%Config_normFgColor8%, Bar_#%m%_#%v%_tagged
     GuiControl, +c%Config_normFgColor7%, Bar_#%m%_#%v%
-  } Else {
-    ; Set foreground/background colors if the view is empty.
+  } 
+  Else 
+  { ;; Set foreground/background colors if the view is empty.
     GuiControl, +Background%Config_normBgColor1% +c%Config_normFgColor8%, Bar_#%m%_#%v%_tagged
     GuiControl, +c%Config_normFgColor1%, Bar_#%m%_#%v%
   }
   
-  Loop, %Config_viewCount% {
-    ViewIdsLen := StrLen( View_#%m%_#%A_Index%_wndIds )
-    ; Update the percentage fill for the view.
-    GuiControl, , Bar_#%m%_#%A_Index%_tagged, % ViewIdsLen / IdsLen * 100
-    ; Refresh the number on the bar.
-    GuiControl, , Bar_#%m%_#%A_Index%, % Config_viewNames_#%A_Index%
+  Loop, %Config_viewCount% 
+  {
+    StringTrimRight, wndIds, View_#%m%_#%A_Index%_wndIds, 1
+    StringSplit, wndId, wndIds, `;
+    GuiControl, , Bar_#%m%_#%A_Index%_tagged, % wndId0 / managedWndId0 * 100    ;; Update the percentage fill for the view.
+    GuiControl, , Bar_#%m%_#%A_Index%, % Config_viewNames_#%A_Index%            ;; Refresh the number on the bar.
   }
 }
