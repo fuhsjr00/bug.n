@@ -40,8 +40,7 @@ Bar_init(m) {
   GuiN := (m - 1) + 1
   Debug_logMessage("DEBUG[6] Bar_init(): Gui, " . GuiN . ": Default", 6)
   Gui, %GuiN%: Default
-  IfWinExist, %wndTitle%
-    Gui, Destroy
+  Gui, Destroy
   Gui, +AlwaysOnTop -Caption +LabelBar_Gui +LastFound +ToolWindow
   Gui, Color, %Config_normBgColor1%
   Gui, Font, c%Config_normFgColor1% s%Config_fontSize%, %Config_fontName%
