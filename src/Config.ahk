@@ -35,6 +35,7 @@ Config_init()
   Config_normFgColor       := 
   Config_selBgColor        := 
   Config_selFgColor        := 
+  Config_barCommands       := "Run, explore docs;Monitor_toggleBar();Main_reload();Reload;ExitApp"
   Config_readinBat         := False
   Config_readinCpu         := False
   Config_readinDate        := True
@@ -222,58 +223,13 @@ Config_readinAny()
 
 Config_redirectHotkey(key) 
 {
-  Local functionArgument0, functionArgument1, functionArgument2, functionArguments, functionName, i, j, parameter0, parameter1, parameter2, parameter3, parameters, type
+  Global
   
   Loop, % Config_hotkeyCount
   {
     If (key = Config_hotkey_#%A_index%_key) 
     {
-      type := SubStr(Config_hotkey_#%A_index%_command, 1, 5)
-      If (type = "Run, ") 
-      {
-        parameters := SubStr(Config_hotkey_#%A_index%_command, 6)
-        If InStr(parameters, ", ") 
-        {
-          StringSplit, parameter, parameters, `,
-          If (parameter0 = 2) 
-          {
-            StringTrimLeft, parameter2, parameter2, 1
-            Run, %parameter1%, %parameter2%
-          } 
-          Else If (parameter0 > 2) 
-          {
-            StringTrimLeft, parameter2, parameter2, 1
-            StringTrimLeft, parameter3, parameter3, 1
-            Run, %parameter1%, %parameter2%, %parameter3%
-          }
-        } 
-        Else
-          Run, %parameters%
-      } 
-      Else If (type = "Send ")
-        Send % SubStr(Config_hotkey_#%A_index%_command, 6)
-      Else If (Config_hotkey_#%A_Index%_command = "Reload")
-        Reload
-      Else If (Config_hotkey_#%A_Index%_command = "ExitApp")
-        ExitApp
-      Else 
-      {
-        i := InStr(Config_hotkey_#%A_index%_command, "(")
-        j := InStr(Config_hotkey_#%A_index%_command, ")", False, i)
-        If i And j 
-        {
-          functionName := SubStr(Config_hotkey_#%A_index%_command, 1, i - 1)
-          functionArguments := SubStr(Config_hotkey_#%A_index%_command, i + 1, j - (i + 1))
-          StringSplit, functionArgument, functionArguments, `,
-          If (functionArgument0 < 2)
-            %functionName%(functionArguments)
-          Else If (functionArgument0 = 2) 
-          {
-            StringTrimLeft, functionArgument2, functionArgument2, 1
-            %functionName%(functionArgument1, functionArgument2)
-          }
-        }
-      }
+      Main_evalCommand(Config_hotkey_#%A_index%_command)
       Break
     }
   }

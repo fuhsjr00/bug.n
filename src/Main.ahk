@@ -62,6 +62,56 @@ Main_cleanup:
   ResourceMonitor_cleanup()
   Debug_logMessage("Exiting bug.n", 0)
 ExitApp
+  
+Main_evalCommand(command) 
+{
+  type := SubStr(command, 1, 5)
+  If (type = "Run, ") 
+  {
+    parameters := SubStr(command, 6)
+    If InStr(parameters, ", ") 
+    {
+      StringSplit, parameter, parameters, `,
+      If (parameter0 = 2) 
+      {
+        StringTrimLeft, parameter2, parameter2, 1
+        Run, %parameter1%, %parameter2%
+      } 
+      Else If (parameter0 > 2) 
+      {
+        StringTrimLeft, parameter2, parameter2, 1
+        StringTrimLeft, parameter3, parameter3, 1
+        Run, %parameter1%, %parameter2%, %parameter3%
+      }
+    } 
+    Else
+      Run, %parameters%
+  } 
+  Else If (type = "Send ")
+    Send % SubStr(command, 6)
+  Else If (command = "Reload")
+    Reload
+  Else If (command = "ExitApp")
+    ExitApp
+  Else 
+  {
+    i := InStr(command, "(")
+    j := InStr(command, ")", False, i)
+    If i And j 
+    {
+      functionName := SubStr(command, 1, i - 1)
+      functionArguments := SubStr(command, i + 1, j - (i + 1))
+      StringSplit, functionArgument, functionArguments, `,
+      If (functionArgument0 < 2)
+        %functionName%(functionArguments)
+      Else If (functionArgument0 = 2) 
+      {
+        StringTrimLeft, functionArgument2, functionArgument2, 1
+        %functionName%(functionArgument1, functionArgument2)
+      }
+    }
+  }
+}
 
 Main_help:
   Run, explore %A_ScriptDir%\docs

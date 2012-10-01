@@ -170,8 +170,9 @@ Bar_init(m) {
   }
 }
 
-Bar_initCmdGui() {  
-  Global Bar_#0_#0, Bar_#0_#0H, Bar_#0_#0W, Bar_cmdGuiIsVisible, Config_fontName, Config_fontSize, Config_normBgColor1, Config_normFgColor1
+Bar_initCmdGui() 
+{
+  Global Bar_#0_#0, Bar_#0_#0H, Bar_#0_#0W, Bar_cmdGuiIsVisible, Config_barCommands, Config_fontName, Config_fontSize, Config_normBgColor1, Config_normFgColor1
   
   Bar_cmdGuiIsVisible := False
   wndTitle := "bug.n_BAR_0"
@@ -179,67 +180,14 @@ Bar_initCmdGui() {
   Gui, +LabelBar_cmdGui
   IfWinExist, %wndTitle%
     Gui, Destroy
-  Gui, +LastFound -Caption +ToolWindow +AlwaysOnTop
+  Gui, +LastFound -Caption +ToolWindow +AlwaysOnTop +Delimiter`;
   Gui, Color, Default
   Gui, Font, s%Config_fontSize%, %Config_fontName%
-  Gui, Add, TreeView, x0 y0 r23 w300 Background%Config_normBgColor1% c%Config_normFgColor1% -ReadOnly vBar_#0_#0 gBar_cmdGuiEnter
-  GuiControl, -Redraw, Bar_#0_#0
-  itemId10 := TV_Add("Window")
-    itemId11 := TV_Add("set tag", itemId10)
-      TV_Add("all", itemId11)
-      TV_Add("Press <F2> to enter a number.", itemId11)
-    itemId12 := TV_Add("toggle tag", itemId10)
-      TV_Add("Press <F2> to enter a number.", itemId12)
-    TV_Add("move to top", itemId10)
-    TV_Add("move up", itemId10)
-    TV_Add("move down", itemId10)
-    TV_Add("toggle floating", itemId10)
-    TV_Add("toggle decor", itemId10)
-    TV_Add("close", itemId10)
-    TV_Add("maximize", itemId10)
-    TV_Add("move by key", itemId10)
-    TV_Add("resize by key", itemId10)
-    TV_Add("activate next", itemId10)
-    TV_Add("activate prev", itemId10)
-    TV_Add("move to next monitor", itemId10)
-    TV_Add("move to prev monitor", itemId10)
-  itemId20 := TV_Add("Layout")
-    TV_Add("set last", itemId20)
-    TV_Add("set 1st (tile)", itemId20)
-    TV_Add("set 2nd (monocle)", itemId20)
-    TV_Add("set 3rd (floating)", itemId20)
-    TV_Add("rotate layout axis", itemId20)
-    TV_Add("rotate master axis", itemId20)
-    TV_Add("rotate stack axis", itemId20)
-    TV_Add("mirror tile layout", itemId20)
-    TV_Add("increase master X", itemId20)
-    TV_Add("decrease master X", itemId20)
-    TV_Add("increase master Y", itemId20)
-    TV_Add("decrease master Y", itemId20)
-    TV_Add("increase master factor", itemId20)
-    TV_Add("decrease master factor", itemId20)
-  itemId30 := TV_Add("View")
-    itemId31 := TV_Add("activate", itemId30)
-      TV_Add("last", itemId31)
-      TV_Add("Press <F2> to enter a number.", itemId31)
-    TV_Add("move to next monitor", itemId30)
-    TV_Add("move to prev monitor", itemId30)
-  itemId40 := TV_Add("Monitor")
-    TV_Add("toggle bar", itemId40)
-    TV_Add("toggle task bar", itemId40)
-    TV_Add("activate next", itemId40)
-    TV_Add("activate prev", itemId40)
-  ;itemId50 := TV_add("Log")
-  ;  TV_Add("increment debug level", itemId50)
-  ;  TV_Add("decrement debug level", itemId50)
-  ;  TV_Add("log help info", itemId50)
-  ;  TV_Add("log view window info", itemId50)
-  ;  TV_Add("log managed window info", itemId50)
-  TV_Add("Reload")
-  TV_Add("Quit")
-  GuiControl, +Redraw, Bar_#0_#0
+  StringSplit, cmd, Config_barCommands, `;
+  Gui, Add, ComboBox, x10 y0 r%cmd0% w300 Background%Config_normBgColor1% c%Config_normFgColor1% Simple vBar_#0_#0 gBar_cmdGuiEnter, % Config_barCommands
   Gui, Add, Button, Y0 Hidden Default gBar_cmdGuiEnter, OK
   GuiControlGet, Bar_#0_#0, Pos
+  Bar_#0_#0W += 20
   Gui, Show, Hide w%Bar_#0_#0W% h%Bar_#0_#0H%, %wndTitle%
 }
 
@@ -250,136 +198,16 @@ Bar_cmdGuiEscape:
 Return
 
 Bar_cmdGuiEnter:
-  If (A_GuiControl = "OK") Or (A_GuiControl = "BAR_#0_#0" And A_GuiControlEvent = "DoubleClick") {
-    Bar_selItemId_#1 := TV_GetSelection()
-    If Not TV_GetChild(Bar_selItemId_#1) {
-      Bar_selItemId_#2 := TV_GetParent(Bar_selItemId_#1)
-      Bar_selItemId_#3 := TV_GetParent(Bar_selItemId_#2)
-      TV_GetText(Bar_command_#1, Bar_selItemId_#1)
-      TV_GetText(Bar_command_#2, Bar_selItemId_#2)
-      TV_GetText(Bar_command_#3, Bar_selItemId_#3)
-    } Else
-      Bar_command_#1 := ""
+  If (A_GuiControl = "OK") Or (A_GuiControl = "Bar_#0_#0" And A_GuiControlEvent = "DoubleClick") 
+  {
+    Gui, Submit, NoHide
     Bar_cmdGuiIsVisible := False
     Gui, Cancel
     WinActivate, ahk_id %Bar_aWndId%
-    Bar_evaluateCommand()
+    Main_evalCommand(Bar_#0_#0)
+    Bar_#0_#0 := ""
   }
 Return
-
-Bar_evaluateCommand() {
-  Global Bar_command_#1, Bar_command_#2, Bar_command_#3, Config_viewCount
-  
-  If (Bar_command_#1) {
-    If (Bar_command_#2 = "Run")
-      Run, %Bar_command_#1%
-    Else If (Bar_command_#3 = "Window") {
-      If (Bar_command_#2 = "set tag") {
-        If (Bar_command_#1 = "all")
-          Monitor_setWindowTag(0)
-        Else If (RegExMatch(Bar_command_#1, "[0-9]+") And Bar_command_#1 <= Config_viewCount)
-          Monitor_setWindowTag(Bar_command_#1)
-      } Else If (Bar_command_#2 = "toggle tag")
-        If (RegExMatch(Bar_command_#1, "[0-9]+") And Bar_command_#1 <= Config_viewCount)
-          Monitor_toggleWindowTag(Bar_command_#1)
-    } Else If (Bar_command_#2 = "Window") {
-      If (Bar_command_#1 = "move to top")
-        View_shuffleWindow(0)
-      Else If (Bar_command_#1 = "move up")
-        View_shuffleWindow(-1)
-      Else If (Bar_command_#1 = "move down")
-         View_shuffleWindow(+1)
-      Else If (Bar_command_#1 = "toggle floating")
-         View_toggleFloating()
-      Else If (Bar_command_#1 = "toggle decor")
-         Manager_toggleDecor()
-      Else If (Bar_command_#1 = "close")
-         Manager_closeWindow()
-      Else If (Bar_command_#1 = "move by key")
-         Manager_moveWindow()
-      Else If (Bar_command_#1 = "resize by key")
-         Manager_sizeWindow()
-      Else If (Bar_command_#1 = "maximize")
-         Manager_maximizeWindow()
-      Else If (Bar_command_#1 = "activate next")
-         View_activateWindow(+1)
-      Else If (Bar_command_#1 = "activate prev")
-         View_activateWindow(-1)
-      Else If (Bar_command_#1 = "move to next monitor")
-         Manager_setWindowMonitor(+1)
-      Else If (Bar_command_#1 = "move to prev monitor")
-         Manager_setWindowMonitor(-1)
-    } Else If (Bar_command_#2 = "Layout") {
-      If (Bar_command_#1 = "set last")
-        View_setLayout(-1)
-      Else If (Bar_command_#1 = "set 1st (tile)")
-        View_setLayout(1)
-      Else If (Bar_command_#1 = "set 2nd (monocle)")
-        View_setLayout(2)
-      Else If (Bar_command_#1 = "set 3rd (floating)")
-        View_setLayout(3)
-      Else If (Bar_command_#1 = "rotate layout axis")
-        View_rotateLayoutAxis(1, +1)
-      Else If (Bar_command_#1 = "rotate master axis")
-        View_rotateLayoutAxis(2, +1)
-      Else If (Bar_command_#1 = "rotate stack axis")
-        View_rotateLayoutAxis(3, +1)
-      Else If (Bar_command_#1 = "mirror tile layout")
-        View_rotateLayoutAxis(1, +2)
-      Else If (Bar_command_#1 = "increase master X")
-        View_setMX(+1)
-      Else If (Bar_command_#1 = "decrease master X")
-        View_setMX(-1)
-      Else If (Bar_command_#1 = "increase master Y")
-        View_setMY(+1)
-      Else If (Bar_command_#1 = "decrease master Y")
-        View_setMY(-1)
-      Else If (Bar_command_#1 = "increase master factor")
-        View_setMFactor(+0.05)
-      Else If (Bar_command_#1 = "decrease master factor")
-        View_setMFactor(-0.05)
-    } Else If (Bar_command_#3 = "View") {
-      If (Bar_command_#2 = "activate") {
-        If (Bar_command_#1 = "last")
-          Monitor_activateView(-1)
-        Else If (RegExMatch(Bar_command_#1, "[0-9]+") And Bar_command_#1 <= Config_viewCount)
-          Monitor_activateView(Bar_command_#1)
-      }
-    } Else If (Bar_command_#2 = "View") {
-      If (Bar_command_#1 = "move to next monitor")
-        Manager_setViewMonitor(+1)
-      Else If (Bar_command_#1 = "move to prev monitor")
-        Manager_setViewMonitor(-1)
-    } Else If (Bar_command_#2 = "Monitor") {
-      If (Bar_command_#1 = "toggle bar")
-        Monitor_toggleBar()
-      Else If (Bar_command_#1 = "toggle task bar")
-        Monitor_toggleTaskBar()
-      Else If (Bar_command_#1 = "activate next")
-        Manager_activateMonitor(+1)
-      Else If (Bar_command_#1 = "activate prev")
-        Manager_activateMonitor(-1)
-    } Else If (Bar_command_#2 = "Log") {
-      If (Bar_command_#1 = "increment debug level")
-        Debug_setLogLevel(+1)
-      If (Bar_command_#1 = "decrement debug level")
-        Debug_setLogLevel(-1)
-      If (Bar_command_#1 = "log help info")
-        Manager_logHelp()
-      If (Bar_command_#1 = "log view window info")
-        Manager_logViewWindowList()
-      If (Bar_command_#1 = "log managed window info")
-        Manager_logManagedWindowList()
-    } Else If (Bar_command_#1 = "Reload")
-      Main_reload()
-    Else If (Bar_command_#1 = "Quit")
-      ExitApp
-    
-    Bar_command_#1 := ""
-    Bar_command_#2 := ""
-    Bar_command_#3 := ""
-  }
-}
 
 Bar_getBatteryStatus(ByRef batteryLifePercent, ByRef acLineStatus) {
   VarSetCapacity(powerStatus, (1 + 1 + 1 + 1 + 4 + 4))
