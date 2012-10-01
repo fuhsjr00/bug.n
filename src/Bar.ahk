@@ -355,8 +355,6 @@ Bar_toggleCommandGui() {
       y := Monitor_#%Manager_aMonitor%_y + Monitor_#%Manager_aMonitor%_height - Bar_#0_#0H
     Gui, Show
     WinMove, bug.n_BAR_0, , %x%, %y%
-    WinGet, wndId, ID, bug.n_BAR_0
-    Manager_winActivate(wndId)
     GuiControl, Focus, % Bar_#0_#0
   }
 }
