@@ -145,6 +145,8 @@ Monitor_getWorkArea(m) {
           If (wndY <= monitorTop) {      ; Top
             wndHeight += wndY - monitorTop
             monitorTop += wndHeight
+            If (A_LoopField = "Shell_TrayWnd")
+              Manager_taskBarPos := "top"
           } Else {              ; Bottom
             wndHeight := monitorBottom - wndY
             monitorBottom -= wndHeight

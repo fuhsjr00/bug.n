@@ -349,7 +349,7 @@ Bar_toggleCommandGui() {
   } Else {
     Bar_cmdGuiIsVisible := True
     x := Monitor_#%Manager_aMonitor%_barX + Monitor_#%Manager_aMonitor%_barWidth - Bar_#0_#0W
-    If (Config_verticalBarPos = "top") Or (Config_verticalBarPos = "tray" And Not Manager_aMonitor = Manager_taskBarMonitor)
+    If (Config_verticalBarPos = "top") Or (Config_verticalBarPos = "tray" And (Manager_taskBarPos = "top" Or Not Manager_aMonitor = Manager_taskBarMonitor))
       y := Monitor_#%Manager_aMonitor%_y
     Else
       y := Monitor_#%Manager_aMonitor%_y + Monitor_#%Manager_aMonitor%_height - Bar_#0_#0H
