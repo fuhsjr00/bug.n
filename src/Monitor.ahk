@@ -60,9 +60,11 @@ Monitor_activateView(v) {
       View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
   }
   
-  n := 1
-  If (Config_syncMonitorViews > 0)
+  n := Config_syncMonitorViews
+  If (n = 1)
     n := Manager_monitorCount
+  Else If (n < 1)
+    n := 1
   Loop, % n {
     If (n = 1)
       m := Manager_aMonitor
@@ -181,10 +183,26 @@ Monitor_getWorkArea(m) {
   Monitor_#%m%_barY   := bTop
 }
 
-Monitor_moveWindow(m, wndId) {
+Monitor_moveWindow(m, wndId) 
+{
   Global
+  Local fX, fY, monitor, wndHeight, wndWidth, wndX, wndY
   
   Manager_#%wndId%_monitor := m
+  If Manager_#%wndId%_isFloating 
+  {
+    WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
+    monitor := Monitor_get(wndX+wndWidth/2, wndY+wndHeight/2)
+    If Not (m = monitor) 
+    {    ;; Move the window to the target monitor and scale it, if it does not fit on the monitor.
+      fX := Monitor_#%m%_width / Monitor_#%monitor%_width
+      fY := Monitor_#%m%_height / Monitor_#%monitor%_height
+      If (wndX-Monitor_#%monitor%_x+wndWidth > Monitor_#%m%_width) Or (wndY-Monitor_#%monitor%_y+wndHeight > Monitor_#%m%_height)
+        Manager_winMove(wndId, Monitor_#%m%_x+fX*(wndX-Monitor_#%monitor%_x), Monitor_#%m%_y+fY*(wndY-Monitor_#%monitor%_y), fX*wndWidth, fY*wndHeight)
+      Else
+        Manager_winMove(wndId, Monitor_#%m%_x+(wndX-Monitor_#%monitor%_x), Monitor_#%m%_y+(wndY-Monitor_#%monitor%_y), wndWidth, wndHeight)
+    }
+  }
 }
 
 Monitor_setWindowTag(t) {
