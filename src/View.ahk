@@ -18,7 +18,8 @@
   @version 8.3.0
 */
 
-View_init(m, v) {
+View_init(m, v) 
+{
   Global
   
   View_#%m%_#%v%_aWndId         := 0
@@ -35,11 +36,11 @@ View_init(m, v) {
   View_#%m%_#%v%_wndIds         := ""
 }
 
-View_activateWindow(d) {
-  Local aWndId, i, j, v, wndId, wndId0, wndIds, failure, direction
+View_activateWindow(d) 
+{
+  Local aWndId, direction, failure, i, j, v, wndId, wndId0, wndIds
   
   Debug_logMessage("DEBUG[1] View_activateWindow(" . d . ")", 1)
-  
   If (d = 0)
     Return
   
@@ -50,35 +51,38 @@ View_activateWindow(d) {
   StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
   StringSplit, wndId, wndIds, `;
   Debug_logMessage("DEBUG[2] wndId count: " . wndId0, 2, False)
-  If (wndId0 > 1) {
+  If (wndId0 > 1) 
+  {
     If Manager_#%aWndId%_isFloating
       Manager_winSet("Bottom", "", aWndId)
-    Loop, % wndId0
-      If (wndId%A_Index% = aWndId) {
+    Loop, % wndId0 
+    {
+      If (wndId%A_Index% = aWndId) 
+      {
         i := A_Index
         Break
       }
+    }
+    Debug_logMessage("DEBUG[2] Current wndId index: " . i, 2, False)
+    
     If (d > 0) 
       direction = 1
     Else
       direction = -1
-    Debug_logMessage("DEBUG[2] Current wndId index: " . i, 2, False)
     j := Manager_loop(i, d, 1, wndId0)
-    Loop, % wndId0 {
+    Loop, % wndId0 
+    {
       Debug_logMessage("DEBUG[2] Next wndId index: " . j, 2, False)
       wndId := wndId%j%
       Manager_winSet("AlwaysOnTop", "On", wndId)
       Manager_winSet("AlwaysOnTop", "Off", wndId)
-      ; This is a lot of extra work in case there are hung windows on the screen.
-      ; We still want to be able to cycle through them.
-      failure := Manager_winActivate(wndId)
-      If Not failure {
-        Break
-      }
       
+      ;; If there are hung windows on the screen, we still want to be able to cycle through them.
+      failure := Manager_winActivate(wndId)
+      If Not failure 
+        Break
       j := Manager_loop(j, direction, 1, wndId0)
     }
-    
   }
 }
 
@@ -190,26 +194,32 @@ View_arrange_monocle(m, v, wndIds) {
   View_draw_stack("View_arrange_monocle_wndId", 1, View_arrange_monocle_wndId0, 0, Monitor_#%m%_x, Monitor_#%m%_y, Monitor_#%m%_width, Monitor_#%m%_height, gw/2)
 }
 
-View_rotateLayoutAxis(i, d) {
-  Local f, l, v, n, tmp
+View_rotateLayoutAxis(i, d) 
+{
+  Local f, l, n, tmp, v
   
   v := Monitor_#%Manager_aMonitor%_aView_#1
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% = "tile") And (i = 1 Or i = 2 Or i = 3) {
-    If (i = 1) {
+  If (Config_layoutFunction_#%l% = "tile") And (i = 1 Or i = 2 Or i = 3) 
+  {
+    If (i = 1) 
+    {
       If (d = +2)
         View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% *= -1
-      Else {
+      Else 
+      {
         f := View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% / Abs(View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%)
         View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% := f * Manager_loop(Abs(View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%), d, 1, 2)
       }
-    } Else {
+    } 
+    Else 
+    {
       n := Manager_loop(View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%, d, 1, 3)
-      ; When we rotate the axis, we may need to swap the X and Y dimensions.
-      ; We only need to check this when the master axis changes (i = 2)
-      ; If the axis doesn't change, there's no need to adjust (Not (n = View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%))
-      ; If the original axis was 1 (X) or the new axis is 1 (X)  (Y and Z are defined to be the same)
-      If (i = 2) And Not (n = View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%) And ((n = 1) Or (View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% = 1)) {
+      ;; When we rotate the axis, we may need to swap the X and Y dimensions.
+      ;; We only need to check this when the master axis changes (i = 2)
+      ;; If the original axis was 1 (X) or the new axis is 1 (X)  (Y and Z are defined to be the same)
+      If (i = 2) And Not (n = View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%) And (n = 1 Or View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% = 1) 
+      {
         tmp := View_#%Manager_aMonitor%_#%v%_layoutMX
         View_#%Manager_aMonitor%_#%v%_layoutMX := View_#%Manager_aMonitor%_#%v%_layoutMY
         View_#%Manager_aMonitor%_#%v%_layoutMY := tmp
@@ -220,25 +230,29 @@ View_rotateLayoutAxis(i, d) {
   }
 }
 
-View_setGapWidth(d) {
+View_setGapWidth(d) 
+{
   Local l, v, w
   
   v := Monitor_#%Manager_aMonitor%_aView_#1
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% = "tile") {
-        If (d < 0)
-            d := Floor(d / 2) * 2
-        Else
-            d := Ceil(d / 2) * 2
-        w := View_#%Manager_aMonitor%_#%v%_layoutGapWidth + d
-    If (w < Monitor_#%Manager_aMonitor%_height And w < Monitor_#%Manager_aMonitor%_width) {
+  If (Config_layoutFunction_#%l% = "tile") 
+  {
+    If (d < 0)
+      d := Floor(d / 2) * 2
+    Else
+      d := Ceil(d / 2) * 2
+    w := View_#%Manager_aMonitor%_#%v%_layoutGapWidth + d
+    If (w < Monitor_#%Manager_aMonitor%_height And w < Monitor_#%Manager_aMonitor%_width) 
+    {
       View_#%Manager_aMonitor%_#%v%_layoutGapWidth := w
       View_arrange(Manager_aMonitor, v)
     }
   }
 }
 
-View_setLayout(l) {
+View_setLayout(l) 
+{
   Local v
   
   v := Monitor_#%Manager_aMonitor%_aView_#1
@@ -246,8 +260,10 @@ View_setLayout(l) {
     l := View_#%Manager_aMonitor%_#%v%_layout_#2
   If (l = ">")
     l := Manager_loop(View_#%Manager_aMonitor%_#%v%_layout_#1, +1, 1, Config_layoutCount)
-  If (l > 0) And (l <= Config_layoutCount) {
-    If Not (l = View_#%Manager_aMonitor%_#%v%_layout_#1) {
+  If (l > 0) And (l <= Config_layoutCount) 
+  {
+    If Not (l = View_#%Manager_aMonitor%_#%v%_layout_#1) 
+    {
       View_#%Manager_aMonitor%_#%v%_layout_#2 := View_#%Manager_aMonitor%_#%v%_layout_#1
       View_#%Manager_aMonitor%_#%v%_layout_#1 := l
     }
@@ -255,77 +271,96 @@ View_setLayout(l) {
   }
 }
 
-View_setMFactor(d) {
+View_setMFactor(d) 
+{
   Local l, mfact, v
   
   v := Monitor_#%Manager_aMonitor%_aView_#1
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% = "tile") {
-    mfact := View_#%Manager_aMonitor%_#%v%_layoutMFact + d
-    If (mfact >= 0.05 And mfact <= 0.95) {
+  If (Config_layoutFunction_#%l% = "tile") 
+  {
+    mfact := 0
+    If (d >= 1.05)
+      mfact := d
+    Else
+      mfact := View_#%Manager_aMonitor%_#%v%_layoutMFact + d
+    If (mfact >= 0.05 And mfact <= 0.95) 
+    {
       View_#%Manager_aMonitor%_#%v%_layoutMFact := mfact
       View_arrange(Manager_aMonitor, v)
     }
   }
 }
 
-View_setMX(d) {
-  Local l, n, m, v
+View_setMX(d) 
+{
+  Local l, n, v
   
-  m := Manager_aMonitor
-  v := Monitor_#%m%_aView_#1
-  l := View_#%m%_#%v%_layout_#1
+  v := Monitor_#%Manager_aMonitor%_aView_#1
+  l := View_#%Manager_aMonitor%_#%v%_layout_#1
   If Not (Config_layoutFunction_#%l% = "tile")
     Return
   
-  n := View_#%m%_#%v%_layoutMX + d
-  If (n >= 1) And (n <= 9) {
-    View_#%m%_#%v%_layoutMX := n
-    View_arrange(m, v)
+  n := View_#%Manager_aMonitor%_#%v%_layoutMX + d
+  If (n >= 1) And (n <= 9) 
+  {
+    View_#%Manager_aMonitor%_#%v%_layoutMX := n
+    View_arrange(Manager_aMonitor, v)
   }
 }
 
-View_setMY(d) {
-  Local l, n, m, v
+View_setMY(d) 
+{
+  Local l, n, v
   
-  m := Manager_aMonitor
-  v := Monitor_#%m%_aView_#1
-  l := View_#%m%_#%v%_layout_#1
+  v := Monitor_#%Manager_aMonitor%_aView_#1
+  l := View_#%Manager_aMonitor%_#%v%_layout_#1
   If Not (Config_layoutFunction_#%l% = "tile")
     Return
   
-  n := View_#%m%_#%v%_layoutMY + d
-  If (n >= 1) And (n <= 9) {
-    View_#%m%_#%v%_layoutMY := n
-    View_arrange(m, v)
+  n := View_#%Manager_aMonitor%_#%v%_layoutMY + d
+  If (n >= 1) And (n <= 9) 
+  {
+    View_#%Manager_aMonitor%_#%v%_layoutMY := n
+    View_arrange(Manager_aMonitor, v)
   }
 }
 
-View_shuffleWindow(d) {
+View_shuffleWindow(d) 
+{
   Local aWndHeight, aWndId, aWndWidth, aWndX, aWndY, i, j, l, search, v, wndId0, wndIds
   
   WinGet, aWndId, ID, A
   v := Monitor_#%Manager_aMonitor%_aView_#1
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% = "tile" And InStr(Manager_managedWndIds, aWndId ";")) {
+  If (Config_layoutFunction_#%l% = "tile" And InStr(Manager_managedWndIds, aWndId ";")) 
+  {
     View_getTiledWndIds(Manager_aMonitor, v, wndIds)
     StringTrimRight, wndIds, wndIds, 1
     StringSplit, wndId, wndIds, `;
-    If (wndId0 > 1) {
-      Loop, % wndId0
-        If (wndId%A_Index% = aWndId) {
+    If (wndId0 > 1) 
+    {
+      Loop, % wndId0 
+      {
+        If (wndId%A_Index% = aWndId) 
+        {
           i := A_Index
           Break
         }
+      }
       If (d = 0 And i = 1)
         j := 2
       Else
         j := Manager_loop(i, d, 1, wndId0)
-      If (j > 0 And j <= wndId0) {
-        If (j = i) {
+      If (j > 0 And j <= wndId0) 
+      {
+        If (j = i) 
+        {
           StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, %aWndId%`;, 
           View_#%Manager_aMonitor%_#%v%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%v%_wndIds
-        } Else {
+        } 
+        Else 
+        {
           search := wndId%j%
           StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, %aWndId%, SEARCH
           StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, %search%, %aWndId%
@@ -333,7 +368,8 @@ View_shuffleWindow(d) {
         }
         View_arrange(Manager_aMonitor, v)
         
-        If Config_mouseFollowsFocus {
+        If Config_mouseFollowsFocus 
+        {
           WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
           DllCall("SetCursorPos", "Int", Round(aWndX + aWndWidth / 2), "Int", Round(aWndY + aWndHeight / 2))
         }
@@ -577,13 +613,15 @@ View_arrange_tile(m, v, wndIds) {
   View_arrange_tile_action("View_arrange_tile_wndId", msplit + 1, stack_len, axis3, x2, y2, w2, h2, gapW_2)
 }
 
-View_toggleFloating() {
+View_toggleFloating() 
+{
   Local aWndId, l, v
   
   WinGet, aWndId, ID, A
   v := Monitor_#%Manager_aMonitor%_aView_#1
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% And InStr(Manager_managedWndIds, aWndId ";")) {
+  If (Config_layoutFunction_#%l% And InStr(Manager_managedWndIds, aWndId ";")) 
+  {
     Manager_#%aWndId%_isFloating := Not Manager_#%aWndId%_isFloating
     View_arrange(Manager_aMonitor, v)
     Bar_updateTitle()
