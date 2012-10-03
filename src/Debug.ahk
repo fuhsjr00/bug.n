@@ -30,6 +30,42 @@ Debug_initLog(filename, level = 0, truncateFile = True)
   Debug_logMessage("Log initialized.", 0)
 }
 
+Debug_logHelp() 
+{
+  Debug_logMessage("Help Display")
+  Debug_logMessage("Window list columns", 0)
+  Debug_logMessage("    ID - Windows ID. Unique, OS-assigned ID", 0)
+  Debug_logMessage("    H - Hidden. Whether bug.n thinks this window is hidden.", 0)
+  Debug_logMessage("    W - Windows active. This window is active according to Windows.", 0)
+  Debug_logMessage("    A - View active. This window is active according to bug.n.", 0)
+  Debug_logMessage("    F - Floating. This window should not be positioned and resized by the layout.", 0)
+  Debug_logMessage("    D - Decorated. Does the window have a title bar?", 0)
+  Debug_logMessage("    R - Responsive. Is responding to messages?", 0)
+  Debug_logMessage("    G - Ghost. Is this window a ghost of another hung window?", 0)
+  Debug_logMessage("    M - Monitor number.", 0)
+  Debug_logMessage("    Tags - Bit-mask of the views in which the window is active.", 0)
+  Debug_logMessage("    X - Windows X position.", 0)
+  Debug_logMessage("    Y - Windows Y position.", 0)
+  Debug_logMessage("    W - Windows width.", 0)
+  Debug_logMessage("    H - Windows height.", 0)
+  Debug_logMessage("    Style - Windows style.", 0)
+  Debug_logMessage("    Proc / Class / Title - Process/Class/Title of the window.", 0)
+}
+
+Debug_logManagedWindowList() 
+{
+  Local wndIds
+  
+  Debug_logMessage("Window dump for manager")
+  Debug_logMessage("ID`t`tH W A F D R G M`tTags`tX`tY`tW`tH`tStyle`t`tProc / Class / Title", 0, False)
+  
+  StringTrimRight, wndIds, Manager_managedWndIds, 1
+  Loop, PARSE, wndIds, `;
+  {
+    Debug_logWindowInfo(A_LoopField)
+  }
+}
+
 Debug_logMessage(text, level = 1, includeTimestamp = True) 
 {
   Global Debug_logFilename, Debug_logLevel
@@ -45,6 +81,75 @@ Debug_logMessage(text, level = 1, includeTimestamp = True)
       text := "                    " text
     FileAppend, %text%`r`n, %Debug_logFilename%
   }
+}
+
+Debug_logViewWindowList() 
+{
+  Local v, wndIds
+  
+  v := Monitor_#%Manager_aMonitor%_aView_#1
+  Debug_logMessage("Window dump for active view (" . Manager_aMonitor . ", " . v . ")")
+  Debug_logMessage("ID`t`tH W A F D R G M`tTags`tX`tY`tW`tH`tStyle`t`tProc / Class / Title", 0, False)
+  
+  StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
+  Loop, PARSE, wndIds, `;
+  {
+    Debug_logWindowInfo(A_LoopField)
+  }
+}
+
+Debug_logWindowInfo(wndId) 
+{
+  Local aWndId, detect_state, text, v
+  Local isBugnActive, isDecorated, isFloating, isGhost, isHidden, isResponsive, isWinFocus
+  Local wndClass, wndH, wndProc, wndStyle, wndTitle, wndW, wndX, wndY
+  
+  detect_state := A_DetectHiddenWindows
+  DetectHiddenWindows, On
+  WinGet, aWndId, ID, A
+  If aWndId = %wndId%
+    isWinFocus := "*"
+  Else
+    isWinFocus := " "
+  v := Monitor_#%Manager_aMonitor%_aView_#1
+  If View_#%Manager_aMonitor%_#%v%_aWndId = %wndId%
+    isBugnActive := "*"
+  Else
+    isBugnActive := " "
+  WinGetTitle, wndTitle, ahk_id %wndId%
+  WinGetClass, wndClass, ahk_id %wndId%
+  WinGet, wndProc, ProcessName, ahk_id %wndId%
+  If InStr(Bar_hiddenWndIds, wndId)
+    isHidden := "*"
+  Else 
+    isHidden := " "
+  If Manager_#%wndId%_isFloating
+    isFloating := "*"
+  Else
+    isFloating := " "
+  If Manager_#%wndId%_isDecorated
+    isDecorated := "*"
+  Else
+    isDecorated := " "
+  WinGet, wndStyle, Style, ahk_id %wndId%
+  WinGetPos, wndX, wndY, wndW, wndH, ahk_id %wndId%
+  If Manager_isGhost(wndId)
+    isGhost := "*"
+  Else
+    isGhost := " "
+  DetectHiddenWindows, %detect_state%
+  
+  ;; Intentionally don't detect hidden windows here to see what Manager_hungTest does
+  If Manager_isHung(wndId)
+    isResponsive := " "
+  Else
+    isResponsive := "*"
+  
+  text := wndId "`t"
+  text .= isHidden " " isWinFocus " " isBugnActive " " isFloating " " isDecorated " " isResponsive " " isGhost " "
+  text .= Manager_#%wndId%_monitor "`t" Manager_#%wndId%_tags "`t"
+  text .= wndX "`t" wndY "`t" wndW "`t" wndH "`t" wndStyle "`t" wndProc " / " wndClass " / " wndTitle
+  Debug_logMessage(text , 0, False)
 }
 
 Debug_setLogLevel(d) 

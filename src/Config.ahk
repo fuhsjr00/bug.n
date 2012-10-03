@@ -366,11 +366,11 @@ Config_saveSession()
 #+i::Manager_getWindowList()
 
 ;; Window debugging
-#^i::Manager_logViewWindowList()
-#+^i::Manager_logManagedWindowList()
-#^h::Manager_logHelp()
-#^l::Debug_setLogLevel(-1)
-#^+l::Debug_setLogLevel(+1)
+#^i::Debug_logViewWindowList()
+#+^i::Debug_logManagedWindowList()
+#^h::Debug_logHelp()
+#^d::Debug_setLogLevel(-1)
+#^+d::Debug_setLogLevel(+1)
 
 ;; Layout management
 #Tab::View_setLayout(-1)
