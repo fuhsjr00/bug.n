@@ -180,6 +180,31 @@ Manager_closeWindow()
     Manager_winClose(aWndId)
 }
 
+
+;; Given a ghost window, try to find its body.
+;; This is only known to work on Windows 7
+Manager_findHung(ghostWnd) 
+{
+  Local expectedH, expectedTitle, expectedW, expectedX, expectedY, wndH, wndIds, wndTitle, wndW, wndX, wndY
+  
+  WinGetTitle, expectedTitle, ahk_id %ghostWnd%
+  StringReplace, expectedTitle, expectedTitle, %Config_ghostWndSubString%, 
+  WinGetPos, expectedX, expectedY, expectedW, expectedH, ahk_id %ghostWnd%
+  
+  SetTitleMatchMode, 2
+  WinGet, wndIds, List, %expectedTitle%
+  Loop, % wndIds 
+  {
+    If (A_Index = ghostWnd)
+      Continue
+    WinGetPos, wndX, wndY, wndW, wndH, % "ahk_id" wndIDs%A_Index%
+    
+    If (wndX = expectedX) And (wndY = expectedY) And (wndW = expectedW) And (wndH = expectedH)
+      Return wndIds%A_Index%
+  }
+  Return 0
+}
+
 Manager_getWindowInfo() 
 {
   Local text, v, aWndClass, aWndHeight, aWndId, aWndProcessName, aWndStyle, aWndTitle, aWndWidth, aWndX, aWndY
@@ -221,6 +246,38 @@ Manager_getWindowList()
   MsgBox, 260, bug.n: Window List, % text "`n`nCopy text to clipboard?"
   IfMsgBox Yes
     Clipboard := text
+}
+
+Manager_isGhost(wndId) 
+{
+  Local wndClass, wndProc
+  
+  WinGet, wndProc, ProcessName, ahk_id %wndId%
+  WinGetClass, wndClass, ahk_id %wndId%
+  
+  If (wndProc = "dwm.exe") And (wndClass = "Ghost")
+    Return 1
+  Else
+    Return 0
+}
+
+;; 0 - Not hung
+;; 1 - Hung
+Manager_isHung(wndId) 
+{
+  Local detect_setting, result, WM_NULL
+  
+  WM_NULL := 0
+  detect_setting := A_DetectHiddenWindows
+  DetectHiddenWindows, On
+  SendMessage, WM_NULL, , , , ahk_id %wndId%
+  result := ErrorLevel
+  DetectHiddenWindows, %detect_setting%
+  
+  If result
+    Return 1
+  Else
+    Return 0
 }
 
 Manager_lockWorkStation() 
@@ -824,6 +881,34 @@ Manager_winActivate(wndId)
   Return 0
 }
 
+Manager_winClose(wndId) 
+{
+  If Manager_isHung(wndId) 
+  {
+    Debug_logMessage("DEBUG[2] Manager_winClose: Potentially hung window " . wndId, 2)
+    Return 1
+  }
+  Else 
+  {
+    WinClose, ahk_id %wndId%
+    Return 0
+  }
+}
+
+Manager_winHide(wndId) 
+{
+  If Manager_isHung(wndId) 
+  {
+    Debug_logMessage("DEBUG[2] Manager_winHide: Potentially hung window " . wndId, 2)
+    Return 1
+  }
+  Else 
+  {
+    WinHide, ahk_id %wndId%
+    Return 0
+  }
+}
+
 Manager_winMove(wndId, x, y, width, height) 
 {
   If Manager_isHung(wndId) 
@@ -848,16 +933,16 @@ Manager_winMove(wndId, x, y, width, height)
   }
 }
 
-Manager_winHide(wndId) 
+Manager_winSet(type, value, wndId) 
 {
   If Manager_isHung(wndId) 
   {
-    Debug_logMessage("DEBUG[2] Manager_winHide: Potentially hung window " . wndId, 2)
+    Debug_logMessage("DEBUG[2] Manager_winSet: Potentially hung window " . wndId, 2)
     Return 1
   }
   Else 
   {
-    WinHide, ahk_id %wndId%
+    WinSet, %type%, %value%, ahk_id %wndId%
     Return 0
   }
 }
@@ -874,88 +959,4 @@ Manager_winShow(wndId)
     WinShow, ahk_id %wndId%
     Return 0
   }
-}
-
-Manager_winClose(wndId) 
-{
-  If Manager_isHung(wndId) 
-  {
-    Debug_logMessage("DEBUG[2] Manager_winClose: Potentially hung window " . wndId, 2)
-    Return 1
-  }
-  Else 
-  {
-    WinClose, ahk_id %wndId%
-    Return 0
-  }
-}
-
-Manager_winSet(type, value, wndId) 
-{
-  If Manager_isHung(wndId) 
-  {
-    Debug_logMessage("DEBUG[2] Manager_winSet: Potentially hung window " . wndId, 2)
-    Return 1
-  }
-  Else 
-  {
-    WinSet, %type%, %value%, ahk_id %wndId%
-    Return 0
-  }
-}
-
-;; 0 - Not hung
-;; 1 - Hung
-Manager_isHung(wndId) 
-{
-  Local detect_setting, result, WM_NULL
-  
-  WM_NULL := 0
-  detect_setting := A_DetectHiddenWindows
-  DetectHiddenWindows, On
-  SendMessage, WM_NULL, , , , ahk_id %wndId%
-  result := ErrorLevel
-  DetectHiddenWindows, %detect_setting%
-  
-  If result
-    Return 1
-  Else
-    Return 0
-}
-
-;; Given a ghost window, try to find its body.
-;; This is only known to work on Windows 7
-Manager_findHung(ghostWnd) 
-{
-  Local expectedH, expectedTitle, expectedW, expectedX, expectedY, wndH, wndIds, wndTitle, wndW, wndX, wndY
-  
-  WinGetTitle, expectedTitle, ahk_id %ghostWnd%
-  StringReplace, expectedTitle, expectedTitle, %Config_ghostWndSubString%, 
-  WinGetPos, expectedX, expectedY, expectedW, expectedH, ahk_id %ghostWnd%
-  
-  SetTitleMatchMode, 2
-  WinGet, wndIds, List, %expectedTitle%
-  Loop, % wndIds 
-  {
-    If (A_Index = ghostWnd)
-      Continue
-    WinGetPos, wndX, wndY, wndW, wndH, % "ahk_id" wndIDs%A_Index%
-    
-    If (wndX = expectedX) And (wndY = expectedY) And (wndW = expectedW) And (wndH = expectedH)
-      Return wndIds%A_Index%
-  }
-  Return 0
-}
-
-Manager_isGhost(wndId) 
-{
-  Local wndClass, wndProc
-  
-  WinGet, wndProc, ProcessName, ahk_id %wndId%
-  WinGetClass, wndClass, ahk_id %wndId%
-  
-  If (wndProc = "dwm.exe") And (wndClass = "Ghost")
-    Return 1
-  Else
-    Return 0
 }
