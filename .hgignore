@@ -1,4 +1,5 @@
 syntax: glob
 01_administration.org
+src/log.txt
 syntax: regexp
 .*[cC]onfig.*\.ini

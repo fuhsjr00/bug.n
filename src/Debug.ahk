@@ -32,24 +32,24 @@ Debug_initLog(filename, level = 0, truncateFile = True)
 
 Debug_logHelp() 
 {
-  Debug_logMessage("Help Display")
-  Debug_logMessage("Window list columns", 0)
-  Debug_logMessage("    ID - Windows ID. Unique, OS-assigned ID", 0)
-  Debug_logMessage("    H - Hidden. Whether bug.n thinks this window is hidden.", 0)
-  Debug_logMessage("    W - Windows active. This window is active according to Windows.", 0)
-  Debug_logMessage("    A - View active. This window is active according to bug.n.", 0)
-  Debug_logMessage("    F - Floating. This window should not be positioned and resized by the layout.", 0)
-  Debug_logMessage("    D - Decorated. Does the window have a title bar?", 0)
-  Debug_logMessage("    R - Responsive. Is responding to messages?", 0)
-  Debug_logMessage("    G - Ghost. Is this window a ghost of another hung window?", 0)
-  Debug_logMessage("    M - Monitor number.", 0)
-  Debug_logMessage("    Tags - Bit-mask of the views in which the window is active.", 0)
-  Debug_logMessage("    X - Windows X position.", 0)
-  Debug_logMessage("    Y - Windows Y position.", 0)
-  Debug_logMessage("    W - Windows width.", 0)
-  Debug_logMessage("    H - Windows height.", 0)
-  Debug_logMessage("    Style - Windows style.", 0)
-  Debug_logMessage("    Proc / Class / Title - Process/Class/Title of the window.", 0)
+  Debug_logMessage("Help Display", 0)
+  Debug_logMessage("Window list columns", 0, False)
+  Debug_logMessage("    ID - Windows ID. Unique, OS-assigned ID", 0, False)
+  Debug_logMessage("    H - Hidden. Whether bug.n thinks this window is hidden.", 0, False)
+  Debug_logMessage("    W - Windows active. This window is active according to Windows.", 0, False)
+  Debug_logMessage("    A - View active. This window is active according to bug.n.", 0, False)
+  Debug_logMessage("    F - Floating. This window should not be positioned and resized by the layout.", 0, False)
+  Debug_logMessage("    D - Decorated. Does the window have a title bar?", 0, False)
+  Debug_logMessage("    R - Responsive. Is responding to messages?", 0, False)
+  Debug_logMessage("    G - Ghost. Is this window a ghost of another hung window?", 0, False)
+  Debug_logMessage("    M - Monitor number.", 0, False)
+  Debug_logMessage("    Tags - Bit-mask of the views in which the window is active.", 0, False)
+  Debug_logMessage("    X - Windows X position.", 0, False)
+  Debug_logMessage("    Y - Windows Y position.", 0, False)
+  Debug_logMessage("    W - Windows width.", 0, False)
+  Debug_logMessage("    H - Windows height.", 0, False)
+  Debug_logMessage("    Style - Windows style.", 0, False)
+  Debug_logMessage("    Proc / Class / Title - Process/Class/Title of the window.", 0, False)
 }
 
 Debug_logManagedWindowList() 
@@ -70,7 +70,7 @@ Debug_logMessage(text, level = 1, includeTimestamp = True)
 {
   Global Debug_logFilename, Debug_logLevel
   
-  If Debug_logLevel >= level 
+  If (Debug_logLevel >= level)
   {
     If includeTimestamp 
     {
@@ -157,10 +157,10 @@ Debug_setLogLevel(d)
   Global Debug_logLevel
   
   i := Debug_logLevel + d
-  If i >= 0
+  If (i >= 0)
   {
     Debug_logLevel := i
-    If i = 0
+    If (i = 0)
       Debug_logMessage("Logging disabled.")
     Else
       Debug_logMessage("Log level set to " i ".")
