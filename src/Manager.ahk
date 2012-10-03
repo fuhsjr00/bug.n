@@ -829,7 +829,7 @@ Manager_isHung(wndId) {
 Manager_findHung( ghostWnd ) {
   Local expectedTitle, expectedX, expectedY, expectedW, expectedH, wndTitle, wndX, wndY, wndW, wndH, wndIds
   WinGetTitle, expectedTitle, ahk_id %ghostWnd%
-  StringReplace, expectedTitle, expectedTitle, " (Not Responding)", ""
+  StringReplace, expectedTitle, expectedTitle, %Config_ghostWndSubString%, 
   WinGetPos, expectedX, expectedY, expectedW, expectedH, ahk_id %ghostWnd%
   
   SetTitleMatchMode, 2

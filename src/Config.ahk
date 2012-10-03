@@ -64,9 +64,10 @@ Config_init()
   Config_layoutAxis_#3      := 2
   Config_layoutGapWidth     := 0
   Config_layoutMFactor      := 0.6
+  Config_ghostWndSubString  := " (Not Responding)"
   Config_mouseFollowsFocus  := True
-  Config_onActiveHiddenWnds := "view"
   Config_newWndPosition     := "top"
+  Config_onActiveHiddenWnds := "view"
   Config_shellMsgDelay      := 350
   Config_syncMonitorViews   := 0
   Config_viewFollowsTagged  := False
