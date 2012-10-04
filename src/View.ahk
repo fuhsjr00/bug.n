@@ -123,16 +123,30 @@ View_arrange(m, v)
 
   Debug_logMessage("DEBUG[1] View_arrange(" . m . ", " . v . ")", 1)
   
-  ;; All window actions are performed on independent windows. A delay won't help.
-  SetWinDelay, 0
   l := View_#%m%_#%v%_layout_#1
   fn := Config_layoutFunction_#%l%
-  View_getTiledWndIds(m, v, wndIds)
-  View_arrange_%fn%(m, v, wndIds)
-  View_updateLayout_%fn%(m, v)
-  SetWinDelay, 10
+  If fn 
+  {
+    ;; All window actions are performed on independent windows. A delay won't help.
+    SetWinDelay, 0
+    View_getTiledWndIds(m, v, wndIds)
+    View_arrange_%fn%(m, v, wndIds)
+    SetWinDelay, 10
+  }
+  Else
+    View_#%m%_#%v%_layoutSymbol := Config_layoutSymbol_#%l%
   
   Bar_updateLayout(m)
+}
+
+View_arrange_monocle(m, v, wndIds) 
+{
+  Global
+  
+  StringTrimRight, wndIds, wndIds, 1
+  StringSplit, View_arrange_monocle_wndId, wndIds, `;
+  View_draw_stack("View_arrange_monocle_wndId", 1, View_arrange_monocle_wndId0, 0, Monitor_#%m%_x, Monitor_#%m%_y, Monitor_#%m%_width, Monitor_#%m%_height, View_#%m%_#%v%_layoutGapWidth / 2)  
+  View_#%m%_#%v%_layoutSymbol := "[" View_arrange_monocle_wndId0 "]"
 }
 
 View_getTiledWndIds(m, v, ByRef tiledWndIds) 
@@ -159,34 +173,6 @@ View_ghostWnd(m, v, bodyWndId, ghostWndId)
   search := bodyWndId ";"
   replace := search ghostWndId ";"
   StringReplace, View_#%m%_#%v%_wndIds, View_#%m%_#%v%_wndIds, %search%, %replace%
-}
-
-View_updateLayout_(m, v)
-{
-  View_#%m%_#%v%_layoutSymbol := "><>"
-}
-
-View_arrange_(m, v)
-{
-  ; Place-holder
-}
-
-View_updateLayout_monocle(m, v)
-{
-  Local wndIds, wndId, wndId0
-  StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
-  StringSplit, wndId, wndIds, `;
-  View_#%m%_#%v%_layoutSymbol := "[" wndId0 "]"
-}
-
-View_arrange_monocle(m, v, wndIds) {
-  Local gw
-  
-  gw := View_#%m%_#%v%_layoutGapWidth
-  
-  StringTrimRight, wndIds, wndIds, 1
-  StringSplit, View_arrange_monocle_wndId, wndIds, `;
-  View_draw_stack("View_arrange_monocle_wndId", 1, View_arrange_monocle_wndId0, 0, Monitor_#%m%_x, Monitor_#%m%_y, Monitor_#%m%_width, Monitor_#%m%_height, gw/2)
 }
 
 View_rotateLayoutAxis(i, d) 
@@ -606,6 +592,7 @@ View_arrange_tile(m, v, wndIds) {
   
   stack_len := View_arrange_tile_wndId0 - msplit
   View_arrange_tile_action("View_arrange_tile_wndId", msplit + 1, stack_len, axis3, x2, y2, w2, h2, gapW_2)
+  View_updateLayout_tile(m, v)
 }
 
 View_toggleFloating() 
