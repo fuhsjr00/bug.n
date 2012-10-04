@@ -836,7 +836,7 @@ Manager_unmanage(wndId)
   {
     If (Manager_#%wndId%_tags & 1 << A_Index - 1) 
     {
-      View_delWnd(Manager_aMonitor, A_Index, wndId)
+      StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %wndId%`;, 
       Bar_updateView(Manager_aMonitor, A_Index)
     }
   }

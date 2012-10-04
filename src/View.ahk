@@ -86,29 +86,22 @@ View_activateWindow(d)
   }
 }
 
-View_updateLayout(m, v) {
-  Local fn, l, wndIds
-  l := View_#%m%_#%v%_layout_#1
-  fn := Config_layoutFunction_#%l%
-  View_updateLayout_%fn%(m, v)
-}
-
-; Add a window to the view in question.
-View_addWnd(m, v, wndId) {
-  Local l, msplit, i, wndIds, n
+View_addWnd(m, v, wndId) 
+{
+  Local i, l, msplit, n, replace, search, wndId0, wndIds
   
   l := View_#%m%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% = "tile") And ((Config_newWndPosition = "masterBottom") Or (Config_newWndPosition = "stackTop")) {
+  If (Config_layoutFunction_#%l% = "tile") And ((Config_newWndPosition = "masterBottom") Or (Config_newWndPosition = "stackTop")) 
+  {
     n := View_getTiledWndIds(m, v, wndIds)
     msplit := View_#%m%_#%v%_layoutMX * View_#%m%_#%v%_layoutMY
-    If ( msplit = 1 And Config_newWndPosition="masterBottom" ) {
+    If (msplit = 1 And Config_newWndPosition = "masterBottom") 
       View_#%m%_#%v%_wndIds := wndId ";" . View_#%m%_#%v%_wndIds
-    }
-    Else If ( (Config_newWndPosition="masterBottom" And n < msplit) Or (Config_newWndPosition="stackTop" And n <= msplit) ) {
+    Else If ((Config_newWndPosition = "masterBottom" And n < msplit) Or (Config_newWndPosition = "stackTop" And n <= msplit)) 
       View_#%m%_#%v%_wndIds .= wndId ";"
-    }
-    Else {
-      If (Config_newWndPosition="masterBottom")
+    Else 
+    {
+      If (Config_newWndPosition = "masterBottom")
         i := msplit - 1
       Else
         i := msplit
@@ -124,46 +117,48 @@ View_addWnd(m, v, wndId) {
     View_#%m%_#%v%_wndIds := wndId ";" View_#%m%_#%v%_wndIds
 }
 
-View_ghostWnd(m, v, bodyWndId, ghostWndId) {
-  Local search, replace
-  
-  search := bodyWndId ";"
-  replace := search ghostWndId ";"
-  StringReplace, View_#%m%_#%v%_wndIds, View_#%m%_#%v%_wndIds, %search%, %replace%
-}
-
-; Remove a window from the view in question.
-View_delWnd(m, v, wndId) {
-  StringReplace, View_#%m%_#%v%_wndIds, View_#%m%_#%v%_wndIds, %wndId%`;, 
-}
-
-View_arrange(m, v) {
+View_arrange(m, v) 
+{
   Local fn, l, wndIds
+
   Debug_logMessage("DEBUG[1] View_arrange(" . m . ", " . v . ")", 1)
-  ; All window actions are performed on independent windows. A delay won't help.
+  
+  ;; All window actions are performed on independent windows. A delay won't help.
   SetWinDelay, 0
   l := View_#%m%_#%v%_layout_#1
   fn := Config_layoutFunction_#%l%
   View_getTiledWndIds(m, v, wndIds)
   View_arrange_%fn%(m, v, wndIds)
-  View_updateLayout(m, v)
-  Bar_updateLayout(m)
+  View_updateLayout_%fn%(m, v)
   SetWinDelay, 10
+  
+  Bar_updateLayout(m)
 }
 
-View_getTiledWndIds(m, v, ByRef tiledWndIds) {
+View_getTiledWndIds(m, v, ByRef tiledWndIds) 
+{
   Local n, wndIds
   
   StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
   Loop, PARSE, wndIds, `;
   {
-    If Not Manager_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) and Not Manager_isHung(A_LoopField) {
+    If Not Manager_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) and Not Manager_isHung(A_LoopField) 
+    {
       n += 1
       tiledWndIds .= A_LoopField ";"
     }
   }
   
   Return, n
+}
+
+View_ghostWnd(m, v, bodyWndId, ghostWndId) 
+{
+  Local search, replace
+  
+  search := bodyWndId ";"
+  replace := search ghostWndId ";"
+  StringReplace, View_#%m%_#%v%_wndIds, View_#%m%_#%v%_wndIds, %search%, %replace%
 }
 
 View_updateLayout_(m, v)
