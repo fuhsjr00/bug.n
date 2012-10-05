@@ -149,6 +149,60 @@ View_arrange_monocle(m, v, wndIds)
   View_#%m%_#%v%_layoutSymbol := "[" View_arrange_monocle_wndId0 "]"
 }
 
+View_getLayoutSymbol_tile(m, v, n) 
+{
+  Local axis1, axis2, axis3, masterDim, masterDiv, masterSym, mx, my, stackSym
+  
+  ;; Main axis
+  ;;  1 - vertical divider, master left
+  ;;  2 - horizontal divider, master top
+  ;; -1 - vertical divider, master right
+  ;; -2 - horizontal divider, master bottom
+  axis1 := View_#%m%_#%v%_layoutAxis_#1
+  ;; Master axis
+  ;;  1 - vertical divider
+  ;;  2 - horizontal divider
+  ;;  3 - monocle
+  axis2 := View_#%m%_#%v%_layoutAxis_#2
+  ;; Stack axis
+  ;;  1 - vertical divider
+  ;;  2 - horizontal divider
+  ;;  3 - monocle
+  axis3 := View_#%m%_#%v%_layoutAxis_#3
+  mx := View_#%m%_#%v%_layoutMX
+  my := View_#%m%_#%v%_layoutMY
+  
+  If (Abs(axis1) = 1)
+    masterDiv := "|"
+  Else
+    masterDiv := "="
+  
+  If (axis2 = 1) 
+  {
+    masterSym := "|"
+    masterDim := mx . "x" . my
+  }
+  Else If (axis2 = 2) 
+  {
+    masterSym := "-"
+    masterDim := mx . "x" . my
+  }
+  Else 
+    masterSym := "[" . (mx * my) . "]"
+  
+  If (axis3 = 1)
+    stackSym := "|"
+  Else If (axis3 = 2)
+    stackSym := "-"
+  Else
+    stackSym := n - (mx * my)
+  
+  If (axis1 > 0)
+    View_#%m%_#%v%_layoutSymbol := masterDim . masterSym . masterDiv . stackSym
+  Else
+    View_#%m%_#%v%_layoutSymbol := stackSym . masterDiv . masterSym . masterDim
+}
+
 View_getTiledWndIds(m, v, ByRef tiledWndIds) 
 {
   Local n, wndIds
@@ -359,58 +413,28 @@ View_shuffleWindow(d)
   }
 }
 
-View_getLayoutSymbol_tile(m, v) 
+View_splitArea(axis, splitRatio, x, y, w, h, ByRef x1, ByRef y1, ByRef w1, ByRef h1, ByRef x2, ByRef y2, ByRef w2, ByRef h2) 
 {
-  Local axis1, axis2, axis3, master_dim, master_div, master_sym, mp, ms, stack_sym, sym1, sym3
-  
-  ;; Main axis
-  ;;  1 - vertical divider, master left
-  ;;  2 - horizontal divider, master top
-  ;; -1 - vertical divider, master right
-  ;; -2 - horizontal divider, master bottom
-  axis1 := View_#%m%_#%v%_layoutAxis_#1
-  ;; Master axis
-  ;;  1 - vertical divider
-  ;;  2 - horizontal divider
-  ;;  3 - monocle
-  axis2 := View_#%m%_#%v%_layoutAxis_#2
-  ;; Stack axis
-  ;;  1 - vertical divider
-  ;;  2 - horizontal divider
-  ;;  3 - monocle
-  axis3 := View_#%m%_#%v%_layoutAxis_#3
-  mx := View_#%m%_#%v%_layoutMX
-  my := View_#%m%_#%v%_layoutMY
-  
-  If (Abs(axis1) = 1)
-    master_div := "|"
-  Else
-    master_div := "="
-  
-  If (axis2 = 1) 
+  x1 := x
+  y1 := y
+  If(axis = 0) 
   {
-    master_sym := "|"
-    master_dim := mx . "x" . my
+    w1 := w * splitRatio
+    w2 := w - w1
+    h1 := h
+    h2 := h
+    x2 := x + w1
+    y2 := y
   }
-  Else If (axis2 = 2) 
+  Else
   {
-    master_sym := "-"
-    master_dim := mx . "x" . my
+    w1 := w
+    w2 := w
+    h1 := h * splitRatio
+    h2 := h - h1
+    x2 := x
+    y2 := y + h1
   }
-  Else 
-    master_sym := "[" . (mx * my) . "]"
-  
-  If (axis3 = 1)
-    stack_sym := "|"
-  Else If (axis3 = 2)
-    stack_sym := "-"
-  Else
-    stack_sym := "o"
-  
-  If (axis1 > 0)
-    View_#%m%_#%v%_layoutSymbol := master_dim . master_sym . master_div . stack_sym
-  Else
-    View_#%m%_#%v%_layoutSymbol := stack_sym . master_div . master_sym . master_dim
 }
 
 ; Stack a bunch of windows on top of each other.
@@ -498,37 +522,6 @@ View_draw_row( arrName, off, len, dir, axis, x, y, w, h, margin ) {
   }
 }
 
-View_arrange_tile_action(arrName, off, len, bugn_axis, x, y, w, h, m) {
-  ; 161 is a magic number determined somewhere. Maybe make this configurable.
-  ; Same with 2*Bar_height.
-  If (bugn_axis = 3 Or (bugn_axis = 1 And w/len < 161) Or (bugn_axis = 2 And h/len < (2*Bar_height))) 
-    View_draw_stack(arrName, off, len, 0, x, y, w, h, m)
-  Else
-    View_draw_row(arrName, off, len, 0, bugn_axis - 1, x, y, w, h, m)
-}
-
-View_split_region(axis, split_point, x, y, w, h, ByRef x1, ByRef y1, ByRef w1, ByRef h1, ByRef x2, ByRef y2, ByRef w2, ByRef h2) {
-  x1 := x
-  y1 := y
-  If(axis = 0) {
-    w1 := w * split_point
-    w2 := w - w1
-    h1 := h
-    h2 := h
-    x2 := x + w1
-    y2 := y
-  }
-  Else
-  {
-    w1 := w
-    w2 := w
-    h1 := h * split_point
-    h2 := h - h1
-    x2 := x
-    y2 := y + h1
-  }
-}
-
 View_arrange_tile(m, v, wndIds) {
   Local axis1, axis2, axis3, gapW_2, h1, h2, i, mfact, mp, ms, mx2, my2, mw2, mh2, msplit, n1, n2, w1, w2, x1, x2, y1, y2, flipped, stack_len, secondary_areas, areas_remaining, draw_windows
   
@@ -555,9 +548,9 @@ View_arrange_tile(m, v, wndIds) {
   ; master and stack area
   If( View_arrange_tile_wndId0 > msplit) {
     If( flipped = 0)
-      View_split_region( axis1 - 1, mfact, Monitor_#%m%_x, Monitor_#%m%_y, Monitor_#%m%_width, Monitor_#%m%_height, x1, y1, w1, h1, x2, y2, w2, h2)
+      View_splitArea( axis1 - 1, mfact, Monitor_#%m%_x, Monitor_#%m%_y, Monitor_#%m%_width, Monitor_#%m%_height, x1, y1, w1, h1, x2, y2, w2, h2)
     Else
-      View_split_region( axis1 - 1, 1 - mfact, Monitor_#%m%_x, Monitor_#%m%_y, Monitor_#%m%_width, Monitor_#%m%_height, x2, y2, w2, h2, x1, y1, w1, h1)
+      View_splitArea( axis1 - 1, 1 - mfact, Monitor_#%m%_x, Monitor_#%m%_y, Monitor_#%m%_width, Monitor_#%m%_height, x2, y2, w2, h2, x1, y1, w1, h1)
   }
   Else {
     x1 := Monitor_#%m%_x
@@ -578,7 +571,7 @@ View_arrange_tile(m, v, wndIds) {
     areas_remaining := secondary_areas
     windows_remaining := msplit
     Loop, % secondary_areas {
-      View_split_region(Not (axis2 - 1), (1/areas_remaining), x1, y1, w1, h1, mx1, my1, mw1, mh1, x1, y1, w1, h1)
+      View_splitArea(Not (axis2 - 1), (1/areas_remaining), x1, y1, w1, h1, mx1, my1, mw1, mh1, x1, y1, w1, h1)
       draw_windows := dimAligned
       If (windows_remaining < dimAligned) {
         draw_windows := windows_remaining
@@ -594,8 +587,15 @@ View_arrange_tile(m, v, wndIds) {
     Return
   
   stack_len := View_arrange_tile_wndId0 - msplit
-  View_arrange_tile_action("View_arrange_tile_wndId", msplit + 1, stack_len, axis3, x2, y2, w2, h2, gapW_2)
-  View_getLayoutSymbol_tile(m, v)
+  ;; 161 is the minimal width of an Windows-Explorer window, below which it cannot be resized.
+  ;; The minimal height is 243, but this seems too high for being a limit here; 
+  ;; therefor '2 * Bar_height' is used for the minimal height of a window.
+  If (axis3 = 3 Or (axis3 = 1 And w2/stack_len < 161) Or (axis3 = 2 And h2/stack_len < (2*Bar_height))) 
+    View_draw_stack("View_arrange_tile_wndId", msplit + 1, stack_len, 0, x2, y2, w2, h2, gapW_2)
+  Else
+    View_draw_row("View_arrange_tile_wndId", msplit + 1, stack_len, 0, axis3 - 1, x2, y2, w2, h2, gapW_2)
+  
+  View_getLayoutSymbol_tile(m, v, View_arrange_tile_wndId0)
 }
 
 View_toggleFloating() 
