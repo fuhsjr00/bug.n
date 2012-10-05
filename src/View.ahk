@@ -86,7 +86,7 @@ View_activateWindow(d)
   }
 }
 
-View_addWnd(m, v, wndId) 
+View_addWindow(m, v, wndId) 
 {
   Local i, l, msplit, n, replace, search, wndId0, wndIds
   
@@ -166,7 +166,7 @@ View_getTiledWndIds(m, v, ByRef tiledWndIds)
   Return, n
 }
 
-View_ghostWnd(m, v, bodyWndId, ghostWndId) 
+View_ghostWindow(m, v, bodyWndId, ghostWndId) 
 {
   Local search, replace
   
@@ -359,52 +359,55 @@ View_shuffleWindow(d)
   }
 }
 
-View_updateLayout_tile(m, v) {
-  Local axis1, axis2, axis3, mp, ms, sym1, sym3, master_div, master_dim, master_sym, stack_sym
+View_getLayoutSymbol_tile(m, v) 
+{
+  Local axis1, axis2, axis3, master_dim, master_div, master_sym, mp, ms, stack_sym, sym1, sym3
   
-  ; Main axis
-  ; 1 - vertical divider, master left
-  ; 2 - horizontal divider, master top
-  ; -1 - vertical divider, master right
-  ; -2 - horizontal divider, master bottom
-  axis1  := View_#%m%_#%v%_layoutAxis_#1
-  ; Master axis
-  ; 1 - vertical divider
-  ; 2 - horizontal divider
-  ; 3 - monocle
-  axis2  := View_#%m%_#%v%_layoutAxis_#2
-  ; Stack axis
-  ; 1 - vertical divider
-  ; 2 - horizontal divider
-  ; 3 - monocle
-  axis3  := View_#%m%_#%v%_layoutAxis_#3
+  ;; Main axis
+  ;;  1 - vertical divider, master left
+  ;;  2 - horizontal divider, master top
+  ;; -1 - vertical divider, master right
+  ;; -2 - horizontal divider, master bottom
+  axis1 := View_#%m%_#%v%_layoutAxis_#1
+  ;; Master axis
+  ;;  1 - vertical divider
+  ;;  2 - horizontal divider
+  ;;  3 - monocle
+  axis2 := View_#%m%_#%v%_layoutAxis_#2
+  ;; Stack axis
+  ;;  1 - vertical divider
+  ;;  2 - horizontal divider
+  ;;  3 - monocle
+  axis3 := View_#%m%_#%v%_layoutAxis_#3
   mx := View_#%m%_#%v%_layoutMX
   my := View_#%m%_#%v%_layoutMY
   
-  If ( Abs(axis1) = 1 )
+  If (Abs(axis1) = 1)
     master_div := "|"
   Else
     master_div := "="
   
-  If ( axis2 = 1 ) {
+  If (axis2 = 1) 
+  {
     master_sym := "|"
     master_dim := mx . "x" . my
-    }
-  Else If ( axis2 = 2 ) {
+  }
+  Else If (axis2 = 2) 
+  {
     master_sym := "-"
     master_dim := mx . "x" . my
   }
   Else 
     master_sym := "[" . (mx * my) . "]"
   
-  If ( axis3 = 1 )
+  If (axis3 = 1)
     stack_sym := "|"
-  Else If ( axis3 = 2 )
+  Else If (axis3 = 2)
     stack_sym := "-"
   Else
     stack_sym := "o"
   
-  If ( axis1 > 0 )
+  If (axis1 > 0)
     View_#%m%_#%v%_layoutSymbol := master_dim . master_sym . master_div . stack_sym
   Else
     View_#%m%_#%v%_layoutSymbol := stack_sym . master_div . master_sym . master_dim
@@ -592,7 +595,7 @@ View_arrange_tile(m, v, wndIds) {
   
   stack_len := View_arrange_tile_wndId0 - msplit
   View_arrange_tile_action("View_arrange_tile_wndId", msplit + 1, stack_len, axis3, x2, y2, w2, h2, gapW_2)
-  View_updateLayout_tile(m, v)
+  View_getLayoutSymbol_tile(m, v)
 }
 
 View_toggleFloating() 

@@ -374,10 +374,10 @@ Manager_manage(preferredMonitor, preferredView, wndId)
       {
         If (body) 
         {    ;; Try to position near the body.
-          View_ghostWnd(m, A_Index, body, wndId)
+          View_ghostWindow(m, A_Index, body, wndId)
         }
         Else 
-          View_addWnd(m, A_Index, wndId)
+          View_addWindow(m, A_Index, wndId)
       }
     }
     
