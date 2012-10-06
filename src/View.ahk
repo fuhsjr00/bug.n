@@ -88,23 +88,23 @@ View_activateWindow(d)
 
 View_addWindow(m, v, wndId) 
 {
-  Local i, l, msplit, n, replace, search, wndId0, wndIds
+  Local i, l, mSplit, n, replace, search, wndId0, wndIds
   
   l := View_#%m%_#%v%_layout_#1
   If (Config_layoutFunction_#%l% = "tile") And ((Config_newWndPosition = "masterBottom") Or (Config_newWndPosition = "stackTop")) 
   {
     n := View_getTiledWndIds(m, v, wndIds)
-    msplit := View_#%m%_#%v%_layoutMX * View_#%m%_#%v%_layoutMY
-    If (msplit = 1 And Config_newWndPosition = "masterBottom") 
+    mSplit := View_#%m%_#%v%_layoutMX * View_#%m%_#%v%_layoutMY
+    If (mSplit = 1 And Config_newWndPosition = "masterBottom") 
       View_#%m%_#%v%_wndIds := wndId ";" . View_#%m%_#%v%_wndIds
-    Else If ((Config_newWndPosition = "masterBottom" And n < msplit) Or (Config_newWndPosition = "stackTop" And n <= msplit)) 
+    Else If ((Config_newWndPosition = "masterBottom" And n < mSplit) Or (Config_newWndPosition = "stackTop" And n <= mSplit)) 
       View_#%m%_#%v%_wndIds .= wndId ";"
     Else 
     {
       If (Config_newWndPosition = "masterBottom")
-        i := msplit - 1
+        i := mSplit - 1
       Else
-        i := msplit
+        i := mSplit
       StringSplit, wndId, wndIds, `;
       search  := wndId%i% ";"
       replace := search wndId ";"
@@ -133,7 +133,7 @@ View_arrange(m, v)
     View_arrange_%fn%(m, v, wndIds)
     SetWinDelay, 10
   }
-  Else
+  Else    ;; floating layout (no 'View_arrange_', following is 'View_getLayoutSymbol_')'
     View_#%m%_#%v%_layoutSymbol := Config_layoutSymbol_#%l%
   
   Bar_updateLayout(m)
@@ -141,17 +141,107 @@ View_arrange(m, v)
 
 View_arrange_monocle(m, v, wndIds) 
 {
-  Global
+  Local gapW
   
-  StringTrimRight, wndIds, wndIds, 1
-  StringSplit, View_arrange_monocle_wndId, wndIds, `;
-  View_draw_stack("View_arrange_monocle_wndId", 1, View_arrange_monocle_wndId0, 0, Monitor_#%m%_x, Monitor_#%m%_y, Monitor_#%m%_width, Monitor_#%m%_height, View_#%m%_#%v%_layoutGapWidth / 2)  
-  View_#%m%_#%v%_layoutSymbol := "[" View_arrange_monocle_wndId0 "]"
+  gapW := View_#%m%_#%v%_layoutGapWidth
+  
+  ;; 'View_getLayoutSymbol_monocle'
+  View_#%m%_#%v%_layoutSymbol := "[" View_tiledWndId0 "]"
+  ;; 'View_arrange_monocle'
+  View_stackWindows("View_tiledWndId", 1, View_tiledWndId0, +1, 3, Monitor_#%m%_x + gapW, Monitor_#%m%_y + gapW, Monitor_#%m%_width - 2 * gapW, Monitor_#%m%_height - 2 * gapW, 0)
+}
+
+View_getTiledWndIds(m, v, ByRef tiledWndIds) 
+{
+  Local n, wndIds
+  
+  StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
+  Loop, PARSE, wndIds, `;
+  {
+    If Not Manager_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) and Not Manager_isHung(A_LoopField) 
+    {
+      n += 1
+      tiledWndIds .= A_LoopField ";"
+    }
+  }
+  StringTrimRight, wndIds, tiledWndIds, 1
+  StringSplit, View_tiledWndId, wndIds, `;
+  
+  Return, n
+}
+
+View_arrange_tile(m, v, wndIds) 
+{
+  Local axis1, axis2, axis3, flipped, gapW, h1, h2, mFact, mSplit, mWndCount, mXSet, mYActual, mYSet, stackLen, subAreaCount, subAreaWndCount, subH1, subW1, subX1, subY1, w1, w2, x1, x2, y1, y2
+  
+  View_#%m%_#%v%_layoutSymbol := View_getLayoutSymbol_tile(m, v, View_tiledWndId0)
+  
+  Debug_logMessage("DEBUG[1] View_arrange_tile: (" . View_tiledWndId0 . ") " . wndIds, 1)
+  If (View_tiledWndId0 = 0)
+    Return
+  
+  axis1   := Abs(View_#%m%_#%v%_layoutAxis_#1)
+  axis2   := View_#%m%_#%v%_layoutAxis_#2
+  axis3   := View_#%m%_#%v%_layoutAxis_#3
+  flipped := View_#%m%_#%v%_layoutAxis_#1 < 0
+  gapW    := View_#%m%_#%v%_layoutGapWidth
+  mFact   := View_#%m%_#%v%_layoutMFact
+  mXSet   := (axis2 = 1) ? View_#%m%_#%v%_layoutMX : View_#%m%_#%v%_layoutMY
+  mYSet   := (axis2 = 1) ? View_#%m%_#%v%_layoutMY : View_#%m%_#%v%_layoutMX
+  mSplit  := mXSet * mYSet
+  If (mSplit > View_tiledWndId0)
+    mSplit := View_tiledWndId0
+  
+  ;; Areas (master and stack)
+  x1 := Monitor_#%m%_x + gapW
+  y1 := Monitor_#%m%_y + gapW
+  w1 := Monitor_#%m%_width - 2 * gapW
+  h1 := Monitor_#%m%_height - 2 * gapW
+  If (View_tiledWndId0 > mSplit) 
+  {    ;; There is a stack area.
+    If flipped
+      View_splitArea(axis1 - 1, 1 - mFact, x1, y1, w1, h1, gapW, x2, y2, w2, h2, x1, y1, w1, h1)
+    Else
+      View_splitArea(axis1 - 1, mFact, x1, y1, w1, h1, gapW, x1, y1, w1, h1, x2, y2, w2, h2)
+  }
+  
+  ;; Master
+  If (axis2 = 3)
+    View_stackWindows("View_tiledWndId", 1, mSplit, +1, 3, x1, y1, w1, h1, 0)
+  Else
+  {
+    mYActual := Ceil(mSplit / mXSet)
+    subAreaCount := mYActual
+    mWndCount := mSplit
+    Loop, % mYActual 
+    {
+      View_splitArea(Not (axis2 - 1), 1 / subAreaCount, x1, y1, w1, h1, gapW, subX1, subY1, subW1, subH1, x1, y1, w1, h1)
+      subAreaWndCount := mXSet
+      If (mWndCount < subAreaWndCount)
+        subAreaWndCount := mWndCount
+      View_stackWindows("View_tiledWndId", mSplit - mWndCount + 1, subAreaWndCount, +1, axis2, subX1, subY1, subW1, subH1, gapW)
+      mWndCount -= subAreaWndCount
+      subAreaCount -= 1
+    }
+  }
+  
+  ;; Stack
+  If (View_tiledWndId0 <= mSplit) 
+    Return
+  
+  stackLen := View_tiledWndId0 - mSplit
+  ;; 161 is the minimal width of an Windows-Explorer window, below which it cannot be resized.
+  ;; The minimal height is 243, but this seems too high for being a limit here; 
+  ;; therefor '2 * Bar_height' is used for the minimal height of a window.
+  If (axis3 = 3 Or (axis3 = 1 And (w2 - (stackLen - 1) * gapW) / stackLen < 161) Or (axis3 = 2 And (h2 - (stackLen - 1) * gapW) / stackLen < 2 * Bar_height)) 
+    View_stackWindows("View_tiledWndId", mSplit + 1, stackLen, +1, 3, x2, y2, w2, h2, 0)
+  Else
+    View_stackWindows("View_tiledWndId", mSplit + 1, stackLen, +1, axis3, x2, y2, w2, h2, gapW)
 }
 
 View_getLayoutSymbol_tile(m, v, n) 
 {
-  Local axis1, axis2, axis3, masterDim, masterDiv, masterSym, mx, my, stackSym
+  Local axis1, axis2, axis3, masterDim, masterDiv, mx, my, stackSym
   
   ;; Main axis
   ;;  1 - vertical divider, master left
@@ -172,52 +262,28 @@ View_getLayoutSymbol_tile(m, v, n)
   mx := View_#%m%_#%v%_layoutMX
   my := View_#%m%_#%v%_layoutMY
   
-  If (Abs(axis1) = 1)
+  If (Abs(axis1) = 1) 
     masterDiv := "|"
-  Else
-    masterDiv := "="
-  
-  If (axis2 = 1) 
-  {
-    masterSym := "|"
-    masterDim := mx . "x" . my
-  }
-  Else If (axis2 = 2) 
-  {
-    masterSym := "-"
-    masterDim := mx . "x" . my
-  }
   Else 
-    masterSym := "[" . (mx * my) . "]"
+    masterDiv := "-"
+  If (axis2 = 1) 
+    masterDim := mx . "x" . my
+  Else If (axis2 = 2) 
+    masterDim := mx . "x" . my
+  Else 
+    masterDim := "[" . (mx * my) . "]"
   
   If (axis3 = 1)
     stackSym := "|"
   Else If (axis3 = 2)
-    stackSym := "-"
+    stackSym := "="
   Else
     stackSym := n - (mx * my)
   
   If (axis1 > 0)
-    View_#%m%_#%v%_layoutSymbol := masterDim . masterSym . masterDiv . stackSym
+    Return, masterDim . masterDiv . stackSym
   Else
-    View_#%m%_#%v%_layoutSymbol := stackSym . masterDiv . masterSym . masterDim
-}
-
-View_getTiledWndIds(m, v, ByRef tiledWndIds) 
-{
-  Local n, wndIds
-  
-  StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
-  Loop, PARSE, wndIds, `;
-  {
-    If Not Manager_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) and Not Manager_isHung(A_LoopField) 
-    {
-      n += 1
-      tiledWndIds .= A_LoopField ";"
-    }
-  }
-  
-  Return, n
+    Return, stackSym . masterDiv . masterDim
 }
 
 View_ghostWindow(m, v, bodyWndId, ghostWndId) 
@@ -271,7 +337,7 @@ View_setGapWidth(d)
   
   v := Monitor_#%Manager_aMonitor%_aView_#1
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% = "tile") 
+  If (Config_layoutFunction_#%l% = "tile" Or Config_layoutFunction_#%l% = "monocle") 
   {
     If (d < 0)
       d := Floor(d / 2) * 2
@@ -308,20 +374,20 @@ View_setLayout(l)
 
 View_setMFactor(d) 
 {
-  Local l, mfact, v
+  Local l, mFact, v
   
   v := Monitor_#%Manager_aMonitor%_aView_#1
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
   If (Config_layoutFunction_#%l% = "tile") 
   {
-    mfact := 0
+    mFact := 0
     If (d >= 1.05)
-      mfact := d
+      mFact := d
     Else
-      mfact := View_#%Manager_aMonitor%_#%v%_layoutMFact + d
-    If (mfact >= 0.05 And mfact <= 0.95) 
+      mFact := View_#%Manager_aMonitor%_#%v%_layoutMFact + d
+    If (mFact >= 0.05 And mFact <= 0.95) 
     {
-      View_#%Manager_aMonitor%_#%v%_layoutMFact := mfact
+      View_#%Manager_aMonitor%_#%v%_layoutMFact := mFact
       View_arrange(Manager_aMonitor, v)
     }
   }
@@ -413,189 +479,79 @@ View_shuffleWindow(d)
   }
 }
 
-View_splitArea(axis, splitRatio, x, y, w, h, ByRef x1, ByRef y1, ByRef w1, ByRef h1, ByRef x2, ByRef y2, ByRef w2, ByRef h2) 
+View_splitArea(axis, splitRatio, x, y, w, h, gapW, ByRef x1, ByRef y1, ByRef w1, ByRef h1, ByRef x2, ByRef y2, ByRef w2, ByRef h2) 
 {
   x1 := x
   y1 := y
-  If(axis = 0) 
+  If (axis = 0) 
   {
-    w1 := w * splitRatio
-    w2 := w - w1
+    w1 := w * splitRatio - gapW / 2
+    w2 := w - w1 - gapW
     h1 := h
     h2 := h
-    x2 := x + w1
+    x2 := x + w1 + gapW
     y2 := y
   }
   Else
   {
     w1 := w
     w2 := w
-    h1 := h * splitRatio
-    h2 := h - h1
+    h1 := h * splitRatio - gapW / 2
+    h2 := h - h1 - gapW
     x2 := x
-    y2 := y + h1
+    y2 := y + h1 + gapW
   }
 }
 
-; Stack a bunch of windows on top of each other.
-;
-; arrName - Name of a globally stored array of windows:
-;   %arrName%1, %arrName%2, ...
-; off - Offset into the array from which to start drawing.
-; len - Number of windows from the array to draw.
-; dir - Determines the direction through which we traverse arrName
-; x - View x-position
-; y - View y-position
-; w - View width
-; h - View height
-; margin - Number of pixels to put between the windows.
-View_draw_stack( arrName, off, len, dir, x, y, w, h, margin ) {
-  Local base, inc
-  If (dir = 0) {
-    base := off
-    inc := 1
-  }
-  Else {
-    base := off + len - 1
-    inc := -1
-  }
-  x += margin
-  y += margin
-  w -= 2 * margin
-  h -= 2 * margin
+;; ARRAY SPECIFICATION
+;;   arrayName - Name of a globally stored array of windows:
+;;     %arrayName%1, %arrayName%2, ...
+;;    startPos - First entry of the array, which should be used.
+;;         len - Number of entries from the array, which should be used.
+;;           d - +1/-1: In-/Decrement (direction) for traversing through the array.
+;; STACKING SPECIFICATION
+;;        axis - 1/2/3: Stacking axis (X/Y/Z)
+;; AREA SPECIFICATION
+;;           x - X-position of the stacking area
+;;           y - Y-position of the stacking area
+;;           w - Width of the stacking area
+;;           h - Height of the stacking area
+;;     padding - Number of pixels to put between the windows.
+View_stackWindows(arrayName, startPos, len, d, axis, x, y, w, h, padding)
+{
+  Local dx, dy, i, wndH, wndW, wndX, wndY
   
-  Loop, % len {
-    Manager_winMove(%arrName%%base%, x, y, w, h)
-    base += inc
-  }
-}
-
-; Draw a row of windows.
-; 
-; arrName - Name of a globally stored array of windows:
-;   %arrName%1, %arrName%2, ...
-; off - Offset into the array from which to start drawing.
-; len - Number of windows from the array to draw.
-; dir - Determines the direction through which we traverse arrName
-; axis - X/Y <=> 0/1
-; x - View x-position
-; y - View y-position
-; w - View width
-; h - View height
-; margin - Number of pixels to put between the windows.
-View_draw_row( arrName, off, len, dir, axis, x, y, w, h, margin ) {
-  Local base, inc, x_inc, y_inc, wHeight, wWidth
-  If (dir = 0) {
-    ; Left-to-right and top-to-bottom, depending on axis
-    base := off
-    inc := 1
-  }
-  Else {
-    ; Right-to-left and bottom-to-top, depending on axis
-    base := off + len - 1
-    inc := -1
-  }
-  If (axis = 0) {
-    ; Create row along X
-    x_inc := w / len
-    y_inc := 0
-    wWidth := x_inc - 2 * margin
-    wHeight := h - 2 * margin
-  }
-  Else {
-    ; Create row along Y
-    x_inc := 0
-    y_inc := h / len
-    wWidth := w - 2 * margin
-    wHeight := y_inc - 2 * margin
-  }
+  ;; d = +1: Left-to-right and top-to-bottom, depending on axis
+  i := startPos
+  ;; d = -1: Right-to-left and bottom-to-top, depending on axis
+  If (d < 0) 
+    i += len - 1
   
-  ; Set original positions with respect to the margins.
-  x += margin
-  y += margin
-  
-  Loop, % len {
-    Manager_winMove(%arrName%%base%, x, y, wWidth, wHeight)
-    x += x_inc
-    y += y_inc
-    base += inc
-  }
-}
-
-View_arrange_tile(m, v, wndIds) {
-  Local axis1, axis2, axis3, gapW_2, h1, h2, i, mfact, mp, ms, mx2, my2, mw2, mh2, msplit, n1, n2, w1, w2, x1, x2, y1, y2, flipped, stack_len, secondary_areas, areas_remaining, draw_windows
-  
-  StringTrimRight, wndIds, wndIds, 1
-  StringSplit, View_arrange_tile_wndId, wndIds, `;
-  Debug_logMessage("DEBUG[1] View_arrange_tile: (" . View_arrange_tile_wndId0 . ") " . wndIds, 1)
-  If (View_arrange_tile_wndId0 = 0)
-    Return
-
-  axis1  := Abs(View_#%m%_#%v%_layoutAxis_#1)
-  axis2  := View_#%m%_#%v%_layoutAxis_#2
-  axis3  := View_#%m%_#%v%_layoutAxis_#3
-  flipped := View_#%m%_#%v%_layoutAxis_#1 < 0
-  gapW_2 := View_#%m%_#%v%_layoutGapWidth/2
-  mfact  := View_#%m%_#%v%_layoutMFact
-  dimAligned := (axis2 = 1) ? View_#%m%_#%v%_layoutMX : View_#%m%_#%v%_layoutMY
-  dimOrtho := (axis2 = 1) ? View_#%m%_#%v%_layoutMY : View_#%m%_#%v%_layoutMX
-  msplit := dimAligned * dimOrtho
-
-  If (msplit > View_arrange_tile_wndId0) {
-    msplit := View_arrange_tile_wndId0
-  }
-  
-  ; master and stack area
-  If( View_arrange_tile_wndId0 > msplit) {
-    If( flipped = 0)
-      View_splitArea( axis1 - 1, mfact, Monitor_#%m%_x, Monitor_#%m%_y, Monitor_#%m%_width, Monitor_#%m%_height, x1, y1, w1, h1, x2, y2, w2, h2)
-    Else
-      View_splitArea( axis1 - 1, 1 - mfact, Monitor_#%m%_x, Monitor_#%m%_y, Monitor_#%m%_width, Monitor_#%m%_height, x2, y2, w2, h2, x1, y1, w1, h1)
-  }
-  Else {
-    x1 := Monitor_#%m%_x
-    y1 := Monitor_#%m%_y
-    w1 := Monitor_#%m%_width
-    h1 := Monitor_#%m%_height
-  }
-  
-  ; master
-  ; Number 
-  If( axis2 = 3 )
+  wndX := x
+  wndY := y
+  wndW := w
+  wndH := h
+  dx := 0
+  dy := 0
+  If (axis = 1) 
   {
-    View_draw_stack("View_arrange_tile_wndId", 1, msplit, 0, x1, y1, w1, h1, gapW_2)
+    wndW := (w - (len - 1) * padding) / len
+    dx := wndW + padding
   }
-  Else
+  Else If (axis = 2) 
   {
-    secondary_areas := Ceil(msplit / dimAligned)
-    areas_remaining := secondary_areas
-    windows_remaining := msplit
-    Loop, % secondary_areas {
-      View_splitArea(Not (axis2 - 1), (1/areas_remaining), x1, y1, w1, h1, mx1, my1, mw1, mh1, x1, y1, w1, h1)
-      draw_windows := dimAligned
-      If (windows_remaining < dimAligned) {
-        draw_windows := windows_remaining
-      }
-      View_draw_row("View_arrange_tile_wndId", msplit - windows_remaining + 1, draw_windows, 0, axis2 - 1, mx1, my1, mw1, mh1, gapW_2)
-      windows_remaining -= draw_windows
-      areas_remaining -= 1
-    }
+    wndH := (h - (len - 1) * padding) / len
+    dy := wndH + padding
   }
+  ;; Else (axis = 3) and nothing to do
   
-  ; stack
-  If (View_arrange_tile_wndId0 <= msplit) 
-    Return
-  
-  stack_len := View_arrange_tile_wndId0 - msplit
-  ;; 161 is the minimal width of an Windows-Explorer window, below which it cannot be resized.
-  ;; The minimal height is 243, but this seems too high for being a limit here; 
-  ;; therefor '2 * Bar_height' is used for the minimal height of a window.
-  If (axis3 = 3 Or (axis3 = 1 And w2/stack_len < 161) Or (axis3 = 2 And h2/stack_len < (2*Bar_height))) 
-    View_draw_stack("View_arrange_tile_wndId", msplit + 1, stack_len, 0, x2, y2, w2, h2, gapW_2)
-  Else
-    View_draw_row("View_arrange_tile_wndId", msplit + 1, stack_len, 0, axis3 - 1, x2, y2, w2, h2, gapW_2)
-  
-  View_getLayoutSymbol_tile(m, v, View_arrange_tile_wndId0)
+  Loop, % len 
+  {
+    Manager_winMove(%arrayName%%i%, wndX, wndY, wndW, wndH)
+    i += d
+    wndX += dx
+    wndY += dy
+  }
 }
 
 View_toggleFloating() 
