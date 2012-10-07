@@ -88,12 +88,12 @@ View_activateWindow(d)
 
 View_addWindow(m, v, wndId) 
 {
-  Local i, l, mSplit, n, replace, search, wndId0, wndIds
+  Local i, l, mSplit, n, replace, search
   
   l := View_#%m%_#%v%_layout_#1
   If (Config_layoutFunction_#%l% = "tile") And ((Config_newWndPosition = "masterBottom") Or (Config_newWndPosition = "stackTop")) 
   {
-    n := View_getTiledWndIds(m, v, wndIds)
+    n := View_getTiledWndIds(m, v)
     mSplit := View_#%m%_#%v%_layoutMX * View_#%m%_#%v%_layoutMY
     If (mSplit = 1 And Config_newWndPosition = "masterBottom") 
       View_#%m%_#%v%_wndIds := wndId ";" . View_#%m%_#%v%_wndIds
@@ -105,8 +105,7 @@ View_addWindow(m, v, wndId)
         i := mSplit - 1
       Else
         i := mSplit
-      StringSplit, wndId, wndIds, `;
-      search  := wndId%i% ";"
+      search  := View_tiledWndId%i% ";"
       replace := search wndId ";"
       StringReplace, View_#%m%_#%v%_wndIds, View_#%m%_#%v%_wndIds, %search%, %replace%
     }
@@ -119,7 +118,7 @@ View_addWindow(m, v, wndId)
 
 View_arrange(m, v) 
 {
-  Local fn, l, wndIds
+  Local fn, l
 
   Debug_logMessage("DEBUG[1] View_arrange(" . m . ", " . v . ")", 1)
   
@@ -129,8 +128,8 @@ View_arrange(m, v)
   {
     ;; All window actions are performed on independent windows. A delay won't help.
     SetWinDelay, 0
-    View_getTiledWndIds(m, v, wndIds)
-    View_arrange_%fn%(m, v, wndIds)
+    View_getTiledWndIds(m, v)
+    View_arrange_%fn%(m, v)
     SetWinDelay, 10
   }
   Else    ;; floating layout (no 'View_arrange_', following is 'View_getLayoutSymbol_')'
@@ -139,7 +138,7 @@ View_arrange(m, v)
   Bar_updateLayout(m)
 }
 
-View_arrange_monocle(m, v, wndIds) 
+View_arrange_monocle(m, v) 
 {
   Local gapW
   
@@ -151,32 +150,13 @@ View_arrange_monocle(m, v, wndIds)
   View_stackWindows("View_tiledWndId", 1, View_tiledWndId0, +1, 3, Monitor_#%m%_x + gapW, Monitor_#%m%_y + gapW, Monitor_#%m%_width - 2 * gapW, Monitor_#%m%_height - 2 * gapW, 0)
 }
 
-View_getTiledWndIds(m, v, ByRef tiledWndIds) 
-{
-  Local n, wndIds
-  
-  StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
-  Loop, PARSE, wndIds, `;
-  {
-    If Not Manager_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) and Not Manager_isHung(A_LoopField) 
-    {
-      n += 1
-      tiledWndIds .= A_LoopField ";"
-    }
-  }
-  StringTrimRight, wndIds, tiledWndIds, 1
-  StringSplit, View_tiledWndId, wndIds, `;
-  
-  Return, n
-}
-
-View_arrange_tile(m, v, wndIds) 
+View_arrange_tile(m, v) 
 {
   Local axis1, axis2, axis3, flipped, gapW, h1, h2, mFact, mSplit, mWndCount, mXSet, mYActual, mYSet, stackLen, subAreaCount, subAreaWndCount, subH1, subW1, subX1, subY1, w1, w2, x1, x2, y1, y2
   
   View_#%m%_#%v%_layoutSymbol := View_getLayoutSymbol_tile(m, v, View_tiledWndId0)
   
-  Debug_logMessage("DEBUG[1] View_arrange_tile: (" . View_tiledWndId0 . ") " . wndIds, 1)
+  Debug_logMessage("DEBUG[1] View_arrange_tile: (" . View_tiledWndId0 . ") ", 1)
   If (View_tiledWndId0 = 0)
     Return
   
@@ -284,6 +264,25 @@ View_getLayoutSymbol_tile(m, v, n)
     Return, masterDim . masterDiv . stackSym
   Else
     Return, stackSym . masterDiv . masterDim
+}
+
+View_getTiledWndIds(m, v) 
+{
+  Local n, tiledWndIds, wndIds
+  
+  StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
+  Loop, PARSE, wndIds, `;
+  {
+    If Not Manager_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) and Not Manager_isHung(A_LoopField) 
+    {
+      n += 1
+      tiledWndIds .= A_LoopField ";"
+    }
+  }
+  StringTrimRight, tiledWndIds, tiledWndIds, 1
+  StringSplit, View_tiledWndId, tiledWndIds, `;
+  
+  Return, n
 }
 
 View_ghostWindow(m, v, bodyWndId, ghostWndId) 
@@ -429,21 +428,19 @@ View_setMY(d)
 
 View_shuffleWindow(d) 
 {
-  Local aWndHeight, aWndId, aWndWidth, aWndX, aWndY, i, j, l, search, v, wndId0, wndIds
+  Local aWndHeight, aWndId, aWndWidth, aWndX, aWndY, i, j, l, search, v
   
   WinGet, aWndId, ID, A
   v := Monitor_#%Manager_aMonitor%_aView_#1
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
   If (Config_layoutFunction_#%l% = "tile" And InStr(Manager_managedWndIds, aWndId ";")) 
   {
-    View_getTiledWndIds(Manager_aMonitor, v, wndIds)
-    StringTrimRight, wndIds, wndIds, 1
-    StringSplit, wndId, wndIds, `;
-    If (wndId0 > 1) 
+    View_getTiledWndIds(Manager_aMonitor, v)
+    If (View_tiledWndId0 > 1) 
     {
-      Loop, % wndId0 
+      Loop, % View_tiledWndId0 
       {
-        If (wndId%A_Index% = aWndId) 
+        If (View_tiledWndId%A_Index% = aWndId) 
         {
           i := A_Index
           Break
@@ -452,8 +449,8 @@ View_shuffleWindow(d)
       If (d = 0 And i = 1)
         j := 2
       Else
-        j := Manager_loop(i, d, 1, wndId0)
-      If (j > 0 And j <= wndId0) 
+        j := Manager_loop(i, d, 1, View_tiledWndId0)
+      If (j > 0 And j <= View_tiledWndId0) 
       {
         If (j = i) 
         {
@@ -462,7 +459,7 @@ View_shuffleWindow(d)
         } 
         Else 
         {
-          search := wndId%j%
+          search := View_tiledWndId%j%
           StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, %aWndId%, SEARCH
           StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, %search%, %aWndId%
           StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, SEARCH, %search%
