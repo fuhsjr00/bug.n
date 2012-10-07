@@ -483,7 +483,16 @@ View_splitArea(axis, splitRatio, x, y, w, h, gapW, ByRef x1, ByRef y1, ByRef w1,
 {
   x1 := x
   y1 := y
-  If (axis = 0) 
+  If (splitRatio = 1) 
+  {
+    w1 := w
+    w2 := 0
+    h1 := h
+    h2 := 0
+    x2 := x + w1
+    y2 := y + h1
+  }
+  Else If (axis = 0) 
   {
     w1 := w * splitRatio - gapW / 2
     w2 := w - w1 - gapW
