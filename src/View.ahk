@@ -33,6 +33,8 @@ View_init(m, v)
   View_#%m%_#%v%_layoutMX       := 1
   View_#%m%_#%v%_layoutMY       := 1
   View_#%m%_#%v%_layoutSymbol   := Config_layoutSymbol_#1
+  View_#%m%_#%v%_margins        := "0;0;0;0"
+  StringSplit, View_#%m%_#%v%_margin, View_#%m%_#%v%_margins, `;
   View_#%m%_#%v%_wndIds         := ""
 }
 
@@ -118,7 +120,7 @@ View_addWindow(m, v, wndId)
 
 View_arrange(m, v) 
 {
-  Local fn, l
+  Local fn, h, l, w, x, y
 
   Debug_logMessage("DEBUG[1] View_arrange(" . m . ", " . v . ")", 1)
   
@@ -126,10 +128,15 @@ View_arrange(m, v)
   fn := Config_layoutFunction_#%l%
   If fn 
   {
+    x := Monitor_#%m%_x + View_#%m%_#%v%_layoutGapWidth + View_#%m%_#%v%_margin4
+    y := Monitor_#%m%_y + View_#%m%_#%v%_layoutGapWidth + View_#%m%_#%v%_margin1
+    w := Monitor_#%m%_width - 2 * View_#%m%_#%v%_layoutGapWidth - View_#%m%_#%v%_margin4 - View_#%m%_#%v%_margin2
+    h := Monitor_#%m%_height - 2 * View_#%m%_#%v%_layoutGapWidth - View_#%m%_#%v%_margin1 - View_#%m%_#%v%_margin3
+    
     ;; All window actions are performed on independent windows. A delay won't help.
     SetWinDelay, 0
     View_getTiledWndIds(m, v)
-    View_arrange_%fn%(m, v)
+    View_arrange_%fn%(m, v, x, y, w, h)
     SetWinDelay, 10
   }
   Else    ;; floating layout (no 'View_arrange_', following is 'View_getLayoutSymbol_')'
@@ -138,19 +145,17 @@ View_arrange(m, v)
   Bar_updateLayout(m)
 }
 
-View_arrange_monocle(m, v) 
+View_arrange_monocle(m, v, x, y, w, h) 
 {
-  Local gapW
-  
-  gapW := View_#%m%_#%v%_layoutGapWidth
+  Global
   
   ;; 'View_getLayoutSymbol_monocle'
   View_#%m%_#%v%_layoutSymbol := "[" View_tiledWndId0 "]"
   ;; 'View_arrange_monocle'
-  View_stackWindows("View_tiledWndId", 1, View_tiledWndId0, +1, 3, Monitor_#%m%_x + gapW, Monitor_#%m%_y + gapW, Monitor_#%m%_width - 2 * gapW, Monitor_#%m%_height - 2 * gapW, 0)
+  View_stackWindows("View_tiledWndId", 1, View_tiledWndId0, +1, 3, x, y, w, h, 0)
 }
 
-View_arrange_tile(m, v) 
+View_arrange_tile(m, v, x, y, w, h) 
 {
   Local axis1, axis2, axis3, flipped, gapW, h1, h2, mFact, mSplit, mWndCount, mXSet, mYActual, mYSet, stackLen, subAreaCount, subAreaWndCount, subH1, subW1, subX1, subY1, w1, w2, x1, x2, y1, y2
   
@@ -173,10 +178,10 @@ View_arrange_tile(m, v)
     mSplit := View_tiledWndId0
   
   ;; Areas (master and stack)
-  x1 := Monitor_#%m%_x + gapW
-  y1 := Monitor_#%m%_y + gapW
-  w1 := Monitor_#%m%_width - 2 * gapW
-  h1 := Monitor_#%m%_height - 2 * gapW
+  x1 := x
+  y1 := y
+  w1 := w
+  h1 := h
   If (View_tiledWndId0 > mSplit) 
   {    ;; There is a stack area.
     If flipped
@@ -572,5 +577,23 @@ View_toggleFloating()
     Manager_#%aWndId%_isFloating := Not Manager_#%aWndId%_isFloating
     View_arrange(Manager_aMonitor, v)
     Bar_updateTitle()
+  }
+}
+
+View_toggleMargins() 
+{
+  Local v
+  
+  Debug_logMessage("DEBUG[3] View_toggleMargins(" . View_#%Manager_aMonitor%_#%v%_margin1 . ", " . View_#%Manager_aMonitor%_#%v%_margin2 . ", " . View_#%Manager_aMonitor%_#%v%_margin3 . ", " . View_#%Manager_aMonitor%_#%v%_margin4 . ")", 3)
+  
+  If Not (Config_viewMargins = "0;0;0;0") 
+  {
+    v := Monitor_#%Manager_aMonitor%_aView_#1
+    If (View_#%Manager_aMonitor%_#%v%_margins = "0;0;0;0") 
+      View_#%Manager_aMonitor%_#%v%_margins := Config_viewMargins
+    Else 
+      View_#%Manager_aMonitor%_#%v%_margins := "0;0;0;0"
+    StringSplit, View_#%Manager_aMonitor%_#%v%_margin, View_#%Manager_aMonitor%_#%v%_margins, `;
+    View_arrange(Manager_aMonitor, v)
   }
 }

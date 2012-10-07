@@ -66,6 +66,7 @@ Config_init()
   Config_layoutMFactor      := 0.6
   Config_ghostWndSubString  := " (Not Responding)"
   Config_mouseFollowsFocus  := True
+  Config_viewMargins        := "0;0;0;0"
   Config_newWndPosition     := "top"
   Config_onActiveHiddenWnds := "view"
   Config_shellMsgDelay      := 350
@@ -396,6 +397,7 @@ Config_saveSession()
 #+Right::View_setGapWidth(+2)
 
 ;; View/Tag management
+#+n::View_toggleMargins()
 #BackSpace::Monitor_activateView(-1)
 #+0::Monitor_setWindowTag(0)
 #1::Monitor_activateView(1)
@@ -443,4 +445,5 @@ Config_saveSession()
 #^e::Run, edit %Config_filePath%
 #^s::Config_saveSession()
 #^r::Main_reload()
+#^+r::Reload
 #^q::ExitApp
