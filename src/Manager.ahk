@@ -509,18 +509,11 @@ Manager_onShellMessage(wParam, lParam)
   
   If (wParam = 1 Or wParam = 2 Or wParam = 4 Or wParam = 6 Or wParam = 32772) And lParam And Not Manager_hideShow And Not Manager_focus 
   {
-    If Not (wParam = 4 Or wParam = 32772)
-      If Not wndClass And Not (wParam = 2) 
-      {
-        WinGetClass, wndClass, ahk_id %lParam%
-        If wndClass 
-        {
-          If (wndClass = "Emacs")
-            Sleep, % 12 * Config_shellMsgDelay
-        } 
-        Else
-          Sleep, %Config_shellMsgDelay%
-      }
+    If Not wndClass And Not (wParam = 2 Or wParam = 4 Or wParam = 32772)
+    {
+      Sleep, %Config_shellMsgDelay%
+      WinGetClass, wndClass, ahk_id %lParam%
+    }
     
     isChanged := Manager_sync(wndIds)
     If wndIds
