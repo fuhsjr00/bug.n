@@ -88,10 +88,10 @@ Manager_activateMonitor(d)
   }
 }
 
-Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating, ByRef isDecorated, ByRef hideTitle) 
+Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating, ByRef isDecorated, ByRef hideTitle, ByRef action) 
 {
   Local mouseX, mouseY, wndClass, wndHeight, wndStyle, wndTitle, wndWidth, wndX, wndY
-  Local rule0, rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9
+  Local rule0, rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10
   
   isManaged   := True
   m           := 0
@@ -99,6 +99,7 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
   isFloating  := False
   isDecorated := False
   hideTitle   := False
+  action      := ""
   
   WinGetClass, wndClass, ahk_id %wndId%
   WinGetTitle, wndTitle, ahk_id %wndId%
@@ -117,6 +118,7 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
         isFloating  := rule7
         isDecorated := rule8
         hideTitle   := rule9
+        action      := rule10
       }
     }
   } 
@@ -309,7 +311,7 @@ Manager_loop(index, increment, lowerBound, upperBound)
 ;; Provide a monitor and view preference, but don't override the config.
 Manager_manage(preferredMonitor, preferredView, wndId) 
 {
-  Local a, c0, hideTitle, i, isDecorated, isFloating, isManaged, l, m, n, replace, search, tags, body
+  Local a, action, c0, hideTitle, i, isDecorated, isFloating, isManaged, l, m, n, replace, search, tags, body
   Local wndControlList0, wndId0, wndIds, wndX, wndY, wndWidth, wndHeight, wndProcessName
   
   If Not InStr(Manager_allWndIds, wndId ";")
@@ -328,6 +330,7 @@ Manager_manage(preferredMonitor, preferredView, wndId)
       isDecorated := Manager_#%body%_isDecorated
       isFloating := Manager_#%body%_isFloating
       hideTitle := InStr(Bar_hideTitleWndIds, body ";")
+      action := ""
     }
     Else 
     {
@@ -338,7 +341,7 @@ Manager_manage(preferredMonitor, preferredView, wndId)
   ;; Apply rules, if the window is either a normal window or a ghost without a body.
   If (body = 0) 
   {
-    Manager_applyRules(wndId, isManaged, m, tags, isFloating, isDecorated, hideTitle)
+    Manager_applyRules(wndId, isManaged, m, tags, isFloating, isDecorated, hideTitle, action)
     If (m = 0)
       m := preferredMonitor
     If (m < 0)
@@ -360,6 +363,8 @@ Manager_manage(preferredMonitor, preferredView, wndId)
   
   If isManaged 
   {
+    If (action = "Close" Or action = "Maximize")
+      Manager_win%action%(wndId)
     Monitor_moveWindow(m, wndId)
 
     Manager_managedWndIds .= wndId ";"
@@ -902,6 +907,20 @@ Manager_winHide(wndId)
   }
 }
 
+Manager_winMaximize(wndId) 
+{
+  If Manager_isHung(wndId) 
+  {
+    Debug_logMessage("DEBUG[2] Manager_winMaximize: Potentially hung window " . wndId, 2)
+    Return 1
+  }
+  Else 
+  {
+    WinMaximize, ahk_id %wndId%
+    Return 0
+  }
+}
+
 Manager_winMove(wndId, x, y, width, height) 
 {
   If Manager_isHung(wndId) 
@@ -909,8 +928,12 @@ Manager_winMove(wndId, x, y, width, height)
     Debug_logMessage("DEBUG[2] Manager_winMove: Potentially hung window " . wndId, 2)
     Return 1
   }
-  Else
-    WinRestore, ahk_id %wndId%
+  Else 
+  {
+    WinGet, wndMin, MinMax, ahk_id %wndId%
+    If (wndMin = -1)
+      WinRestore, ahk_id %wndId%
+  }
   WM_ENTERSIZEMOVE = 0x0231
   WM_EXITSIZEMOVE  = 0x0232
   SendMessage, WM_ENTERSIZEMOVE, , , , ahk_id %wndId%

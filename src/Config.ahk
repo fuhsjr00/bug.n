@@ -72,17 +72,20 @@ Config_init()
   Config_syncMonitorViews   := 0
   Config_viewFollowsTagged  := False
   
-  Config_rule_#1   := ".*;.*;;1;0;0;0;0;0"            ;; default rule
-  Config_rule_#2   := ".*;.*;0x80000000;0;0;0;1;1;1"  ;; Pop-up windows (style WS_POPUP=0x80000000) will not be managed, are floating and the titles are hidden.
-  Config_rule_#3   := "SWT_Window0;.*;;1;0;0;0;0;0"   ;; Windows created by Java (SWT) e. g. Eclipse have the style WS_POPUP, but should be excluded from the second rule.
-  Config_rule_#4   := "QWidget;.*;;1;0;0;0;0;0"       ;; ... also windows created by QT (QWidget)
-  Config_rule_#5   := "Xming;.*;;1;0;0;0;0;0"         ;; ... and Xming windows
-  Config_rule_#6   := "MsiDialog(No)?CloseClass;.*;;1;0;0;1;1;0"
-  Config_rule_#7   := "AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;1"
-  Config_rule_#8   := "CalcFrame;.*;;1;0;0;1;1;0"
-  Config_rule_#9   := "MozillaDialogClass;.*;;1;0;0;1;1;0"
-  Config_rule_#10  := "_sp;_sp;;1;0;0;1;0;1"
-  Config_ruleCount := 10                              ;; This variable has to be set to the total number of active rules above.
+  ;; Config_rule_#<i> := '<class>;<title>;<style>;<is managed>;<m>;<tags>;<is floating>;<is decorated>;<hide title>;<action>'
+  Config_rule_#1   := ".*;.*;;1;0;0;0;0;0;"            ;; default rule
+  Config_rule_#2   := ".*;.*;0x80000000;0;0;0;1;1;1;"  ;; Pop-up windows (style WS_POPUP=0x80000000) will not be managed, are floating and the titles are hidden.
+  Config_rule_#3   := "SWT_Window0;.*;;1;0;0;0;0;0;"   ;; Windows created by Java (SWT) e. g. Eclipse have the style WS_POPUP, but should be excluded from the second rule.
+  Config_rule_#4   := "QWidget;.*;;1;0;0;0;0;0;"       ;; ... also windows created by QT (QWidget)
+  Config_rule_#5   := "Xming;.*;;1;0;0;0;0;0;"         ;; ... and Xming windows
+  Config_rule_#6   := "MsiDialog(No)?CloseClass;.*;;1;0;0;1;1;0;"
+  Config_rule_#7   := "AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;1;"
+  Config_rule_#8   := "CalcFrame;.*;;1;0;0;1;1;0;"
+  Config_rule_#9   := "MozillaDialogClass;.*;;1;0;0;1;1;0;"
+  Config_rule_#10  := "_sp;_sp;;1;0;0;1;0;1;"
+  Config_rule_#11  := "MozillaWindowClass;.* - Mozilla Firefox;;1;0;0;0;1;0;Maximize"
+  Config_rule_#12  := "Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;Maximize"
+  Config_ruleCount := 12                              ;; This variable has to be set to the total number of active rules above.
   
   ;; Configuration management
   Config_autoSaveSession := False
