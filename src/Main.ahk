@@ -123,16 +123,26 @@ Return
 
 Main_reload() 
 {
-  Local i
+  Local i, m
   
   Manager_resetWindowBorder()
   
   DllCall("Shell32.dll\SHAppBarMessage", "UInt", (ABM_REMOVE := 0x1), "UInt", &Bar_appBarData)
   ;; SKAN: Crazy Scripting : Quick Launcher for Portable Apps (http://www.autohotkey.com/forum/topic22398.html)
-
+  
   Config_init()
   Manager_setWindowBorder()
   Bar_getHeight()
+  SysGet, m, MonitorCount
+  If Not (m = Manager_monitorCount)
+  {
+    MsgBox, 48, bug.n: Reload, The number of monitors changed. You should restart bug.n (by default with the hotkey Win+Ctrl+Shift+R).
+    If (m < Manager_monitorCount)
+    {
+      Manager_monitorCount := m
+      Manager_aMonitor := 1
+    }
+  }
   Loop, % Manager_monitorCount 
   {
     Monitor_getWorkArea(A_Index)

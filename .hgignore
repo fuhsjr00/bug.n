@@ -3,3 +3,4 @@ syntax: glob
 src/log.txt
 syntax: regexp
 .*[cC]onfig.*\.ini
+.+\.\w{3}~
