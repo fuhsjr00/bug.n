@@ -36,7 +36,7 @@ Monitor_init(m)
 
 Monitor_activateView(v) 
 {
-  Local aView, aWndClass, aWndId, aWndTitle, m, n, wndId, wndIds
+  Local aView, aWndId, m, n, wndId, wndIds
   
   If (v = -1)
     v := Monitor_#%Manager_aMonitor%_aView_#2
@@ -45,7 +45,7 @@ Monitor_activateView(v)
   Else If (v = "<")
     v := Manager_loop(Monitor_#%Manager_aMonitor%_aView_#1, -1, 1, Config_viewCount)
   
-  Debug_logMessage("DEBUG[1] Monitor_activateView(" . v . ") Manager_aMonitor: " . Manager_aMonitor . "; wndIds: " . View_#%m%_#%aView%_wndIds, 1)
+  Debug_logMessage("DEBUG[1] Monitor_activateView(" . v . ") Manager_aMonitor: " . Manager_aMonitor . "; wndIds: " . View_#%Manager_aMonitor%_#%v%_wndIds, 1)
   If (v <= 0) Or (v > Config_viewCount) Or Manager_hideShow
     Return
   ;; Re-arrange the windows on the active view.
@@ -56,14 +56,9 @@ Monitor_activateView(v)
   }
   
   aView := Monitor_#%Manager_aMonitor%_aView_#1
-  WinGet, aWndId, ID, A
-  If WinExist("ahk_id" aWndId) And InStr(View_#%Manager_aMonitor%_#%aView%_wndIds, aWndId ";") 
-  {
-    WinGetClass, aWndClass, ahk_id %aWndId%
-    WinGetTitle, aWndTitle, ahk_id %aWndId%
-    If Not (aWndClass = "Progman") And Not (aWndClass = "AutoHotkeyGui" And SubStr(aWndTitle, 1, 10) = "bug.n_BAR_") And Not (aWndClass = "DesktopBackgroundClass")
-      View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
-  }
+  aWndId := View_getActiveWindow(Manager_aMonitor, aView)
+  If aWndId
+    View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
   
   n := Config_syncMonitorViews
   If (n = 1)

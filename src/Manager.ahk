@@ -57,21 +57,17 @@ Manager_init()
 
 Manager_activateMonitor(d) 
 {
-  Local aView, aWndClass, aWndHeight, aWndId, aWndWidth, aWndX, aWndY, v, wndId
+  Local aView, aWndHeight, aWndId, aWndWidth, aWndX, aWndY, v, wndId
   
   If (Manager_monitorCount > 1) 
   {
     aView := Monitor_#%Manager_aMonitor%_aView_#1
-    WinGet, aWndId, ID, A
-    If WinExist("ahk_id" aWndId) 
+    aWndId := View_getActiveWindow(Manager_aMonitor, aView)
+    If aWndId
     {
-      WinGetClass, aWndClass, ahk_id %aWndId%
-      If Not (aWndClass = "Progman") And Not (aWndClass = "AutoHotkeyGui") And Not (aWndClass = "DesktopBackgroundClass") 
-      {
-        WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
-        If (Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2) = Manager_aMonitor)
-          View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
-      }
+      WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
+      If (Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2) = Manager_aMonitor)
+        View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
     }
     
     Manager_aMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)

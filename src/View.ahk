@@ -224,6 +224,21 @@ View_arrange_tile(m, v, x, y, w, h)
     View_stackWindows("View_tiledWndId", mSplit + 1, stackLen, +1, axis3, x2, y2, w2, h2, gapW)
 }
 
+View_getActiveWindow(m, v)
+{
+  Local aWndClass, aWndId, aWndTitle
+  
+  WinGet, aWndId, ID, A
+  If WinExist("ahk_id" aWndId) And InStr(View_#%m%_#%v%_wndIds, aWndId ";") 
+  {
+    WinGetClass, aWndClass, ahk_id %aWndId%
+    WinGetTitle, aWndTitle, ahk_id %aWndId%
+    If Not (aWndClass = "Progman") And Not (aWndClass = "AutoHotkeyGui" And SubStr(aWndTitle, 1, 10) = "bug.n_BAR_") And Not (aWndClass = "DesktopBackgroundClass")
+      Return, aWndId
+  }
+  Return, 0
+}
+
 View_getLayoutSymbol_tile(m, v, n) 
 {
   Local axis1, axis2, axis3, masterDim, masterDiv, mx, my, stackSym
