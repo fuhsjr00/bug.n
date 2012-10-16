@@ -80,6 +80,7 @@ Manager_activateMonitor(d)
       Else
         wndId := 0
     }
+    Debug_logMessage("DEBUG[1] Manager_activateMonitor: Manager_aMonitor: " Manager_aMonitor ", d: " d ", wndId: " wndId, 1)
     Manager_winActivate(wndId)
   }
 }
@@ -493,10 +494,13 @@ Manager_onShellMessage(wParam, lParam)
   WinGetTitle, aWndTitle, ahk_id %aWndId%
   If ((wParam = 4 Or wParam = 32772) And lParam = 0 And aWndClass = "Progman" And aWndTitle = "Program Manager") 
   {
-    MouseGetPos, x, y
-    m := Monitor_get(x, y)
-    If m
-      Manager_aMonitor := m
+    If (Manager_monitorCount > 1) 
+    {
+      MouseGetPos, x, y
+      m := Monitor_get(x, y)
+      If m
+        Manager_aMonitor := m
+    }
     Bar_updateTitle()
   }
   
@@ -528,10 +532,12 @@ Manager_onShellMessage(wParam, lParam)
     
     If (Manager_monitorCount > 1) 
     {
+      WinGet, aWndId, ID, A
       WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
       m := Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2)
-      If m
-        Manager_aMonitor := m
+      Debug_logMessage("DEBUG[1] Manager_onShellMessage: Manager_monitorCount: " Manager_monitorCount ", Manager_aMonitor: " Manager_aMonitor ", m: " m ", aWndId: " aWndId, 1)
+      If m And Not (m = Manager_aMonitor)
+        Manager_activateMonitor(0)
     }
     
     If wndIds 
@@ -613,7 +619,7 @@ Manager_resetWindowBorder()
 
 Manager_setViewMonitor(d) 
 {
-  Local aView, m, v, wndIds
+  Local aView, aWndId, m, v, wndIds
   
   If (Manager_monitorCount > 1) 
   {
@@ -644,7 +650,8 @@ Manager_setViewMonitor(d)
       
       Manager_aMonitor := m
       View_arrange(m, v)
-      Bar_updateTitle()
+      WinGet, aWndId, ID, A
+      Manager_winActivate(aWndId)
       Bar_updateView(m, v)
     }
   }
@@ -699,7 +706,7 @@ Manager_setWindowMonitor(d)
     View_#%Manager_aMonitor%_#%v%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%v%_wndIds
     View_#%Manager_aMonitor%_#%v%_aWndId := aWndId
     View_arrange(Manager_aMonitor, v)
-    Bar_updateTitle()
+    Manager_winActivate(aWndId)
     Bar_updateView(Manager_aMonitor, v)
   }
 }
@@ -847,7 +854,7 @@ Manager_unmanage(wndId)
 
 Manager_winActivate(wndId) 
 {
-  Local newWnd, wndHeight, wndWidth, wndX, wndY
+  Local aWndId, wndHeight, wndWidth, wndX, wndY
   
   If Config_mouseFollowsFocus 
   {
@@ -859,16 +866,22 @@ Manager_winActivate(wndId)
     Else
       DllCall("SetCursorPos", "Int", Round(Monitor_#%Manager_aMonitor%_x + Monitor_#%Manager_aMonitor%_width / 2), "Int", Round(Monitor_#%Manager_aMonitor%_y + Monitor_#%Manager_aMonitor%_height / 2))
   }
-  If Manager_isHung(wndId) 
+  If wndId And Manager_isHung(wndId) 
   {
     Debug_logMessage("DEBUG[2] Manager_winActivate: Potentially hung window " . wndId, 2)
     Return 1
   }
   Else 
   {
+    Debug_logMessage("DEBUG[1] Activating window: " wndId, 1)
+    If Not wndId
+    {
+      WinGet, wndId, ID, Program Manager ahk_class Progman
+      Debug_logMessage("DEBUG[1] Activating Program Manager: " wndId, 1)
+    }
     WinActivate, ahk_id %wndId%
-    WinGet, newWin, ID, A
-    If (wndId != newWin)
+    WinGet, aWndId, ID, A
+    If (wndId != aWndId)
       Return 1
   }
   Bar_updateTitle()

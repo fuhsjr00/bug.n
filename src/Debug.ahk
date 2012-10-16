@@ -161,7 +161,7 @@ Debug_setLogLevel(d)
   {
     Debug_logLevel := i
     If (i = 0)
-      Debug_logMessage("Logging disabled.")
+      Debug_logMessage("Logging disabled.", 0)
     Else
       Debug_logMessage("Log level set to " i ".")
   }
