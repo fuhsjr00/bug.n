@@ -114,7 +114,7 @@ Main_evalCommand(command)
 }
 
 Main_help:
-  Run, explore %A_ScriptDir%\docs
+  Run, explore %A_ScriptDir%\doc
 Return
 
 Main_quit:
