@@ -26,7 +26,7 @@ Monitor_init(m) {
 	Monitor_#%m%_showBar  := Config_showBar
 	Loop, % Config_viewCount
 		View_init(m, A_Index)
-	Config_restore("Monitor", m)
+	Config_restoreLayout(Main_autoLayout, m)
 	Monitor_getWorkArea(m)
 	Bar_init(m)
 }

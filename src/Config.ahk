@@ -96,8 +96,9 @@ Config_init() {
 	Config_autoSaveSession := False							; Automatically save the current state of monitors, views, layouts (active view, layout, axes, mfact and msplit) to the configuration file (set below) when quitting bug.n.
 	If Not Config_filePath									; The file path, to which the configuration and session is saved. This target directory must be writable by the user (%A_ScriptDir% is the diretory, in which "Main.ahk" or the executable of bug.n is saved).
 		Config_filePath := A_ScriptDir "\Config.ini"
+	Config_maintenanceInterval := 5000
 	
-	Config_restore("Config")
+	Config_restoreConfig(Config_filePath)
 	Config_getSystemSettings()
 	Config_initColors()
 	Loop, % Config_layoutCount {
@@ -281,96 +282,103 @@ Config_redirectHotkey(key) {
 		}
 }
 
-Config_restore(section, m = 0) {
-	Local cmd, i, key, type, val, var
+Config_restoreLayout(filename, m) {
+	Local i, var, val
+
+	If Not FileExist(filename)
+		Return
 	
-	If FileExist(Config_filePath) {
-		If (section = "Config") {
-			Loop, READ, %Config_filePath%
-				If (SubStr(A_LoopReadLine, 1, 7) = "Config_") {
-					i := InStr(A_LoopReadLine, "=")
-					var := SubStr(A_LoopReadLine, 1, i - 1)
-					val := SubStr(A_LoopReadLine, i + 1)
-					type := SubStr(var, 1, 13)
-					If (type = "Config_hotkey") {
-						i := InStr(val, "::")
-						key := SubStr(val, 1, i - 1)
-						cmd := SubStr(val, i + 2)
-						If Not cmd
-							Hotkey, %key%, Off
-						Else {
-							Config_hotkeyCount += 1
-							Config_hotkey_#%Config_hotkeyCount%_key := key
-							Config_hotkey_#%Config_hotkeyCount%_command := cmd
-							Hotkey, %key%, Config_hotkeyLabel
-						}
-					} Else If (type = "Config_rule") {
-						i := 0
-						If InStr(var, "Config_rule_#")
-							i := SubStr(var, 14)
-						If (i = 0 Or i > Config_ruleCount) {
-							Config_ruleCount += 1
-							i := Config_ruleCount
-						}
-						var := "Config_rule_#" i
-					}
-					%var% := val
-				}
-		} Else If (section = "Monitor") {
-			Loop, READ, %Config_filePath%
-				If (SubStr(A_LoopReadLine, 1, 10 + StrLen(m)) = "Monitor_#" m "_" Or SubStr(A_LoopReadLine, 1, 8 + StrLen(m)) = "View_#" m "_#") {
-					i := InStr(A_LoopReadLine, "=")
-					var := SubStr(A_LoopReadLine, 1, i - 1)
-					val := SubStr(A_LoopReadLine, i + 1)
-					%var% := val
-				}
+	Loop, READ, %filename%
+		If (SubStr(A_LoopReadLine, 1, 10 + StrLen(m)) = "Monitor_#" m "_" Or SubStr(A_LoopReadLine, 1, 8 + StrLen(m)) = "View_#" m "_#") {
+			i := InStr(A_LoopReadLine, "=")
+			var := SubStr(A_LoopReadLine, 1, i - 1)
+			val := SubStr(A_LoopReadLine, i + 1)
+			%var% := val
 		}
-	}
 }
 
-Config_saveSession() {
-	Local m, text
+Config_restoreConfig(filename) {
+	Local cmd, i, key, type, val, var
+	
+	If Not FileExist(filename)
+		Return
+	
+	Loop, READ, %filename%
+		If (SubStr(A_LoopReadLine, 1, 7) = "Config_") {
+			Log_msg("Processing line: " . A_LoopReadLine)
+			i := InStr(A_LoopReadLine, "=")
+			var := SubStr(A_LoopReadLine, 1, i - 1)
+			val := SubStr(A_LoopReadLine, i + 1)
+			type := SubStr(var, 1, 13)
+			If (type = "Config_hotkey") {
+				i := InStr(val, "::")
+				key := SubStr(val, 1, i - 1)
+				cmd := SubStr(val, i + 2)
+				If Not cmd
+					Hotkey, %key%, Off
+				Else {
+					Config_hotkeyCount += 1
+					Config_hotkey_#%Config_hotkeyCount%_key := key
+					Config_hotkey_#%Config_hotkeyCount%_command := cmd
+					Hotkey, %key%, Config_hotkeyLabel
+				}
+			} Else If (type = "Config_rule") {
+				i := 0
+				If InStr(var, "Config_rule_#")
+					i := SubStr(var, 14)
+				If (i = 0 Or i > Config_ruleCount) {
+					Config_ruleCount += 1
+					i := Config_ruleCount
+				}
+				var := "Config_rule_#" i
+			}
+			%var% := val
+		}
+}
+
+Config_UI_saveSession() {
+	Config_saveSession(Config_filePath)
+}
+
+Config_saveSession(filename) {
+	Local m, text, tmpfilename
+	
+	tmpfilename := filename . ".tmp"
+	FileDelete, %tmpfilename%
 	
 	text := "; bug.n - tiling window management`n; @version " VERSION "`n`n"
-	If FileExist(Config_filePath) {
-		Loop, READ, %Config_filePath%
+	If FileExist(filename) {
+		Loop, READ, %filename%
 			If (SubStr(A_LoopReadLine, 1, 7) = "Config_")
 				text .= A_LoopReadLine "`n"
 		text .= "`n"
 	}
-	FileDelete, %Config_filePath%
 	
 	Loop, % Manager_monitorCount {
 		m := A_Index
-		If Not (Monitor_#%m%_aView_#1 = 1)
-			text .= "Monitor_#" m "_aView_#1=" Monitor_#%m%_aView_#1 "`n"
-		If Not (Monitor_#%m%_aView_#2 = 1)
-			text .= "Monitor_#" m "_aView_#2=" Monitor_#%m%_aView_#2 "`n"
-		If Not (Monitor_#%m%_showBar = Config_showBar)
-			text .= "Monitor_#" m "_showBar=" Monitor_#%m%_showBar "`n"
+		text .= "Monitor_#" m "_aView_#1=" Monitor_#%m%_aView_#1 "`n"
+		text .= "Monitor_#" m "_aView_#2=" Monitor_#%m%_aView_#2 "`n"
+		text .= "Monitor_#" m "_showBar=" Monitor_#%m%_showBar "`n"
 		Loop, % Config_viewCount {
-			If Not (View_#%m%_#%A_Index%_layout_#1 = 1)
-				text .= "View_#" m "_#" A_Index "_layout_#1=" View_#%m%_#%A_Index%_layout_#1 "`n"
-			If Not (View_#%m%_#%A_Index%_layout_#2 = 1)
-				text .= "View_#" m "_#" A_Index "_layout_#2=" View_#%m%_#%A_Index%_layout_#2 "`n"
-			If Not (View_#%m%_#%A_Index%_layoutAxis_#1 = Config_layoutAxis_#1)
-				text .= "View_#" m "_#" A_Index "_layoutAxis_#1=" View_#%m%_#%A_Index%_layoutAxis_#1 "`n"
-			If Not (View_#%m%_#%A_Index%_layoutAxis_#2 = Config_layoutAxis_#2)
-				text .= "View_#" m "_#" A_Index "_layoutAxis_#2=" View_#%m%_#%A_Index%_layoutAxis_#2 "`n"
-			If Not (View_#%m%_#%A_Index%_layoutAxis_#3 = Config_layoutAxis_#3)
-				text .= "View_#" m "_#" A_Index "_layoutAxis_#3=" View_#%m%_#%A_Index%_layoutAxis_#3 "`n"
-			If Not (View_#%m%_#%A_Index%_layoutGapWidth = Config_layoutGapWidth)
-				text .= "View_#" m "_#" A_Index "_layoutGapWidth=" View_#%m%_#%A_Index%_layoutGapWidth "`n"
-			If Not (View_#%m%_#%A_Index%_layoutMFact = Config_layoutMFactor)
-				text .= "View_#" m "_#" A_Index "_layoutMFact=" View_#%m%_#%A_Index%_layoutMFact "`n"
-			If Not (View_#%m%_#%A_Index%_layoutMX = 1)
-				text .= "View_#" m "_#" A_Index "_layoutMX=" View_#%m%_#%A_Index%_layoutMX "`n"
-			If Not (View_#%m%_#%A_Index%_layoutMY = 1)
-				text .= "View_#" m "_#" A_Index "_layoutMY=" View_#%m%_#%A_Index%_layoutMY "`n"
+			text .= "View_#" m "_#" A_Index "_layout_#1=" View_#%m%_#%A_Index%_layout_#1 "`n"
+			text .= "View_#" m "_#" A_Index "_layout_#2=" View_#%m%_#%A_Index%_layout_#2 "`n"
+			text .= "View_#" m "_#" A_Index "_layoutAxis_#1=" View_#%m%_#%A_Index%_layoutAxis_#1 "`n"
+			text .= "View_#" m "_#" A_Index "_layoutAxis_#2=" View_#%m%_#%A_Index%_layoutAxis_#2 "`n"
+			text .= "View_#" m "_#" A_Index "_layoutAxis_#3=" View_#%m%_#%A_Index%_layoutAxis_#3 "`n"
+			text .= "View_#" m "_#" A_Index "_layoutGapWidth=" View_#%m%_#%A_Index%_layoutGapWidth "`n"
+			text .= "View_#" m "_#" A_Index "_layoutMFact=" View_#%m%_#%A_Index%_layoutMFact "`n"
+			text .= "View_#" m "_#" A_Index "_layoutMX=" View_#%m%_#%A_Index%_layoutMX "`n"
+			text .= "View_#" m "_#" A_Index "_layoutMY=" View_#%m%_#%A_Index%_layoutMY "`n"
 		}
 	}
 	
-	FileAppend, %text%, %Config_filePath%
+	FileAppend, %text%, %tmpfilename%
+	If ErrorLevel {
+		If FileExist(tmpfilename)
+			FileDelete, %tmpfilename%
+	}
+	Else
+		FileMove, %tmpfilename%, %filename%, 1
 }
 
 /**
@@ -457,7 +465,7 @@ Config_saveSession() {
 #Space::Monitor_toggleTaskBar()				; Hide / Show the task bar.
 #y::Bar_toggleCommandGui()					; Open the command GUI for executing programmes or bug.n functions.
 #^e::Run, edit %Config_filePath%			; Open the configuration file in the standard text editor.
-#^s::Config_saveSession()					; Save the current state of monitors, views, layouts to the configuration file.
+#^s::Config_UI_saveSession()				; Save the current state of monitors, views, layouts to the configuration file.
 #^r::Main_reload()							; Reload bug.n (i. e. the configuration and its dependent settings) without deleting the window lists of bug.n and restoring windows.
 											; It does not reset internal configuration variables, the tray icon or menu, hotkeys (unless set explicitly in Config.ini), individual window settings like Config_showBorder (since windows might be hidden) or hiding the title bar, the monitor count or views.
 											; It does not reload functions. Changed rules are only applied to new windows.

@@ -33,20 +33,9 @@ SetWinDelay, 10
 
 ; pseudo main function
 
+	Main_setup()
 	
-	EnvGet, appDir, APPDATA
-	bugnDir := appDir . "\bug.n"
-	IfNotExist, %bugnDir%
-		FileCreateDir, %bugnDir%
-	FileGetAttrib, attrib, %bugnDir%
-	IfNotInString, attrib, D 
-	{
-		MsgBox, The file path '%appDir%' already exists and is not a directory. Aborting.
-		Return
-	}
-	logFile := bugnDir . "\bugn_log.txt"
-	Log_init(logFile, False)
-	
+	Log_init(Main_logFile, False)
 	
 	Log_msg("====== Initializing ======")
 	If 0 = 1
@@ -71,7 +60,7 @@ Return					; end of the auto-execute section
 Main_cleanup:			; The labels with "ExitApp" or "Return" at the end and hotkeys have to be after the auto-execute section.
 	Log_msg("====== Cleaning up ======")
 	If Config_autoSaveSession
-		Config_saveSession()
+		Config_saveSession(Config_filePath)
 	Manager_cleanup()
     DllCall("CloseHandle", "UInt", Bar_hDrive)    ; used in Bar_getDiskLoad
 ExitApp
@@ -83,6 +72,49 @@ Return
 Main_quit:
 	ExitApp
 Return
+
+; Create bug.n-specific directories.
+Main_makeDir(dirName) {
+	IfNotExist, %dirName%
+	{
+		FileCreateDir, %dirName%
+		If ErrorLevel {
+			MsgBox, Error (%ErrorLevel%) when creating '%dirName%'. Aborting.
+			ExitApp
+		}
+	}
+	Else {
+		FileGetAttrib, attrib, %dirName%
+		IfNotInString, attrib, D 
+		{
+			MsgBox, The file path '%dirName%' already exists and is not a directory. Aborting.
+			ExitApp
+		}
+	}
+}
+
+
+Main_setup() {
+	Local winAppDir
+
+	Main_appDir := ""
+	Main_logFile := ""
+	Main_dataDir := ""
+	Main_autoLayout := ""
+	Main_autoWindowState := ""
+
+	EnvGet, winAppDir, APPDATA
+
+	Main_appDir := winAppDir . "\bug.n"
+	Main_logFile := Main_appDir . "\bugn_log.txt"
+	Main_dataDir := Main_appDir . "\data"
+	Main_autoLayout := Main_dataDir . "\_Layout.ini"
+	Main_autoWindowState := Main_dataDir . "\_WindowState.ini"
+	
+	Main_makeDir(Main_appDir)
+	Main_makeDir(Main_dataDir)
+}
+
 
 Main_reload() {
 	Local i, ncm, ncmSize
