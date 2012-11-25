@@ -305,7 +305,7 @@ Config_restoreConfig(filename) {
 	
 	Loop, READ, %filename%
 		If (SubStr(A_LoopReadLine, 1, 7) = "Config_") {
-			Log_msg("Processing line: " . A_LoopReadLine)
+			;Log_msg("Processing line: " . A_LoopReadLine)
 			i := InStr(A_LoopReadLine, "=")
 			var := SubStr(A_LoopReadLine, 1, i - 1)
 			val := SubStr(A_LoopReadLine, i + 1)
