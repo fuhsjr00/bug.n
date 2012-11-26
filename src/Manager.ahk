@@ -92,7 +92,7 @@ Manager_maintenance() {
 	; @todo: Check for changes to the layout.
 	;If Manager_layoutDirty {
 		;Log_msg("Saving layout state: " . Main_autoLayout)
-		Config_saveSession(Main_autoLayout)
+		Config_saveSession(Config_filaPath, Main_autoLayout)
 		Manager_layoutDirty := 0
 	;}
 
