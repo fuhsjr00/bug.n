@@ -52,6 +52,7 @@ SetWinDelay, 10
 	Menu, Tray, Add, Exit, Main_quit
 	
 	Manager_init()
+	Log_msg("====== Running ======")
 Return					; end of the auto-execute section
 
 /**
@@ -62,7 +63,8 @@ Main_cleanup:			; The labels with "ExitApp" or "Return" at the end and hotkeys h
 	If Config_autoSaveSession
 		Config_saveSession(Config_filePath)
 	Manager_cleanup()
-    DllCall("CloseHandle", "UInt", Bar_hDrive)    ; used in Bar_getDiskLoad
+	DllCall("CloseHandle", "UInt", Bar_hDrive)    ; used in Bar_getDiskLoad
+	Log_msg("====== Exiting ======")
 ExitApp
 
 Main_help:
