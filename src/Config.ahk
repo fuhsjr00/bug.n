@@ -267,29 +267,37 @@ Config_restoreConfig(filename) {
     Return
   
   Loop, READ, %filename%
-    If (SubStr(A_LoopReadLine, 1, 7) = "Config_") {
+    If (SubStr(A_LoopReadLine, 1, 7) = "Config_") 
+    {
       ;Log_msg("Processing line: " . A_LoopReadLine)
       i := InStr(A_LoopReadLine, "=")
       var := SubStr(A_LoopReadLine, 1, i - 1)
       val := SubStr(A_LoopReadLine, i + 1)
       type := SubStr(var, 1, 13)
-      If (type = "Config_hotkey") {
+      If (type = "Config_hotkey") 
+      {
+        Debug_logMessage("Processing configured hotkey: " . A_LoopReadLine, 0)
         i := InStr(val, "::")
         key := SubStr(val, 1, i - 1)
         cmd := SubStr(val, i + 2)
         If Not cmd
           Hotkey, %key%, Off
-        Else {
+        Else 
+        {
+          Debug_logMessage("  Hotkey: " . key . " -> " . cmd, 0)
           Config_hotkeyCount += 1
           Config_hotkey_#%Config_hotkeyCount%_key := key
           Config_hotkey_#%Config_hotkeyCount%_command := cmd
           Hotkey, %key%, Config_hotkeyLabel
         }
-      } Else If (type = "Config_rule") {
+      } 
+      Else If (type = "Config_rule") 
+      {
         i := 0
         If InStr(var, "Config_rule_#")
           i := SubStr(var, 14)
-        If (i = 0 Or i > Config_ruleCount) {
+        If (i = 0 Or i > Config_ruleCount) 
+        {
           Config_ruleCount += 1
           i := Config_ruleCount
         }
@@ -382,11 +390,11 @@ Config_saveSession(original, target)
 #+i::Manager_getWindowList()
 
 ;; Window debugging
-#^i::Manager_logViewWindowList()
-#+^i::Manager_logManagedWindowList()
-#^h::Manager_logHelp()
-#^[::Log_decDebugLevel()
-#^]::Log_incDebugLevel()
+#^i::Debug_logViewWindowList()
+#+^i::Debug_logManagedWindowList()
+#^h::Debug_logHelp()
+#^d::Debug_setLogLevel(-1)
+#^+d::Debug_setLogLevel(+1)
 
 ;; Layout management
 #Tab::View_setLayout(-1)

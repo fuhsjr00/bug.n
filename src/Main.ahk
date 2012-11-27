@@ -39,11 +39,10 @@ SetWinDelay, 10
 
   Main_setup()
   
-  Log_init(Main_logFile, False)
-  
-  Log_msg("====== Initializing ======")
-  If 0 = 1
-    Config_filePath = %1%
+  Debug_initLog(Main_appDir "\log.txt", 0, False)
+
+  Debug_logMessage("====== Initializing ======")
+  Config_filePath := Main_appDir "\Config.ini"
   Config_init()
   
   Menu, Tray, Tip, %NAME% %VERSION%
@@ -57,17 +56,17 @@ SetWinDelay, 10
   
   ResourceMonitor_init()
   Manager_init()
-  Log_msg("====== Running ======")
+  Debug_logMessage("====== Running ======", 0)
 Return          ;; end of the auto-execute section
 
 ;; Function & label definitions
 Main_cleanup:
-  Log_msg("====== Cleaning up ======")
+  Debug_logMessage("====== Cleaning up ======", 0)
   If Config_autoSaveSession
     Config_saveSession(Config_filePath, Config_filePath)
   Manager_cleanup()
   ResourceMonitor_cleanup()
-  Log_msg("====== Exiting ======")
+  Debug_logMessage("====== Exiting bug.n ======", 0)
 ExitApp
   
 Main_evalCommand(command) 
@@ -242,7 +241,7 @@ Main_toggleBar:
   Monitor_toggleBar()
 Return
 
-#Include Log.ahk
+#include Debug.ahk
 #Include List.ahk
 #Include Bar.ahk
 #Include Config.ahk
