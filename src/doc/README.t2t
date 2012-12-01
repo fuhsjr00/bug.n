@@ -1,3 +1,10 @@
+
+%!encoding:       utf-8
+%!target:         txt
+%!options(txt):   -o README.txt
+%!preproc(txt):   '%%txt: ' ''
+%!postproc(txt):  '<BR>'    ''
+
 Tags     software / Microsoft Windows / tiling window management / AutoHotkey
 Title    bug.n
 Author   Joshua Fuhs, joten
@@ -10,59 +17,66 @@ with this version, in particular the changes in configuration variables and
 hotkeys.
 
 
-Credits
+=Credits=
 
-  bug.n is written by Joshua Fuhs and joten, but some source was copied from
-  the AutoHotkey forum (http://www.autohotkey.com/forum). These are
-  explicitly marked in the source code at the end of the appropriate section.
-  Additionally the following listing summarizes these sources (of ideas or
-  code):
-
-  Patch ideas
-    * pitkali:
-        + Sync window arrays on fussy events and unknown window ids
-        + Dialog detection upon manage
-        + Regular expression support in rules
-        + Window information handling patches
-            - memory leaks
-            - flickering windows
-      http://pitkali.info/bugn (patches/code outdated)
-
-  Ideas or concepts
-    * suckless.org: dwm
-      http://dwm.suckless.org
-    * jgpaiva: GridMove
-      http://jgpaiva.donationcoders.com/gridmove.html
-    * Lexikos: WindowPad - multi-monitor window-moving tool
-      http://www.autohotkey.com/forum/topic21703.html
-
-  Code snippets
-    * fures: System + Network monitor - with net history graph
-      http://www.autohotkey.com/community/viewtopic.php?p=260329
-    * maestrith: Script Writer
-      http://www.autohotkey.net/~maestrith/Script Writer/
-    * PhiLho: AC/Battery status
-      http://www.autohotkey.com/forum/topic7633.html
-    * Sean:
-        + CPU LoadTimes
-          http://www.autohotkey.com/forum/topic18913.html
-        + Network Download/Upload Meter
-          http://www.autohotkey.com/community/viewtopic.php?t=18033
-    * SKAN:
-        + Crazy Scripting : Quick Launcher for Portable Apps
-          http://www.autohotkey.com/forum/topic22398.html
-        + HDD Activity Monitoring LED
-          http://www.autohotkey.com/community/viewtopic.php?p=113890&sid=64d9824fdf252697ff4d5026faba91f8#p113890
-        + How to Hook on to Shell to receive its messages?
-          http://www.autohotkey.com/forum/viewtopic.php?p=123323#123323
-    * Unambiguous: Re-use WIN+L as a hotkey in bug.n
-      http://www.autohotkey.com/community/viewtopic.php?p=500903&sid=eb3c7a119259b4015ff045ef80b94a81#p500903
+bug.n is written by Joshua Fuhs and joten, but some source was copied from
+the AutoHotkey forum (http://www.autohotkey.com/forum). These are
+explicitly marked in the source code at the end of the appropriate section.
+Additionally the following listing summarizes these sources (of ideas or
+code):
 
 
-License
+==Patch ideas==
 
-  bug.n is licensed under the GPL version 3; please see doc/license.txt for
-  the explicit license text.
+- pitkali:
+  - Sync window arrays on fussy events and unknown window ids
+  - Dialog detection upon manage
+  - Regular expression support in rules
+  - Window information handling patches
+    - memory leaks
+    - flickering windows
+  http://pitkali.info/bugn (patches/code outdated)
 
 
-Copyright (c) 2010-2012 Joshua Fuhs, joten
+==Ideas or concepts==
+
+- suckless.org: dwm
+  http://dwm.suckless.org
+- jgpaiva: GridMove
+  http://jgpaiva.donationcoders.com/gridmove.html
+- Lexikos: WindowPad - multi-monitor window-moving tool
+  http://www.autohotkey.com/forum/topic21703.html
+
+
+==Code snippets==
+
+- fures: System + Network monitor - with net history graph
+  http://www.autohotkey.com/community/viewtopic.php?p=260329
+- maestrith: Script Writer
+  http://www.autohotkey.net/~maestrith/Script Writer/
+- PhiLho: AC/Battery status
+  http://www.autohotkey.com/forum/topic7633.html
+- Sean:
+  - CPU LoadTimes
+    http://www.autohotkey.com/forum/topic18913.html
+  - Network Download/Upload Meter
+    http://www.autohotkey.com/community/viewtopic.php?t=18033
+- SKAN:
+  - Crazy Scripting : Quick Launcher for Portable Apps
+    http://www.autohotkey.com/forum/topic22398.html
+  - HDD Activity Monitoring LED
+    http://www.autohotkey.com/community/viewtopic.php?p=113890&sid=64d9824fdf252697ff4d5026faba91f8#p113890
+  - How to Hook on to Shell to receive its messages?
+    http://www.autohotkey.com/forum/viewtopic.php?p=123323#123323
+- Unambiguous: Re-use WIN+L as a hotkey in bug.n
+  http://www.autohotkey.com/community/viewtopic.php?p=500903&sid=eb3c7a119259b4015ff045ef80b94a81#p500903
+
+
+=License=
+
+bug.n is licensed under the GPL version 3; please see doc/license.txt for
+the explicit license text.
+
+
+------------------------------------------------------------------------
+%%txt: (c) 2010-2012 Joshua Fuhs, joten. Last modified %%date(%d.%m.%Y).
