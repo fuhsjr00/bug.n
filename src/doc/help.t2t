@@ -20,8 +20,8 @@
 %!preproc(txt):   '%%txt: '              ''
 %!postproc(txt):  '<DIV ID="frame">'     ''
 %!postproc(txt):  '<BR>'                 ''
-%!postproc(txt):  '%%LINK_configuration' 'docs/configuration.txt'
-%!postproc(txt):  '%%LINK_hotkeys'       'docs/hotkeys.txt'
+%!postproc(txt):  '%%LINK_configuration' 'doc/configuration.txt'
+%!postproc(txt):  '%%LINK_hotkeys'       'doc/hotkeys.txt'
 
 ''' <DIV ID="frame">
 %%html: ''' <DIV CLASS="header">
@@ -183,7 +183,7 @@ The following functions can also be controlled with the mouse:
 ''<BR>''
 %%html: ''' <DIV CLASS="footer">
 ------------------------------------------------------------------------
-%%txt: (c) 2010-2011 joten, last modified %%date(%d.%m.%Y)
-%%html: | (c) 2010-2011 joten, last modified %%date(%d.%m.%Y)  |  [jn.png]
+%%txt: (c) 2010-2012 Joshua Fuhs, joten. Last modified %%date(%d.%m.%Y).
+%%html: | (c) 2010-2012 Joshua Fuhs, joten. Last modified %%date(%d.%m.%Y).  |  [jn.png]
 %%html: ''' </DIV>
 %%html: ''' </DIV>
