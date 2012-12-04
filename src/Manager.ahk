@@ -211,6 +211,8 @@ Manager_closeWindow()
   WinGet, aWndId, ID, A
   WinGetClass, aWndClass, ahk_id %aWndId%
   WinGetTitle, aWndTitle, ahk_id %aWndId%
+  ;; @todo: Prior to closing, find the next window that should have focus.
+  ;;   If there is no such window, choose the bar on the same monitor.
   If Not (aWndClass = "AutoHotkeyGUI" And RegExMatch(aWndTitle, "bug.n_BAR_[0-9]+"))
     Manager_winClose(aWndId)
 }
@@ -543,7 +545,8 @@ Manager_onShellMessage(wParam, lParam) {
   WinGet, aWndId, ID, A
   WinGetClass, aWndClass, ahk_id %aWndId%
   WinGetTitle, aWndTitle, ahk_id %aWndId%
-  If ((wParam = 4 Or wParam = 32772) And lParam = 0 And aWndClass = "Progman" And aWndTitle = "Program Manager") {
+  If ((wParam = 4 Or wParam = 32772) And lParam = 0 And aWndClass = "Progman" And aWndTitle = "Program Manager") 
+  {
     MouseGetPos, x, y
     m := Monitor_get(x, y)
     If m
