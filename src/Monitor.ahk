@@ -29,7 +29,7 @@ Monitor_init(m)
   {
     View_init(m, A_Index)
   }
-  Config_restore("Monitor", m)
+  Config_restoreLayout(Main_autoLayout, m)
   Monitor_getWorkArea(m)
   Bar_init(m)
 }
@@ -209,23 +209,9 @@ Monitor_getWorkArea(m)
 
 Monitor_moveWindow(m, wndId) 
 {
-  Local fX, fY, monitor, wndHeight, wndWidth, wndX, wndY
+  Global
   
   Manager_#%wndId%_monitor := m
-  If Manager_#%wndId%_isFloating 
-  {
-    WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
-    monitor := Monitor_get(wndX+wndWidth/2, wndY+wndHeight/2)
-    If Not (m = monitor) 
-    {    ;; Move the window to the target monitor and scale it, if it does not fit on the monitor.
-      fX := Monitor_#%m%_width / Monitor_#%monitor%_width
-      fY := Monitor_#%m%_height / Monitor_#%monitor%_height
-      If (wndX-Monitor_#%monitor%_x+wndWidth > Monitor_#%m%_width) Or (wndY-Monitor_#%monitor%_y+wndHeight > Monitor_#%m%_height)
-        Manager_winMove(wndId, Monitor_#%m%_x+fX*(wndX-Monitor_#%monitor%_x), Monitor_#%m%_y+fY*(wndY-Monitor_#%monitor%_y), fX*wndWidth, fY*wndHeight)
-      Else
-        Manager_winMove(wndId, Monitor_#%m%_x+(wndX-Monitor_#%monitor%_x), Monitor_#%m%_y+(wndY-Monitor_#%monitor%_y), wndWidth, wndHeight)
-    }
-  }
 }
 
 Monitor_setWindowTag(t) 

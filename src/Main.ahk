@@ -36,13 +36,18 @@ SetWinDelay, 10
     Main_dataDir = %1%
   Else
     Main_dataDir = %A_ScriptDir%
-  Debug_initLog(Main_dataDir "\log.txt", 0, False)
-  Config_filePath := Main_dataDir "\config.ini"
+
+  Main_setup()
+  
+  Debug_initLog(Main_appDir "\log.txt", 0, False)
+
+  Debug_logMessage("====== Initializing ======")
+  Config_filePath := Main_appDir "\Config.ini"
   Config_init()
   
   Menu, Tray, Tip, %NAME% %VERSION%
-  IfExist %A_ScriptDir%\logo.ico
-    Menu, Tray, Icon, %A_ScriptDir%\logo.ico
+  IfExist %A_ScriptDir%\images\kfm.ico
+    Menu, Tray, Icon, %A_ScriptDir%\images\kfm.ico
   Menu, Tray, NoStandard
   Menu, Tray, Add, Toggle bar, Main_toggleBar
   Menu, Tray, Add, Help, Main_help
@@ -51,16 +56,17 @@ SetWinDelay, 10
   
   ResourceMonitor_init()
   Manager_init()
+  Debug_logMessage("====== Running ======", 0)
 Return          ;; end of the auto-execute section
 
 ;; Function & label definitions
 Main_cleanup:
-  Debug_logMessage("Cleaning up", 0)
+  Debug_logMessage("====== Cleaning up ======", 0)
   If Config_autoSaveSession
-    Config_saveSession()
+    Config_saveSession(Config_filePath, Config_filePath)
   Manager_cleanup()
   ResourceMonitor_cleanup()
-  Debug_logMessage("Exiting bug.n", 0)
+  Debug_logMessage("====== Exiting bug.n ======", 0)
 ExitApp
   
 Main_evalCommand(command) 
@@ -121,28 +127,93 @@ Main_quit:
   ExitApp
 Return
 
+; Create bug.n-specific directories.
+Main_makeDir(dirName) {
+  IfNotExist, %dirName%
+  {
+    FileCreateDir, %dirName%
+    If ErrorLevel 
+    {
+      MsgBox, Error (%ErrorLevel%) when creating '%dirName%'. Aborting.
+      ExitApp
+    }
+  }
+  Else 
+  {
+    FileGetAttrib, attrib, %dirName%
+    IfNotInString, attrib, D 
+    {
+      MsgBox, The file path '%dirName%' already exists and is not a directory. Aborting.
+      ExitApp
+    }
+  }
+}
+
+
+Main_setup() {
+  Local winAppDir
+
+  Main_appDir := ""
+  Main_logFile := ""
+  Main_dataDir := ""
+  Main_autoLayout := ""
+  Main_autoWindowState := ""
+
+  EnvGet, winAppDir, APPDATA
+
+  Main_appDir := winAppDir . "\bug.n"
+  Main_logFile := Main_appDir . "\bugn_log.txt"
+  Main_dataDir := Main_appDir . "\data"
+  Main_autoLayout := Main_dataDir . "\_Layout.ini"
+  Main_autoWindowState := Main_dataDir . "\_WindowState.ini"
+  
+  Main_makeDir(Main_appDir)
+  Main_makeDir(Main_dataDir)
+}
+
+
 Main_reload() 
 {
-  Local i, m
+  Local i, ncm, ncmSize
   
-  Manager_resetWindowBorder()
-  
+  ;; Reset border color, padding and witdh.
+  If Config_selBorderColor
+    DllCall("SetSysColors", "Int", 1, "Int*", 10, "UInt*", Manager_normBorderColor)
+  If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA) 
+  {
+    ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
+    NumPut(ncmSize, ncm, 0, "UInt")
+    DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
+    If (Config_borderWidth > 0)
+      NumPut(Manager_borderWidth, ncm, 4, "Int")
+    If (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA)
+      NumPut(Manager_borderPadding, ncm, 40 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), "Int")
+    DllCall("SystemParametersInfo", "UInt", 0x002a, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
+  }
   DllCall("Shell32.dll\SHAppBarMessage", "UInt", (ABM_REMOVE := 0x1), "UInt", &Bar_appBarData)
   ;; SKAN: Crazy Scripting : Quick Launcher for Portable Apps (http://www.autohotkey.com/forum/topic22398.html)
   
   Config_init()
-  Manager_setWindowBorder()
-  Bar_getHeight()
-  SysGet, m, MonitorCount
-  If Not (m = Manager_monitorCount)
-  {
-    MsgBox, 48, bug.n: Reload, The number of monitors changed. You should restart bug.n (by default with the hotkey Win+Ctrl+Shift+R).
-    If (m < Manager_monitorCount)
-    {
-      Manager_monitorCount := m
-      Manager_aMonitor := 1
-    }
+  ; Windows UI
+  If Config_selBorderColor {
+    SetFormat, Integer, hex
+    Manager_normBorderColor := DllCall("GetSysColor", "Int", 10)
+    SetFormat, Integer, d
+    DllCall("SetSysColors", "Int", 1, "Int*", 10, "UInt*", Config_selBorderColor)
   }
+  If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA) {
+    ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
+    NumPut(ncmSize, ncm, 0, "UInt")
+    DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
+    Manager_borderWidth := NumGet(ncm, 4, "Int")
+    Manager_borderPadding := NumGet(ncm, 40 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), "Int")
+    If (Config_borderWidth > 0)
+      NumPut(Config_borderWidth, ncm, 4, "Int")
+    If (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA)
+      NumPut(Config_borderPadding, ncm, 40 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), "Int")
+    DllCall("SystemParametersInfo", "UInt", 0x002a, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
+  }
+  Bar_getHeight()
   Loop, % Manager_monitorCount 
   {
     Monitor_getWorkArea(A_Index)

@@ -90,8 +90,12 @@ Config_init()
   
   ;; Configuration management
   Config_autoSaveSession := False
+  ; @todo: To be removed?
+  If Not Config_filePath                  ; The file path, to which the configuration and session is saved. This target directory must be writable by the user (%A_ScriptDir% is the diretory, in which "Main.ahk" or the executable of bug.n is saved).
+    Config_filePath := A_ScriptDir "\Config.ini"
+  Config_maintenanceInterval := 5000
   
-  Config_restore("Config")
+  Config_restoreConfig(Config_filePath)
   Config_getSystemSettings()
   Config_initColors()
   Loop, % Config_layoutCount 
@@ -241,84 +245,92 @@ Config_redirectHotkey(key)
   }
 }
 
-Config_restore(section, m = 0) 
+Config_restoreLayout(filename, m) 
+{
+  Local i, var, val
+
+  If Not FileExist(filename)
+    Return
+  
+  Loop, READ, %filename%
+    If (SubStr(A_LoopReadLine, 1, 10 + StrLen(m)) = "Monitor_#" m "_" Or SubStr(A_LoopReadLine, 1, 8 + StrLen(m)) = "View_#" m "_#") {
+      i := InStr(A_LoopReadLine, "=")
+      var := SubStr(A_LoopReadLine, 1, i - 1)
+      val := SubStr(A_LoopReadLine, i + 1)
+      %var% := val
+    }
+}
+
+Config_restoreConfig(filename) 
 {
   Local cmd, i, key, type, val, var
   
-  If FileExist(Config_filePath) 
-  {
-    If (section = "Config") 
+  If Not FileExist(filename)
+    Return
+  
+  Loop, READ, %filename%
+    If (SubStr(A_LoopReadLine, 1, 7) = "Config_") 
     {
-      Loop, READ, %Config_filePath%
+      ;Log_msg("Processing line: " . A_LoopReadLine)
+      i := InStr(A_LoopReadLine, "=")
+      var := SubStr(A_LoopReadLine, 1, i - 1)
+      val := SubStr(A_LoopReadLine, i + 1)
+      type := SubStr(var, 1, 13)
+      If (type = "Config_hotkey") 
       {
-        If (SubStr(A_LoopReadLine, 1, 7) = "Config_") 
+        Debug_logMessage("Processing configured hotkey: " . A_LoopReadLine, 0)
+        i := InStr(val, "::")
+        key := SubStr(val, 1, i - 1)
+        cmd := SubStr(val, i + 2)
+        If Not cmd
+          Hotkey, %key%, Off
+        Else 
         {
-          i := InStr(A_LoopReadLine, "=")
-          var := SubStr(A_LoopReadLine, 1, i - 1)
-          val := SubStr(A_LoopReadLine, i + 1)
-          type := SubStr(var, 1, 13)
-          If (type = "Config_hotkey") 
-          {
-            i := InStr(val, "::")
-            key := SubStr(val, 1, i - 1)
-            cmd := SubStr(val, i + 2)
-            If Not cmd
-              Hotkey, %key%, Off
-            Else 
-            {
-              Config_hotkeyCount += 1
-              Config_hotkey_#%Config_hotkeyCount%_key := key
-              Config_hotkey_#%Config_hotkeyCount%_command := cmd
-              Hotkey, %key%, Config_hotkeyLabel
-            }
-          } 
-          Else If (type = "Config_rule") 
-          {
-            i := 0
-            If InStr(var, "Config_rule_#")
-              i := SubStr(var, 14)
-            If (i = 0 Or i > Config_ruleCount) 
-            {
-              Config_ruleCount += 1
-              i := Config_ruleCount
-            }
-            var := "Config_rule_#" i
-          }
-          %var% := val
+          Debug_logMessage("  Hotkey: " . key . " -> " . cmd, 0)
+          Config_hotkeyCount += 1
+          Config_hotkey_#%Config_hotkeyCount%_key := key
+          Config_hotkey_#%Config_hotkeyCount%_command := cmd
+          Hotkey, %key%, Config_hotkeyLabel
         }
       }
-    } 
-    Else If (section = "Monitor") 
-    {
-      Loop, READ, %Config_filePath%
+      Else If (type = "Config_rule") 
       {
-        If (SubStr(A_LoopReadLine, 1, 10 + StrLen(m)) = "Monitor_#" m "_" Or SubStr(A_LoopReadLine, 1, 8 + StrLen(m)) = "View_#" m "_#") 
+        i := 0
+        If InStr(var, "Config_rule_#")
+          i := SubStr(var, 14)
+        If (i = 0 Or i > Config_ruleCount) 
         {
-          i := InStr(A_LoopReadLine, "=")
-          var := SubStr(A_LoopReadLine, 1, i - 1)
-          val := SubStr(A_LoopReadLine, i + 1)
-          %var% := val
+          Config_ruleCount += 1
+          i := Config_ruleCount
         }
+        var := "Config_rule_#" i
       }
+      %var% := val
     }
-  }
 }
 
-Config_saveSession() 
+Config_UI_saveSession() 
 {
-  Local m, text
+  Config_saveSession(Config_filePath, Config_filePath)
+}
+
+Config_saveSession(original, target) 
+{
+  Local m, text, tmpfilename
   
-  text := ";; bug.n -- tiling window management`n;; @version " VERSION "`n`n"
-  If FileExist(Config_filePath) 
+  tmpfilename := target . ".tmp"
+  FileDelete, %tmpfilename%
+  
+  text := "; bug.n - tiling window management`n; @version " VERSION "`n`n"
+  If FileExist(original) 
   {
-    Loop, READ, %Config_filePath%
+    Loop, READ, %original%
     {
       If (SubStr(A_LoopReadLine, 1, 7) = "Config_")
         text .= A_LoopReadLine "`n"
     }
     text .= "`n"
   }
-  FileDelete, %Config_filePath%
   
   Loop, % Manager_monitorCount 
   {
@@ -352,7 +364,16 @@ Config_saveSession()
     }
   }
   
-  FileAppend, %text%, %Config_filePath%
+  ;; The FileMove below is an all-or-nothing replacement of the file.
+  ;; We don't want to leave this half-finished.
+  FileAppend, %text%, %tmpfilename%
+  If ErrorLevel 
+  {
+    If FileExist(tmpfilename)
+      FileDelete, %tmpfilename%
+  }
+  Else
+    FileMove, %tmpfilename%, %target%, 1
 }
 
 ;; Key definitions
@@ -443,7 +464,7 @@ Config_saveSession()
 
 ;; Administration
 #^e::Run, edit %Config_filePath%
-#^s::Config_saveSession()
+#^s::Config_UI_saveSession()
 #^r::Main_reload()
 #^+r::Reload
 #^q::ExitApp

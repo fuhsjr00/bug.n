@@ -27,7 +27,6 @@ Debug_initLog(filename, level = 0, truncateFile = True)
   If truncateFile
     If FileExist(Debug_logFilename)
       FileDelete, %Debug_logFilename%
-  Debug_logMessage("Log initialized.", 0)
 }
 
 Debug_logHelp() 
