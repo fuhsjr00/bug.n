@@ -950,7 +950,7 @@ Manager__restoreWindowState(filename)
   ;Debug_logMessage("view_set: " . view_set, 1)
   ;Debug_logMessage("excluded_view_set: " . excluded_view_set, 1)
   
-  candidate_set := List_new()
+  candidate_set := ""
   
   ; Scan through all defined windows. Create a candidate set of windows based on whether the properties of existing windows match.
   Loop, % (widx - 1) 
@@ -1012,7 +1012,7 @@ Manager__restoreWindowState(filename)
     Manager__setWinProperties(i, isManaged, m, v, isDecorated, isFloating, hideTitle )
     ;Manager_winHide(i)
     
-    List_append(candidate_set, i)
+    candidate_set := candidate_set . i . ";"
   }
   
   ;Debug_logMessage("candidate_set: " . candidate_set, 1)

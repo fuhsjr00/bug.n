@@ -242,7 +242,6 @@ Main_toggleBar:
 Return
 
 #include Debug.ahk
-#Include List.ahk
 #Include Bar.ahk
 #Include Config.ahk
 #Include Manager.ahk

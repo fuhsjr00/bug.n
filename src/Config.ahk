@@ -290,7 +290,7 @@ Config_restoreConfig(filename) {
           Config_hotkey_#%Config_hotkeyCount%_command := cmd
           Hotkey, %key%, Config_hotkeyLabel
         }
-      } 
+      }
       Else If (type = "Config_rule") 
       {
         i := 0
@@ -365,7 +365,8 @@ Config_saveSession(original, target)
   ;; The FileMove below is an all-or-nothing replacement of the file.
   ;; We don't want to leave this half-finished.
   FileAppend, %text%, %tmpfilename%
-  If ErrorLevel {
+  If ErrorLevel 
+  {
     If FileExist(tmpfilename)
       FileDelete, %tmpfilename%
   }
@@ -415,7 +416,7 @@ Config_saveSession(original, target)
 #+Right::View_setGapWidth(+2)
 
 ;; View/Tag management
-;#+n::View_toggleMargins()
+#+n::View_toggleMargins()
 #BackSpace::Monitor_activateView(-1)
 #+0::Monitor_setWindowTag(0)
 #1::Monitor_activateView(1)
@@ -463,5 +464,5 @@ Config_saveSession(original, target)
 #^e::Run, edit %Config_filePath%
 #^s::Config_UI_saveSession()
 #^r::Main_reload()
-;#^+r::Reload
+#^+r::Reload
 #^q::ExitApp
