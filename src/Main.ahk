@@ -241,9 +241,9 @@ Main_toggleBar:
   Monitor_toggleBar()
 Return
 
-#include Debug.ahk
 #Include Bar.ahk
 #Include Config.ahk
+#Include Debug.ahk
 #Include Manager.ahk
 #Include Monitor.ahk
 #Include ResourceMonitor.ahk

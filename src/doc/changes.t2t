@@ -10,14 +10,9 @@
 (~) changed
 (+) added
 
-=8.2.2(?)=
+=8.3.0=
 
-(+) Multi-dimensional tiling of the master area. The user may now specify
-    X and Y dimensions independently up to 9 x 9.
-(+) Initially assign windows to the monitor on which they appear if 
-    nothing is specified in the configuration.
 (~) Improved view arranging runtime.
-(+) Created bug.n log to record major and debugging events.
 (~) Fixed bug #18641: Freezing problem. In most cases, bug.n will no 
     longer hang when one of its managed windows hangs.
 (~) Fixed bug: Sometimes cycling through the windows in a view would 
@@ -26,6 +21,38 @@
     a non-active monitor could cause both monitors to change views.
 (~) Gap widths are now treated identically on both "tile" and "monocle"
     layouts.
+(~) Fixed bug #18650: Unexpected monitor focus changes
+(~) Fixed bug in 'Manager_setWindowMonitor(d)' and 
+    'Manager_setViewMonitor(d)'
+(~) Fixed bug, which prevented bug.n from Main_reload, if the number of 
+    monitors changed.
+(~) Fixed bug: Closing Bar_cmdGui and activating the next to last window.
+(~) Fixed bug: Vertical position of Bar_cmdGui, if 
+    Config_verticalBarPos=tray and the task bar is at the top of the 
+    monitor.
+(~) Fixed bug: On Main_reload() and Config_verticalBarPos=tray.
+(~) Changed the command line argument from specifying 'the path to the 
+    config.ini' to 'the path to the general data directory containing 
+    the config.ini and log.txt'.
+(+) Multi-dimensional tiling of the master area. The user may now specify
+    X and Y dimensions independently up to 9 x 9.
+(+) Initially assign windows to the monitor on which they appear if 
+    nothing is specified in the configuration.
+(+) Created bug.n log to record major and debugging events and window 
+    information.
+(+) 'View margins' allowing a layout to occupy a limited space of the 
+    monitor.
+(+) 'Single window action', which allows to close or maximize windows 
+    based on rules.
+(+) 'Reload' hotkey, which reloads the whole script.
+(+) Re-Setting the 'Reload' and 'ExitApp' hotkey in 'config.ini'-
+(+) Added the configuration variable "Config_viewNames", with which views 
+    can be named and the number of views can be set. The configuration 
+    variable "Config_viewCount" therewith becomes obsolete.
+(-) Removed the configuration variable "Config_viewCount".
+(-) Removed the explicit listing of commands in the Bar_cmdGui.
+(-) Removed the default rules for Gimp, since from version 2.8 onwards 
+    Gimp can use a single application window instead of three and more.
 
 
 =8.2.1=

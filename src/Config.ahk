@@ -245,7 +245,8 @@ Config_redirectHotkey(key)
   }
 }
 
-Config_restoreLayout(filename, m) {
+Config_restoreLayout(filename, m) 
+{
   Local i, var, val
 
   If Not FileExist(filename)
@@ -260,7 +261,8 @@ Config_restoreLayout(filename, m) {
     }
 }
 
-Config_restoreConfig(filename) {
+Config_restoreConfig(filename) 
+{
   Local cmd, i, key, type, val, var
   
   If Not FileExist(filename)

@@ -136,19 +136,27 @@ pressing the left Windows key and the shift key and the q key
 
 : #^Left::**View_setMX(-1)**
   Decrease the master X dimension by 1, i. e. decrease the number of 
-  windows in the master area by Y. Minimum of 1.
+  windows in the master area by Y. Minimum of 1 (only for the "tile" 
+  layout).
 
 : #^Right::**View_setMX(+1)
   Increase the master X dimension by 1, i. e. increase the number of 
-  windows in the master area by Y. Maximum of 9.
+  windows in the master area by Y. Maximum of 9 (only for the "tile" 
+  layout).
 
 : #^Down::**View_setMY(-1)**
   Decrease the master Y dimension by 1, i.e. decrease the number of 
-  windows in the master area by X. Minimum of 1.
+  windows in the master area by X. Minimum of 1 (only for the "tile" 
+  layout).
 
 : #^Up::**View_setMY(+1)**
   Increase the master Y dimension by 1, i.e. increase the number of
-  windows in the master area by X. Maximum of 9.
+  windows in the master area by X. Maximum of 9 (only for the "tile" 
+  layout).
+
+: #+n::**View_toggleMargins()**
+  Toggle the view margins, which are set by the configuration variable 
+  "Config_viewMargins".
 
 
 === Tag / View related hotkeys ===
@@ -207,20 +215,22 @@ pressing the left Windows key and the shift key and the q key
 
 === Logging/Debugging related hotkeys ===
 
-: #^i::**Manager_logViewWindowList()**
-  Dump the contents of the current view to the bug.n log.
+: #^i::**Debug_logViewWindowList()**
+  Dump window information on the windows of the active view to the log.
 
-: #+^i::**Manager_logManagedWindowList()**
-  Dump the contents of the managed window list to the bug.n log.
+: #+^i::**Debug_logManagedWindowList()**
+  Dump window information on the contents of the managed window list 
+  (floating and tiled windows of all views) to the log.
 
-: #^h::**Manager_logHelp()**
-  Print to the log a description of the formatting used in the 
-  previous two log messages.
+: #^h::**Debug_logHelp()**
+  Print a description of the formatting (column headings) used in the 
+  previous two log messages (Manager_logViewWindowList and 
+  Manager_logManagedWindowList) to the log.
 
-: #^[::**Log_decDebugLevel()**
+: #^d::**Debug_setLogLevel(-1)**
   Decrement the debug log level. Show fewer debug messages.
 
-: #^]::**Log_incDebugLevel()**
+: #^+d::**Debug_setLogLevel(+1)**
   Increment the debug log level. Show more debug messages.
 
 
@@ -240,11 +250,18 @@ pressing the left Windows key and the shift key and the q key
   Reload bug.n (i. e. the configuration and its dependent settings)
   without deleting the window lists of bug.n and restoring windows.
   ! It does not reset internal configuration variables, the tray icon or
-  menu, hotkeys (unless set explicitly in Config.ini), individual window
+  menu, hotkeys (unless defined in Config.ini), individual window
   settings like Config_showBorder (since windows might be hidden) or
   hiding the title bar, the monitor count or views.
+  ! It does not reload the monitor configuration and therefor does not 
+  recognize any changes in the number of monitors.
   ! It does not reload functions.
   ! Changed rules are only applied to new windows.
+
+: #^+r::**Reload**
+  Reload bug.n (i. e. the whole script), which resets the configuration, 
+  the bar, the monitor configuration and window lists of bug.n. It is 
+  like Quitting and restarting bug.n.
 
 : #^q::**ExitApp
   Quit bug.n, restore the default Windows UI and show all windows.

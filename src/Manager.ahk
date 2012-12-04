@@ -347,7 +347,8 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
   If Not Instr(Manager_allWndIds, wndId ";")
     Manager_allWndIds .= wndId ";"
 
-  If (isManaged) {
+  If (isManaged) 
+  {
     Manager_managedWndIds .= wndId ";"
     Monitor_moveWindow(m, wndId)
     Manager_#%wndId%_tags        := tags
@@ -360,10 +361,13 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
       Manager_winSet("Style", "-0xC00000", wndId)
 
     a := Manager_#%wndId%_tags & (1 << (Monitor_#%m%_aView_#1 - 1))
-    If a {
+    If a 
+    {
       Manager_aMonitor := m
       Manager_winActivate(wndId)
-    } Else {
+    } 
+    Else 
+    {
       Manager_hideShow := True
       Manager_winHide(wndId)
       Manager_hideShow := False
@@ -372,8 +376,6 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
   If hideTitle
     Bar_hideTitleWndIds .= wndId . ";"
     
-
-  
   Return, a
 }
 

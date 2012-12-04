@@ -71,7 +71,7 @@ There are three layouts.
   A master area for the main window(s) and a stacking area for the rest,
   all windows are shown at any time. This layout can be further changed
   in the following respects:
-  - the dimensions of the master area (1x1 ... 9x9)
+  - the dimensions of the master area (1x1 ... 2x3 ... 9x9)
   - the stacking direction of the master and stacking area (from left to
     right, from top to bottom or monocle)
   - the position of the master area (left, top, right or bottom)
@@ -120,7 +120,7 @@ path to the configuration file (<file path to the bug.n executable>
 If you are using bug.n on Microsoft Windows Vista or 7 you may use
 applications, which run with administrator privileges e. g.
 administrative tools and therefor are not managed by bug.n, if it is
-run with an account, which //is// not the administrator. If you want
+run with an account, which is //not// the administrator. If you want
 those applications to be managed, you need to run bug.n with
 administrator privileges, too.
 You can set the option "Run this program as an administrator" on the
