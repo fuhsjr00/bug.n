@@ -900,7 +900,7 @@ Manager_saveWindowState(filename, nm, nv)
     Loop, % nv 
     {
       view := A_Index
-      ; @todo: Dump all view window lists
+      ; Dump all view window lists
       text .= "View_#" . monitor . "_#" . view . "_wndIds=" . View_#%monitor%_#%view%_wndIds . "`n"
     }
   }
