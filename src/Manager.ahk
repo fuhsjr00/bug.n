@@ -891,8 +891,8 @@ Manager_saveWindowState(filename, nm, nv)
 
   text .= "`n"
   
-  ; @todo: Dump window arrangements on every view. If some views or monitors have disappeared, leave their
-  ;   corresponding windows alone.
+  ;; Dump window arrangements on every view. If some views or monitors have disappeared, leave their
+  ;;   corresponding windows alone.
   
   Loop, % nm 
   {
@@ -900,7 +900,7 @@ Manager_saveWindowState(filename, nm, nv)
     Loop, % nv 
     {
       view := A_Index
-      ; Dump all view window lists
+      ;; Dump all view window lists
       text .= "View_#" . monitor . "_#" . view . "_wndIds=" . View_#%monitor%_#%view%_wndIds . "`n"
     }
   }
