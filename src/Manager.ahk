@@ -356,7 +356,7 @@ Manager_loop(index, increment, lowerBound, upperBound)
   Return, index
 }
 
-Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hideTitle )
+Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hideTitle, action = "")
 {
   Local a
 
@@ -365,6 +365,9 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
 
   If (isManaged)
   {
+    If (action = "Close" Or action = "Maximize")
+      Manager_win%action%(wndId)
+
     Manager_managedWndIds .= wndId ";"
     Monitor_moveWindow(m, wndId)
     Manager_#%wndId%_tags        := tags
@@ -451,7 +454,7 @@ Manager_manage(preferredMonitor, preferredView, wndId)
       isManaged := False
   }
 
-  a := Manager__setWinProperties( wndId, isManaged, m, tags, isDecorated, isFloating, hideTitle)
+  a := Manager__setWinProperties( wndId, isManaged, m, tags, isDecorated, isFloating, hideTitle, action)
 
   ; Do view placement.
   If isManaged {
