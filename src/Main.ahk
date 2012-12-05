@@ -33,9 +33,7 @@ SetWinDelay, 10
 
 ;; Pseudo main function
   If 0 = 1
-    Main_dataDir = %1%
-  Else
-    Main_dataDir = %A_ScriptDir%
+    Main_appDir = %1%
 
   Main_setup()
 
@@ -153,7 +151,6 @@ Main_makeDir(dirName) {
 Main_setup() {
   Local winAppDir
 
-  Main_appDir := ""
   Main_logFile := ""
   Main_dataDir := ""
   Main_autoLayout := ""
@@ -161,7 +158,8 @@ Main_setup() {
 
   EnvGet, winAppDir, APPDATA
 
-  Main_appDir := winAppDir . "\bug.n"
+  If Main_appDir = ""
+    Main_appDir := winAppDir . "\bug.n"
   Main_logFile := Main_appDir . "\bugn_log.txt"
   Main_dataDir := Main_appDir . "\data"
   Main_autoLayout := Main_dataDir . "\_Layout.ini"
