@@ -38,30 +38,35 @@ window management of Microsoft Windows are as follows:
   available screen estate.
 
 
-Additionally bug.n increases the available screen estate by freeing up
-the space occupied by
-- the Microsoft Windows Taskbar
+Additionally bug.n can increase the available screen estate by freeing
+up the space occupied by
+- the Microsoft Windows Taskbar and
 - the title bar for every single window
 
 
 by hiding and replacing all with a single slim status bar (but bug.n is
 not a shell replacement).
 
-This status bar may show the following:
-- system information
-  - time
-  - date
-  - CPU usage
-  - battery level
+This status bar shows the following:
 - active window title
-- layout
-  - []= (tile)
-  - [M] (monocle)
-  - ><> (floating)
+- layout, e. g.
+  - 1x1|= (tile)
+  - [0]   (monocle)
+  - ><>   (floating)
 - up to nine views indicating
   - the active view
   - how many windows are tagged with and shown on the view with the same
     number
+
+
+Additionally it can show the following system information:
+- time
+- date
+- CPU usage
+- memory usage
+- disk load
+- network load
+- battery level
 
 
 === Layouts ===
@@ -74,7 +79,8 @@ There are three layouts.
   - the dimensions of the master area (1x1 ... 2x3 ... 9x9)
   - the stacking direction of the master and stacking area (from left to
     right, from top to bottom or monocle)
-  - the position of the master area (left, top, right or bottom)
+  - the position of the master area (left, top, right or bottom) and
+    accordingly the position of the stacking area
   - the witdh or height of the master area (depending on its position)
 + **monocle**''<BR>''
   All windows are maximized and only one is shown at any time.
@@ -109,10 +115,13 @@ read and write access. This is the only requirement for using bug.n (at
 least for saving the bug.n configuration file). Apart from that you may
 copy bug.n to any directory.
 If you want to save it to a directory, to which you do not have write
-access, you will have to run bug.n with a parameter indicating the file
-path to the configuration file (<file path to the bug.n executable>
-<file path to the session file>), e. g.
-"C:\Program Files\bugn\bugn.exe C:\Users\joten\bugn.ini".
+access and do not want to use the default directory for application data
+(APPDATA, e. g. C:\Users\joten\AppData\Roaming\bug.n), you will have to
+run bug.n with a parameter indicating the file path to that application
+data directory, which i. a. contains the configuration file (config.ini)
+(<file path to the bug.n executable> <file path to the data directory>),
+e. g.
+"C:\Program Files\bugn\bugn.exe D:\projects\bugn".
 
 
 === Microsoft Windows Vista / 7 and UAC ===
@@ -132,35 +141,37 @@ file properties.
 
 Customization can be done
 - with configuration variables for
-  - the appearance of the bug.n status bar (font, colour and content)
+  - the appearance of the bug.n status bar (position, size, font,
+    colour and content)
   - controlling Windows UI elements (border width and colour, hiding
     elements)
   - default values (number of tags, layouts, runtime and session
     management)
-  - rules controlling specific windows (i. a. exclusions)
+  - rules controlling specific windows (i. a. excluding windows from
+    tiling window management)
 - for hotkeys (the key bindings for the bug.n functions)
 
 
 The available configuration variables are listed in
 %%LINK_configuration.''<BR>''
-To change these, first create a session file by using the hotkey
+To change these, first create a configuration file by using the hotkey
 "WIN+CTRL+S". The file is either saved in the directory you specified
 with the parameter to the executable, or in the same directory where the
 executable is saved. You may then edit the file with a text editor
 ("WIN+CTRL+E" opens the file for editing) and add a new line for each
 configuration variable with its value (format: <variable>=<value>, use
 no quotation marks, 1 for true and 0 for false), e. g.
-"Config_showBar=0". You will have to quit and run bug.n again for the
-changes to take effect.''<BR>''
-You may find a sample configuration file (Config_example.ini) in the
+"Config_showBar=0". You will have to reload bug.n for the changes to
+take effect.''<BR>''
+You may find a sample configuration file (config_example.ini) in the
 main directory of bug.n.
 
 
 == Usage ==
 
 bug.n is mostly controlled with hotkeys. The available hotkeys are
-listed in %%LINK_hotkeys. A list of all functions is available through
-the command GUI. For a quick help there are the following hotkeys:
+listed in %%LINK_hotkeys. For a quick help there are the following
+hotkeys:
 - WIN+Y: Show the command GUI.
 - WIN+Space: Show / Hide the Windows Taskbar.
 - WIN+CTRL+Q: Quit bug.n and restore all windows and Windows UI
@@ -176,8 +187,9 @@ The following functions can also be controlled with the mouse:
   layout to the last used.
 - With a right-click on the layout symbol you can set the layout to the
   next in the list.
-- A function can be selected from a list in the command GUI, which is
-  accessible by cklickig on "#!" on the right end of the status bar.
+- A function can be selected from a list or entered in the command GUI,
+  which is accessible by cklickig on "#!" on the right end of the status
+  bar.
 
 
 ''<BR>''
