@@ -208,13 +208,27 @@ Manager_cleanup()
 
 Manager_closeWindow() 
 {
+  Local aWndId, aview, c0
   WinGet, aWndId, ID, A
   WinGetClass, aWndClass, ahk_id %aWndId%
   WinGetTitle, aWndTitle, ahk_id %aWndId%
-  ;; @todo: Prior to closing, find the next window that should have focus.
-  ;;   If there is no such window, choose the bar on the same monitor.
   If Not (aWndClass = "AutoHotkeyGUI" And RegExMatch(aWndTitle, "bug.n_BAR_[0-9]+"))
+  {
+    ;; Prior to closing, find the next window that should have focus.
+    ;;   If there is no such window, choose the bar on the same monitor.
+    aview := Monitor_#%Manager_aMonitor%_aView_#1
+    wnds := View_#%Manager_aMonitor%_#%aview%_wndIds
+    StringSplit, c, wnds, `;
+    If (c0 < 3)
+    {
+      Manager_winActivate(0)
+    }
+    Else
+    {
+      View_activateWindow(1)
+    }
     Manager_winClose(aWndId)
+  }
 }
 
 
@@ -593,8 +607,8 @@ Manager_onShellMessage(wParam, lParam) {
       WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
       m := Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2)
       Debug_logMessage("DEBUG[1] Manager_onShellMessage: Manager_monitorCount: " Manager_monitorCount ", Manager_aMonitor: " Manager_aMonitor ", m: " m ", aWndId: " aWndId, 1)
-      If m And Not (m = Manager_aMonitor)
-        Manager_activateMonitor(0)
+      If m
+        Manager_aMonitor := m
     }
     
     If wndIds 
