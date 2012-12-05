@@ -10,6 +10,12 @@
 (~) changed
 (+) added
 
+=?????=
+
+(+) Session auto-save and restore. Layout and Window information is
+    stored periodically so that it may be recovered after a restart.
+
+
 =8.3.0=
 
 (~) Improved view arranging runtime.
