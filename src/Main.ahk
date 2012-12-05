@@ -44,8 +44,8 @@ SetWinDelay, 10
   Config_init()
 
   Menu, Tray, Tip, %NAME% %VERSION%
-  IfExist %A_ScriptDir%\images\kfm.ico
-    Menu, Tray, Icon, %A_ScriptDir%\images\kfm.ico
+  IfExist %A_ScriptDir%\logo.ico
+    Menu, Tray, Icon, %A_ScriptDir%\logo.ico
   Menu, Tray, NoStandard
   Menu, Tray, Add, Toggle bar, Main_toggleBar
   Menu, Tray, Add, Help, Main_help
@@ -158,7 +158,7 @@ Main_setup() {
 
   EnvGet, winAppDir, APPDATA
 
-  If Main_appDir = ""
+  If (Main_appDir = "")
     Main_appDir := winAppDir . "\bug.n"
   Main_logFile := Main_appDir . "\bugn_log.txt"
   Main_dataDir := Main_appDir . "\data"
