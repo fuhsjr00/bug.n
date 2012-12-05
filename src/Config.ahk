@@ -89,7 +89,7 @@ Config_init()
   Config_ruleCount := 12                              ;; This variable has to be set to the total number of active rules above.
   
   ;; Configuration management
-  Config_autoSaveSession := False
+  Config_autoSaveSession := "auto"    ;; "off" | "auto" | "ask"
   ; @todo: To be removed?
   If Not Config_filePath                  ; The file path, to which the configuration and session is saved. This target directory must be writable by the user (%A_ScriptDir% is the diretory, in which "Main.ahk" or the executable of bug.n is saved).
     Config_filePath := A_ScriptDir "\Config.ini"

@@ -62,8 +62,9 @@ Return          ;; end of the auto-execute section
 ;; Function & label definitions
 Main_cleanup:
   Debug_logMessage("====== Cleaning up ======", 0)
-  If Config_autoSaveSession
-    Config_saveSession(Config_filePath, Config_filePath)
+  ;; Config_autoSaveSession as False is deprecated.
+  If Not (Config_autoSaveSession = "off") And Not (Config_autoSaveSession = "False")
+    Manager_saveState()
   Manager_cleanup()
   ResourceMonitor_cleanup()
   Debug_logMessage("====== Exiting bug.n ======", 0)

@@ -18,7 +18,7 @@
   @version 8.3.0
 */
 
-Monitor_init(m) 
+Monitor_init(m, doRestore) 
 {
   Global
   
@@ -29,7 +29,10 @@ Monitor_init(m)
   {
     View_init(m, A_Index)
   }
-  Config_restoreLayout(Main_autoLayout, m)
+  If doRestore
+    Config_restoreLayout(Main_autoLayout, m)
+  Else
+    Config_restoreLayout(Config_filePath, m)
   Monitor_getWorkArea(m)
   Bar_init(m)
 }

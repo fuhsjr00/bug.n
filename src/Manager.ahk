@@ -20,7 +20,7 @@
 
 Manager_init() 
 {
-  Global
+  Local doRestore
   
   Manager_setWindowBorder()
   Bar_getHeight()
@@ -31,10 +31,23 @@ Manager_init()
   Manager_aMonitor := 1
   Manager_taskBarMonitor := ""
   Manager_showTaskBar := True
+  
+  doRestore := 0
+  If (Config_autoSaveSession = "ask")
+  {
+    MsgBox, 0x4, , Would you like to restore an auto-saved session?
+    IfMsgBox Yes
+      doRestore := 1
+  }
+  Else If (Config_autoSaveSession = "auto")
+  {
+    doRestore := 1
+  }
+  
   SysGet, Manager_monitorCount, MonitorCount
   Loop, % Manager_monitorCount
   {
-    Monitor_init(A_Index)
+    Monitor_init(A_Index, doRestore)
   }
   Bar_initCmdGui()
   If Not Config_showTaskBar
@@ -45,7 +58,7 @@ Manager_init()
   Bar_hideTitleWndIds   := ""
   Manager_allWndIds     := ""
   Manager_managedWndIds := ""
-  Manager_initial_sync()
+  Manager_initial_sync(doRestore)
   
   Bar_updateStatus()
   Bar_updateTitle()
@@ -70,25 +83,41 @@ Manager_maintenance_label:
   Manager_maintenance()
 Return
 
-Manager_maintenance() {
-  Local tmp
-  ;Debug_logMessage("Manager_maintenance", 2)
+Manager_saveState()
+{
+  Global
+  Critical
+  ;Debug_logMessage("Manager_saveState", 0)
   
   ; @todo: Check for changes to the layout.
-  ;If Manager_layoutDirty {
+  ;If Manager_layoutDirty 
+  ;{
     ;Debug_logMessage("Saving layout state: " . Main_autoLayout, 0)
     Config_saveSession(Config_filaPath, Main_autoLayout)
     Manager_layoutDirty := 0
   ;}
-
-  ; @todo: Manager_sync?
-
+  
   ; @todo: Check for changes to windows.
-  ;If Manager_windowsDirty {
+  ;If Manager_windowsDirty 
+  ;{
     ;Debug_logMessage("Saving window state: " . Main_autoWindowState, 0)
     Manager_saveWindowState(Main_autoWindowState, Manager_monitorCount, Config_viewCount)
     Manager_windowsDirty := 0
   ;}
+}
+
+Manager_maintenance() 
+{
+  Local tmp
+  Critical
+  ;Debug_logMessage("Manager_maintenance", 0)
+
+  ; @todo: Manager_sync?
+
+  Manager__displaySync()
+
+  If Not (Config_autoSaveSession = "off") And Not (Config_autoSaveSession = "False")
+    Manager_saveState()
 }
 
 Manager_activateMonitor(d) 
@@ -1055,7 +1084,7 @@ Manager__restoreWindowState(filename)
 
 ; No windows are known to the system yet.
 ; Try to do something smart with the initial layout.
-Manager_initial_sync() 
+Manager_initial_sync(doRestore) 
 {
   Local wndId0, wnd, wndX, wndY, wndW, wndH, x, y, m, len
   
@@ -1068,7 +1097,10 @@ Manager_initial_sync()
   
   ;; Use saved window placement settings to first determine
   ;;   which monitor/view a window should be attached to.
-  Manager__restoreWindowState(Main_autoWindowState)
+  If doRestore
+  {
+    Manager__restoreWindowState(Main_autoWindowState)
+  }
   
   ;; Check all remaining visible windows against the known windows
   WinGet, wndId, List, , , 
