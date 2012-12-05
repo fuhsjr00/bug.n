@@ -10,7 +10,8 @@
 (~) changed
 (+) added
 
-=?????=
+
+=8.4.0=
 
 (+) Session auto-save and restore. Layout and Window information is
     stored periodically so that it may be recovered after a restart.

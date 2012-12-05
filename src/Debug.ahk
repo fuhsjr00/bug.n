@@ -1,27 +1,27 @@
 /*
   bug.n -- tiling window management
   Copyright (c) 2010-2012 Joshua Fuhs, joten
-  
+
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
   the Free Software Foundation, either version 3 of the License, or
   (at your option) any later version.
-  
+
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
   GNU General Public License for more details.
-  
+
   You should have received a copy of the GNU General Public License
   along with this program. If not, see <http://www.gnu.org/licenses/>.
-  
-  @version 8.3.0
+
+  @version 8.4.0
 */
 
-Debug_initLog(filename, level = 0, truncateFile = True) 
+Debug_initLog(filename, level = 0, truncateFile = True)
 {
   Global Debug_logFilename, Debug_logLevel
-  
+
   Debug_logFilename := filename
   Debug_logLevel := level
   If truncateFile
@@ -29,7 +29,7 @@ Debug_initLog(filename, level = 0, truncateFile = True)
       FileDelete, %Debug_logFilename%
 }
 
-Debug_logHelp() 
+Debug_logHelp()
 {
   Debug_logMessage("Help Display", 0)
   Debug_logMessage("Window list columns", 0, False)
@@ -51,13 +51,13 @@ Debug_logHelp()
   Debug_logMessage("    Proc / Class / Title - Process/Class/Title of the window.", 0, False)
 }
 
-Debug_logManagedWindowList() 
+Debug_logManagedWindowList()
 {
   Local wndIds
-  
+
   Debug_logMessage("Window dump for manager")
   Debug_logMessage("ID`t`tH W A F D R G M`tTags`tX`tY`tW`tH`tStyle`t`tProc / Class / Title", 0, False)
-  
+
   StringTrimRight, wndIds, Manager_managedWndIds, 1
   Loop, PARSE, wndIds, `;
   {
@@ -65,13 +65,13 @@ Debug_logManagedWindowList()
   }
 }
 
-Debug_logMessage(text, level = 1, includeTimestamp = True) 
+Debug_logMessage(text, level = 1, includeTimestamp = True)
 {
   Global Debug_logFilename, Debug_logLevel
-  
+
   If (Debug_logLevel >= level)
   {
-    If includeTimestamp 
+    If includeTimestamp
     {
       FormatTime, time, , yyyy-MM-dd HH:mm:ss
       text := time " " text
@@ -82,14 +82,14 @@ Debug_logMessage(text, level = 1, includeTimestamp = True)
   }
 }
 
-Debug_logViewWindowList() 
+Debug_logViewWindowList()
 {
   Local v, wndIds
-  
+
   v := Monitor_#%Manager_aMonitor%_aView_#1
   Debug_logMessage("Window dump for active view (" . Manager_aMonitor . ", " . v . ")")
   Debug_logMessage("ID`t`tH W A F D R G M`tTags`tX`tY`tW`tH`tStyle`t`tProc / Class / Title", 0, False)
-  
+
   StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
   Loop, PARSE, wndIds, `;
   {
@@ -97,12 +97,12 @@ Debug_logViewWindowList()
   }
 }
 
-Debug_logWindowInfo(wndId) 
+Debug_logWindowInfo(wndId)
 {
   Local aWndId, detect_state, text, v
   Local isBugnActive, isDecorated, isFloating, isGhost, isHidden, isResponsive, isWinFocus
   Local wndClass, wndH, wndProc, wndStyle, wndTitle, wndW, wndX, wndY
-  
+
   detect_state := A_DetectHiddenWindows
   DetectHiddenWindows, On
   WinGet, aWndId, ID, A
@@ -120,7 +120,7 @@ Debug_logWindowInfo(wndId)
   WinGet, wndProc, ProcessName, ahk_id %wndId%
   If InStr(Bar_hiddenWndIds, wndId)
     isHidden := "*"
-  Else 
+  Else
     isHidden := " "
   If Manager_#%wndId%_isFloating
     isFloating := "*"
@@ -137,13 +137,13 @@ Debug_logWindowInfo(wndId)
   Else
     isGhost := " "
   DetectHiddenWindows, %detect_state%
-  
+
   ;; Intentionally don't detect hidden windows here to see what Manager_hungTest does
   If Manager_isHung(wndId)
     isResponsive := " "
   Else
     isResponsive := "*"
-  
+
   text := wndId "`t"
   text .= isHidden " " isWinFocus " " isBugnActive " " isFloating " " isDecorated " " isResponsive " " isGhost " "
   text .= Manager_#%wndId%_monitor "`t" Manager_#%wndId%_tags "`t"
@@ -151,10 +151,10 @@ Debug_logWindowInfo(wndId)
   Debug_logMessage(text , 0, False)
 }
 
-Debug_setLogLevel(d) 
+Debug_setLogLevel(d)
 {
   Global Debug_logLevel
-  
+
   i := Debug_logLevel + d
   If (i >= 0)
   {
