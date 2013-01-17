@@ -277,7 +277,7 @@ Bar_getHeight()
   {
     WinGetPos, , , , buttonH, Start ahk_class Button
     WinGetPos, , , , barH, ahk_class Shell_TrayWnd
-    If (buttonH < barH)
+    If WinExist("Start ahk_class Button") And (buttonH < barH)
       Bar_height := buttonH
     Else
       Bar_height := barH

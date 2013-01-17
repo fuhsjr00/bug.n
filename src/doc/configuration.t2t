@@ -62,38 +62,44 @@
   Color and Appearance" settings for the "Active Title Bar".
 
 : **Config_normBgColor**=<COLOR_MENU>;<COLOR_INACTIVECAPTION>;<COLOR_GRADIENTINACTIVECAPTION>;Red;<COLOR_GRADIENTINACTIVECAPTION>
-  The normal background color of bar elements. The first value is the
-  color for views without windows, the title bar and time. The second
-  value is the color for the layout symbol, the any-text (i. a. date) and
-  the button for the command GUI (#!). The third value is the background
-  color of the progress bar indicating an inactive view and a charging
-  battery, the fourth value is the background color of the progress bar
-  indicating a discharging battery with a remaining charge of less than
-  ten percent, the fifth value is the background color of the progress
-  bar indicating a charging battery. The default values are retrieved
-  from the "Window Color and Appearance" settings.
+  The normal background color of the following bar elements:
+  1. inactive views, title and time
+  2. the layout symbol, the any-text (i. a. date) and the button for the
+     command GUI (#!).
+  3. the progress bar indicating a charging or full battery
+  4. the progress bar indicating a discharging battery with a remaining
+     charge of less than ten percent
+  5. the progress bar indicating a charging battery
+
+  The default values are retrieved from the "Window Color and Appearance"
+  settings.
 
 : **Config_normFgColor**=<COLOR_MENUTEXT>;Default;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTIONTEXT>;<COLOR_HIGHLIGHT>;White;Default;<COLOR_INACTIVECAPTION>
-  The normal foreground color of bar elements. The first two values are
-  the text colors for the first two elements as described above. The
-  third value is the forground color of the progress bar and the fourth
-  value the text color indicating an inactive view and a charging
-  battery. The fifth value is the foreground color of a progress bar
-  indicating a discharging battery. The sixth value is the text color
-  indicating a dischargin battery with a remaining charge of less than
-  ten percent. The seventh value is the text color indicating a charging
-  battery. The eighth value is the foreground color of a progress bar
-  indicating a chargin battery. The default values are retrieved from the
-  "Window Color and Appearance" settings.
+  The normal foreground color of the following bar elements:
+  1. the text of inactive views, title and time
+  2. the text of the layout symbol, a full battery, the any-text (i. a.
+     date) and the button for the command GUI (#!)
+  3. the progress bar indicating a charging battery?
+  4. the text indicating a discharging battery
+  5. the progress bar indicating a discharging battery
+  6. the text indicating a discharging battery with a remaining charge of
+     less than ten percent?
+  7. the text indicating a charging battery?
+  8. the progress bar indicating an inactive view and a charging battery?
+
+  The default values are retrieved from the "Window Color and Appearance"
+  settings.
 
 : **Config_selBgColor**=<COLOR_GRADIENTACTIVECAPTION>
-  The background color of a progress bar indicating an active view or
-  discharging battery status. The default values are retrieved from the
-  "Window Color and Appearance" settings.
+  The background color of a progress bar indicating an active view.
+
+  The default values are retrieved from the "Window Color and Appearance"
+  settings.
 
 : **Config_selFgColor**=<COLOR_CAPTIONTEXT>;<COLOR_ACTIVECAPTION>
-  The first color is the text color, the second the foreground color of a
-  progress bar indicating an active view or discharging battery status.
+  1. The text color and
+  2. the foreground color of a progress bar indicating an active view.
+
   The default values are retrieved from the "Window Color and Appearance"
   settings.
 
