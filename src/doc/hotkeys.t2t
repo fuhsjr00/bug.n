@@ -212,6 +212,9 @@ pressing the left Windows key and the shift key and the q key
 : #Space::**Monitor_toggleTaskBar()**
   Hide / Show the task bar.
 
+: #+y::**Monitor_toggleNotifyIconOverflowWindow()**
+  Toggle the overflow window of the 'notify icons'.
+
 
 === Logging/Debugging related hotkeys ===
 

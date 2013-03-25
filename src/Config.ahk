@@ -461,6 +461,7 @@ Config_saveSession(original, target)
 #+Space::Monitor_toggleBar()
 #Space::Monitor_toggleTaskBar()
 #y::Bar_toggleCommandGui()
+#+y::Monitor_toggleNotifyIconOverflowWindow()
 
 ;; Administration
 #^e::Run, edit %Config_filePath%

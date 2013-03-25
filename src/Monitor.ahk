@@ -19,7 +19,7 @@
 */
 
 
-Monitor_init(m, doRestore) 
+Monitor_init(m, doRestore)
 {
   Global
 
@@ -291,6 +291,25 @@ Monitor_toggleBar()
   Monitor_getWorkArea(Manager_aMonitor)
   View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
   Manager_winActivate(Bar_aWndId)
+}
+
+Monitor_toggleNotifyIconOverflowWindow()
+{
+  Static wndId
+
+  If Not WinExist("ahk_class NotifyIconOverflowWindow")
+  {
+    WinGet, wndId, ID, A
+    DetectHiddenWindows, On
+    WinShow, ahk_class NotifyIconOverflowWindow
+    WinActivate, ahk_class NotifyIconOverflowWindow
+    DetectHiddenWindows, Off
+  }
+  Else
+  {
+    WinHide, ahk_class NotifyIconOverflowWindow
+    WinActivate, ahk_id %wndId%
+  }
 }
 
 Monitor_toggleTaskBar()
