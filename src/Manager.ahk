@@ -21,7 +21,7 @@
 Manager_init()
 {
   Local doRestore
-  
+
   Manager_setWindowBorder()
   Bar_getHeight()
   ; axes, dimensions, percentage, flipped, gapWidth
@@ -31,7 +31,7 @@ Manager_init()
   Manager_aMonitor := 1
   Manager_taskBarMonitor := ""
   Manager_showTaskBar := True
-  
+
   doRestore := 0
   If (Config_autoSaveSession = "ask")
   {
@@ -43,7 +43,7 @@ Manager_init()
   {
     doRestore := 1
   }
-  
+
   SysGet, Manager_monitorCount, MonitorCount
   Loop, % Manager_monitorCount
   {
@@ -59,7 +59,7 @@ Manager_init()
   Manager_allWndIds     := ""
   Manager_managedWndIds := ""
   Manager_initial_sync(doRestore)
-  
+
   Bar_updateStatus()
   Bar_updateTitle()
   Loop, % Manager_monitorCount
@@ -88,17 +88,17 @@ Manager_saveState()
   Global
   Critical
   ;Debug_logMessage("Manager_saveState", 0)
-  
+
   ; @todo: Check for changes to the layout.
-  ;If Manager_layoutDirty 
+  ;If Manager_layoutDirty
   ;{
     ;Debug_logMessage("Saving layout state: " . Main_autoLayout, 0)
-    Config_saveSession(Config_filaPath, Main_autoLayout)
+    Config_saveSession(Config_filePath, Main_autoLayout)
     Manager_layoutDirty := 0
   ;}
-  
+
   ; @todo: Check for changes to windows.
-  ;If Manager_windowsDirty 
+  ;If Manager_windowsDirty
   ;{
     ;Debug_logMessage("Saving window state: " . Main_autoWindowState, 0)
     Manager_saveWindowState(Main_autoWindowState, Manager_monitorCount, Config_viewCount)
@@ -106,7 +106,7 @@ Manager_saveState()
   ;}
 }
 
-Manager_maintenance() 
+Manager_maintenance()
 {
   Local tmp
   Critical
@@ -1085,7 +1085,7 @@ Manager__restoreWindowState(filename)
 
 ; No windows are known to the system yet.
 ; Try to do something smart with the initial layout.
-Manager_initial_sync(doRestore) 
+Manager_initial_sync(doRestore)
 {
   Local wndId0, wnd, wndX, wndY, wndW, wndH, x, y, m, len
 
@@ -1102,7 +1102,7 @@ Manager_initial_sync(doRestore)
   {
     Manager__restoreWindowState(Main_autoWindowState)
   }
-  
+
   ;; Check all remaining visible windows against the known windows
   WinGet, wndId, List, , ,
   Loop, % wndId
