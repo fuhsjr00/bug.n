@@ -39,7 +39,7 @@ SetWinDelay, 10
 
   Debug_initLog(Main_appDir "\log.txt", 0, False)
 
-  Debug_logMessage("====== Initializing ======")
+  Debug_logMessage("====== Initializing ======", 0)
   Config_filePath := Main_appDir "\Config.ini"
   Config_init()
 
