@@ -21,7 +21,8 @@
 ResourceMonitor_init()
 {
   ResourceMonitor_hDrive := DllCall("CreateFile", "Str", "\\.\PhysicalDrive0", "UInt", 0, "UInt", 3, "UInt", 0, "UInt", 3, "UInt", 0, "UInt", 0)
-  ResourceMonitor_getNetworkInterface()
+  ;; Disabled due to bug 019005. This call may lead to bug.n hanging.
+  ;;ResourceMonitor_getNetworkInterface()
 }
 
 ResourceMonitor_cleanup()
