@@ -22,6 +22,7 @@ View_init(m, v)
 {
   Global
 
+  View_#%m%_#%v%_area_#0        := 0
   View_#%m%_#%v%_aWndId         := 0
   View_#%m%_#%v%_layout_#1      := 1
   View_#%m%_#%v%_layout_#2      := 1
@@ -34,6 +35,7 @@ View_init(m, v)
   View_#%m%_#%v%_layoutMY       := 1
   View_#%m%_#%v%_layoutSymbol   := Config_layoutSymbol_#1
   View_#%m%_#%v%_margins        := "0;0;0;0"
+  View_#%m%_#%v%_showStackArea  := True
   StringSplit, View_#%m%_#%v%_margin, View_#%m%_#%v%_margins, `;
   View_#%m%_#%v%_wndIds         := ""
 }
@@ -118,7 +120,7 @@ View_addWindow(m, v, wndId)
     View_#%m%_#%v%_wndIds := wndId ";" View_#%m%_#%v%_wndIds
 }
 
-View_arrange(m, v)
+View_arrange(m, v, setLayout=False)
 {
   Local fn, h, l, w, x, y
 
@@ -135,8 +137,14 @@ View_arrange(m, v)
 
     ;; All window actions are performed on independent windows. A delay won't help.
     SetWinDelay, 0
-    View_getTiledWndIds(m, v)
-    View_arrange_%fn%(m, v, x, y, w, h)
+    If Config_dynamicTiling Or setLayout {
+      View_getTiledWndIds(m, v)
+      View_arrange_%fn%(m, v, x, y, w, h)
+    } Else If (fn = "tile") {
+      View_setAreas(m, v, x, y, w, h)
+      If Config_continuouslyTraceAreas
+        View_traceAreas(True)
+    }
     SetWinDelay, 10
   }
   Else    ;; floating layout (no 'View_arrange_', following is 'View_getLayoutSymbol_')'
@@ -314,6 +322,25 @@ View_ghostWindow(m, v, bodyWndId, ghostWndId)
   StringReplace, View_#%m%_#%v%_wndIds, View_#%m%_#%v%_wndIds, %search%, %replace%
 }
 
+View_moveWindow(i=0, d=0) {
+  Local aWndId, l, m, v
+
+  WinGet, aWndId, ID, A
+  m := Manager_aMonitor
+  v := Monitor_#%m%_aView_#1
+  l := View_#%Manager_aMonitor%_#%v%_layout_#1
+  If (Config_layoutFunction_#%l% = "tile" And InStr(Manager_managedWndIds, aWndId ";") And Not (i = 0 And d = 0) And i <= View_#%m%_#%v%_area_#0) {
+    If (i = 0)
+      i := Manager_loop(Manager_#%aWndId%_area, d, 1, View_#%m%_#%v%_area_#0)
+    Manager_winMove(aWndId, View_#%m%_#%v%_area_#%i%_x, View_#%m%_#%v%_area_#%i%_y, View_#%m%_#%v%_area_#%i%_width, View_#%m%_#%v%_area_#%i%_height)
+    Manager_#%aWndId%_area := i
+    If Config_mouseFollowsFocus {
+      WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
+      DllCall("SetCursorPos", "Int", Round(aWndX + aWndWidth / 2), "Int", Round(aWndY + aWndHeight / 2))
+    }
+  }
+}
+
 View_rotateLayoutAxis(i, d)
 {
   Local f, l, n, tmp, v
@@ -347,6 +374,61 @@ View_rotateLayoutAxis(i, d)
       View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% := n
     }
     View_arrange(Manager_aMonitor, v)
+  }
+}
+
+View_setAreas(m, v, x, y, w, h) {
+  Local axis1, axis2, axis3, gapW, mFact, mSplit, mXSet, mYSet
+  Local h1, h2, mWndCount, stackLen, subAreaCount, subAreaWndCount, subH1, subW1, subX1, subY1, w1, w2, x1, x2, y1, y2
+
+  axis1   := Abs(View_#%m%_#%v%_layoutAxis_#1)
+  axis2   := View_#%m%_#%v%_layoutAxis_#2
+  axis3   := View_#%m%_#%v%_layoutAxis_#3
+  gapW    := View_#%m%_#%v%_layoutGapWidth
+  mFact   := View_#%m%_#%v%_layoutMFact
+  mXSet   := (axis2 = 1) ? View_#%m%_#%v%_layoutMX : View_#%m%_#%v%_layoutMY
+  mYSet   := (axis2 = 1) ? View_#%m%_#%v%_layoutMY : View_#%m%_#%v%_layoutMX
+  mSplit  := mXSet * mYSet
+
+  Debug_logMessage("DEBUG[2] View_setAreas: mX = " mXSet ", mY = " mYSet ", mSplit = " mSplit, 2)
+
+  View_#%m%_#%v%_area_#0 := 0
+  View_#%m%_#%v%_layoutSymbol := View_getLayoutSymbol_tile(m, v, mSplit)
+
+  ;; Areas (master and stack)
+  x1 := x
+  y1 := y
+  w1 := w
+  h1 := h
+  If View_#%m%_#%v%_showStackArea {
+    If (View_#%m%_#%v%_layoutAxis_#1 < 0)
+      View_splitArea(axis1 - 1, 1 - mFact, x1, y1, w1, h1, gapW, x2, y2, w2, h2, x1, y1, w1, h1)
+    Else
+      View_splitArea(axis1 - 1, mFact, x1, y1, w1, h1, gapW, x1, y1, w1, h1, x2, y2, w2, h2)
+  }
+
+  ;; Master
+  If (axis2 = 3)
+    View_setSubAreas(m, v, 1, mSplit, +1, 3, x1, y1, w1, h1, 0)
+  Else {
+    subAreaCount := mYSet
+    mWndCount := mSplit
+    Loop, % mYSet {
+      View_splitArea(Not (axis2 - 1), 1 / subAreaCount, x1, y1, w1, h1, gapW, subX1, subY1, subW1, subH1, x1, y1, w1, h1)
+      subAreaWndCount := mXSet
+      If (mWndCount < subAreaWndCount)
+        subAreaWndCount := mWndCount
+      Debug_logMessage("DEBUG[2] View_setAreas: Master subArea #" A_Index, 2)
+      View_setSubAreas(m, v, mSplit - mWndCount + 1, subAreaWndCount, +1, axis2, subX1, subY1, subW1, subH1, gapW)
+      mWndCount -= subAreaWndCount
+      subAreaCount -= 1
+    }
+  }
+
+  ;; Stack
+  If View_#%m%_#%v%_showStackArea {
+    Debug_logMessage("DEBUG[2] View_setAreas: Stack subArea #" A_Index, 2)
+    View_setSubAreas(m, v, mSplit + 1, 1, +1, 3, x2, y2, w2, h2, 0)
   }
 }
 
@@ -387,7 +469,7 @@ View_setLayout(l)
       View_#%Manager_aMonitor%_#%v%_layout_#2 := View_#%Manager_aMonitor%_#%v%_layout_#1
       View_#%Manager_aMonitor%_#%v%_layout_#1 := l
     }
-    View_arrange(Manager_aMonitor, v)
+    View_arrange(Manager_aMonitor, v, True)
   }
 }
 
@@ -443,6 +525,43 @@ View_setMY(d)
   {
     View_#%Manager_aMonitor%_#%v%_layoutMY := n
     View_arrange(Manager_aMonitor, v)
+  }
+}
+
+View_setSubAreas(m, v, i, len, d, axis, x, y, w, h, padding) {
+  Local areaH, areaW, areaX, areaY, dx, dy
+
+  ;; d = +1: Left-to-right and top-to-bottom, depending on axis
+  ;; d = -1: Right-to-left and bottom-to-top, depending on axis
+  If (d < 0)
+    i += len - 1
+
+  areaX := x
+  areaY := y
+  areaW := w
+  areaH := h
+  dx := 0
+  dy := 0
+  If (axis = 1) {
+    areaW := (w - (len - 1) * padding) / len
+    dx := areaW + padding
+  } Else If (axis = 2) {
+    areaH := (h - (len - 1) * padding) / len
+    dy := areaH + padding
+  }
+  ;; Else (axis = 3) and nothing to do
+
+  Debug_logMessage("DEBUG[2] View_setSubAreas: start = " i ", length = " len, 2)
+  Loop, % len {
+    Debug_logMessage("DEBUG[2] View_setSubAreas: areaX = " areax ", areaY = " areaY ", areaW = " areaW ", areaH = " areaH, 2)
+    View_#%m%_#%v%_area_#0 += 1
+    View_#%m%_#%v%_area_#%i%_x := Round(areaX)
+    View_#%m%_#%v%_area_#%i%_y := Round(areaY)
+    View_#%m%_#%v%_area_#%i%_width  := Round(areaW)
+    View_#%m%_#%v%_area_#%i%_height := Round(areaH)
+    i += d
+    areaX += dx
+    areaY += dy
   }
 }
 
@@ -610,5 +729,63 @@ View_toggleMargins()
       View_#%Manager_aMonitor%_#%v%_margins := "0;0;0;0"
     StringSplit, View_#%Manager_aMonitor%_#%v%_margin, View_#%Manager_aMonitor%_#%v%_margins, `;
     View_arrange(Manager_aMonitor, v)
+  }
+}
+
+View_toggleStackArea() {
+  Local l, m, v
+
+  m := Manager_aMonitor
+  v := Monitor_#%m%_aView_#1
+  l := View_#%m%_#%v%_layout_#1
+  If (Config_layoutFunction_#%l% = "tile" And Not Config_dynamicTiling) {
+    View_#%m%_#%v%_showStackArea := Not View_#%m%_#%v%_showStackArea
+    If Not View_#%m%_#%v%_showStackArea
+      View_#%m%_#%v%_layoutAxis_#3 := 3
+    View_arrange(m, v)
+  }
+}
+
+View_traceAreas(continuously=False) {
+  Local GuiN, h1, h2, l, m, n, v, w1, w2, wndTitle, x1, x2, y1, y2
+
+  m := Manager_aMonitor
+  v := Monitor_#%m%_aView_#1
+  l := View_#%m%_#%v%_layout_#1
+  If (Config_layoutFunction_#%l% = "tile" And Not Config_dynamicTiling) {
+    x1 := Monitor_#%m%_x + View_#%m%_#%v%_layoutGapWidth + View_#%m%_#%v%_margin4
+    y1 := Monitor_#%m%_y + View_#%m%_#%v%_layoutGapWidth + View_#%m%_#%v%_margin1
+    w1 := Monitor_#%m%_width - 2 * View_#%m%_#%v%_layoutGapWidth - View_#%m%_#%v%_margin4 - View_#%m%_#%v%_margin2
+    h1 := Monitor_#%m%_height - 2 * View_#%m%_#%v%_layoutGapWidth - View_#%m%_#%v%_margin1 - View_#%m%_#%v%_margin3
+    wndTitle := "bug.n_TRACE_" m "_" v
+    Gui, 98: Default
+    Gui, Destroy
+    Gui, -Caption +Disabled +ToolWindow
+    Gui, +AlwaysOnTop
+    Gui, Color, %Config_selFgColor2%
+    Gui, Font, c%Config_normFgColor1% s%Config_largeFontSize%, %Config_fontName%
+
+    n := View_#%m%_#%v%_area_#0
+    Loop, % n {
+      x2 := View_#%m%_#%v%_area_#%A_Index%_x - x1 + Config_borderWidth + Config_borderPadding
+      y2 := View_#%m%_#%v%_area_#%A_Index%_y - y1 + Config_borderWidth + Config_borderPadding
+      w2 := View_#%m%_#%v%_area_#%A_Index%_width - 2 * (Config_borderWidth + Config_borderPadding)
+      h2 := View_#%m%_#%v%_area_#%A_Index%_height - 2 * (Config_borderWidth + Config_borderPadding)
+      y3 := y2 + (h2 - Config_largeFontSize) / 2
+      Gui, Add, Progress, x%x2% y%y2% w%w2% h%h2% Background%Config_normBgColor1%
+      Gui, Add, Text, x%x2% y%y3% w%w2% BackgroundTrans Center, % A_Index
+      Debug_logMessage("DEBUG[2] View_traceAreas: i = " A_Index " / " n ", x = " x2 ", y = " y2 ", w = " w2 ", h = " h2, 2)
+    }
+
+    Gui, Show, NoActivate x%x1% y%y1% w%w1% h%h1%, %wndTitle%
+    WinSet, Transparent, 191, % wndTitle
+    If Not continuously {
+      Sleep, % Config_areaTraceTimeout
+      If Not Config_continuouslyTraceAreas
+        Gui, Destroy
+      Else
+        WinSet, Bottom,, % wndTitle
+    } Else
+      WinSet, Bottom,, % wndTitle
   }
 }

@@ -400,6 +400,7 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
     Manager_#%wndId%_tags        := tags
     Manager_#%wndId%_isDecorated := isDecorated
     Manager_#%wndId%_isFloating  := isFloating
+    Manager_#%wndId%_area        := 0
 
     If Not Config_showBorder
       Manager_winSet("Style", "-0x40000", wndId)
@@ -627,7 +628,8 @@ Manager_onShellMessage(wParam, lParam) {
 
     If isChanged
     {
-      View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
+      If Config_dynamicTiling
+        View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
       Bar_updateView(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
     }
 
@@ -680,7 +682,8 @@ Manager_onShellMessage(wParam, lParam) {
             Manager_#%wndId%_tags += 1 << t - 1
           }
           Bar_updateView(Manager_aMonitor, t)
-          View_arrange(Manager_aMonitor, t)
+          If Config_dynamicTiling
+            View_arrange(Manager_aMonitor, t)
         }
       }
     }
@@ -798,7 +801,8 @@ Manager_setWindowMonitor(d)
         View_#%Manager_aMonitor%_#%A_Index%_aWndId := 0
       Bar_updateView(Manager_aMonitor, A_Index)
     }
-    View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
+    If Config_dynamicTiling
+      View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
 
     Manager_aMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
     Monitor_moveWindow(Manager_aMonitor, aWndId)
@@ -806,7 +810,8 @@ Manager_setWindowMonitor(d)
     Manager_#%aWndId%_tags := 1 << v - 1
     View_#%Manager_aMonitor%_#%v%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%v%_wndIds
     View_#%Manager_aMonitor%_#%v%_aWndId := aWndId
-    View_arrange(Manager_aMonitor, v)
+    If Config_dynamicTiling
+      View_arrange(Manager_aMonitor, v)
     Manager_winActivate(aWndId)
     Bar_updateView(Manager_aMonitor, v)
   }
@@ -1166,6 +1171,7 @@ Manager_unmanage(wndId)
   Manager_#%wndId%_tags        :=
   Manager_#%wndId%_isDecorated :=
   Manager_#%wndId%_isFloating  :=
+  Manager_#%wndId%_area        :=
   StringReplace, Bar_hideTitleWndIds, Bar_hideTitleWndIds, %wndId%`;,
   StringReplace, Manager_allWndIds, Manager_allWndIds, %wndId%`;,
   StringReplace, Manager_managedWndIds, Manager_managedWndIds, %wndId%`;, , All

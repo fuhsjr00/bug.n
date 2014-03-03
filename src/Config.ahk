@@ -31,6 +31,7 @@ Config_init()
   Config_spaciousBar       := False
   Config_fontName          := "Lucida Console"
   Config_fontSize          :=
+  Config_largeFontSize     := 24
   Config_normBgColor       :=
   Config_normFgColor       :=
   Config_selBgColor        :=
@@ -64,6 +65,9 @@ Config_init()
   Config_layoutAxis_#3      := 2
   Config_layoutGapWidth     := 0
   Config_layoutMFactor      := 0.6
+  Config_areaTraceTimeout   := 1000
+  Config_continuouslyTraceAreas := False
+  Config_dynamicTiling      := True
   Config_ghostWndSubString  := " (Not Responding)"
   Config_mouseFollowsFocus  := True
   Config_viewMargins        := "0;0;0;0"
@@ -391,6 +395,20 @@ Config_saveSession(original, target)
 #+x::Manager_maximizeWindow()
 #i::Manager_getWindowInfo()
 #+i::Manager_getWindowList()
+!Down::View_moveWindow(0, +1)
+!Up::View_moveWindow(0, -1)
+!+Enter::Manager_maximizeWindow()
+!1::View_moveWindow(1)
+!2::View_moveWindow(2)
+!3::View_moveWindow(3)
+!4::View_moveWindow(4)
+!5::View_moveWindow(5)
+!6::View_moveWindow(6)
+!7::View_moveWindow(7)
+!8::View_moveWindow(8)
+!9::View_moveWindow(9)
+!0::View_moveWindow(10)
+!BackSpace::View_toggleStackArea()
 
 ;; Window debugging
 #^i::Debug_logViewWindowList()
@@ -462,6 +480,7 @@ Config_saveSession(original, target)
 #Space::Monitor_toggleTaskBar()
 #y::Bar_toggleCommandGui()
 #+y::Monitor_toggleNotifyIconOverflowWindow()
+!+y::View_traceAreas()
 
 ;; Administration
 #^e::Run, edit %Config_filePath%
