@@ -18,16 +18,21 @@
   @version 8.4.0
 */
 
-ResourceMonitor_init()
-{
-  ResourceMonitor_hDrive := DllCall("CreateFile", "Str", "\\.\PhysicalDrive0", "UInt", 0, "UInt", 3, "UInt", 0, "UInt", 3, "UInt", 0, "UInt", 0)
-  ;; Disabled due to bug 019005. This call may lead to bug.n hanging.
-  ;;ResourceMonitor_getNetworkInterface()
+ResourceMonitor_init() {
+  Global Config_readinDiskLoad, Config_readinNetworkLoad, ResourceMonitor_hDrive
+
+  If Config_readinDiskLoad
+    ResourceMonitor_hDrive := DllCall("CreateFile", "Str", "\\.\PhysicalDrive0", "UInt", 0, "UInt", 3, "UInt", 0, "UInt", 3, "UInt", 0, "UInt", 0)
+  ;; This call may lead to bug.n hanging (bug 019005).
+  If Config_readinNetworkLoad
+    ResourceMonitor_getNetworkInterface()
 }
 
-ResourceMonitor_cleanup()
-{
-  DllCall("CloseHandle", "UInt", ResourceMonitor_hDrive)    ;; used in ResourceMonitor_getDiskLoad
+ResourceMonitor_cleanup() {
+  Global Config_readinDiskLoad, ResourceMonitor_hDrive
+
+  If Config_readinDiskLoad
+    DllCall("CloseHandle", "UInt", ResourceMonitor_hDrive)    ;; used in ResourceMonitor_getDiskLoad
 }
 
 ResourceMonitor_getText()
@@ -90,63 +95,24 @@ ResourceMonitor_getMemoryUsage()
 }
 ;; fures: System + Network monitor - with net history graph (http://www.autohotkey.com/community/viewtopic.php?p=260329)
 
-ResourceMonitor_getNetworkInterface()
-{
-  Global ResourceMonitor_networkInterface, ResourceMonitor_networkInterfaceTable
+ResourceMonitor_getNetworkInterface() {
+  Global Config_readinNetworkLoad, ResourceMonitor_networkInterface
 
-  DllCall("iphlpapi\GetNumberOfInterfaces", "UIntP", n)
-  nSize := 4 + 860 * n + 8
-  VarSetCapacity(ResourceMonitor_networkInterfaceTable, nSize)
-  If Not DllCall("iphlpapi\GetIfTable", "UInt", &ResourceMonitor_networkInterfaceTable, "UIntP", nSize, "Int", False)
-  {
-    Loop, 2
-    {
-      i := 0
-      j := A_Index
-      Loop, % NumGet(ResourceMonitor_networkInterfaceTable)
-      {
-        If NumGet(ResourceMonitor_networkInterfaceTable, 4 + 860 * (A_Index - 1) + 544) < 4
-        || NumGet(ResourceMonitor_networkInterfaceTable, 4 + 860 * (A_Index - 1) + 516) = 24
-          Continue
-        i += 1
-        dn_#%i%_#%j% := NumGet(ResourceMonitor_networkInterfaceTable, 4 + 860 * (A_Index - 1) + 552)
-        up_#%i%_#%j% := NumGet(ResourceMonitor_networkInterfaceTable, 4 + 860 * (A_Index - 1) + 576)
-      }
-      If (A_Index < 2)
-        RunWait, %Comspec% /c ping -n 1 127.0.0.1, , hide
-    }
-
-    Loop, % i
-    {
-      If (dn_#%i%_#2 > dn_#%i%_1)
-      {
-        ResourceMonitor_networkInterface := i
-        Break
-      }
-    }
-  }
+  objWMIService := ComObjGet("winmgmts:{impersonationLevel=impersonate}!\\" . A_ComputerName . "\root\cimv2")
+  WQLQuery := "SELECT * FROM Win32_PerfFormattedData_Tcpip_NetworkInterface WHERE Name LIKE '%" . Config_readinNetworkLoad . "%'"
+  ResourceMonitor_networkInterface := objWMIService.ExecQuery(WQLQuery).ItemIndex(0)
 }
-;; fures: System + Network monitor - with net history graph (http://www.autohotkey.com/community/viewtopic.php?p=260329)
+;; Pillus: System monitor (HDD/Wired/Wireless) using keyboard LEDs (http://www.autohotkey.com/board/topic/65308-system-monitor-hddwiredwireless-using-keyboard-leds/)
 
 ResourceMonitor_getNetworkLoad(ByRef upLoad, ByRef dnLoad)
 {
-  Global ResourceMonitor_networkInterface, ResourceMonitor_networkInterfaceTable
-  Static dn_#0, t_#0, up_#0
+  Global ResourceMonitor_networkInterface
 
-  DllCall("iphlpapi\GetIfEntry", "UInt", &ResourceMonitor_networkInterfaceTable + 4 + 860 * (ResourceMonitor_networkInterface - 1))
-  dn_#1 := NumGet(ResourceMonitor_networkInterfaceTable, 4 + 860 * (ResourceMonitor_networkInterface - 1) + 552)    ;; Total Incoming Bytes
-  up_#1 := NumGet(ResourceMonitor_networkInterfaceTable, 4 + 860 * (ResourceMonitor_networkInterface - 1) + 576)    ;; Total Outgoing Bytes
-  tDiff := (A_TickCount - t_#0) / 1000
-  t_#0  := A_TickCount
-
-  dnLoad := SubStr("   " Round((dn_#1 - dn_#0) / 1024 / tDiff), -3)
-  upLoad := SubStr("   " Round((up_#1 - up_#0) / 1024 / tDiff), -3)
-
-  dn_#0 := dn_#1
-  up_#0 := up_#1
+  ResourceMonitor_networkInterface.Refresh_
+  dnLoad := SubStr("   " Round(ResourceMonitor_networkInterface.BytesReceivedPerSec / 1024), -3)
+  upLoad := SubStr("   " Round(ResourceMonitor_networkInterface.BytesSentPerSec / 1024), -3)
 }
-;; fures: System + Network monitor - with net history graph (http://www.autohotkey.com/community/viewtopic.php?p=260329)
-;; Sean: Network Download/Upload Meter (http://www.autohotkey.com/community/viewtopic.php?t=18033)
+;; Pillus: System monitor (HDD/Wired/Wireless) using keyboard LEDs (http://www.autohotkey.com/board/topic/65308-system-monitor-hddwiredwireless-using-keyboard-leds/)
 
 ResourceMonitor_getSystemTimes()
 {    ;; Total CPU Load
