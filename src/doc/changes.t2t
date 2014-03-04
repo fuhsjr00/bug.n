@@ -17,6 +17,7 @@
     stored periodically so that it may be recovered after a restart.
 (+) A hotkey and corresponding function for toggling the overflow window
     of the 'notify icons'.
+(+) Manual tiling.
 
 
 =8.3.0=
