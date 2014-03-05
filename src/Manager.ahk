@@ -835,6 +835,11 @@ Manager_sizeWindow()
 
 ;; @todo: This constantly tries to re-add windows that are never going to be manageable.
 ;;   Manager_manage should probably ignore all windows that are already in Manager_allWndIds.
+;;   The problem was, that i. a. claws-mail triggers Manager_sync, but the application window
+;;   would not be ready for being managed, i. e. class and title were not available. Therefore more
+;;   attempts were needed.
+;;   Perhaps this method can be refined by not adding any window to Manager_allWndIds, but only
+;;   those, which have at least a title or class.
 Manager_sync(ByRef wndIds = "")
 {
   Local a, flag, shownWndIds, v, visibleWndIds, wndId
