@@ -66,7 +66,7 @@ If running bug.n from source as a script:
 * [AutoHotkey](http://ahkscript.org/download/)
 
 There is no installation wizard for bug.n. If you downloaded the repository
-from [GitHub](./) as a zip file and unpacked it, you should be able to run
+from [GitHub](../../) as a zip file and unpacked it, you should be able to run
 either the executbale as it is or the main script (src\Main.ahk) with
 [AutoHotkey](http://ahkscript.org/download/).
 
