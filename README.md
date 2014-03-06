@@ -1,5 +1,4 @@
 ## bug.n -- Tiling Window Manager
-Joshua Fuhs, joten
 
 bug.n is a
 [tiling window manager](https://en.wikipedia.org/wiki/Tiling_window_manager)
@@ -67,14 +66,14 @@ If running bug.n from source as a script:
 * [AutoHotkey](http://ahkscript.org/download/)
 
 There is no installation wizard for bug.n. If you downloaded the repository
-from https://github.com/fuhsjr00/bug.n[GitHub] as a zip file and unpacked it,
-you should be able to run either the executbale as it is or the main script
-(src\Main.ahk) with http://ahkscript.org/download/[AutoHotkey].
+from [GitHub](./) as a zip file and unpacked it, you should be able to run
+either the executbale as it is or the main script (src\Main.ahk) with
+[AutoHotkey](http://ahkscript.org/download/).
 
 bug.n stores the session data (configuration, layout, window states and log) to
 the user's APPDATA directory, e. g. C:\Users\joten\AppData\Roaming\bug.n.
 
-Please see the [documentation](./doc) or the [Wiki](./wiki) for more
+Please see the [documentation](./doc) or the [Wiki](../../wiki) for more
 information on installing and running, customizing and using bug.n and for a
 list of changes made with the current version, in particular the changes in the
 user interface (configuration variables and hotkeys).
