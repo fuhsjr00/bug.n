@@ -35,7 +35,7 @@ the bar and its elements (sub-windows).
 Appearance" settings for the "Active Title Bar".
 
 `Config_largeFontSize=24`
-> Font size in pixel, i, a, for the numbering of areas in the area trace.
+> Font size in pixel, i. a. for the numbering of areas in the area trace.
 
 `Config_normBgColor=`
 > The normal background color of the following bar elements:
@@ -46,8 +46,6 @@ Appearance" settings for the "Active Title Bar".
   4. the progress bar indicating a discharging battery with a remaining
      charge of less than ten percent
   5. the progress bar indicating a charging battery
-The default values are retrieved from the "Window Color and Appearance"
-settings.
 
 `Config_normFgColor=`
 > The normal foreground color of the following bar elements:
@@ -61,18 +59,15 @@ settings.
      less than ten percent?
   7. the text indicating a charging battery?
   8. the progress bar indicating an inactive view and a charging battery?
-The default values are retrieved from the "Window Color and Appearance"
-settings.
 
 `Config_selBgColor=`
 > The background color of a progress bar indicating an active view.
-The default values are retrieved from the "Window Color and Appearance"
-settings.
 
 `Config_selFgColor=`
 > 1. The text color and
-  2. the foreground color of a progress bar indicating an active view.
-The default values are retrieved from the "Window Color and Appearance"
+2. the foreground color of a progress bar indicating an active view.
+
+The default color values are retrieved from the "Window Color and Appearance"
 settings.
 
 `Config_barCommands=Run, explore doc;Monitor_toggleBar();Main_reload();Reload;ExitApp`
@@ -115,32 +110,30 @@ the status bar.
 
 ### Windows ui elements
 
-  `Config_bbCompatibility=0`
-  > If true (=1), bug.n looks for BlackBox components (bbLeanBar, bbSlit and
-  SystemBarEx) when calculating the work area. It is assumed that the virtual
-  desktop functionality of BlackBox and NOT bug.n is used (=> Hiding and showing
-  windows is detected and acted upon).
+`Config_bbCompatibility=0`
+> If true (=1), bug.n looks for BlackBox components (bbLeanBar, bbSlit and
+SystemBarEx) when calculating the work area. It is assumed that the virtual
+desktop functionality of BlackBox and NOT bug.n is used (=> Hiding and showing
+windows is detected and acted upon).
 
-  `Config_borderWidth=0`
-  > If > 0, the window border width is set to the integer value
-  Config_borderWidth.
+`Config_borderWidth=0`
+> If > 0, the window border width is set to the given integer value.
 
-  `Config_borderPadding=-1`
-  > If >= 0, the window border padding is set to the integer value
-  Config_borderPadding (only for Windows >= Vista).
+`Config_borderPadding=-1`
+> If >= 0, the window border padding is set to the given integer value (only
+for Windows >= Vista).
 
-  `Config_showTaskBar=0`
-  > If false (=0), the task bar is hidden. It can be made visible or hidden by
-  hotkey (see below).
+`Config_showTaskBar=0`
+> If false (=0), the task bar is hidden. It can be made visible or hidden by
+hotkey (see below).
 
-  `Config_showBorder=1`
-  >> If false (=0), the window borders are hidden; therefor windows cannot be
-  resized manually by dragging the border, even if using the according hotkey.
+`Config_showBorder=1`
+> If false (=0), the window borders are hidden; therefor windows cannot be
+resized manually by dragging the border, even if using the according hotkey.
 
-  `Config_selBorderColor=`
-  >> Border colour of the active window; format: 0x00BBGGRR (e. g. "0x006A240A",
-  if = "", all without the quotation marks, the system's window border colour is
-  not changed).
+`Config_selBorderColor=`
+> Border colour of the active window; format: 0x00BBGGRR (e. g. `0x006A240A`,
+if =0, the system's window border colour is not changed).
 
 
 ### Window arrangement
@@ -148,11 +141,13 @@ the status bar.
 `Config_viewNames=1;2;3;4;5;6;7;8;9`
 > The names of the views separated by a semicolon. This variable sets the names
 of the views shown in the status bar and determines the nummber of views
-(Config_viewCount); the total number of names given, i. e. views, should not be
-exceeded by the configured hotkeys.
+(`Config_viewCount`); the total number of names given, i. e. views, should not
+be exceeded by the configured hotkeys.
 
 `Config_layout_#1=[]=;tile`
+
 `Config_layout_#2=[M];monocle`
+
 `Config_layout_#3=><>;`
 > The layout symbol and arrange function (the first entry is set as the default
 layout, no layout function means floating behavior)
@@ -206,7 +201,7 @@ is activated by bug.n.
 `Config_viewMargins=0;0;0;0`
 > The margin of a view (around the layout, "monocle" and "tile") as a semicolon
 separated list of values in px (top;right;bottom;left), which by default can be
-activated per view with the hotkey Win+Shift+N (View_toggleMargins).
+activated per view with the hotkey Win+Shift+N (`View_toggleMargins`).
 With view margins you may create an empty area on the monitor, which is not
 occupied by the layout, therewith making a desktop widget visible.
 
@@ -241,19 +236,19 @@ correspondingly set to the tag.
 ### Rules
 `Config_rule_#1=.*;.*;;1;0;0;0;0;0;`
 > If you want to replace a default rule, you will have to use the correct
-variable name, e. g. you may set a rule (.*;.*;) for a default monitor, view
+variable name, e. g. you may set a rule (`.*;.*;`) for a default monitor, view
 and / or showing window title bars by setting the first rule
 `Config_rule_#1=...` and therewith replacing the value.
 If you want to add a rule you do not have to use a numbered variable, but
 `Config_rule=...` (the numbering will be done automatically in the order given
 in the configuration file). General format:
-  Config_rule_#<i>=<class (regular expression string)>;<title (regular expression
-  string)>;<window style (hexadecimal number or blank)>;<is managed (1 = True or
-  0 = False)>;<monitor (0 <= integer <= total number of monitors, 0 means the
-  currently active monitor)>;<tags (binary mask as integer >= 0, e. g. 17 for 1
-  and 5, 0 means the currently active tag)>;<is floating (1 = True or
-  0 = False)>;<is decorated (1 = True or 0 = False)>;<hide title (1 = True or
-  0 = False)>;<action on single windows (Close or Maximize)>
+`Config_rule_#<i>=<class (regular expression string)>;<title (regular expression
+string)>;<window style (hexadecimal number or blank)>;<is managed (1 = True or
+0 = False)>;<monitor (0 <= integer <= total number of monitors, 0 means the
+currently active monitor)>;<tags (binary mask as integer >= 0, e. g. 17 for 1
+and 5, 0 means the currently active tag)>;<is floating (1 = True or
+0 = False)>;<is decorated (1 = True or 0 = False)>;<hide title (1 = True or
+0 = False)>;<action on single windows (Close or Maximize)>`
 (all in one line, ";" is not allowed as a character)
 
 `Config_rule_#2=.*;.*;0x80000000;0;0;0;1;1;1;`
@@ -273,11 +268,17 @@ for the same reason as above.
 reason as above.
 
 `Config_rule_#6=MsiDialog(No)?CloseClass;.*;;1;0;0;1;1;0;`
+
 `Config_rule_#7=AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;1;`
+
 `Config_rule_#8=CalcFrame;.*;;1;0;0;1;1;0;`
+
 `Config_rule_#9=MozillaDialogClass;.*;;1;0;0;1;1;0;`
+
 `Config_rule_#10=_sp;_sp;;1;0;0;1;0;1;`
+
 `Config_rule_#11=MozillaWindowClass;.* - Mozilla Firefox;;1;0;0;0;1;0;Maximize`
+
 `Config_rule_#12=Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;Maximize`
 
 `Config_ruleCount=12`
@@ -288,11 +289,13 @@ above.
 ### Configuration management
 
 **`Config_autoSaveSession=auto`**
+
 Automatically save the current state of monitors, views, layouts (active
 view, layout, axes, mfact and msplit) and windows to the configuration files in
 the data directory of bug.n. Possible values are `off`, `auto` and `ask`.
 
 **`Config_maintenanceInterval=5000`**
+
 The interval in milliseconds, in which the session will be automatically
 saved to especially support the recovery of window states after bug.n
 unintentionally quits.
