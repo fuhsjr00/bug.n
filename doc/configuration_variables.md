@@ -3,7 +3,7 @@
 ### Status bar
 
 `Config_showBar=1`
-> If false (=0), the bar is hidden. It can be made visible or hidden by hotkey
+> If false (`=0`), the bar is hidden. It can be made visible or hidden by hotkey
 (see below).
 
 `Config_horizontalBarPos=left`
@@ -77,31 +77,31 @@ the bar (#!) and therewith can be selected rather then typed; bug.n functions
 AutoHotkey can be used here.
 
 `Config_readinBat=0`
-> If true (=1), the system battery status is read in and displayed in the
+> If true (`=1`), the system battery status is read in and displayed in the
 status bar. This only makes sense, if you have a system battery (notebook).
 
 `Config_readinCpu=0`
-> If true (=1), the current CPU load is read in and displayed in the status bar.
+> If true (`=1`), the current CPU load is read in and displayed in the status bar.
 
 `Config_readinDate=1`
-> If true (=1), the current date is read in (format: "WW, DD. MMM. YYYY") and
+> If true (`=1`), the current date is read in (format: "WW, DD. MMM. YYYY") and
 displayed in the status bar.
 
 `Config_readinDiskLoad=0`
-> If true (=1), the current disk load (read and write) is read in and displayed
+> If true (`=1`), the current disk load (read and write) is read in and displayed
 in the status bar.
 
 `Config_readinMemoryUsage=0`
-> If true (=1), the system memory usage is read in and displayed in the status
+> If true (`=1`), the system memory usage is read in and displayed in the status
 bar.
 
 `Config_readinNetworkLoad=0`
-> If not false (=0) and given an identifying string for the network interface,
+> If not false (`=0`) and given an identifying string for the network interface,
 which should be monitored, the current network load (up and down) is read in
 and displayed in the status bar.
 
 `Config_readinTime=1`
-> If true (=1), the current time is read in (format: "HH:MM") and displayed in
+> If true (`=1`), the current time is read in (format: "HH:MM") and displayed in
 the status bar.
 
 `Config_readinInterval=30000`
@@ -111,7 +111,7 @@ the status bar.
 ### Windows ui elements
 
 `Config_bbCompatibility=0`
-> If true (=1), bug.n looks for BlackBox components (bbLeanBar, bbSlit and
+> If true (`=1`), bug.n looks for BlackBox components (bbLeanBar, bbSlit and
 SystemBarEx) when calculating the work area. It is assumed that the virtual
 desktop functionality of BlackBox and NOT bug.n is used (=> Hiding and showing
 windows is detected and acted upon).
@@ -124,11 +124,11 @@ windows is detected and acted upon).
 for Windows >= Vista).
 
 `Config_showTaskBar=0`
-> If false (=0), the task bar is hidden. It can be made visible or hidden by
+> If false (`=0`), the task bar is hidden. It can be made visible or hidden by
 hotkey (see below).
 
 `Config_showBorder=1`
-> If false (=0), the window borders are hidden; therefor windows cannot be
+> If false (`=0`), the window borders are hidden; therefor windows cannot be
 resized manually by dragging the border, even if using the according hotkey.
 
 `Config_selBorderColor=`
@@ -168,7 +168,7 @@ master area to the right / bottom instead of left / top.
 3 = z (monocle).
 
 `Config_layoutGapWidth=0`
-> If true (=1), the system battery status is read in and displayed in the
+> If true (`=1`), the system battery status is read in and displayed in the
 status bar. This only makes sense, if you have a system battery (notebook).
 
 `Config_layoutMFactor=0.6`
@@ -182,20 +182,20 @@ manually resize and position windows by hotkey. See also `View_moveWindow(<n>)`
 and `View_traceAreas()` in the listing of hotkeys.
 
 `Config_continuouslyTraceAreas=0`
-> If true (=1), the area trace is continuously shown over the desktop.
+> If true (`=1`), the area trace is continuously shown over the desktop.
 
 `Config_dynamicTiling=1`
-> If true (=1), windows are dynamically tiled i. e. the layout is reset and
+> If true (`=1`), windows are dynamically tiled i. e. the layout is reset and
 therewith all windows resized and positioned automatically, if new windows are
 created or existing destroyed or moved.
-If false (=0) you may use manual tiling.
+If false (`=0`) you may use manual tiling.
 
 `Config_ghostWndSubString= (Not Responding)`
 > The text string, which identifies a hung window in its title bar; the german
 Windows version uses " (Keine Rückmeldung)".
 
 `Config_mouseFollowsFocus=1`
-> If true (=1), the mouse pointer is set over the focused window, if a window
+> If true (`=1`), the mouse pointer is set over the focused window, if a window
 is activated by bug.n.
 
 `Config_viewMargins=0;0;0;0`
@@ -229,7 +229,7 @@ monitors. If set to 0, views are activated independently (only on the active
 monitor).
 
 `Config_viewFollowsTagged=0`
-> If true (=1) and a window is tagged with a single tag, the view is
+> If true (`=1`) and a window is tagged with a single tag, the view is
 correspondingly set to the tag.
 
 
@@ -267,19 +267,19 @@ for the same reason as above.
 > Also Xming windows should be excluded from the second rule for the same
 reason as above.
 
-  `Config_rule_#6=MsiDialog(No)?CloseClass;.*;;1;0;0;1;1;0;`
+    `Config_rule_#6=MsiDialog(No)?CloseClass;.*;;1;0;0;1;1;0;`
 
-  `Config_rule_#7=AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;1;`
+    `Config_rule_#7=AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;1;`
 
-  `Config_rule_#8=CalcFrame;.*;;1;0;0;1;1;0;`
+    `Config_rule_#8=CalcFrame;.*;;1;0;0;1;1;0;`
 
-  `Config_rule_#9=MozillaDialogClass;.*;;1;0;0;1;1;0;`
+    `Config_rule_#9=MozillaDialogClass;.*;;1;0;0;1;1;0;`
 
-  `Config_rule_#10=_sp;_sp;;1;0;0;1;0;1;`
+    `Config_rule_#10=_sp;_sp;;1;0;0;1;0;1;`
 
-  `Config_rule_#11=MozillaWindowClass;.* - Mozilla Firefox;;1;0;0;0;1;0;Maximize`
+    `Config_rule_#11=MozillaWindowClass;.* - Mozilla Firefox;;1;0;0;0;1;0;Maximize`
 
-  `Config_rule_#12=Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;Maximize`
+    `Config_rule_#12=Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;Maximize`
 
 `Config_ruleCount=12`
 > This variable will be automatically set to the total number of active rules
