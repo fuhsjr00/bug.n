@@ -104,7 +104,7 @@ to the log.
 
 ### Layout management
 `#Tab::View_setLayout(-1)`
-> Set the previously set layout. You may also use View_setLayout(">") for
+> Set the previously set layout. You may also use View_setLayout(>) for
 setting the next layout in the layout array.
 
 `#f::View_setLayout(3)`
@@ -169,16 +169,16 @@ the master area by Y. Minimum of 1 (only for the "tile" layout).
 ### View / Tag management
 `#+n::View_toggleMargins()`
 > Toggle the view margins, which are set by the configuration variable
-"Config_viewMargins".
+`Config_viewMargins`.
 
 `#BackSpace::Monitor_activateView(-1)`
 > Activate the previously activated view. You may also use
-Monitor_activateView("<") or Monitor_activateView(">") for activating the
+Monitor_activateView(<) or Monitor_activateView(>) for activating the
 previous or next adjacent view.
 
 `#+0::Monitor_setWindowTag(0)`
 > Tag the active window with all tags (1 ... Config_viewCount). You may also
-use Monitor_setWindowTag("<") or Monitor_setWindowTag(">") for setting the tag
+use Monitor_setWindowTag(<) or Monitor_setWindowTag(>) for setting the tag
 of the previous or next adjacent to the current view.
 
 `#<n>::Monitor_activateView(<n>)`
@@ -245,14 +245,14 @@ in a multi-monitor environment.
 `#^r::Main_reload()`
 > Reload bug.n (i. e. the configuration and its dependent settings) without
 deleting the window lists of bug.n and restoring windows.
-! It does not reset internal configuration variables, the tray icon or menu,
+- It does not reset internal configuration variables, the tray icon or menu,
 hotkeys (unless defined in Config.ini), individual window settings like
 Config_showBorder (since windows might be hidden) or hiding the title bar, the
 monitor count or views.
-! It does not reload the monitor configuration and therefor does not recognize
+- It does not reload the monitor configuration and therefor does not recognize
 any changes in the number of monitors.
-! It does not reload functions.
-! Changed rules are only applied to new windows.
+- It does not reload functions.
+- Changed rules are only applied to new windows.
 
 `#^+r::Reload`
 > Reload bug.n (i. e. the whole script), which resets the configuration, the
