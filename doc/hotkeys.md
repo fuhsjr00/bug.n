@@ -108,16 +108,16 @@ two log messages (`Manager_logViewWindowList` and
 setting the next layout in the layout array.
 
 `#f::View_setLayout(3)`
-> Set the 3rd defined layout (i. e. floating layout in the default
-configuration).
+> Set the 3<sup><small>rd</small></sup> defined layout (i. e. floating layout
+in the default configuration).
 
 `#m::View_setLayout(2)`
-> Set the 2nd defined layout (i. e. monocle layout in the default
-configuration).
+> Set the 2<sup><small>nd</small></sup> defined layout (i. e. monocle layout in
+the default configuration).
 
 `#t::View_setLayout(1)`
-> Set the 1st defined layout (i. e. tile layout in the default
-configuration).
+> Set the 1<sup><small>st</small></sup> defined layout (i. e. tile layout in
+the default configuration).
 
 `#Left::View_setMFactor(-0.05)`
 > Reduce the size of the master area in the active view (only for the "tile"
