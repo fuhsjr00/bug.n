@@ -12,7 +12,7 @@ Possible modifiers are the following:
 * `#` (LWin, left Windows)
 
 You will have to press all keys of a hotkey at the same time beginning
-with the modifier for calling the associated function, e. g. "#^q" means
+with the modifier for calling the associated function, e. g. `#^q` means
 pressing the left Windows key and the shift key and the q key
 (WIN+CTRL+Q) for quitting bug.n.
 
@@ -92,8 +92,8 @@ and tiled windows of all views) to the log.
 
 `#^h::Debug_logHelp()`
 > Print a description of the formatting (column headings) used in the previous
-two log messages (Manager_logViewWindowList and Manager_logManagedWindowList)
-to the log.
+two log messages (`Manager_logViewWindowList` and
+`Manager_logManagedWindowList`) to the log.
 
 `#^d::Debug_setLogLevel(-1)`
 > Decrement the debug log level. Show fewer debug messages.
@@ -104,7 +104,7 @@ to the log.
 
 ### Layout management
 `#Tab::View_setLayout(-1)`
-> Set the previously set layout. You may also use View_setLayout(>) for
+> Set the previously set layout. You may also use `View_setLayout(>)` for
 setting the next layout in the layout array.
 
 `#f::View_setLayout(3)`
@@ -173,12 +173,12 @@ the master area by Y. Minimum of 1 (only for the "tile" layout).
 
 `#BackSpace::Monitor_activateView(-1)`
 > Activate the previously activated view. You may also use
-Monitor_activateView(<) or Monitor_activateView(>) for activating the
+`Monitor_activateView(<)` or `Monitor_activateView(>)` for activating the
 previous or next adjacent view.
 
 `#+0::Monitor_setWindowTag(0)`
-> Tag the active window with all tags (1 ... Config_viewCount). You may also
-use Monitor_setWindowTag(<) or Monitor_setWindowTag(>) for setting the tag
+> Tag the active window with all tags (n = 1..Config_viewCount). You may also
+use `Monitor_setWindowTag(<)` or `Monitor_setWindowTag(>)` for setting the tag
 of the previous or next adjacent to the current view.
 
 `#<n>::Monitor_activateView(<n>)`
@@ -189,7 +189,7 @@ of the previous or next adjacent to the current view.
 1..Config_viewCount).
 
 `#^<n>::Monitor_toggleWindowTag(<n>)`
-> Add / Remove the n<sup><small>th</small></sup> tag (n = 1.Config_viewCount)
+> Add / Remove the n<sup><small>th</small></sup> tag (n = 1..Config_viewCount)
 for the active window, if it is not / is already set.
 
 
@@ -236,7 +236,7 @@ in a multi-monitor environment.
 
 ### Administration
 
-`#^e::Run, edit %Config_filePath%
+`#^e::Run, edit %Config_filePath%`
 > Open the configuration file in the standard text editor.
 
 `#^s::Config_UI_saveSession()`
@@ -247,7 +247,7 @@ in a multi-monitor environment.
 deleting the window lists of bug.n and restoring windows.
 - It does not reset internal configuration variables, the tray icon or menu,
 hotkeys (unless defined in Config.ini), individual window settings like
-Config_showBorder (since windows might be hidden) or hiding the title bar, the
+`Config_showBorder` (since windows might be hidden) or hiding the title bar, the
 monitor count or views.
 - It does not reload the monitor configuration and therefor does not recognize
 any changes in the number of monitors.
