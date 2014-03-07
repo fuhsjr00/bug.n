@@ -73,7 +73,7 @@ settings.
 `Config_barCommands=Run, explore doc;Monitor_toggleBar();Main_reload();Reload;ExitApp`
 > The commands seperated by semicolon, which are listed in the command GUI of
 the bar (#!) and therewith can be selected rather then typed; bug.n functions
-(as used in the hotkey configuration), the "Run" and "Send" command of
+(as used in the hotkey configuration), the `Run` and `Send` command of
 AutoHotkey can be used here.
 
 `Config_readinBat=0`
@@ -206,16 +206,16 @@ With view margins you may create an empty area on the monitor, which is not
 occupied by the layout, therewith making a desktop widget visible.
 
 `Config_newWndPosition=top`
-> The position of a new window in a view; "top": at the beginning of the window
-list and the master area (default), "masterBottom": at the end of the master
-area, "stackTop": on top of the stack area, "bottom": at the end of the window
+> The position of a new window in a view; `top`: at the beginning of the window
+list and the master area (default), `masterBottom`: at the end of the master
+area, `stackTop`: on top of the stack area, `bottom`: at the end of the window
 list and the stack area.
 
 `Config_onActiveHiddenWnds=view`
 > The action, which will be taken, if a window e. g. should be activated, but
-is not visible; "view": show the view accordng to the first tag of the window
-in question, "tag": add the window in question to the current visible view,
-"hide": hide the window again ignoring the activation.
+is not visible; `view`: show the view accordng to the first tag of the window
+in question, `tag`: add the window in question to the current visible view,
+`hide`: hide the window again ignoring the activation.
 
 `Config_shellMsgDelay=350`
 > The time bug.n waits after a shell message (a window is opened, closed or the
@@ -267,19 +267,19 @@ for the same reason as above.
 > Also Xming windows should be excluded from the second rule for the same
 reason as above.
 
-`Config_rule_#6=MsiDialog(No)?CloseClass;.*;;1;0;0;1;1;0;`
+  `Config_rule_#6=MsiDialog(No)?CloseClass;.*;;1;0;0;1;1;0;`
 
-`Config_rule_#7=AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;1;`
+  `Config_rule_#7=AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;1;`
 
-`Config_rule_#8=CalcFrame;.*;;1;0;0;1;1;0;`
+  `Config_rule_#8=CalcFrame;.*;;1;0;0;1;1;0;`
 
-`Config_rule_#9=MozillaDialogClass;.*;;1;0;0;1;1;0;`
+  `Config_rule_#9=MozillaDialogClass;.*;;1;0;0;1;1;0;`
 
-`Config_rule_#10=_sp;_sp;;1;0;0;1;0;1;`
+  `Config_rule_#10=_sp;_sp;;1;0;0;1;0;1;`
 
-`Config_rule_#11=MozillaWindowClass;.* - Mozilla Firefox;;1;0;0;0;1;0;Maximize`
+  `Config_rule_#11=MozillaWindowClass;.* - Mozilla Firefox;;1;0;0;0;1;0;Maximize`
 
-`Config_rule_#12=Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;Maximize`
+  `Config_rule_#12=Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;Maximize`
 
 `Config_ruleCount=12`
 > This variable will be automatically set to the total number of active rules
@@ -288,14 +288,12 @@ above.
 
 ### Configuration management
 
-**`Config_autoSaveSession=auto`**
-
-Automatically save the current state of monitors, views, layouts (active
+`Config_autoSaveSession=auto`
+> Automatically save the current state of monitors, views, layouts (active
 view, layout, axes, mfact and msplit) and windows to the configuration files in
 the data directory of bug.n. Possible values are `off`, `auto` and `ask`.
 
-**`Config_maintenanceInterval=5000`**
-
-The interval in milliseconds, in which the session will be automatically
+`Config_maintenanceInterval=5000`
+> The interval in milliseconds, in which the session will be automatically
 saved to especially support the recovery of window states after bug.n
 unintentionally quits.
