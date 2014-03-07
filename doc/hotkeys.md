@@ -177,19 +177,19 @@ the master area by Y. Minimum of 1 (only for the "tile" layout).
 previous or next adjacent view.
 
 `#+0::Monitor_setWindowTag(0)`
-> Tag the active window with all tags (n = 1..Config_viewCount). You may also
+> Tag the active window with all tags (n = 1..`Config_viewCount`). You may also
 use `Monitor_setWindowTag(<)` or `Monitor_setWindowTag(>)` for setting the tag
 of the previous or next adjacent to the current view.
 
 `#<n>::Monitor_activateView(<n>)`
-> Activate the n<sup><small>th</small></sup> view (n = 1..Config_viewCount).
+> Activate the n<sup><small>th</small></sup> view (n = 1..`Config_viewCount`).
 
 `#+<n>::Monitor_setWindowTag(<n>)`
 > Tag the active window with the n<sup><small>th</small></sup> tag (n =
-1..Config_viewCount).
+1..`Config_viewCount`).
 
 `#^<n>::Monitor_toggleWindowTag(<n>)`
-> Add / Remove the n<sup><small>th</small></sup> tag (n = 1..Config_viewCount)
+> Add / Remove the n<sup><small>th</small></sup> tag (n = 1..`Config_viewCount`)
 for the active window, if it is not / is already set.
 
 
@@ -246,7 +246,7 @@ in a multi-monitor environment.
 > Reload bug.n (i. e. the configuration and its dependent settings) without
 deleting the window lists of bug.n and restoring windows.
 - It does not reset internal configuration variables, the tray icon or menu,
-hotkeys (unless defined in Config.ini), individual window settings like
+hotkeys (unless defined in `Config.ini`), individual window settings like
 `Config_showBorder` (since windows might be hidden) or hiding the title bar, the
 monitor count or views.
 - It does not reload the monitor configuration and therefor does not recognize
