@@ -1,4 +1,4 @@
-## Configuration variables
+## Default setting of configuration variables
 
 ### Status bar
 
@@ -107,7 +107,6 @@ the status bar.
 `Config_readinInterval=30000`
 > Time in milliseconds after which the above status values are refreshed.
 
-
 ### Windows ui elements
 
 `Config_bbCompatibility=0`
@@ -134,7 +133,6 @@ resized manually by dragging the border, even if using the according hotkey.
 `Config_selBorderColor=`
 > Border colour of the active window; format: 0x00BBGGRR (e. g. `0x006A240A`,
 if =0, the system's window border colour is not changed).
-
 
 ### Window arrangement
 
@@ -230,24 +228,16 @@ monitor).
 > If true (`=1`) and a window is tagged with a single tag, the view is
 correspondingly set to the tag.
 
-
 ### Rules
+
+For a general description of rules and how they can be replaced or added see
+the [specific documentation](./Configuring_rules.md).
+
 `Config_rule_#1=.*;.*;;1;0;0;0;0;0;`
-> If you want to replace a default rule, you will have to use the correct
-variable name, e. g. you may set a rule (`.*;.*;`) for a default monitor, view
-and / or showing window title bars by setting the first rule
-`Config_rule_#1=...` and therewith replacing the value.
-If you want to add a rule you do not have to use a numbered variable, but
-`Config_rule=...` (the numbering will be done automatically in the order given
-in the configuration file). General format:
-`Config_rule_#<i>=<class (regular expression string)>;<title (regular expression
-string)>;<window style (hexadecimal number or blank)>;<is managed (1 = True or
-0 = False)>;<monitor (0 <= integer <= total number of monitors, 0 means the
-currently active monitor)>;<tags (binary mask as integer >= 0, e. g. 17 for 1
-and 5, 0 means the currently active tag)>;<is floating (1 = True or
-0 = False)>;<is decorated (1 = True or 0 = False)>;<hide title (1 = True or
-0 = False)>;<action on single windows (Close or Maximize)>`
-(all in one line, ";" is not allowed as a character)
+> By default all windows are managed, not allocated on a specific monitor or
+view, not floating (i. e. tiled), the window title bar is not visible, the
+title is not hidden on the bug.n status bar and no window action is taken, when
+the window first is created.
 
 `Config_rule_#2=.*;.*;0x80000000;0;0;0;1;1;1;`
 > Pop-up windows (style WS_POPUP=0x80000000) will not be managed, are floating
@@ -276,7 +266,6 @@ reason as above.
 `Config_ruleCount=12`
 > This variable will be automatically set to the total number of active rules
 above.
-
 
 ### Configuration management
 

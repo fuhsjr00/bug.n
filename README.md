@@ -63,13 +63,14 @@ add-on for Microsoft Windows. It is written in the scripting language
 * [AutoHotkey](http://ahkscript.org/download/) (if running bug.n from source as
   a script)
 
-There is no installation wizard for bug.n. If you downloaded the repository
+There is no installation process for bug.n. If you downloaded the repository
 from [GitHub](../../archive/master.zip) as a zip file and unpacked it, you
 should be able to run either the executbale as it is or the main script
 (src\Main.ahk) with [AutoHotkey](http://ahkscript.org/download/).
 
-bug.n stores the session data (configuration, layout, window states and log) to
-the user's APPDATA directory, e. g. C:\Users\joten\AppData\Roaming\bug.n.
+By default bug.n stores the session data (configuration, layout, window states
+and log) to the user's APPDATA directory, e. g.
+`C:\Users\joten\AppData\Roaming\bug.n`.
 
 Please see the [documentation](./doc) or the [Wiki](../../wiki) for more
 information on installing and running, customizing and using bug.n and for a

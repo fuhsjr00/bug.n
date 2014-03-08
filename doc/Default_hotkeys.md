@@ -1,4 +1,4 @@
-## Hotkeys
+## Default hotkeys
 
 ### General description
 
@@ -8,13 +8,13 @@ Possible modifiers are the following:
 
 * `!` (Alt)
 * `^` (Ctrl, Control)
-* `+` (Shift)
 * `#` (LWin, left Windows)
+* `+` (Shift)
 
 You will have to press all keys of a hotkey at the same time beginning
 with the modifier for calling the associated function, e. g. `#^q` means
 pressing the left Windows key and the shift key and the q key
-(WIN+CTRL+Q) for quitting bug.n.
+(`Win+Ctrl+Q`) for quitting bug.n.
 
 ### Window management
 
@@ -83,6 +83,7 @@ the layout.
 master area takes up the whole view.
 
 ### Window debugging
+
 `#^i::Debug_logViewWindowList()`
 > Dump window information on the windows of the active view to the log.
 
@@ -101,8 +102,8 @@ two log messages (`Manager_logViewWindowList` and
 `#^+d::Debug_setLogLevel(+1)`
 > Increment the debug log level. Show more debug messages.
 
-
 ### Layout management
+
 `#Tab::View_setLayout(-1)`
 > Set the previously set layout. You may also use `View_setLayout(>)` for
 setting the next layout in the layout array.
@@ -165,8 +166,8 @@ the master area by Y. Minimum of 1 (only for the "tile" layout).
 `#+Right::View_setGapWidth(+2)`
 > Increase the gap between windows in "tile" layout.
 
-
 ### View / Tag management
+
 `#+n::View_toggleMargins()`
 > Toggle the view margins, which are set by the configuration variable
 `Config_viewMargins`.
@@ -192,8 +193,8 @@ of the previous or next adjacent to the current view.
 > Add / Remove the n<sup><small>th</small></sup> tag (n = 1..`Config_viewCount`)
 for the active window, if it is not / is already set.
 
-
 ### Monitor management
+
 `#.::Manager_activateMonitor(+1)`
 > Activate the next monitor in a multi-monitor environment.
 
@@ -216,8 +217,8 @@ a multi-monitor environment.
 > Set all windows of the active view on the active view of the previous monitor
 in a multi-monitor environment.
 
-
 ### GUI management
+
 `#+Space::Monitor_toggleBar()`
 > Hide / Show the bar (bug.n status bar) on the active monitor.
 
@@ -232,7 +233,6 @@ in a multi-monitor environment.
 
 `!+y::View_traceAreas()`
 > Indicate the areas of the "tile" layout.
-
 
 ### Administration
 
