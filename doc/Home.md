@@ -56,8 +56,7 @@ for non-bug.n hotkeys or to reassign bug.n functions.
 
 ##### [Xmonad hotkeys](./Xmonad-hotkeys.md)
 > A list of hotkeys, which are similar to those used in
-[Xmonad](http://xmonad.org/), a tiling window manager for the 'X windows
-system' on *n?x.
+[xmonad](http://xmonad.org/), a dynamically tiling X11 window manager on *n?x.
 
 ##### [User proposed hotkeys](./User-hotkeys.md)
 > Some individual hotkeys, proposed by bug.n users.

@@ -64,18 +64,20 @@ add-on for Microsoft Windows. It is written in the scripting language
   a script)
 
 There is no installation process for bug.n. If you downloaded the repository
-from [GitHub](../../archive/master.zip) as a zip file and unpacked it, you
-should be able to run either the executbale as it is or the main script
-(src\Main.ahk) with [AutoHotkey](http://ahkscript.org/download/).
+from [GitHub](https://github.com/fuhsjr00/bug.n/archive/master.zip) as a zip
+file and unpacked it, you should be able to run either the executbale as it is
+or the main script (src\Main.ahk) with
+[AutoHotkey](http://ahkscript.org/download/).
 
 By default bug.n stores the session data (configuration, layout, window states
 and log) to the user's APPDATA directory, e. g.
 `C:\Users\joten\AppData\Roaming\bug.n`.
 
-Please see the [documentation](./doc) or the [Wiki](../../wiki) for more
-information on installing and running, customizing and using bug.n and for a
-list of changes made with the current version, in particular the changes in the
-user interface (configuration variables and hotkeys).
+Please see the [documentation](./doc) or the
+[Wiki](https://github.com/fuhsjr00/bug.n/wiki) for more information on
+installing and running, customizing and using bug.n and for a list of changes
+made with the current version, in particular the changes in the user interface
+(configuration variables and hotkeys).
 
 
 ### License
