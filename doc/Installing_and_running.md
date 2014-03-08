@@ -7,7 +7,7 @@
 a script)
 
 There is no installation process for bug.n. If you downloaded the repository
-from [GitHub](../../archive/master.zip) as a zip file and unpacked it, you
+from [GitHub](../../../archive/master.zip) as a zip file and unpacked it, you
 should be able to run either the executbale as it is or the main script
 (src\Main.ahk) with [AutoHotkey](http://ahkscript.org/download/).
 
