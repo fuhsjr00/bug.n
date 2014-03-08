@@ -1,9 +1,0 @@
-syntax: glob
-01_administration.org
-src/log.txt
-berliOS_bug.n_activity.PNG
-*.lnk
-syntax: regexp
-.*[cC]onfig.*\.ini
-.+\.\w{3}~
-src/data/_.*.ini
