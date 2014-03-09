@@ -6,11 +6,17 @@
 * [AutoHotkey](http://ahkscript.org/download/) (if running bug.n from source as
 a script)
 
-There is no installation process for bug.n. If you downloaded the repository
-from [GitHub](https://github.com/fuhsjr00/bug.n/archive/master.zip) as a zip
-file and unpacked it, you should be able to run either the executbale as it is
-or the main script (src\Main.ahk) with
-[AutoHotkey](http://ahkscript.org/download/).
+You may either
+[download the stable version of bug.n](https://github.com/fuhsjr00/bug.n/blob/master/bug.n-stable.zip)
+from the repository, or
+[download the current development version](https://github.com/fuhsjr00/bug.n/archive/master.zip)
+as the repository itself. Either way, you will have a `zip` file including an
+executable (`bug.n*.exe`), the source (`src\*`) and documentation (`doc\*`)
+files.
+
+There is no installation process for bug.n. Unpack the `zip` file, and you
+should be able to run either the executable as it is or the main script
+(`src\Main.ahk`) with [AutoHotkey](http://ahkscript.org/download/).
 
 You may copy bug.n anywhere you like -- at least if you have write acces
 there -- e. g. `C:\Program Files\bugn` or link it to the 'Windows Start Menu'

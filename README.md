@@ -5,7 +5,6 @@ bug.n is a
 add-on for Microsoft Windows. It is written in the scripting language
 [AutoHotkey](http://ahkscript.org/download/).
 
-
 ### What it can do
 
 * Provide layouts for resizing and moving windows, utilizing all available
@@ -54,7 +53,6 @@ add-on for Microsoft Windows. It is written in the scripting language
 * You can move between views, hiding the windows, you do not want to see, and
   showing those, you want to see, by pressing a simple hotkey.
 
-
 ### Installing and running bug.n
 
 #### Requirements
@@ -63,11 +61,17 @@ add-on for Microsoft Windows. It is written in the scripting language
 * [AutoHotkey](http://ahkscript.org/download/) (if running bug.n from source as
   a script)
 
-There is no installation process for bug.n. If you downloaded the repository
-from [GitHub](https://github.com/fuhsjr00/bug.n/archive/master.zip) as a zip
-file and unpacked it, you should be able to run either the executbale as it is
-or the main script (src\Main.ahk) with
-[AutoHotkey](http://ahkscript.org/download/).
+You may either
+[download the stable version of bug.n](https://github.com/fuhsjr00/bug.n/blob/master/bug.n-stable.zip)
+from the repository, or
+[download the current development version](https://github.com/fuhsjr00/bug.n/archive/master.zip)
+as the repository itself. Either way, you will have a `zip` file including an
+executable (`bug.n*.exe`), the source (`src\*`) and documentation (`doc\*`)
+files.
+
+There is no installation process for bug.n. Unpack the `zip` file, and you
+should be able to run either the executable as it is or the main script
+(`src\Main.ahk`) with [AutoHotkey](http://ahkscript.org/download/).
 
 By default bug.n stores the session data (configuration, layout, window states
 and log) to the user's APPDATA directory, e. g.
@@ -79,12 +83,10 @@ installing and running, customizing and using bug.n and for a list of changes
 made with the current version, in particular the changes in the user interface
 (configuration variables and hotkeys).
 
-
 ### License
 
 bug.n is licensed under the GNU General Public License version 3. Please see
 the [LICENSE file](./LICENSE.md) for the full license text.
-
 
 ### Credits
 
