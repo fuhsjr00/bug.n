@@ -469,23 +469,18 @@ Bar_updateStatus()
   }
 }
 
-Bar_updateTitle(debugMsg = "")
+Bar_updateTitle()
 {
   Local aWndId, aWndTitle, content, GuiN, i, title
 
-  If debugMsg
-    aWndTitle := debugMsg
-  Else
-  {
-    WinGet, aWndId, ID, A
-    WinGetTitle, aWndTitle, ahk_id %aWndId%
-    If InStr(Bar_hideTitleWndIds, aWndId ";") Or (aWndTitle = "bug.n_BAR_0")
-      aWndTitle := ""
-    If Manager_#%aWndId%_isFloating
-      aWndTitle := "~ " aWndTitle
-    If (Manager_monitorCount > 1)
-      aWndTitle := "[" Manager_aMonitor "] " aWndTitle
-  }
+  WinGet, aWndId, ID, A
+  WinGetTitle, aWndTitle, ahk_id %aWndId%
+  If InStr(Bar_hideTitleWndIds, aWndId ";") Or (aWndTitle = "bug.n_BAR_0")
+    aWndTitle := ""
+  If Manager_#%aWndId%_isFloating
+    aWndTitle := "~ " aWndTitle
+  If (Manager_monitorCount > 1)
+    aWndTitle := "[" Manager_aMonitor "] " aWndTitle
   title := " " . aWndTitle . " "
 
   If (Bar_getTextWidth(title) > Bar_#%Manager_aMonitor%_titleWidth)
