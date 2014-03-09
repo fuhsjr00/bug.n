@@ -223,7 +223,7 @@ Manager_cleanup()
     Monitor_getWorkArea(m)
     Loop, % Config_viewCount
     {
-      View_arrange(m, A_Index)
+      View_arrange(m, A_Index, True)
     }
   }
   Manager_winSet("AlwaysOnTop", "On", aWndId)
