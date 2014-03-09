@@ -1,18 +1,31 @@
 ## Changes
 
 ##### Legend
+
 * `-` deleted
 * `~` changed
 * `+` added
 
-
 ### 8.4.0
-* `+` Session auto-save and restore. Layout and Window information is stored
+
+1. `+` Session auto-save and restore. Layout and Window information is stored
 periodically so that it may be recovered after a restart.
-* `+` A hotkey for toggling the overflow window of the 'notify icons'.
-* `+` Manual tiling.
+2. `+` Toggling the overflow window of the 'notify icons' by hotkey.
+3. `+` Manual tiling.
+
+| #   | Configuration variables           | Hotkeys                                         |
+| ---:| --------------------------------- | ----------------------------------------------- |
+|  2. |                                   | `#+y::Monitor_toggleNotifyIconOverflowWindow()` |
+|  3. | `Config_largeFontSize=24`         | `!Down::View_moveWindow(0, +1)`                 |
+|     | `Config_areaTraceTimeout=1000`    | `!Up::View_moveWindow(0, -1)`                   |
+|     | `Config_continuouslyTraceAreas=0` | `!+Enter::Manager_maximizeWindow()`             |
+|     | `Config_dynamicTiling=1`          | `!<n>::View_moveWindow(<n>)`                    |
+|     |                                   | `!0::View_moveWindow(10)`                       |
+|     |                                   | `!BackSpace::View_toggleStackArea()`            |
+|     |                                   | `!+y::View_traceAreas()`                        |
 
 ### 8.3.0
+
 * `~` Changed the command line argument from specifying 'the path to the
 Config.ini' to 'the path to the general data directory containing the
 Config.ini and log.txt'.
@@ -35,6 +48,7 @@ be named and the number of views can be set. The configuration variable
 can use a single application window instead of three and more.
 
 ### 8.2.1
+
 * `+` feature #005446: Reload function (reloading bug.n without changing the
 current association of windows to views/tags)
 * `+` workaround bug #018364: (Evernote: new note) Introducing the
@@ -42,6 +56,7 @@ configuration variable `Config_onActiveHiddenWnds` to set the behaviour of
 bug.n for already existing but hidden windows on redraw
 
 ### 8.2.0
+
 * `-` `Config_addRunCommands` (the 'Run' item in 'command GUI').
 * `-` `Config_sessionFilePath`
 * `-` `Config_topBar` (replaced by `Config_verticalBarPos`.
@@ -85,6 +100,7 @@ colors anymore, but by a progress bar.
 desktop and therewith changing the active window.
 
 ### 8.1.0
+
 * `-` `Config_showTitleBars`
 * `~` `Config_rules` have two more parameters (window style and if the window
 is decorated; this replaces `Config_showTitleBars`).
