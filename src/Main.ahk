@@ -119,7 +119,7 @@ Main_evalCommand(command)
 }
 
 Main_help:
-  Run, explore %A_ScriptDir%\doc
+  Run, explore %Main_docDir%
 Return
 
 Main_quit:
@@ -151,6 +151,11 @@ Main_makeDir(dirName) {
 
 Main_setup() {
   Local winAppDir
+
+  Main_docDir := A_ScriptDir
+  If (SubStr(A_ScriptDir, -3) = "\src")
+    Main_docDir .= "\.."
+  Main_docDir .= "\doc"
 
   Main_logFile := ""
   Main_dataDir := ""

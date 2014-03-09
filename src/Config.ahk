@@ -36,7 +36,7 @@ Config_init()
   Config_normFgColor       :=
   Config_selBgColor        :=
   Config_selFgColor        :=
-  Config_barCommands       := "Run, explore doc;Monitor_toggleBar();Main_reload();Reload;ExitApp"
+  Config_barCommands       := "Run, explore " Main_docDir ";Monitor_toggleBar();Main_reload();Reload;ExitApp"
   Config_readinBat         := False
   Config_readinCpu         := False
   Config_readinDate        := True
