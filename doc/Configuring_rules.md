@@ -66,4 +66,4 @@ title bar visible and maximizing them.
 The following `Config.ini` line adds a rule, putting windows of 'Mozilla
 Thunderbird' on view 4, keeping the title bar visible and maximizing them.
 
-`Config_rule=MozillaWindowClass;.* - Mozilla Thunderbird;;1;0;8;0;1;0;Maximize`
+`Config_rule=MozillaWindowClass;.*Mozilla Thunderbird;;1;0;8;0;1;0;Maximize`
