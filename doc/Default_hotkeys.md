@@ -11,10 +11,10 @@ Possible modifiers are the following:
 * `#` (LWin, left Windows)
 * `+` (Shift)
 
-You will have to press all keys of a hotkey at the same time beginning
-with the modifier for calling the associated function, e. g. `#^q` means
-pressing the left Windows key and the shift key and the q key
-(`Win+Ctrl+Q`) for quitting bug.n.
+You will have to press all keys of a hotkey at the same time beginning with the
+modifier for calling the associated function, e. g. `#^q` means pressing the
+left 'Windows key' and the 'Control key' and the 'Q key' (`Win+Ctrl+Q`) for
+quitting bug.n.
 
 ### Window management
 
