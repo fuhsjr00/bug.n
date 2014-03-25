@@ -489,6 +489,7 @@ Bar_updateTitle()
     StringLeft, title, aWndTitle, i
     title := " " . title . " ... "
   }
+  StringReplace, title, title, &, &&, All     ;; Special character '&', which would underline the next letter.
 
   i := Config_viewCount + 2
   Loop, % Manager_monitorCount
