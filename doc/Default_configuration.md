@@ -190,16 +190,15 @@ If false (`=0`) you may use manual tiling.
 > The text string, which identifies a hung window in its title bar; the german
 Windows version uses " (Keine Rückmeldung)".
 
+`Config_mFactCallInterval=700`
+> The time in milliseconds, in which two consecutive calls to
+`View_setMFactor(<d>, <dFact>)` have to be made, to accelerate the increasing
+or decreasing of `mfact`. See also `View_setMFactor(<d>, <dFact>)` in the
+listing of hotkeys.
+
 `Config_mouseFollowsFocus=1`
 > If true (`=1`), the mouse pointer is set over the focused window, if a window
 is activated by bug.n.
-
-`Config_viewMargins=0;0;0;0`
-> The margin of a view (around the layout, "monocle" and "tile") as a semicolon
-separated list of values in px (top;right;bottom;left), which by default can be
-activated per view with the hotkey Win+Shift+N (`View_toggleMargins`).
-With view margins you may create an empty area on the monitor, which is not
-occupied by the layout, therewith making a desktop widget visible.
 
 `Config_newWndPosition=top`
 > The position of a new window in a view; `top`: at the beginning of the window
@@ -227,6 +226,13 @@ monitor).
 `Config_viewFollowsTagged=0`
 > If true (`=1`) and a window is tagged with a single tag, the view is
 correspondingly set to the tag.
+
+`Config_viewMargins=0;0;0;0`
+> The margin of a view (around the layout, "monocle" and "tile") as a semicolon
+separated list of values in px (top;right;bottom;left), which by default can be
+activated per view with the hotkey Win+Shift+N (`View_toggleMargins`).
+With view margins you may create an empty area on the monitor, which is not
+occupied by the layout, therewith making a desktop widget visible.
 
 ### Rules
 

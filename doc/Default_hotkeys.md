@@ -122,11 +122,17 @@ the default configuration).
 
 `#Left::View_setMFactor(-0.05)`
 > Reduce the size of the master area in the active view (only for the "tile"
-layout).
+layout). You may also set a second parameter for accelerating the first one.
+E. g. with `#Left::View_setMFactor(-0.05, 2)` the first step, by which the
+master area is reduced, is -0.0016% and will be doubled with consecutive calls
+until it reaches -0.05%.
 
 `#Right::View_setMFactor(+0.05)`
 > Enlarge the size of the master area in the active view (only for the "tile"
-layout).
+layout). You may also set a second parameter for accelerating the first one.
+E. g. with `#Right::View_setMFactor(0.05, 0.5)` the first step, by which the
+master area is reduced, is 0.05%, but with consecutive calls it will be halved
+until it reaches 0.0016%.
 
 `#^t::View_rotateLayoutAxis(1, +1)`
 > Rotate the layout axis (i. e. 2 -> 1 = vertical layout, 1 -> 2 = horizontal
