@@ -69,13 +69,14 @@ Config_init()
   Config_continuouslyTraceAreas := False
   Config_dynamicTiling      := True
   Config_ghostWndSubString  := " (Not Responding)"
+  Config_mFactCallInterval  := 700
   Config_mouseFollowsFocus  := True
-  Config_viewMargins        := "0;0;0;0"
   Config_newWndPosition     := "top"
   Config_onActiveHiddenWnds := "view"
   Config_shellMsgDelay      := 350
   Config_syncMonitorViews   := 0
   Config_viewFollowsTagged  := False
+  Config_viewMargins        := "0;0;0;0"
 
   ;; Config_rule_#<i> := '<class>;<title>;<style>;<is managed>;<m>;<tags>;<is floating>;<is decorated>;<hide title>;<action>'
   Config_rule_#1   := ".*;.*;;1;0;0;0;0;0;"            ;; default rule

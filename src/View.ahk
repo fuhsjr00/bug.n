@@ -294,6 +294,40 @@ View_getLayoutSymbol_tile(m, v, n)
     Return, stackSym . masterDiv . masterDim
 }
 
+View_getMFactorD(m, v, d, dFact) {
+  Local callD, minD
+  Static lastCall, mFactD
+
+  callD := A_TickCount - lastCall
+  lastCall := A_TickCount
+
+  ;; The minimum d, which is reached in 5 steps. maxD is d.
+  If (dFact < 1)
+    minD := d * dFact**5
+  Else
+    minD := d / dFact**5
+
+  If (callD < Config_mFactCallInterval And d * mFactD > 0) {
+    ;; Accelerate mFactD, if the last call is inside the time frame and went in the same direction.
+    mFactD *= dFact
+    ;; Reset mFactD, if it is out of bounds (d).
+    If (dFact < 1 And Abs(mFactD) < Abs(minD))
+      mFactD := minD
+    Else If (Abs(mFactD) > Abs(d))
+      mFactD := d
+    Debug_logMessage("DEBUG[2] View_getMFactorD [on]: callD: " callD ", d: " d ", dFact: " dFact ", mFactD: " mFactD, 2)
+  } Else {
+    ;; Reset after a timeout or a change of direction.
+    If (dFact > 1)
+      mFactD := minD
+    Else
+      mFactD := d
+    Debug_logMessage("DEBUG[2] View_getMFactorD [off]: callD: " callD ", d: " d ", dFact: " dFact ", mFactD: " mFactD, 2)
+  }
+
+  Return, mFactD
+}
+
 View_getTiledWndIds(m, v)
 {
   Local n, tiledWndIds, wndIds
@@ -473,7 +507,7 @@ View_setLayout(l)
   }
 }
 
-View_setMFactor(d)
+View_setMFactor(d, dFact=1)
 {
   Local l, mFact, v
 
@@ -482,11 +516,14 @@ View_setMFactor(d)
   If (Config_layoutFunction_#%l% = "tile")
   {
     mFact := 0
-    If (d >= 1.05)
+    If (d > 1)
       mFact := d
     Else
+    {
+      d := View_getMFactorD(Manager_aMonitor, v, d, dFact)
       mFact := View_#%Manager_aMonitor%_#%v%_layoutMFact + d
-    If (mFact >= 0.05 And mFact <= 0.95)
+    }
+    If (mFact > 0 And mFact < 1)
     {
       View_#%Manager_aMonitor%_#%v%_layoutMFact := mFact
       View_arrange(Manager_aMonitor, v)
