@@ -1,6 +1,6 @@
 /*
   bug.n -- tiling window management
-  Copyright (c) 2010-2012 Joshua Fuhs, joten
+  Copyright (c) 2010-2014 Joshua Fuhs, joten
 
   This program is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
