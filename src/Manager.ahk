@@ -472,16 +472,6 @@ Manager_manage(preferredMonitor, preferredView, wndId)
       tags := 1 << (preferredView - 1)
   }
 
-  ; @todo: Remove this application-specific code.
-  WinGet, wndProcessName, ProcessName, ahk_id %wndId%
-  If (wndProcessName = "chrome.exe")
-  {
-    WinGet, wndControlList, ControlList, ahk_id %wndId%
-    StringSplit, c, wndControlList, `n
-    If (c0 <= 1)
-      isManaged := False
-  }
-
   a := Manager__setWinProperties( wndId, isManaged, m, tags, isDecorated, isFloating, hideTitle, action)
 
   ; Do view placement.
