@@ -157,6 +157,7 @@ Bar_init(m)
     Gui, Show, NoActivate x%x1% y%y1% w%wndWidth% h%Bar_height%, %wndTitle%
   Else
     Gui, Show, NoActivate Hide x%x1% y%y1% w%wndWidth% h%Bar_height%, %wndTitle%
+  WinSet, Transparent, %Config_barTransparency%, %wndTitle%
   wndId := WinExist(wndTitle)
   If (Config_verticalBarPos = "tray" And m = Manager_taskBarMonitor)
   {

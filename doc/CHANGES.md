@@ -13,6 +13,7 @@ periodically so that it may be recovered after a restart.
 2. `+` Toggling the overflow window of the 'notify icons' by hotkey.
 3. `+` Manual tiling.
 4. `+` Increasing MFactor Resizing Over Time
+5. `+` Bar transparency
 
 | #   | Configuration variables           | Hotkeys                                         |
 | ---:| --------------------------------- | ----------------------------------------------- |
@@ -25,6 +26,7 @@ periodically so that it may be recovered after a restart.
 |     |                                   | `!BackSpace::View_toggleStackArea()`            |
 |     |                                   | `!+y::View_traceAreas()`                        |
 |  4. | `Config_mFactCallInterval=700`    | `View_setMFactor(d, dFact=1)`                   |
+|  5. | `Config_barTransparency=off`      |                                                 |
 
 ### 8.3.0
 

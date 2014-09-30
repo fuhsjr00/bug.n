@@ -70,6 +70,12 @@ Appearance" settings for the "Active Title Bar".
 The default color values are retrieved from the "Window Color and Appearance"
 settings.
 
+`Config_barTransparency=off`
+> The degree of transparency for the bar. Possible values are `off` (no
+transparency) or an integer between `0` (fully transparent) and `255` (opaque).
+At least on Windows >= 8 with `Config_verticalBarPos=tray` the bar won't be
+visible at all, if `Config_barTransparency` is not set to `off`.
+
 `Config_barCommands=Run, explore doc;Monitor_toggleBar();Main_reload();Reload;ExitApp`
 > The commands seperated by semicolon, which are listed in the command GUI of
 the bar (#!) and therewith can be selected rather then typed; bug.n functions
