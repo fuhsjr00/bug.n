@@ -110,6 +110,10 @@ and displayed in the status bar.
 > If true (`=1`), the current time is read in (format: "HH:MM") and displayed in
 the status bar.
 
+`Config_readinVolume=0`
+> If true (`=1`), the current sound volume is read in
+(format: "VOL: <mute> <volume percentage>") and displayed in the status bar.
+
 `Config_readinInterval=30000`
 > Time in milliseconds after which the above status values are refreshed.
 

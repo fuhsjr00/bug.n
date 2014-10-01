@@ -14,6 +14,7 @@ periodically so that it may be recovered after a restart.
 3. `+` Manual tiling.
 4. `+` Increasing MFactor Resizing Over Time
 5. `+` Bar transparency
+6. `+` Reading in the sound volume and mute status and displaying it in the status bar.
 
 | #   | Configuration variables           | Hotkeys                                         |
 | ---:| --------------------------------- | ----------------------------------------------- |
@@ -27,6 +28,7 @@ periodically so that it may be recovered after a restart.
 |     |                                   | `!+y::View_traceAreas()`                        |
 |  4. | `Config_mFactCallInterval=700`    | `View_setMFactor(d, dFact=1)`                   |
 |  5. | `Config_barTransparency=off`      |                                                 |
+|  6. | `Config_readinVolume`             |                                                 |
 
 ### 8.3.0
 

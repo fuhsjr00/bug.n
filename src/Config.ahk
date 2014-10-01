@@ -45,6 +45,7 @@ Config_init()
   Config_readinMemoryUsage := False
   Config_readinNetworkLoad := False
   Config_readinTime        := True
+  Config_readinVolume      := False
   Config_readinInterval    := 30000
 
   ;; Windows ui elements
