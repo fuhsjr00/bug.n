@@ -75,6 +75,7 @@ Bar_init(m)
   x1 += w
 
   ;; The x-position and width of the sub-windows right of the window title are set from the right.
+  ;; @TODO [v9] Maybe add a field (including a progress bar) for sound volume information.
   Loop, 4
   {
     i := Config_viewCount + 7 - A_Index
