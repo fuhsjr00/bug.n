@@ -285,20 +285,33 @@ Manager_findHung(ghostWnd)
 
 Manager_getWindowInfo()
 {
-  Local text, v, aWndClass, aWndHeight, aWndId, aWndProcessName, aWndStyle, aWndTitle, aWndWidth, aWndX, aWndY
+  Local aWndClass, aWndHeight, aWndId, aWndMinMax, aWndProcessName, aWndStyle, aWndTitle, aWndWidth, aWndX, aWndY, rule, text, v
 
   WinGet, aWndId, ID, A
   WinGetClass, aWndClass, ahk_id %aWndId%
   WinGetTitle, aWndTitle, ahk_id %aWndId%
   WinGet, aWndProcessName, ProcessName, ahk_id %aWndId%
   WinGet, aWndStyle, Style, ahk_id %aWndId%
+  WinGet, aWndMinMax, MinMax, ahk_id %aWndId%
   WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
   text := "ID: " aWndId "`nclass:`t" aWndClass "`ntitle:`t" aWndTitle
-  If InStr(Bar_hiddenWndIds, aWndId)
+  rule := "Config_rule=" aWndClass ";" aWndTitle ";" aWndStyle
+  If InStr(Manager_managedWndIds, aWndId ";")
+    rule .= ";1"
+  Else
+    rule .= ";0"
+  rule .= ";" Manager_#%aWndId%_monitor ";" Manager_#%aWndId%_tags ";" Manager_#%aWndId%_isFloating ";" Manager_#%aWndId%_isDecorated
+  If InStr(Bar_hiddenWndIds, aWndId) {
     text .= " (hidden)"
+    rule .= ";1;"
+  } Else
+    rule .= ";0;"
+  If (aWndMinMax = 1)
+    rule .= "Maximize"
   text .= "`nprocess:`t" aWndProcessName "`nstyle:`t" aWndStyle "`nmetrics:`tx: " aWndX ", y: " aWndY ", width: " aWndWidth ", height: " aWndHeight "`ntags:`t" Manager_#%aWndId%_tags
   If Manager_#%aWndId%_isFloating
     text .= " (floating)"
+  text .= "`n`n" rule
   MsgBox, 260, bug.n: Window Information, % text "`n`nCopy text to clipboard?"
   IfMsgBox Yes
     Clipboard := text
