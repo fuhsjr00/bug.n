@@ -69,6 +69,7 @@ Manager_init()
   }
 
   Manager_registerShellHook()
+  Manager_registerWindowProc()
   SetTimer, Manager_maintenance_label, %Config_maintenanceInterval%
   SetTimer, Bar_loop, %Config_readinInterval%
 }
@@ -704,6 +705,25 @@ Manager_registerShellHook()
   OnMessage(msgNum, "Manager_onShellMessage")
 }
 ;; SKAN: How to Hook on to Shell to receive its messages? (http://www.autohotkey.com/forum/viewtopic.php?p=123323#123323)
+
+Manager_registerWindowProc() {
+  Global Manager_windowProc_#0
+
+  Gui, +LastFound
+  hWnd := WinExist()
+  windowProc_#1 := RegisterCallback("Manager_windowProc", "", 4)
+  Manager_windowProc_#0 := DllCall("SetWindowLong", UInt, hWnd, Int, -4, Int, windowProc_#1, UInt)
+}
+
+WM_DISPLAYCHANGE := 126   ;; This message is sent when the display resolution has changed.
+Manager_windowProc(hWnd, uMsg, wParam, lParam) {
+  Global Manager_windowProc_#0, WM_DISPLAYCHANGE
+
+  If (uMsg = 126)
+    Debug_logMessage("DEBUG[0] Manager_onShellMessage( wParam: " . wParam . ", lParam: " . lParam . " )", 0)
+  ;; Otherwise (since above didn't return), pass all unhandled events to the original WindowProc.
+  Return, DllCall("CallWindowProcA", UInt, Manager_windowProc_#0, UInt, hWnd, UInt, uMsg, UInt, wParam, UInt, lParam)
+}
 
 Manager_resetWindowBorder()
 {

@@ -238,6 +238,7 @@ Main_reload()
     View_arrange(i, Monitor_#%i%_aView_#1)
   }
   Manager_registerShellHook()
+  Manager_registerWindowProc()
   SetTimer, Bar_loop, %Config_readinInterval%
 }
 
