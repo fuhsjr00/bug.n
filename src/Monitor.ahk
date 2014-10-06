@@ -142,7 +142,8 @@ Monitor_getWorkArea(m)
 
   SysGet, monitor, Monitor, %m%
 
-  wndClasses := "Shell_TrayWnd"
+  wndClasses := "Shell_TrayWnd;Shell_SecondaryTrayWnd"
+  ;; @TODO What about third and so forth TrayWnd?
   If Config_bbCompatibility
     wndClasses .= ";bbLeanBar;bbSlit;BBToolbar;SystemBarEx"
   Loop, PARSE, wndClasses, `;
