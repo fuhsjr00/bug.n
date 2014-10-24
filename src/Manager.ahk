@@ -134,7 +134,10 @@ Manager_activateMonitor(d)
         View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
     }
 
-    Manager_aMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
+    if ( SubStr(d, 1, 1 ) == "=" )
+		  Manager_aMonitor := SubStr(d,2)
+	  else
+      Manager_aMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
     v := Monitor_#%Manager_aMonitor%_aView_#1
     wndId := View_#%Manager_aMonitor%_#%v%_aWndId
     If Not (wndId And WinExist("ahk_id" wndId))
@@ -827,7 +830,10 @@ Manager_setWindowMonitor(d)
     If Config_dynamicTiling
       View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
 
-    Manager_aMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
+    if ( SubStr(d, 1, 1 ) == "=" )
+		  Manager_aMonitor := SubStr(d,2)
+    else
+      Manager_aMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
     Monitor_moveWindow(Manager_aMonitor, aWndId)
     v := Monitor_#%Manager_aMonitor%_aView_#1
     Manager_#%aWndId%_tags := 1 << v - 1
