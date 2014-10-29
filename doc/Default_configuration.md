@@ -174,8 +174,8 @@ master area to the right / bottom instead of left / top.
 3 = z (monocle).
 
 `Config_layoutGapWidth=0`
-> If true (`=1`), the system battery status is read in and displayed in the
-status bar. This only makes sense, if you have a system battery (notebook).
+> The default gap width in px (only even numbers) used in the "tile" and
+"monocle" layout, i. e. the space between windows and around the layout.
 
 `Config_layoutMFactor=0.6`
 > The factor for the size of the master area, which is multiplied by the
