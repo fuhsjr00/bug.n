@@ -134,6 +134,7 @@ Manager_activateMonitor(d)
         View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
     }
 
+    ;; Manually set the active monitor.
     Manager_aMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
     v := Monitor_#%Manager_aMonitor%_aView_#1
     wndId := View_#%Manager_aMonitor%_#%v%_aWndId
@@ -424,6 +425,7 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
     a := Manager_#%wndId%_tags & (1 << (Monitor_#%m%_aView_#1 - 1))
     If a
     {
+      ;; A newly created window defines the active monitor, if it is visible.
       Manager_aMonitor := m
       Manager_winActivate(wndId)
     }
@@ -598,6 +600,7 @@ Manager_onShellMessage(wParam, lParam) {
   {
     MouseGetPos, x, y
     m := Monitor_get(x, y)
+    ;; The current position of the mouse cursor defines the active monitor, if the desktop has been activated.
     If m
       Manager_aMonitor := m
     Bar_updateTitle()
@@ -643,6 +646,7 @@ Manager_onShellMessage(wParam, lParam) {
       WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
       m := Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2)
       Debug_logMessage("DEBUG[1] Manager_onShellMessage: Manager_monitorCount: " Manager_monitorCount ", Manager_aMonitor: " Manager_aMonitor ", m: " m ", aWndId: " aWndId, 1)
+      ;; The currently active window defines the active monitor.
       If m
         Manager_aMonitor := m
     }
@@ -657,6 +661,7 @@ Manager_onShellMessage(wParam, lParam) {
           If (Manager_#%wndId%_tags & 1 << A_Index - 1)
           {
             Debug_logMessage("DEBUG[3] Switching views because " . wndId . " is considered hidden and active", 3)
+            ;; A newly created window defines the active monitor, if it is visible.
             Manager_aMonitor := Manager_#%wndId%_monitor
             Monitor_activateView(A_Index)
             Break
@@ -775,6 +780,7 @@ Manager_setViewMonitor(d)
         Bar_updateView(Manager_aMonitor, A_Index)
       }
 
+      ;; Manually set the active monitor.
       Manager_aMonitor := m
       View_arrange(m, v)
       WinGet, aWndId, ID, A
@@ -827,6 +833,7 @@ Manager_setWindowMonitor(d)
     If Config_dynamicTiling
       View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
 
+    ;; Manually set the active monitor.
     Manager_aMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
     Monitor_moveWindow(Manager_aMonitor, aWndId)
     v := Monitor_#%Manager_aMonitor%_aView_#1
