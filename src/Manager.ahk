@@ -69,7 +69,6 @@ Manager_init()
   }
 
   Manager_registerShellHook()
-  Manager_registerWindowProc()
   SetTimer, Manager_maintenance_label, %Config_maintenanceInterval%
   SetTimer, Bar_loop, %Config_readinInterval%
 }
@@ -701,33 +700,80 @@ Manager_onShellMessage(wParam, lParam) {
   }
 }
 
-Manager_registerShellHook()
-{
+Manager_registerShellHook() {
+  WM_DISPLAYCHANGE := 126   ;; This message is sent when the display resolution has changed.
   Gui, +LastFound
   hWnd := WinExist()
+  WinGetClass, wndClass, ahk_id %hWnd%
+  WinGetTitle, wndTitle, ahk_id %hWnd%
   DllCall("RegisterShellHookWindow", "UInt", hWnd)    ;; Minimum operating systems: Windows 2000 (http://msdn.microsoft.com/en-us/library/ms644989(VS.85).aspx)
+  Debug_logMessage("DEBUG[1] Manager_registerShellHook; hWnd: " . hWnd . ", wndClass: " . wndClass . ", wndTitle: " . wndTitle, 1)
   msgNum := DllCall("RegisterWindowMessage", "Str", "SHELLHOOK")
   OnMessage(msgNum, "Manager_onShellMessage")
+  OnMessage(WM_DISPLAYCHANGE, "Manager_onDisplayChange")
 }
 ;; SKAN: How to Hook on to Shell to receive its messages? (http://www.autohotkey.com/forum/viewtopic.php?p=123323#123323)
 
-Manager_registerWindowProc() {
-  Global Manager_windowProc_#0
+Manager_onDisplayChange(a, wParam, uMsg, lParam) {
+  Debug_logMessage("DEBUG[1] Manager_onDisplayChange( a: " . a . ", uMsg: " . uMsg . ", wParam: " . wParam . ", lParam: " . lParam . " )", 1)
+  MsgBox, 0x4, , Would you like to reset the monitor configuration?
+  IfMsgBox Yes
+    Manager_resetMonitorConfiguration()
+}
+
+Manager_resetMonitorConfiguration() {
+  Local GuiN, hWnd, i, m, wndClass, wndIds, wndTitle
+
+  m := Manager_monitorCount
+  SysGet, Manager_monitorCount, MonitorCount
+  If (Manager_monitorCount < m) {
+    Loop, % m - Manager_monitorCount {
+      i := Manager_monitorCount + A_Index
+      GuiN := (i - 1) + 1
+      Gui, %GuiN%: Destroy
+      Loop, % Config_viewCount {
+        If View_#%i%_#%A_Index%_wndIds {
+          View_#1_#%A_Index%_wndIds := View_#%i%_#%A_Index%_wndIds View_#1_#%A_Index%_wndIds
+
+          StringTrimRight, wndIds, View_#%i%_#%A_Index%_wndIds, 1
+          Loop, PARSE, wndIds, `;
+          {
+            Loop, % Config_viewCount {
+              StringReplace, View_#%i%_#%A_Index%_wndIds, View_#%i%_#%A_Index%_wndIds, %A_LoopField%`;,
+              View_#%i%_#%A_Index%_aWndId := 0
+            }
+            Monitor_moveWindow(1, A_LoopField)
+          }
+
+          ;; Manually set the active monitor.
+          Manager_aMonitor := 1
+        }
+      }
+    }
+    m := Manager_monitorCount
+  } Else If (Manager_monitorCount > m) {
+    Loop, % Manager_monitorCount - m
+      Monitor_init(m + A_Index, True)
+  }
+  Loop, % m {
+    Monitor_getWorkArea(A_Index)
+    Bar_init(A_Index)
+  }
+  Manager_saveState()
+  Loop, % Manager_monitorCount {
+    View_arrange(A_Index, Monitor_#%A_Index%_aView_#1)
+    Bar_updateView(A_Index, Monitor_#%A_Index%_aView_#1)
+  }
+  Manager__restoreWindowState(Main_autoWindowState)
+  Bar_updateStatus()
+  Bar_updateTitle()
 
   Gui, +LastFound
   hWnd := WinExist()
-  windowProc_#1 := RegisterCallback("Manager_windowProc", "", 4)
-  Manager_windowProc_#0 := DllCall("SetWindowLong", UInt, hWnd, Int, -4, Int, windowProc_#1, UInt)
-}
-
-WM_DISPLAYCHANGE := 126   ;; This message is sent when the display resolution has changed.
-Manager_windowProc(hWnd, uMsg, wParam, lParam) {
-  Global Manager_windowProc_#0, WM_DISPLAYCHANGE
-
-  If (uMsg = 126)
-    Debug_logMessage("DEBUG[0] Manager_onShellMessage( wParam: " . wParam . ", lParam: " . lParam . " )", 0)
-  ;; Otherwise (since above didn't return), pass all unhandled events to the original WindowProc.
-  Return, DllCall("CallWindowProcA", UInt, Manager_windowProc_#0, UInt, hWnd, UInt, uMsg, UInt, wParam, UInt, lParam)
+  WinGetClass, wndClass, ahk_id %hWnd%
+  WinGetTitle, wndTitle, ahk_id %hWnd%
+  DllCall("RegisterShellHookWindow", "UInt", hWnd)    ;; Minimum operating systems: Windows 2000 (http://msdn.microsoft.com/en-us/library/ms644989(VS.85).aspx)
+  Debug_logMessage("DEBUG[1] Manager_registerShellHook; hWnd: " . hWnd . ", wndClass: " . wndClass . ", wndTitle: " . wndTitle, 1)
 }
 
 Manager_resetWindowBorder()
