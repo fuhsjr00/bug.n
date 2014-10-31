@@ -1187,9 +1187,18 @@ Manager_toggleDecor()
     Manager_winSet("Style", "-0xC00000", aWndId)
 }
 
-Manager_unmanage(wndId)
-{
-  Local a
+Manager_unmanage(wndId) {
+  Local a, aView, wndId0, wndIds
+
+  ;; Find the next window that should have focus.
+  ;;   If there is no such window, choose the bar on the same monitor.
+  aView := Monitor_#%Manager_aMonitor%_aView_#1
+  wndIds := View_#%Manager_aMonitor%_#%aView%_wndIds
+  StringSplit, wndId, wndIds, `;
+  If (wndId0 < 3)
+    Manager_winActivate(0)
+  Else
+    View_activateWindow(1)
 
   ;; Do our best to make sure that any unmanaged windows are left visible.
   Manager_winShow(wndId)
