@@ -1293,8 +1293,11 @@ Manager_winActivate(wndId)
     Debug_logMessage("DEBUG[1] Activating window: " wndId, 1)
     If Not wndId
     {
-      WinGet, wndId, ID, Program Manager ahk_class Progman
-      Debug_logMessage("DEBUG[1] Activating Program Manager: " wndId, 1)
+      If (A_OSVersion = "WIN_8")
+        WinGet, wndId, ID, ahk_class WorkerW
+      Else
+        WinGet, wndId, ID, Program Manager ahk_class Progman
+      Debug_logMessage("DEBUG[1] Activating Desktop: " wndId, 1)
     }
     WinActivate, ahk_id %wndId%
     WinGet, aWndId, ID, A

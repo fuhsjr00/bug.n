@@ -241,7 +241,7 @@ View_getActiveWindow(m, v)
   {
     WinGetClass, aWndClass, ahk_id %aWndId%
     WinGetTitle, aWndTitle, ahk_id %aWndId%
-    If Not (aWndClass = "Progman") And Not (aWndClass = "AutoHotkeyGui" And SubStr(aWndTitle, 1, 10) = "bug.n_BAR_") And Not (aWndClass = "DesktopBackgroundClass")
+    If Not (aWndClass = "Progman") And Not (aWndClass = "WorkerW") And Not (aWndClass = "AutoHotkeyGui" And SubStr(aWndTitle, 1, 10) = "bug.n_BAR_") And Not (aWndClass = "DesktopBackgroundClass")
       Return, aWndId
   }
   Return, 0
