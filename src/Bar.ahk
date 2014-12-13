@@ -29,6 +29,13 @@ Bar_init(m)
   }
   Else
     wndWidth := Config_barWidth
+
+  wndWidth := Round(wndWidth * Config_scalingFactor)
+  If (Config_verticalBarPos = "tray" And m = Manager_taskBarMonitor) {
+    Bar_ctrlHeight := Round(Bar_ctrlHeight * Config_scalingFactor)
+    Bar_height := Round(Bar_height * Config_scalingFactor)
+  }
+
   Monitor_#%m%_barWidth := wndWidth
   titleWidth := wndWidth
   h1 := Bar_ctrlHeight
@@ -140,15 +147,16 @@ Bar_init(m)
   If (Config_horizontalBarPos = "left")
     x1 := 0
   Else If (Config_horizontalBarPos = "right")
-    x1 := Monitor_#%m%_width - wndWidth
+    x1 := Monitor_#%m%_width - wndWidth / Config_scalingFactor
   Else If (Config_horizontalBarPos = "center")
-    x1 := (Monitor_#%m%_width - wndWidth) / 2
-  Else If (Config_horizontalBarPos => 0)
+    x1 := (Monitor_#%m%_width - wndWidth / Config_scalingFactor) / 2
+  Else If (Config_horizontalBarPos >= 0)
     x1 := Config_horizontalBarPos
   Else If (Config_horizontalBarPos < 0)
-    x1 := Monitor_#%m%_width - wndWidth + Config_horizontalBarPos
+    x1 := Monitor_#%m%_width - wndWidth / Config_scalingFactor + Config_horizontalBarPos
   If Not (Config_verticalBarPos = "tray" And m = Manager_taskBarMonitor)
     x1 += Monitor_#%m%_x
+  x1 := Round(x1)
 
   Bar_#%m%_titleWidth := titleWidth
   Monitor_#%m%_barX := x1

@@ -55,6 +55,9 @@ Config_init()
   Config_showTaskBar     := False
   Config_showBorder      := True
   Config_selBorderColor  := ""
+  Config_scalingFactor   := 1   ;; Undocumented. The value is retrieved by `Config_getSystemSettings()` from the registry.
+                                ;; It should not be set manually by the user,
+                                ;; but is dependant on the setting in the `Display control panel` of Windows under `Appearance and Personalization`.
 
   ;; Window arrangement
   Config_viewNames          := "1;2;3;4;5;6;7;8;9"
@@ -156,7 +159,7 @@ Config_convertSystemColor(systemColor)
 
 Config_getSystemSettings()
 {
-  Global Config_fontName, Config_fontSize, Config_normBgColor, Config_normFgColor, Config_selBgColor, Config_selFgColor
+  Global Config_fontName, Config_fontSize, Config_normBgColor, Config_normFgColor, Config_selBgColor, Config_selFgColor, Config_scalingFactor
 
   If Not Config_fontName
   {
@@ -218,6 +221,10 @@ Config_getSystemSettings()
     Config_selFgColor .= ";" Config_convertSystemColor(DllCall("GetSysColor", "Int", 2))    ;; COLOR_ACTIVECAPTION
   }
   SetFormat, Integer, d
+
+  RegRead, appliedDPI, HKEY_CURRENT_USER, Control Panel\Desktop\WindowMetrics, AppliedDPI
+  If (ErrorLevel = 0)
+    Config_scalingFactor := 96 / appliedDPI
 }
 
 Config_hotkeyLabel:

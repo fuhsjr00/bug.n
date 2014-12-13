@@ -136,7 +136,7 @@ Monitor_get(x, y)
 
 Monitor_getWorkArea(m)
 {
-  Local bTop, x, y
+  Local bHeight, bTop, x, y
   Local monitor, monitorBottom, monitorLeft, monitorRight, monitorTop
   Local wndClasses, wndHeight, wndId, wndWidth, wndX, wndY
 
@@ -190,18 +190,19 @@ Monitor_getWorkArea(m)
       }
     }
   }
+  bHeight := Round(Bar_height / Config_scalingFactor)
   bTop := 0
   If Monitor_#%m%_showBar
   {
     If (Config_verticalBarPos = "top" Or (Config_verticalBarPos = "tray" And Not m = Manager_taskBarMonitor))
     {
       bTop := monitorTop
-      monitorTop += Bar_height
+      monitorTop += bHeight
     }
     Else If (Config_verticalBarPos = "bottom")
     {
-      bTop := monitorBottom - Bar_height
-      monitorBottom -= Bar_height
+      bTop := monitorBottom - bHeight
+      monitorBottom -= bHeight
     }
   }
 
