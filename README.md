@@ -14,20 +14,14 @@ add-on for Microsoft Windows. It is written in the scripting language
 * Dynamically resize and move your windows, applying a specified layout,
   without you having to care about moving them all by mouse
 * Increase the available screen estate by hiding and therewith freeing up the
-  space occupied by
-  + the Microsoft Windows Taskbar and
-  + the title bar for every single window
+  space occupied by the Microsoft Windows Taskbar and the title bar for every
+  single window
 * and replacing all with a single slim status bar (-- but bug.n is not a shell
   replacement)
-* Show window management information in the status bar:
-  + active window title
-  + active layout
-  + overview of the views used
-* Show system information in the status bar:
-  + time and date
-  + CPU and memory usage
-  + disk and network load
-  + battery level
+* Show window management information in the status bar: active window title,
+  active layout, overview of the views used
+* Show system information in the status bar: time and date, CPU and memory
+  usage, disk and network load, battery level
 * Store your settings, i. e. which windows and layout were set on a specific
   view
 * Support multiple monitors
