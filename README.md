@@ -84,5 +84,5 @@ the [LICENSE file](./LICENSE.md) for the full license text.
 
 ### Credits
 
-Please see the [CREDITS file](./CREDITS.md) for a list of people and projects,
+Please see the [CREDITS file](./doc/CREDITS.md) for a list of people and projects,
 which contributed to bug.n.
