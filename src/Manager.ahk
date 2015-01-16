@@ -120,6 +120,13 @@ Manager_maintenance()
 
 Manager_activateMonitor(d)
 {
+  Local nextMonitor
+  nextMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
+  Manager_activateMonitorAbs(nextMonitor)
+}
+
+Manager_activateMonitorAbs(monitor)
+{
   Local aView, aWndHeight, aWndId, aWndWidth, aWndX, aWndY, v, wndId
 
   If (Manager_monitorCount > 1)
@@ -134,7 +141,7 @@ Manager_activateMonitor(d)
     }
 
     ;; Manually set the active monitor.
-    Manager_aMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
+    Manager_aMonitor := Manager_loop(0, monitor, 1, Manager_monitorCount)
     v := Monitor_#%Manager_aMonitor%_aView_#1
     wndId := View_#%Manager_aMonitor%_#%v%_aWndId
     If Not (wndId And WinExist("ahk_id" wndId))
@@ -144,7 +151,7 @@ Manager_activateMonitor(d)
       Else
         wndId := 0
     }
-    Debug_logMessage("DEBUG[1] Manager_activateMonitor: Manager_aMonitor: " Manager_aMonitor ", d: " d ", wndId: " wndId, 1)
+    Debug_logMessage("DEBUG[1] Manager_activateMonitor: Manager_aMonitor: " Manager_aMonitor ", monitor: " monitor ", wndId: " wndId, 1)
     Manager_winActivate(wndId)
   }
 }
@@ -386,15 +393,18 @@ Manager_lockWorkStation()
 
 Manager_loop(index, increment, lowerBound, upperBound)
 {
-  index += increment
-  If (index > upperBound)
-    index := lowerBound
-  If (index < lowerBound)
-    index := upperBound
-  If (upperBound = 0)
-    index := 0
+  Local signedIndex, numberOfIndexes, lowerBoundBasedIndex
 
-  Return, index
+  If (upperBound <= 0 Or upperBound < lowerBound)
+    Return, 0
+
+  numberOfIndexes := upperBound - lowerBound + 1
+  lowerBoundBasedIndex := index - lowerBound
+  lowerBoundBasedIndex := Mod(lowerBoundBasedIndex + increment, numberOfIndexes)
+  If (lowerBoundBasedIndex < 0)
+    lowerBoundBasedIndex += numberOfIndexes
+
+  Return, lowerBound + lowerBoundBasedIndex
 }
 
 Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hideTitle, action = "")
@@ -797,11 +807,18 @@ Manager_resetWindowBorder()
 
 Manager_setViewMonitor(d)
 {
+    Local nextMonitor
+    nextMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
+    Manager_setViewMonitorAbs(nextMonitor)
+}
+
+Manager_setViewMonitorAbs(monitor)
+{
   Local aView, aWndId, m, v, wndIds
 
   If (Manager_monitorCount > 1)
   {
-    m := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
+    m := Manager_loop(0, monitor, 1, Manager_monitorCount)
     v := Monitor_#%m%_aView_#1
     aView := Monitor_#%Manager_aMonitor%_aView_#1
     If View_#%Manager_aMonitor%_#%aView%_wndIds
@@ -864,6 +881,13 @@ Manager_setWindowBorder()
 
 Manager_setWindowMonitor(d)
 {
+  Local nextMonitor
+  nextMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
+  Manager_setWindowMonitorAbs(nextMonitor)
+}
+
+Manager_setWindowMonitorAbs(monitor)
+{
   Local aWndId, v
 
   WinGet, aWndId, ID, A
@@ -880,7 +904,7 @@ Manager_setWindowMonitor(d)
       View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
 
     ;; Manually set the active monitor.
-    Manager_aMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
+    Manager_aMonitor := Manager_loop(0, monitor, 1, Manager_monitorCount)
     Monitor_moveWindow(Manager_aMonitor, aWndId)
     v := Monitor_#%Manager_aMonitor%_aView_#1
     Manager_#%aWndId%_tags := 1 << v - 1
