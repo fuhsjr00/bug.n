@@ -72,3 +72,6 @@ for non-bug.n hotkeys or to reassign bug.n functions.
 
 #### [LICENSE](../LICENSE.md)
 > bug.n is licensed under the GNU General Public License version 3.
+
+#### [CREDITS](../CREDITS.md)
+> A list of people and projects, which contributed to bug.n.
