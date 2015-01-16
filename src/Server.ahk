@@ -22,26 +22,22 @@ Server_init()
 {
     ; Create a hidden GUI with an edit control.
     gui, 1:add, edit, w50 h20 vcommand gOnCommandReceived
-    ;gui, show, NA, scriptcomwin_1
+    ;gui, show, NA, bug.n_BAR_1
 }
 
 ; Whenever the text in the edit control is changed this subroutine is launched.
 OnCommandReceived:
 {
     gui, 1:submit, NoHide
-;     MsgBox % command
     if (RegExMatch(command, "^\s*\w+\s*\(\s*\)\s*$")) ; no args
     {
         function := RegExReplace(command, "^\s*(\w+)\s*\(.*", "${1}")
-;         MsgBox % function
         %function%()
     }
     else if (RegExMatch(command, "^\s*\w+\s*\(\s*[-""_a-zA-Z0-9]+\s*\)\s*$")) ; 1 arg
     {
         function := RegExReplace(command, "^\s*(\w+)\s*\(.*", "${1}")
         arg1 := RegExReplace(command, "^\s*\w+\s*\(\s*([-""_a-zA-Z0-9]+).*", "${1}")
-;         MsgBox % function
-;         MsgBox % arg1
         %function%(arg1)
     }
     else if (RegExMatch(command, "^\s*\w+\s*\(\s*[-""_a-zA-Z0-9]+\s*,\s*[-""_a-zA-Z0-9]+\s*\)\s*$")) ; 2 arg
@@ -49,9 +45,6 @@ OnCommandReceived:
         function := RegExReplace(command, "^\s*(\w+)\s*\(.*", "${1}")
         arg1 := RegExReplace(command, "^\s*\w+\s*\(\s*([-""_a-zA-Z0-9]+).*", "${1}")
         arg2 := RegExReplace(command, "^\s*\w+\s*\(\s*[-""_a-zA-Z0-9]+\s*,\s*([-""_a-zA-Z0-9]+).*", "${1}")
-;         MsgBox % function
-;         MsgBox % arg1
-;         MsgBox % arg2
         %function%(arg1, arg2)
     }
     else if (RegExMatch(command, "^\s*\w+\s*\(\s*[-""_a-zA-Z0-9]+\s*,\s*[-""_a-zA-Z0-9]+\s*,\s*[-""_a-zA-Z0-9]+\s*\)\s*$")) ; 3 arg
@@ -60,10 +53,6 @@ OnCommandReceived:
         arg1 := RegExReplace(command, "^\s*\w+\s*\(\s*([-""_a-zA-Z0-9]+).*", "${1}")
         arg2 := RegExReplace(command, "^\s*\w+\s*\(\s*[-""_a-zA-Z0-9]+\s*,\s*([-""_a-zA-Z0-9]+).*", "${1}")
         arg3 := RegExReplace(command, "^\s*\w+\s*\(\s*[-""_a-zA-Z0-9]+\s*,\s*[-""_a-zA-Z0-9]+\s*,\s*([-""_a-zA-Z0-9]+).*", "${1}")
-;         MsgBox % function
-;         MsgBox % arg1
-;         MsgBox % arg2
-;         MsgBox % arg3
         %function%(arg1, arg2, arg3)
     }
     else if (RegExMatch(command, "^\s*\w+\s*\(\s*[-""_a-zA-Z0-9]+\s*,\s*[-""_a-zA-Z0-9]+\s*,\s*[-""_a-zA-Z0-9]+\s*,\s*[-""_a-zA-Z0-9]+\s*\)\s*$")) ; 4 arg
@@ -73,16 +62,13 @@ OnCommandReceived:
         arg2 := RegExReplace(command, "^\s*\w+\s*\(\s*[-""_a-zA-Z0-9]+\s*,\s*([-""_a-zA-Z0-9]+).*", "${1}")
         arg3 := RegExReplace(command, "^\s*\w+\s*\(\s*[-""_a-zA-Z0-9]+\s*,\s*[-""_a-zA-Z0-9]+\s*,\s*([-""_a-zA-Z0-9]+).*", "${1}")
         arg4 := RegExReplace(command, "^\s*\w+\s*\(\s*[-""_a-zA-Z0-9]+\s*,\s*[-""_a-zA-Z0-9]+\s*,\s*[-""_a-zA-Z0-9]+\s*,\s*([-""_a-zA-Z0-9]+).*", "${1}")
-;         MsgBox % function
-;         MsgBox % arg1
-;         MsgBox % arg2
-;         MsgBox % arg3
-;         MsgBox % arg4
         %function%(arg1, arg2, arg3, arg4)
     }
 }
 
 ; Just use this to send command
 ;     detecthiddenwindows, on
-;     controlsettext, edit1, % "Monitor_setWindowTag(2)", scriptcomwin_1
+;     controlsettext, edit1, % "Monitor_setXXX()", bug.n_BAR_1
+;     controlsettext, edit1, % "Monitor_setWindowTag(2)", bug.n_BAR_1
+;     controlsettext, edit1, % "Monitor_setZZZ(1, 3)", bug.n_BAR_1
 
