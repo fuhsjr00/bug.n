@@ -20,12 +20,12 @@ hotkeys) for each version of bug.n.
 run bug.n as Administrator to solve problems with the User Access Control of
 Microsft Windows higher than Vista.
 
-##### [Stable version](../releases/latest)
+##### [Stable version](../../../releases/latest)
 > The current stable version of bug.n as a package (`.zip` file); it includes
 the source, a compiled version as one executable and the corresponding
 documentation for that version.
 
-##### [Development version](../archive/master.zip)
+##### [Development version](../../../archive/master.zip)
 > The development version of bug.n as a package (`.zip` file); it includes the
 source, a compiled version as one executable and the corresponding documentation
 for the current development status.
