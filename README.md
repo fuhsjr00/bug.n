@@ -52,8 +52,8 @@ add-on for Microsoft Windows. It is written in the scripting language
 #### Requirements
 
 * Microsoft Windows 2000 or higher
-* [AutoHotkey](http://ahkscript.org/download/) (if running bug.n from source as
-  a script)
+* [AutoHotkey](http://ahkscript.org/download/) 1.1.10 or higher (if running
+  bug.n from source as a script)
 
 You may either
 [download the stable version of bug.n](https://github.com/fuhsjr00/bug.n/releases/latest)
