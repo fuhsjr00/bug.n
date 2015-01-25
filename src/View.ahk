@@ -52,7 +52,7 @@ View_activateWindow(d)
   Debug_logMessage("DEBUG[2] wndId count: " . wndId0, 2, False)
   If (wndId0 > 1)
   {
-    If Manager_#%aWndId%_isFloating
+    If Window_#%aWndId%_isFloating
       Window_set(aWndId, "Bottom", "")
     Loop, % wndId0
     {
@@ -325,7 +325,7 @@ View_getTiledWndIds(m, v)
   StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
   Loop, PARSE, wndIds, `;
   {
-    If Not Manager_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) and Not Window_isHung(A_LoopField)
+    If Not Window_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) and Not Window_isHung(A_LoopField)
     {
       n += 1
       tiledWndIds .= A_LoopField ";"
@@ -355,9 +355,9 @@ View_moveWindow(i=0, d=0) {
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
   If (Config_layoutFunction_#%l% = "tile" And InStr(Manager_managedWndIds, aWndId ";") And Not (i = 0 And d = 0) And i <= View_#%m%_#%v%_area_#0) {
     If (i = 0)
-      i := Manager_loop(Manager_#%aWndId%_area, d, 1, View_#%m%_#%v%_area_#0)
+      i := Manager_loop(Window_#%aWndId%_area, d, 1, View_#%m%_#%v%_area_#0)
     Window_move(aWndId, View_#%m%_#%v%_area_#%i%_x, View_#%m%_#%v%_area_#%i%_y, View_#%m%_#%v%_area_#%i%_width, View_#%m%_#%v%_area_#%i%_height)
-    Manager_#%aWndId%_area := i
+    Window_#%aWndId%_area := i
     If Config_mouseFollowsFocus {
       WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
       DllCall("SetCursorPos", "Int", Round(aWndX + aWndWidth / 2), "Int", Round(aWndY + aWndHeight / 2))
@@ -735,7 +735,7 @@ View_toggleFloating()
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
   If (Config_layoutFunction_#%l% And InStr(Manager_managedWndIds, aWndId ";"))
   {
-    Manager_#%aWndId%_isFloating := Not Manager_#%aWndId%_isFloating
+    Window_#%aWndId%_isFloating := Not Window_#%aWndId%_isFloating
     View_arrange(Manager_aMonitor, v)
     Bar_updateTitle()
   }

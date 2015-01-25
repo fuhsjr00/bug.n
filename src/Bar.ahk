@@ -482,7 +482,7 @@ Bar_updateTitle()
   WinGetTitle, aWndTitle, ahk_id %aWndId%
   If InStr(Bar_hideTitleWndIds, aWndId ";") Or (aWndTitle = "bug.n_BAR_0")
     aWndTitle := ""
-  If Manager_#%aWndId%_isFloating
+  If Window_#%aWndId%_isFloating
     aWndTitle := "~ " aWndTitle
   If (Manager_monitorCount > 1)
     aWndTitle := "[" Manager_aMonitor "] " aWndTitle

@@ -77,7 +77,7 @@ Monitor_activateView(v)
     StringTrimRight, wndIds, View_#%m%_#%aView%_wndIds, 1
     Loop, PARSE, wndIds, `;
     {
-      If Not (Manager_#%A_LoopField%_tags & (1 << v - 1))
+      If Not (Window_#%A_LoopField%_tags & (1 << v - 1))
         Window_hide(A_LoopField)
     }
     SetWinDelay, 10
@@ -88,7 +88,7 @@ Monitor_activateView(v)
     SetWinDelay, 0
     Loop, PARSE, wndIds, `;
     {
-      Manager_winShow(A_LoopField)
+      Window_show(A_LoopField)
     }
     SetWinDelay, 10
     Manager_hideShow := False
@@ -211,7 +211,7 @@ Monitor_moveWindow(m, wndId)
 {
   Global
 
-  Manager_#%wndId%_monitor := m
+  Window_#%wndId%_monitor := m
 }
 
 Monitor_setWindowTag(t)
@@ -230,12 +230,12 @@ Monitor_setWindowTag(t)
     {
       Loop, % Config_viewCount
       {
-        If Not (Manager_#%aWndId%_tags & (1 << A_Index - 1))
+        If Not (Window_#%aWndId%_tags & (1 << A_Index - 1))
         {
           View_#%Manager_aMonitor%_#%A_Index%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%A_Index%_wndIds
           View_#%Manager_aMonitor%_#%A_Index%_aWndId := aWndId
           Bar_updateView(Manager_aMonitor, A_Index)
-          Manager_#%aWndId%_tags += 1 << A_Index - 1
+          Window_#%aWndId%_tags += 1 << A_Index - 1
         }
       }
     }
@@ -251,10 +251,10 @@ Monitor_setWindowTag(t)
         }
       }
 
-      If Not (Manager_#%aWndId%_tags & (1 << t - 1))
+      If Not (Window_#%aWndId%_tags & (1 << t - 1))
         View_#%Manager_aMonitor%_#%t%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%t%_wndIds
       View_#%Manager_aMonitor%_#%t%_aWndId := aWndId
-      Manager_#%aWndId%_tags := 1 << t - 1
+      Window_#%aWndId%_tags := 1 << t - 1
 
       aView := Monitor_#%Manager_aMonitor%_aView_#1
       If Not (t = aView)
@@ -342,11 +342,11 @@ Monitor_toggleWindowTag(t)
   WinGet, aWndId, ID, A
   If (InStr(Manager_managedWndIds, aWndId ";") And t >= 0 And t <= Config_viewCount)
   {
-    If (Manager_#%aWndId%_tags & (1 << t - 1))
+    If (Window_#%aWndId%_tags & (1 << t - 1))
     {
-      If Not ((Manager_#%aWndId%_tags - (1 << t - 1)) = 0)
+      If Not ((Window_#%aWndId%_tags - (1 << t - 1)) = 0)
       {
-        Manager_#%aWndId%_tags -= 1 << t - 1
+        Window_#%aWndId%_tags -= 1 << t - 1
         StringReplace, View_#%Manager_aMonitor%_#%t%_wndIds, View_#%Manager_aMonitor%_#%t%_wndIds, %aWndId%`;,
         Bar_updateView(Manager_aMonitor, t)
         If (t = Monitor_#%Manager_aMonitor%_aView_#1)
@@ -366,7 +366,7 @@ Monitor_toggleWindowTag(t)
       View_#%Manager_aMonitor%_#%t%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%t%_wndIds
       View_#%Manager_aMonitor%_#%t%_aWndId := aWndId
       Bar_updateView(Manager_aMonitor, t)
-      Manager_#%aWndId%_tags += 1 << t - 1
+      Window_#%aWndId%_tags += 1 << t - 1
     }
   }
 }

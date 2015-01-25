@@ -165,8 +165,8 @@ Window_toggleDecor(wndId = 0) {
   If (wndId = 0)
     WinGet, wndId, ID, A
 
-  Manager_#%wndId%_isDecorated := Not Manager_#%wndId%_isDecorated
-  If Manager_#%wndId%_isDecorated
+  Window_#%wndId%_isDecorated := Not Window_#%wndId%_isDecorated
+  If Window_#%wndId%_isDecorated
     Window_set(wndId, "Style", "+0xC00000")
   Else
     Window_set(wndId, "Style", "-0xC00000")

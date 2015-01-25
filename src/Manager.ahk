@@ -264,7 +264,7 @@ Manager_getWindowInfo()
     rule .= ";1"
   Else
     rule .= ";0"
-  rule .= ";" Manager_#%aWndId%_monitor ";" Manager_#%aWndId%_tags ";" Manager_#%aWndId%_isFloating ";" Manager_#%aWndId%_isDecorated
+  rule .= ";" Window_#%aWndId%_monitor ";" Window_#%aWndId%_tags ";" Window_#%aWndId%_isFloating ";" Window_#%aWndId%_isDecorated
   If InStr(Bar_hiddenWndIds, aWndId) {
     text .= " (hidden)"
     rule .= ";1;"
@@ -272,8 +272,8 @@ Manager_getWindowInfo()
     rule .= ";0;"
   If (aWndMinMax = 1)
     rule .= "maximize"
-  text .= "`nprocess:`t" aWndProcessName "`nstyle:`t" aWndStyle "`nmetrics:`tx: " aWndX ", y: " aWndY ", width: " aWndWidth ", height: " aWndHeight "`ntags:`t" Manager_#%aWndId%_tags
-  If Manager_#%aWndId%_isFloating
+  text .= "`nprocess:`t" aWndProcessName "`nstyle:`t" aWndStyle "`nmetrics:`tx: " aWndX ", y: " aWndY ", width: " aWndWidth ", height: " aWndHeight "`ntags:`t" Window_#%aWndId%_tags
+  If Window_#%aWndId%_isFloating
     text .= " (floating)"
   text .= "`n`n" rule
   MsgBox, 260, bug.n: Window Information, % text "`n`nCopy text to clipboard?"
@@ -342,17 +342,17 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
 
     Manager_managedWndIds .= wndId ";"
     Monitor_moveWindow(m, wndId)
-    Manager_#%wndId%_tags        := tags
-    Manager_#%wndId%_isDecorated := isDecorated
-    Manager_#%wndId%_isFloating  := isFloating
-    Manager_#%wndId%_area        := 0
+    Window_#%wndId%_tags        := tags
+    Window_#%wndId%_isDecorated := isDecorated
+    Window_#%wndId%_isFloating  := isFloating
+    Window_#%wndId%_area        := 0
 
     If Not Config_showBorder
       Window_set(wndId, "Style", "-0x40000")
-    If Not Manager_#%wndId%_isDecorated
+    If Not Window_#%wndId%_isDecorated
       Window_set(wndId, "Style", "-0xC00000")
 
-    a := Manager_#%wndId%_tags & (1 << (Monitor_#%m%_aView_#1 - 1))
+    a := Window_#%wndId%_tags & (1 << (Monitor_#%m%_aView_#1 - 1))
     If a
     {
       ;; A newly created window defines the active monitor, if it is visible.
@@ -391,10 +391,10 @@ Manager_manage(preferredMonitor, preferredView, wndId)
     If body
     {
       isManaged := InStr(Manager_managedWndIds, body ";")
-      m := Manager_#%body%_monitor
-      tags := Manager_#%body%_tags
-      isDecorated := Manager_#%body%_isDecorated
-      isFloating := Manager_#%body%_isFloating
+      m := Window_#%body%_monitor
+      tags := Window_#%body%_tags
+      isDecorated := Window_#%body%_isDecorated
+      isFloating := Window_#%body%_isFloating
       hideTitle := InStr(Bar_hideTitleWndIds, body ";")
       action := ""
     }
@@ -423,7 +423,7 @@ Manager_manage(preferredMonitor, preferredView, wndId)
   ; Do view placement.
   If isManaged {
     Loop, % Config_viewCount
-      If (Manager_#%wndId%_tags & (1 << (A_Index - 1))) {
+      If (Window_#%wndId%_tags & (1 << (A_Index - 1))) {
         If (body) {
           ; Try to position near the body.
           View_ghostWindow(m, A_Index, body, wndId)
@@ -443,7 +443,7 @@ Manager_maximizeWindow()
   WinGet, aWndId, ID, A
   v := Monitor_#%Manager_aMonitor%_aView_#1
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If Not Manager_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
+  If Not Window_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
     View_toggleFloating()
   Window_set(aWndId, "Top", "")
 
@@ -457,7 +457,7 @@ Manager_moveWindow()
   WinGet, aWndId, ID, A
   v := Monitor_#%Manager_aMonitor%_aView_#1
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If Not Manager_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
+  If Not Window_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
     View_toggleFloating()
   Window_set(aWndId, "Top", "")
 
@@ -588,11 +588,11 @@ Manager_onShellMessage(wParam, lParam) {
         wndId := SubStr(wndIds, 1, InStr(wndIds, ";") - 1)
         Loop, % Config_viewCount
         {
-          If (Manager_#%wndId%_tags & 1 << A_Index - 1)
+          If (Window_#%wndId%_tags & 1 << A_Index - 1)
           {
             Debug_logMessage("DEBUG[3] Switching views because " . wndId . " is considered hidden and active", 3)
             ;; A newly created window defines the active monitor, if it is visible.
-            Manager_aMonitor := Manager_#%wndId%_monitor
+            Manager_aMonitor := Window_#%wndId%_monitor
             Monitor_activateView(A_Index)
             Break
           }
@@ -618,7 +618,7 @@ Manager_onShellMessage(wParam, lParam) {
             wndId := wndId%A_Index%
             View_#%Manager_aMonitor%_#%t%_wndIds := wndId ";" View_#%Manager_aMonitor%_#%t%_wndIds
             View_#%Manager_aMonitor%_#%t%_aWndId := wndId
-            Manager_#%wndId%_tags += 1 << t - 1
+            Window_#%wndId%_tags += 1 << t - 1
           }
           Bar_updateView(Manager_aMonitor, t)
           If Config_dynamicTiling
@@ -749,7 +749,7 @@ Manager_setViewMonitor(d)
         }
 
         Monitor_moveWindow(m, A_LoopField)
-        Manager_#%A_LoopField%_tags := 1 << v - 1
+        Window_#%A_LoopField%_tags := 1 << v - 1
       }
       View_arrange(Manager_aMonitor, aView)
       Loop, % Config_viewCount
@@ -814,7 +814,7 @@ Manager_setWindowMonitor(d)
     Manager_aMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
     Monitor_moveWindow(Manager_aMonitor, aWndId)
     v := Monitor_#%Manager_aMonitor%_aView_#1
-    Manager_#%aWndId%_tags := 1 << v - 1
+    Window_#%aWndId%_tags := 1 << v - 1
     View_#%Manager_aMonitor%_#%v%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%v%_wndIds
     View_#%Manager_aMonitor%_#%v%_aWndId := aWndId
     If Config_dynamicTiling
@@ -831,7 +831,7 @@ Manager_sizeWindow()
   WinGet, aWndId, ID, A
   v := Monitor_#%Manager_aMonitor%_aView_#1
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If Not Manager_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
+  If Not Window_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
     View_toggleFloating()
   Window_set(aWndId, "Top", "")
 
@@ -932,7 +932,7 @@ Manager_saveWindowState(filename, nm, nv)
     Else
       isTitleHidden := 0
 
-    text .= "Window " . wndId . ";" . process . ";" . Manager_#%wndId%_monitor . ";" . Manager_#%wndId%_tags . ";" . Manager_#%wndId%_isFloating . ";" . Manager_#%wndId%_isDecorated . ";" . isTitleHidden . ";" . isManaged . ";" . title . "`n"
+    text .= "Window " . wndId . ";" . process . ";" . Window_#%wndId%_monitor . ";" . Window_#%wndId%_tags . ";" . Window_#%wndId%_isFloating . ";" . Window_#%wndId%_isDecorated . ";" . isTitleHidden . ";" . isManaged . ";" . title . "`n"
   }
   DetectHiddenWindows, Off
 
@@ -1167,20 +1167,20 @@ Manager_unmanage(wndId) {
 
   ;; Do our best to make sure that any unmanaged windows are left visible.
   Window_show(wndId)
-  a := Manager_#%wndId%_tags & 1 << Monitor_#%Manager_aMonitor%_aView_#1 - 1
+  a := Window_#%wndId%_tags & 1 << Monitor_#%Manager_aMonitor%_aView_#1 - 1
   Loop, % Config_viewCount
   {
-    If (Manager_#%wndId%_tags & 1 << A_Index - 1)
+    If (Window_#%wndId%_tags & 1 << A_Index - 1)
     {
       StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %wndId%`;,
       Bar_updateView(Manager_aMonitor, A_Index)
     }
   }
-  Manager_#%wndId%_monitor     :=
-  Manager_#%wndId%_tags        :=
-  Manager_#%wndId%_isDecorated :=
-  Manager_#%wndId%_isFloating  :=
-  Manager_#%wndId%_area        :=
+  Window_#%wndId%_monitor     :=
+  Window_#%wndId%_tags        :=
+  Window_#%wndId%_isDecorated :=
+  Window_#%wndId%_isFloating  :=
+  Window_#%wndId%_area        :=
   StringReplace, Bar_hideTitleWndIds, Bar_hideTitleWndIds, %wndId%`;,
   StringReplace, Manager_allWndIds, Manager_allWndIds, %wndId%`;,
   StringReplace, Manager_managedWndIds, Manager_managedWndIds, %wndId%`;, , All
