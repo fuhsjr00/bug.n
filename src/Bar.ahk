@@ -10,7 +10,7 @@
   @license GNU General Public License version 3
            ../LICENSE.md or <http://www.gnu.org/licenses/>
 
-  @version 8.4.0
+  @version 9.0.0
 */
 
 Bar_init(m)

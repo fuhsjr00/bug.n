@@ -6,6 +6,10 @@
 * `~` changed
 * `+` added
 
+### 9.0.0
+
+
+
 ### 8.4.0
 
 1. `+` Session auto-save and restore. Layout and Window information is stored
