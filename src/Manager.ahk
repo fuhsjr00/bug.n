@@ -229,54 +229,22 @@ Manager_cleanup()
   ;; SKAN: Crazy Scripting : Quick Launcher for Portable Apps (http://www.autohotkey.com/forum/topic22398.html)
 }
 
-Manager_closeWindow()
-{
-  Local aWndId, aview, c0
+Manager_closeWindow() {
+  Local aView, aWndId, c
+
   WinGet, aWndId, ID, A
-  WinGetClass, aWndClass, ahk_id %aWndId%
-  WinGetTitle, aWndTitle, ahk_id %aWndId%
-  If Not (aWndClass = "AutoHotkeyGUI" And RegExMatch(aWndTitle, "bug.n_BAR_[0-9]+"))
-  {
+  If Window_isProg(aWndId) {
     ;; Prior to closing, find the next window that should have focus.
     ;;   If there is no such window, choose the bar on the same monitor.
-    aview := Monitor_#%Manager_aMonitor%_aView_#1
-    wnds := View_#%Manager_aMonitor%_#%aview%_wndIds
-    StringSplit, c, wnds, `;
-    If (c0 < 3)
-    {
+    aView := Monitor_#%Manager_aMonitor%_aView_#1
+    StringSplit, c, View_#%Manager_aMonitor%_#%aView%_wndIds, `;
+    If (c0 < 3) {
       Manager_winActivate(0)
-    }
-    Else
-    {
+    } Else {
       View_activateWindow(1)
     }
     Manager_winClose(aWndId)
   }
-}
-
-
-;; Given a ghost window, try to find its body.
-;; This is only known to work on Windows 7
-Manager_findHung(ghostWnd)
-{
-  Local expectedH, expectedTitle, expectedW, expectedX, expectedY, wndH, wndIds, wndTitle, wndW, wndX, wndY
-
-  WinGetTitle, expectedTitle, ahk_id %ghostWnd%
-  StringReplace, expectedTitle, expectedTitle, %Config_ghostWndSubString%,
-  WinGetPos, expectedX, expectedY, expectedW, expectedH, ahk_id %ghostWnd%
-
-  SetTitleMatchMode, 2
-  WinGet, wndIds, List, %expectedTitle%
-  Loop, % wndIds
-  {
-    If (A_Index = ghostWnd)
-      Continue
-    WinGetPos, wndX, wndY, wndW, wndH, % "ahk_id" wndIDs%A_Index%
-
-    If (wndX = expectedX) And (wndY = expectedY) And (wndW = expectedW) And (wndH = expectedH)
-      Return wndIds%A_Index%
-  }
-  Return 0
 }
 
 Manager_getWindowInfo()
@@ -333,38 +301,6 @@ Manager_getWindowList()
   MsgBox, 260, bug.n: Window List, % text "`n`nCopy text to clipboard?"
   IfMsgBox Yes
     Clipboard := text
-}
-
-Manager_isGhost(wndId)
-{
-  Local wndClass, wndProc
-
-  WinGet, wndProc, ProcessName, ahk_id %wndId%
-  WinGetClass, wndClass, ahk_id %wndId%
-
-  If (wndProc = "dwm.exe") And (wndClass = "Ghost")
-    Return 1
-  Else
-    Return 0
-}
-
-;; 0 - Not hung
-;; 1 - Hung
-Manager_isHung(wndId)
-{
-  Local detect_setting, result, WM_NULL
-
-  WM_NULL := 0
-  detect_setting := A_DetectHiddenWindows
-  DetectHiddenWindows, On
-  SendMessage, WM_NULL, , , , ahk_id %wndId%
-  result := ErrorLevel
-  DetectHiddenWindows, %detect_setting%
-
-  If result
-    Return 1
-  Else
-    Return 0
 }
 
 Manager_lockWorkStation()
@@ -1216,18 +1152,6 @@ Manager_initial_sync(doRestore)
   }
 }
 
-Manager_toggleDecor()
-{
-  Local aWndId
-
-  WinGet, aWndId, ID, A
-  Manager_#%aWndId%_isDecorated := Not Manager_#%aWndId%_isDecorated
-  If Manager_#%aWndId%_isDecorated
-    Manager_winSet("Style", "+0xC00000", aWndId)
-  Else
-    Manager_winSet("Style", "-0xC00000", aWndId)
-}
-
 Manager_unmanage(wndId) {
   Local a, aView, wndId0, wndIds
 
@@ -1264,139 +1188,30 @@ Manager_unmanage(wndId) {
   Return, a
 }
 
-Manager_winActivate(wndId)
-{
-  Local aWndId, wndHeight, wndWidth, wndX, wndY
+Manager_winActivate(wndId) {
+  Local wndHeight, wndWidth, wndX, wndY
 
-  If Config_mouseFollowsFocus
-  {
-    If wndId
-    {
+  If Config_mouseFollowsFocus {
+    If wndId {
       WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
       DllCall("SetCursorPos", "Int", Round(wndX + wndWidth / 2), "Int", Round(wndY + wndHeight / 2))
-    }
-    Else
+    } Else
       DllCall("SetCursorPos", "Int", Round(Monitor_#%Manager_aMonitor%_x + Monitor_#%Manager_aMonitor%_width / 2), "Int", Round(Monitor_#%Manager_aMonitor%_y + Monitor_#%Manager_aMonitor%_height / 2))
   }
-  If wndId And Manager_isHung(wndId)
-  {
-    Debug_logMessage("DEBUG[2] Manager_winActivate: Potentially hung window " . wndId, 2)
-    Return 1
-  }
-  Else
-  {
-    Debug_logMessage("DEBUG[1] Activating window: " wndId, 1)
-    If Not wndId
-    {
-      If (A_OSVersion = "WIN_8")
-        WinGet, wndId, ID, ahk_class WorkerW
-      Else
-        WinGet, wndId, ID, Program Manager ahk_class Progman
-      Debug_logMessage("DEBUG[1] Activating Desktop: " wndId, 1)
-    }
-    WinActivate, ahk_id %wndId%
-    WinGet, aWndId, ID, A
-    If (wndId != aWndId)
-      Return 1
-  }
-  Bar_updateTitle()
-  Return 0
-}
 
-Manager_winClose(wndId)
-{
-  If Manager_isHung(wndId)
-  {
-    Debug_logMessage("DEBUG[2] Manager_winClose: Potentially hung window " . wndId, 2)
-    Return 1
+  Debug_logMessage("DEBUG[1] Activating window: " wndId, 1)
+  If Not wndId {
+    If (A_OSVersion = "WIN_8")
+      WinGet, wndId, ID, ahk_class WorkerW
+    Else
+      WinGet, wndId, ID, Program Manager ahk_class Progman
+    Debug_logMessage("DEBUG[1] Activating Desktop: " wndId, 1)
   }
-  Else
-  {
-    WinClose, ahk_id %wndId%
-    Return 0
-  }
-}
 
-Manager_winHide(wndId)
-{
-  If Manager_isHung(wndId)
-  {
-    Debug_logMessage("DEBUG[2] Manager_winHide: Potentially hung window " . wndId, 2)
-    Return 1
-  }
-  Else
-  {
-    WinHide, ahk_id %wndId%
-    Return 0
-  }
-}
-
-Manager_winMaximize(wndId)
-{
-  If Manager_isHung(wndId)
-  {
-    Debug_logMessage("DEBUG[2] Manager_winMaximize: Potentially hung window " . wndId, 2)
-    Return 1
-  }
-  Else
-  {
-    WinMaximize, ahk_id %wndId%
-    Return 0
-  }
-}
-
-Manager_winMove(wndId, x, y, width, height)
-{
-  If Manager_isHung(wndId)
-  {
-    Debug_logMessage("DEBUG[2] Manager_winMove: Potentially hung window " . wndId, 2)
-    Return 1
-  }
-  Else
-  {
-    WinGet, wndMin, MinMax, ahk_id %wndId%
-    If (wndMin = -1)
-      WinRestore, ahk_id %wndId%
-  }
-  WM_ENTERSIZEMOVE = 0x0231
-  WM_EXITSIZEMOVE  = 0x0232
-  SendMessage, WM_ENTERSIZEMOVE, , , , ahk_id %wndId%
-  If ErrorLevel
-  {
-    Debug_logMessage("DEBUG[2] Manager_winMove: Potentially hung window " . wndId, 1)
-    Return 1
-  }
-  Else
-  {
-    WinMove, ahk_id %wndId%, , %x%, %y%, %width%, %height%
-    SendMessage, WM_EXITSIZEMOVE, , , , ahk_id %wndId%
-  }
-}
-
-Manager_winSet(type, value, wndId)
-{
-  If Manager_isHung(wndId)
-  {
-    Debug_logMessage("DEBUG[2] Manager_winSet: Potentially hung window " . wndId, 2)
-    Return 1
-  }
-  Else
-  {
-    WinSet, %type%, %value%, ahk_id %wndId%
-    Return 0
-  }
-}
-
-Manager_winShow(wndId)
-{
-  If Manager_isHung(wndId)
-  {
-    Debug_logMessage("DEBUG[2] Manager_winShow: Potentially hung window " . wndId, 2)
-    Return 1
-  }
-  Else
-  {
-    WinShow, ahk_id %wndId%
+  If Window_activate(wndId)
+    Return, 1
+  Else {
+    Bar_updateTitle()
     Return 0
   }
 }

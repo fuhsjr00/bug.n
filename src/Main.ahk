@@ -247,3 +247,4 @@ Return
 #Include Monitor.ahk
 #Include ResourceMonitor.ahk
 #Include View.ahk
+#Include Window.ahk
