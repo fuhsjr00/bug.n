@@ -32,7 +32,7 @@ SetWinDelay, 10
 
   Main_setup()
 
-  Debug_initLog(Main_appDir "\log.txt", 0, False)
+  Debug_initLog(Main_logFile, 0, False)
 
   Debug_logMessage("====== Initializing ======", 0)
   Config_filePath := Main_appDir "\Config.ini"
@@ -161,7 +161,7 @@ Main_setup() {
 
   If (Main_appDir = "")
     Main_appDir := winAppDir . "\bug.n"
-  Main_logFile := Main_appDir . "\bugn_log.txt"
+  Main_logFile := Main_appDir . "\log.txt"
   Main_dataDir := Main_appDir . "\data"
   Main_autoLayout := Main_dataDir . "\_Layout.ini"
   Main_autoWindowState := Main_dataDir . "\_WindowState.ini"
