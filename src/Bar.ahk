@@ -212,15 +212,8 @@ Bar_initCmdGui()
   Gui, Show, Hide w%Bar_#0_#0W% h%Bar_#0_#0H%, %wndTitle%
 }
 
-Bar_cmdGuiEscape:
-  Bar_cmdGuiIsVisible := False
-  Gui, Cancel
-  WinActivate, ahk_id %Bar_aWndId%
-Return
-
 Bar_cmdGuiEnter:
-  If (A_GuiControl = "OK") Or (A_GuiControl = "Bar_#0_#0" And A_GuiControlEvent = "DoubleClick")
-  {
+  If (A_GuiControl = "OK") Or (A_GuiControl = "Bar_#0_#0" And A_GuiControlEvent = "DoubleClick") {
     Gui, Submit, NoHide
     Bar_cmdGuiIsVisible := False
     Gui, Cancel
@@ -228,6 +221,12 @@ Bar_cmdGuiEnter:
     Main_evalCommand(Bar_#0_#0)
     Bar_#0_#0 := ""
   }
+Return
+
+Bar_cmdGuiEscape:
+  Bar_cmdGuiIsVisible := False
+  Gui, Cancel
+  WinActivate, ahk_id %Bar_aWndId%
 Return
 
 Bar_getHeight()

@@ -252,22 +252,6 @@ Config_redirectHotkey(key)
   }
 }
 
-Config_restoreLayout(filename, m)
-{
-  Local i, var, val
-
-  If Not FileExist(filename)
-    Return
-
-  Loop, READ, %filename%
-    If (SubStr(A_LoopReadLine, 1, 10 + StrLen(m)) = "Monitor_#" m "_" Or SubStr(A_LoopReadLine, 1, 8 + StrLen(m)) = "View_#" m "_#") {
-      i := InStr(A_LoopReadLine, "=")
-      var := SubStr(A_LoopReadLine, 1, i - 1)
-      val := SubStr(A_LoopReadLine, i + 1)
-      %var% := val
-    }
-}
-
 Config_restoreConfig(filename)
 {
   Local cmd, i, key, type, val, var
@@ -316,9 +300,19 @@ Config_restoreConfig(filename)
     }
 }
 
-Config_UI_saveSession()
-{
-  Config_saveSession(Config_filePath, Config_filePath)
+Config_restoreLayout(filename, m) {
+  Local i, var, val
+
+  If Not FileExist(filename)
+    Return
+
+  Loop, READ, %filename%
+    If (SubStr(A_LoopReadLine, 1, 10 + StrLen(m)) = "Monitor_#" m "_" Or SubStr(A_LoopReadLine, 1, 8 + StrLen(m)) = "View_#" m "_#") {
+      i := InStr(A_LoopReadLine, "=")
+      var := SubStr(A_LoopReadLine, 1, i - 1)
+      val := SubStr(A_LoopReadLine, i + 1)
+      %var% := val
+    }
 }
 
 Config_saveSession(original, target)
@@ -381,6 +375,10 @@ Config_saveSession(original, target)
   }
   Else
     FileMove, %tmpfilename%, %target%, 1
+}
+
+Config_UI_saveSession() {
+  Config_saveSession(Config_filePath, Config_filePath)
 }
 
 ;; Key definitions

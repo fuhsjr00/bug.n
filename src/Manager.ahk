@@ -64,53 +64,8 @@ Manager_init()
   }
 
   Manager_registerShellHook()
-  SetTimer, Manager_maintenance_label, %Config_maintenanceInterval%
+  SetTimer, Manager_doMaintenance, %Config_maintenanceInterval%
   SetTimer, Bar_loop, %Config_readinInterval%
-}
-
-; Asynchronous management of various WM properties.
-; We want to make sure that we can recover the layout and windows in the event of
-; unexpected problems.
-; Periodically check for changes to these things and save them somewhere (not over
-; user-defined files).
-
-Manager_maintenance_label:
-  Manager_maintenance()
-Return
-
-Manager_saveState()
-{
-  Global
-  Critical
-  ;Debug_logMessage("Manager_saveState", 0)
-
-  ; @todo: Check for changes to the layout.
-  ;If Manager_layoutDirty
-  ;{
-    ;Debug_logMessage("Saving layout state: " . Main_autoLayout, 0)
-    Config_saveSession(Config_filePath, Main_autoLayout)
-    Manager_layoutDirty := 0
-  ;}
-
-  ; @todo: Check for changes to windows.
-  ;If Manager_windowsDirty
-  ;{
-    ;Debug_logMessage("Saving window state: " . Main_autoWindowState, 0)
-    Manager_saveWindowState(Main_autoWindowState, Manager_monitorCount, Config_viewCount)
-    Manager_windowsDirty := 0
-  ;}
-}
-
-Manager_maintenance()
-{
-  Local tmp
-  Critical
-  ;Debug_logMessage("Manager_maintenance", 0)
-
-  ; @todo: Manager_sync?
-
-  If Not (Config_autoSaveSession = "off") And Not (Config_autoSaveSession = "False")
-    Manager_saveState()
 }
 
 Manager_activateMonitor(d)
@@ -246,6 +201,19 @@ Manager_closeWindow() {
     Window_close(aWndId)
   }
 }
+
+; Asynchronous management of various WM properties.
+; We want to make sure that we can recover the layout and windows in the event of
+; unexpected problems.
+; Periodically check for changes to these things and save them somewhere (not over
+; user-defined files).
+Manager_doMaintenance:
+  Critical
+
+  ;; @TODO: Manager_sync?
+  If Not (Config_autoSaveSession = "off") And Not (Config_autoSaveSession = "False")
+    Manager_saveState()
+Return
 
 Manager_getWindowInfo()
 {
@@ -460,6 +428,13 @@ Manager_moveWindow() {
   SendMessage, WM_SYSCOMMAND, SC_MOVE, , , ahk_id %aWndId%
 }
 
+Manager_onDisplayChange(a, wParam, uMsg, lParam) {
+  Debug_logMessage("DEBUG[1] Manager_onDisplayChange( a: " . a . ", uMsg: " . uMsg . ", wParam: " . wParam . ", lParam: " . lParam . " )", 1)
+  MsgBox, 0x4, , Would you like to reset the monitor configuration?
+  IfMsgBox Yes
+    Manager_resetMonitorConfiguration()
+}
+
 HSHELL_WINDOWCREATED := 1
 ;; Seems to get sent sometimes when windows are deactivated.
 HSHELL_WINDOWDESTROYED := 2
@@ -639,13 +614,6 @@ Manager_registerShellHook() {
 }
 ;; SKAN: How to Hook on to Shell to receive its messages? (http://www.autohotkey.com/forum/viewtopic.php?p=123323#123323)
 
-Manager_onDisplayChange(a, wParam, uMsg, lParam) {
-  Debug_logMessage("DEBUG[1] Manager_onDisplayChange( a: " . a . ", uMsg: " . uMsg . ", wParam: " . wParam . ", lParam: " . lParam . " )", 1)
-  MsgBox, 0x4, , Would you like to reset the monitor configuration?
-  IfMsgBox Yes
-    Manager_resetMonitorConfiguration()
-}
-
 Manager_resetMonitorConfiguration() {
   Local GuiN, hWnd, i, m, wndClass, wndIds, wndTitle
 
@@ -718,6 +686,202 @@ Manager_restoreWindowBorders()
       NumPut(Manager_borderPadding, ncm, 40 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), "Int")
     DllCall("SystemParametersInfo", "UInt", 0x002a, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
   }
+}
+
+;; Restore previously saved window state.
+;; If the state is completely different, this function won't do much. However, if restoring from a crash
+;; or simply restarting bug.n, it should completely recover the window state.
+Manager__restoreWindowState(filename) {
+  Local vidx, widx, i, j, m, v, candidate_set, view_set, excluded_view_set, view_m0, view_v0, view_list0, wnds0, items0, wndProc, view_var, isManaged, isFloating, isDecorated, hideTitle
+
+  If Not FileExist(filename)
+    Return
+
+  widx := 1
+  vidx := 1
+
+  view_set := ""
+  excluded_view_set := ""
+
+  ;; Read all interesting things from the file.
+  Loop, READ, %filename%
+  {
+    If (SubStr(A_LoopReadLine, 1, 5) = "View_") {
+      i := InStr(A_LoopReadLine, "#")
+      j := InStr(A_LoopReadLine, "_", false, i)
+      m := SubStr(A_LoopReadLine, i + 1, j - i - 1)
+      i := InStr(A_LoopReadLine, "#", false, j)
+      j := InStr(A_LoopReadLine, "_", false, i)
+      v := SubStr(A_LoopReadLine, i + 1, j - i - 1)
+
+      i := InStr(A_LoopReadLine, "=", j + 1)
+
+
+      If (m <= Manager_monitorCount) And ( v <= Config_viewCount ) {
+        view_list%vidx% := SubStr(A_LoopReadLine, i + 1)
+        view_m%vidx% := m
+        view_v%vidx% := v
+        view_set := view_set . view_list%vidx%
+        vidx := vidx + 1
+      } Else {
+        excluded_view_set := excluded_view_set . view_list%vidx%
+        Debug_logMessage("View (" . m . ", " . v . ") is no longer available (" . vidx . ")", 0)
+      }
+    } Else If (SubStr(A_LoopReadLine, 1, 7) = "Window ") {
+      wnds%widx% := SubStr(A_LoopReadLine, 8)
+      widx := widx + 1
+    }
+  }
+
+  ;Debug_logMessage("view_set: " . view_set, 1)
+  ;Debug_logMessage("excluded_view_set: " . excluded_view_set, 1)
+
+  candidate_set := ""
+
+  ; Scan through all defined windows. Create a candidate set of windows based on whether the properties of existing windows match.
+  Loop, % (widx - 1) {
+    StringSplit, items, wnds%A_Index%, `;
+    If (items0 < 9) {
+      Debug_logMessage("Window '" . wnds%A_Index% . "' could not be processed due to parse error", 0)
+      Continue
+    }
+
+    i := 1
+    i := items%i%
+    j := 2
+
+    DetectHiddenWindows, On
+    WinGet, wndProc, ProcessName, ahk_id %i%
+    DetectHiddenWindows, Off
+    If Not ( items%j% = wndProc ) {
+      Debug_logMessage("Window ahk_id " . i . " process '" . wndProc . "' doesn't match expected '" . items%j% . "', forgetting this window", 0)
+      Continue
+    }
+
+    j := 8
+    isManaged := items%j%
+
+    ; If Managed
+    If ( items%j% ) {
+      If ( InStr(view_set, i) = 0) {
+        If ( InStr(excluded_view_set, i) )
+          Debug_logMessage("Window ahk_id " . i . " is being ignored because it no longer belongs to an active view", 0)
+        Else
+          Debug_logMessage("Window ahk_id " . i . " is being ignored because it doesn't exist in any views", 0)
+        Continue
+      }
+    }
+
+    ; Set up the window.
+
+    j := 3
+    m := items%j%
+    j := 4
+    v := items%j%
+    j := 5
+    isFloating := items%j%
+    j := 6
+    isDecorated := items%j%
+    j := 7
+    hideTitle := items%j%
+
+    Manager__setWinProperties(i, isManaged, m, v, isDecorated, isFloating, hideTitle )
+    ;Window_hide(i)
+
+    candidate_set := candidate_set . i . ";"
+  }
+
+  ;Debug_logMessage("candidate_set: " . candidate_set, 1)
+
+  ; Set up all views. Must filter the window list by those from the candidate set.
+  Loop, % (vidx - 1) {
+    StringSplit, items, view_list%A_Index%, `;
+    view_set := ""
+    Loop, % (items0 - 1) {
+      If ( InStr(candidate_set, items%A_Index% ) > 0 )
+        view_set := view_set . items%A_Index% . ";"
+    }
+    view_var := "View_#" . view_m%A_Index% . "_#" . view_v%A_Index% . "_wndIds"
+    %view_var% := view_set
+  }
+}
+
+Manager_saveState() {
+  Critical
+  Global Config_filePath, Config_viewCount, Main_autoLayout, Main_autoWindowState, Manager_layoutDirty, Manager_monitorCount, Manager_windowsDirty
+
+  Debug_logMessage("DEBUG[2] Manager_saveState", 2)
+
+  ;; @TODO: Check for changes to the layout.
+  ;If Manager_layoutDirty {
+    Debug_logMessage("DEBUG[2] Manager_saveState: " Main_autoLayout, 2)
+    Config_saveSession(Config_filePath, Main_autoLayout)
+    Manager_layoutDirty := 0
+  ;}
+
+  ;; @TODO: Check for changes to windows.
+  ;If Manager_windowsDirty {
+    Debug_logMessage("DEBUG[2] Manager_saveState: " Main_autoWindowState, 2)
+    Manager_saveWindowState(Main_autoWindowState, Manager_monitorCount, Config_viewCount)
+    Manager_windowsDirty := 0
+  ;}
+}
+
+Manager_saveWindowState(filename, nm, nv) {
+  Local allWndId, allWndIds, process, title, text, monitor, wndId, view, isManaged, isTitleHidden
+
+  text := "; bug.n - tiling window management`n; @version " VERSION "`n`n"
+
+  tmpfname := filename . ".tmp"
+  FileDelete, %tmpfname%
+
+  ; Dump window ID and process name. If these two don't match an existing process, we won't try
+  ;   to recover that window.
+  StringTrimRight, allWndIds, Manager_allWndIds, 1
+  StringSplit, allWndId, allWndIds, `;
+  DetectHiddenWindows, On
+  Loop, % allWndId0 {
+    wndId := allWndId%A_Index%
+    WinGet, process, ProcessName, ahk_id %wndId%
+    ; Include title for informative reasons.
+    WinGetTitle, title, ahk_id %wndId%
+
+    ; wndId;process;Tags;Floating;Decorated;HideTitle;Managed;Title
+
+    If ( InStr(Manager_managedWndIds, wndId . ";") > 0 )
+      isManaged := 1
+    Else
+      isManaged := 0
+
+    If ( InStr(Bar_hideTitleWndIds, wndId . ";") > 0 )
+      isTitleHidden := 1
+    Else
+      isTitleHidden := 0
+
+    text .= "Window " . wndId . ";" . process . ";" . Window_#%wndId%_monitor . ";" . Window_#%wndId%_tags . ";" . Window_#%wndId%_isFloating . ";" . Window_#%wndId%_isDecorated . ";" . isTitleHidden . ";" . isManaged . ";" . title . "`n"
+  }
+  DetectHiddenWindows, Off
+
+  text .= "`n"
+
+  ;; Dump window arrangements on every view. If some views or monitors have disappeared, leave their
+  ;;   corresponding windows alone.
+
+  Loop, % nm {
+    monitor := A_Index
+    Loop, % nv {
+      view := A_Index
+      ;; Dump all view window lists
+      text .= "View_#" . monitor . "_#" . view . "_wndIds=" . View_#%monitor%_#%view%_wndIds . "`n"
+    }
+  }
+
+  FileAppend, %text%, %tmpfname%
+  If ErrorLevel {
+    If FileExist(tmpfname)
+      FileDelete, %tmpfname%
+  } Else
+    FileMove, %tmpfname%, %filename%, 1
 }
 
 Manager_setViewMonitor(d)
@@ -831,6 +995,49 @@ Manager_sizeWindow() {
   SendMessage, WM_SYSCOMMAND, SC_SIZE, , , ahk_id %aWndId%
 }
 
+;; No windows are known to the system yet.
+;; Try to do something smart with the initial layout.
+Manager_initial_sync(doRestore) {
+  Local wndId0, wnd, wndX, wndY, wndW, wndH, x, y, m, len
+
+  ;; Initialize lists
+  ;; Note that these variables make this function non-reentrant.
+  Loop, % Manager_monitorCount
+    Manager_initial_sync_m#%A_Index%_wndList := ""
+
+  ;; Use saved window placement settings to first determine
+  ;;   which monitor/view a window should be attached to.
+  If doRestore
+    Manager__restoreWindowState(Main_autoWindowState)
+
+  ;; Check all remaining visible windows against the known windows
+  WinGet, wndId, List, , ,
+  Loop, % wndId {
+    ;; Based on some analysis here, determine which monitors and layouts would best
+    ;; serve existing windows. Do not override configuration settings.
+
+    ;; Which monitor is it on?
+    wnd := wndId%A_Index%
+    WinGetPos, wndX, wndY, wndW, wndH, ahk_id %wnd%
+
+    x := wndX + wndW/2
+    y := wndY + wndH/2
+
+    m := Monitor_get(x, y)
+    If m > 0
+      Manager_initial_sync_m#%m%_wndList .= wndId%A_Index% ";"
+
+  }
+
+  Loop, % Manager_monitorCount {
+    m := A_Index
+    StringTrimRight, wndIds, Manager_initial_sync_m#%m%_wndList, 1
+    StringSplit, wndId, wndIds, `;
+    Loop, % wndId0
+      Manager_manage(m, 1, wndId%A_Index%)
+  }
+}
+
 ;; @todo: This constantly tries to re-add windows that are never going to be manageable.
 ;;   Manager_manage should probably ignore all windows that are already in Manager_allWndIds.
 ;;   The problem was, that i. a. claws-mail triggers Manager_sync, but the application window
@@ -883,264 +1090,6 @@ Manager_sync(ByRef wndIds = "")
   }
 
   Return, a
-}
-
-
-Manager_saveWindowState(filename, nm, nv)
-{
-  Local allWndId, allWndIds, process, title, text, monitor, wndId, view, isManaged, isTitleHidden
-
-  text := "; bug.n - tiling window management`n; @version " VERSION "`n`n"
-
-  tmpfname := filename . ".tmp"
-  FileDelete, %tmpfname%
-
-  ; Dump window ID and process name. If these two don't match an existing process, we won't try
-  ;   to recover that window.
-  StringTrimRight, allWndIds, Manager_allWndIds, 1
-  StringSplit, allWndId, allWndIds, `;
-  DetectHiddenWindows, On
-  Loop, % allWndId0
-  {
-    wndId := allWndId%A_Index%
-    WinGet, process, ProcessName, ahk_id %wndId%
-    ; Include title for informative reasons.
-    WinGetTitle, title, ahk_id %wndId%
-
-    ; wndId;process;Tags;Floating;Decorated;HideTitle;Managed;Title
-
-    If ( InStr(Manager_managedWndIds, wndId . ";") > 0 )
-    {
-      isManaged := 1
-    }
-    else
-    {
-      isManaged := 0
-    }
-
-    If ( InStr(Bar_hideTitleWndIds, wndId . ";") > 0 )
-      isTitleHidden := 1
-    Else
-      isTitleHidden := 0
-
-    text .= "Window " . wndId . ";" . process . ";" . Window_#%wndId%_monitor . ";" . Window_#%wndId%_tags . ";" . Window_#%wndId%_isFloating . ";" . Window_#%wndId%_isDecorated . ";" . isTitleHidden . ";" . isManaged . ";" . title . "`n"
-  }
-  DetectHiddenWindows, Off
-
-  text .= "`n"
-
-  ;; Dump window arrangements on every view. If some views or monitors have disappeared, leave their
-  ;;   corresponding windows alone.
-
-  Loop, % nm
-  {
-    monitor := A_Index
-    Loop, % nv
-    {
-      view := A_Index
-      ;; Dump all view window lists
-      text .= "View_#" . monitor . "_#" . view . "_wndIds=" . View_#%monitor%_#%view%_wndIds . "`n"
-    }
-  }
-
-  FileAppend, %text%, %tmpfname%
-  If ErrorLevel
-  {
-    If FileExist(tmpfname)
-      FileDelete, %tmpfname%
-  }
-  Else
-    FileMove, %tmpfname%, %filename%, 1
-}
-
-;; Restore previously saved window state.
-;; If the state is completely different, this function won't do much. However, if restoring from a crash
-;; or simply restarting bug.n, it should completely recover the window state.
-Manager__restoreWindowState(filename)
-{
-  Local vidx, widx, i, j, m, v, candidate_set, view_set, excluded_view_set, view_m0, view_v0, view_list0, wnds0, items0, wndProc, view_var, isManaged, isFloating, isDecorated, hideTitle
-
-  If Not FileExist(filename)
-    Return
-
-  widx := 1
-  vidx := 1
-
-  view_set := ""
-  excluded_view_set := ""
-
-  ;; Read all interesting things from the file.
-  Loop, READ, %filename%
-  {
-    If (SubStr(A_LoopReadLine, 1, 5) = "View_")
-    {
-      i := InStr(A_LoopReadLine, "#")
-      j := InStr(A_LoopReadLine, "_", false, i)
-      m := SubStr(A_LoopReadLine, i + 1, j - i - 1)
-      i := InStr(A_LoopReadLine, "#", false, j)
-      j := InStr(A_LoopReadLine, "_", false, i)
-      v := SubStr(A_LoopReadLine, i + 1, j - i - 1)
-
-      i := InStr(A_LoopReadLine, "=", j + 1)
-
-
-      If (m <= Manager_monitorCount) And ( v <= Config_viewCount )
-      {
-        view_list%vidx% := SubStr(A_LoopReadLine, i + 1)
-        view_m%vidx% := m
-        view_v%vidx% := v
-        view_set := view_set . view_list%vidx%
-        vidx := vidx + 1
-      }
-      Else
-      {
-        excluded_view_set := excluded_view_set . view_list%vidx%
-        Debug_logMessage("View (" . m . ", " . v . ") is no longer available (" . vidx . ")", 0)
-      }
-    }
-    Else If (SubStr(A_LoopReadLine, 1, 7) = "Window ") {
-      wnds%widx% := SubStr(A_LoopReadLine, 8)
-      widx := widx + 1
-    }
-  }
-
-  ;Debug_logMessage("view_set: " . view_set, 1)
-  ;Debug_logMessage("excluded_view_set: " . excluded_view_set, 1)
-
-  candidate_set := ""
-
-  ; Scan through all defined windows. Create a candidate set of windows based on whether the properties of existing windows match.
-  Loop, % (widx - 1)
-  {
-    StringSplit, items, wnds%A_Index%, `;
-    If ( items0 < 9 )
-    {
-      Debug_logMessage("Window '" . wnds%A_Index% . "' could not be processed due to parse error", 0)
-      Continue
-    }
-
-    i := 1
-    i := items%i%
-    j := 2
-
-
-    DetectHiddenWindows, On
-    WinGet, wndProc, ProcessName, ahk_id %i%
-    DetectHiddenWindows, Off
-    If Not ( items%j% = wndProc )
-    {
-      Debug_logMessage("Window ahk_id " . i . " process '" . wndProc . "' doesn't match expected '" . items%j% . "', forgetting this window", 0)
-      Continue
-    }
-
-    j := 8
-    isManaged := items%j%
-
-    ; If Managed
-    If ( items%j% )
-    {
-      If ( InStr(view_set, i) = 0)
-      {
-        If ( InStr(excluded_view_set, i) )
-        {
-          Debug_logMessage("Window ahk_id " . i . " is being ignored because it no longer belongs to an active view", 0)
-        }
-        Else
-        {
-          Debug_logMessage("Window ahk_id " . i . " is being ignored because it doesn't exist in any views", 0)
-        }
-        Continue
-      }
-    }
-
-    ; Set up the window.
-
-    j := 3
-    m := items%j%
-    j := 4
-    v := items%j%
-    j := 5
-    isFloating := items%j%
-    j := 6
-    isDecorated := items%j%
-    j := 7
-    hideTitle := items%j%
-
-    Manager__setWinProperties(i, isManaged, m, v, isDecorated, isFloating, hideTitle )
-    ;Window_hide(i)
-
-    candidate_set := candidate_set . i . ";"
-  }
-
-  ;Debug_logMessage("candidate_set: " . candidate_set, 1)
-
-  ; Set up all views. Must filter the window list by those from the candidate set.
-  Loop, % (vidx - 1)
-  {
-    StringSplit, items, view_list%A_Index%, `;
-    view_set := ""
-    Loop, % items0 - 1
-    {
-      If ( InStr(candidate_set, items%A_Index% ) > 0 )
-        view_set := view_set . items%A_Index% . ";"
-    }
-    view_var := "View_#" . view_m%A_Index% . "_#" . view_v%A_Index% . "_wndIds"
-    %view_var% := view_set
-  }
-}
-
-
-
-; No windows are known to the system yet.
-; Try to do something smart with the initial layout.
-Manager_initial_sync(doRestore)
-{
-  Local wndId0, wnd, wndX, wndY, wndW, wndH, x, y, m, len
-
-  ;; Initialize lists
-  ;; Note that these variables make this function non-reentrant.
-  Loop, % Manager_monitorCount
-  {
-    Manager_initial_sync_m#%A_Index%_wndList := ""
-  }
-
-  ;; Use saved window placement settings to first determine
-  ;;   which monitor/view a window should be attached to.
-  If doRestore
-  {
-    Manager__restoreWindowState(Main_autoWindowState)
-  }
-
-  ;; Check all remaining visible windows against the known windows
-  WinGet, wndId, List, , ,
-  Loop, % wndId
-  {
-    ;; Based on some analysis here, determine which monitors and layouts would best
-    ;; serve existing windows. Do not override configuration settings.
-
-    ;; Which monitor is it on?
-    wnd := wndId%A_Index%
-    WinGetPos, wndX, wndY, wndW, wndH, ahk_id %wnd%
-
-    x := wndX + wndW/2
-    y := wndY + wndH/2
-
-    m := Monitor_get(x, y)
-    If m > 0
-      Manager_initial_sync_m#%m%_wndList .= wndId%A_Index% ";"
-
-  }
-
-  Loop, % Manager_monitorCount
-  {
-    m := A_Index
-    StringTrimRight, wndIds, Manager_initial_sync_m#%m%_wndList, 1
-    StringSplit, wndId, wndIds, `;
-    Loop, % wndId0
-    {
-      Manager_manage(m, 1, wndId%A_Index%)
-    }
-  }
 }
 
 Manager_unmanage(wndId) {

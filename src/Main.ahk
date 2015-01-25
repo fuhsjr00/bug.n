@@ -117,11 +117,7 @@ Main_help:
   Run, explore %Main_docDir%
 Return
 
-Main_quit:
-  ExitApp
-Return
-
-; Create bug.n-specific directories.
+;; Create bug.n-specific directories.
 Main_makeDir(dirName) {
   IfNotExist, %dirName%
   {
@@ -143,33 +139,9 @@ Main_makeDir(dirName) {
   }
 }
 
-
-Main_setup() {
-  Local winAppDir
-
-  Main_docDir := A_ScriptDir
-  If (SubStr(A_ScriptDir, -3) = "\src")
-    Main_docDir .= "\.."
-  Main_docDir .= "\doc"
-
-  Main_logFile := ""
-  Main_dataDir := ""
-  Main_autoLayout := ""
-  Main_autoWindowState := ""
-
-  EnvGet, winAppDir, APPDATA
-
-  If (Main_appDir = "")
-    Main_appDir := winAppDir . "\bug.n"
-  Main_logFile := Main_appDir . "\log.txt"
-  Main_dataDir := Main_appDir . "\data"
-  Main_autoLayout := Main_dataDir . "\_Layout.ini"
-  Main_autoWindowState := Main_dataDir . "\_WindowState.ini"
-
-  Main_makeDir(Main_appDir)
-  Main_makeDir(Main_dataDir)
-}
-
+Main_quit:
+  ExitApp
+Return
 
 Main_reload()
 {
@@ -234,6 +206,32 @@ Main_reload()
   }
   Manager_registerShellHook()
   SetTimer, Bar_loop, %Config_readinInterval%
+}
+
+Main_setup() {
+  Local winAppDir
+
+  Main_docDir := A_ScriptDir
+  If (SubStr(A_ScriptDir, -3) = "\src")
+    Main_docDir .= "\.."
+  Main_docDir .= "\doc"
+
+  Main_logFile := ""
+  Main_dataDir := ""
+  Main_autoLayout := ""
+  Main_autoWindowState := ""
+
+  EnvGet, winAppDir, APPDATA
+
+  If (Main_appDir = "")
+    Main_appDir := winAppDir . "\bug.n"
+  Main_logFile := Main_appDir . "\log.txt"
+  Main_dataDir := Main_appDir . "\data"
+  Main_autoLayout := Main_dataDir . "\_Layout.ini"
+  Main_autoWindowState := Main_dataDir . "\_WindowState.ini"
+
+  Main_makeDir(Main_appDir)
+  Main_makeDir(Main_dataDir)
 }
 
 Main_toggleBar:
