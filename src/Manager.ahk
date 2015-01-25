@@ -17,7 +17,7 @@ Manager_init()
 {
   Local doRestore
 
-  Manager_setWindowBorder()
+  Manager_setWindowBorders()
   Bar_getHeight()
   ; axes, dimensions, percentage, flipped, gapWidth
   Manager_layoutDirty := 0
@@ -192,7 +192,7 @@ Manager_cleanup()
 
   WinGet, aWndId, ID, A
 
-  Manager_resetWindowBorder()
+  Manager_restoreWindowBorders()
 
   ;; Show borders and title bars.
   StringTrimRight, wndIds, Manager_managedWndIds, 1
@@ -210,7 +210,7 @@ Manager_cleanup()
   WinShow, ahk_class Shell_TrayWnd
   Manager_hideShow := False
 
-  ;; Reset windows position and size.
+  ;; Restore window positions and sizes.
   Manager_showTaskBar := True
   Loop, % Manager_monitorCount
   {
@@ -701,7 +701,7 @@ Manager_resetMonitorConfiguration() {
   Debug_logMessage("DEBUG[1] Manager_registerShellHook; hWnd: " . hWnd . ", wndClass: " . wndClass . ", wndTitle: " . wndTitle, 1)
 }
 
-Manager_resetWindowBorder()
+Manager_restoreWindowBorders()
 {
   Local ncm, ncmSize
 
@@ -761,7 +761,7 @@ Manager_setViewMonitor(d)
   }
 }
 
-Manager_setWindowBorder()
+Manager_setWindowBorders()
 {
   Local ncm, ncmSize
 

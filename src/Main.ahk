@@ -175,7 +175,7 @@ Main_reload()
 {
   Local i, ncm, ncmSize
 
-  ;; Reset border color, padding and witdh.
+  ;; Restore border color, padding and witdh.
   If Config_selBorderColor
     DllCall("SetSysColors", "Int", 1, "Int*", 10, "UInt*", Manager_normBorderColor)
   If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA)
