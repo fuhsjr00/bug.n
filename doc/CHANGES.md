@@ -9,11 +9,14 @@
 ### 9.0.0
 
 1. `~` Renamed the function `Manager_toggleDecor` to `Window_toggleDecor`
+2. `~` Renamed the function `View_toggleFloating` to `View_toggleFloatingWindow`
 
-|  # | Configuration variables | Hotkeys                          |
-| --:| ----------------------- | -------------------------------- |
-| 1. |                         | `-` `#+d::Manager_toggleDecor()` |
-|    |                         | `+` `#+d::Window_toggleDecor()`  |
+|  # | Configuration variables | Hotkeys                                |
+| --:| ----------------------- | -------------------------------------- |
+| 1. |                         | `-` `#+d::Manager_toggleDecor()`       |
+|    |                         | `+` `#+d::Window_toggleDecor()`        |
+| 2. |                         | `-` `#+f::View_toggleFloating()`       |
+|    |                         | `+` `#+f::View_toggleFloatingWindow()` |
 
 ### 8.4.0
 

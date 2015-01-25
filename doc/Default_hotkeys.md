@@ -39,7 +39,7 @@ quitting bug.n.
 `#+d::Window_toggleDecor()`
 > Show / Hide the title bar of the active window.
 
-`#+f::View_toggleFloating()`
+`#+f::View_toggleFloatingWindow()`
 > Toggle the floating status of the active window (i. e. dis- / regard it when
 tiling).
 

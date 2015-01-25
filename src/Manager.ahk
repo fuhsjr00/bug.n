@@ -436,29 +436,23 @@ Manager_manage(preferredMonitor, preferredView, wndId)
   Return, a
 }
 
-Manager_maximizeWindow()
-{
-  Local aWndId, l, v
+Manager_maximizeWindow() {
+  Local aWndId
 
   WinGet, aWndId, ID, A
-  v := Monitor_#%Manager_aMonitor%_aView_#1
-  l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If Not Window_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
-    View_toggleFloating()
+  If Not Window_#%aWndId%_isFloating
+    View_toggleFloatingWindow(aWndId)
   Window_set(aWndId, "Top", "")
 
   Window_move(aWndId, Monitor_#%Manager_aMonitor%_x, Monitor_#%Manager_aMonitor%_y, Monitor_#%Manager_aMonitor%_width, Monitor_#%Manager_aMonitor%_height)
 }
 
-Manager_moveWindow()
-{
-  Local aWndId, l, SC_MOVE, v, WM_SYSCOMMAND
+Manager_moveWindow() {
+  Local aWndId, SC_MOVE, WM_SYSCOMMAND
 
   WinGet, aWndId, ID, A
-  v := Monitor_#%Manager_aMonitor%_aView_#1
-  l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If Not Window_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
-    View_toggleFloating()
+  If Not Window_#%aWndId%_isFloating
+    View_toggleFloatingWindow(aWndId)
   Window_set(aWndId, "Top", "")
 
   WM_SYSCOMMAND = 0x112
@@ -824,15 +818,12 @@ Manager_setWindowMonitor(d)
   }
 }
 
-Manager_sizeWindow()
-{
-  Local aWndId, l, SC_SIZE, v, WM_SYSCOMMAND
+Manager_sizeWindow() {
+  Local aWndId, SC_SIZE, WM_SYSCOMMAND
 
   WinGet, aWndId, ID, A
-  v := Monitor_#%Manager_aMonitor%_aView_#1
-  l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If Not Window_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
-    View_toggleFloating()
+  If Not Window_#%aWndId%_isFloating
+    View_toggleFloatingWindow(aWndId)
   Window_set(aWndId, "Top", "")
 
   WM_SYSCOMMAND = 0x112

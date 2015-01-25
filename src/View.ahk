@@ -726,16 +726,15 @@ View_stackWindows(arrayName, startPos, len, d, axis, x, y, w, h, padding)
   }
 }
 
-View_toggleFloating()
-{
-  Local aWndId, l, v
+View_toggleFloatingWindow(wndId = 0) {
+  Local l, v
 
-  WinGet, aWndId, ID, A
+  If (wndId = 0)
+    WinGet, wndId, ID, A
   v := Monitor_#%Manager_aMonitor%_aView_#1
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% And InStr(Manager_managedWndIds, aWndId ";"))
-  {
-    Window_#%aWndId%_isFloating := Not Window_#%aWndId%_isFloating
+  If (Config_layoutFunction_#%l% And InStr(Manager_managedWndIds, wndId ";")) {
+    Window_#%wndId%_isFloating := Not Window_#%wndId%_isFloating
     View_arrange(Manager_aMonitor, v)
     Bar_updateTitle()
   }
