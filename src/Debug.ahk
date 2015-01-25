@@ -127,14 +127,14 @@ Debug_logWindowInfo(wndId)
     isDecorated := " "
   WinGet, wndStyle, Style, ahk_id %wndId%
   WinGetPos, wndX, wndY, wndW, wndH, ahk_id %wndId%
-  If Manager_isGhost(wndId)
+  If Window_isGhost(wndId)
     isGhost := "*"
   Else
     isGhost := " "
   DetectHiddenWindows, %detect_state%
 
   ;; Intentionally don't detect hidden windows here to see what Manager_hungTest does
-  If Manager_isHung(wndId)
+  If Window_isHung(wndId)
     isResponsive := " "
   Else
     isResponsive := "*"

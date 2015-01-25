@@ -53,7 +53,7 @@ View_activateWindow(d)
   If (wndId0 > 1)
   {
     If Manager_#%aWndId%_isFloating
-      Manager_winSet("Bottom", "", aWndId)
+      Window_set(aWndId, "Bottom", "")
     Loop, % wndId0
     {
       If (wndId%A_Index% = aWndId)
@@ -73,8 +73,8 @@ View_activateWindow(d)
     {
       Debug_logMessage("DEBUG[2] Next wndId index: " . j, 2, False)
       wndId := wndId%j%
-      Manager_winSet("AlwaysOnTop", "On", wndId)
-      Manager_winSet("AlwaysOnTop", "Off", wndId)
+      Window_set(wndId, "AlwaysOnTop", "On")
+      Window_set(wndId, "AlwaysOnTop", "Off")
 
       ;; If there are hung windows on the screen, we still want to be able to cycle through them.
       failure := Manager_winActivate(wndId)
@@ -325,7 +325,7 @@ View_getTiledWndIds(m, v)
   StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
   Loop, PARSE, wndIds, `;
   {
-    If Not Manager_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) and Not Manager_isHung(A_LoopField)
+    If Not Manager_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) and Not Window_isHung(A_LoopField)
     {
       n += 1
       tiledWndIds .= A_LoopField ";"
@@ -356,7 +356,7 @@ View_moveWindow(i=0, d=0) {
   If (Config_layoutFunction_#%l% = "tile" And InStr(Manager_managedWndIds, aWndId ";") And Not (i = 0 And d = 0) And i <= View_#%m%_#%v%_area_#0) {
     If (i = 0)
       i := Manager_loop(Manager_#%aWndId%_area, d, 1, View_#%m%_#%v%_area_#0)
-    Manager_winMove(aWndId, View_#%m%_#%v%_area_#%i%_x, View_#%m%_#%v%_area_#%i%_y, View_#%m%_#%v%_area_#%i%_width, View_#%m%_#%v%_area_#%i%_height)
+    Window_move(aWndId, View_#%m%_#%v%_area_#%i%_x, View_#%m%_#%v%_area_#%i%_y, View_#%m%_#%v%_area_#%i%_width, View_#%m%_#%v%_area_#%i%_height)
     Manager_#%aWndId%_area := i
     If Config_mouseFollowsFocus {
       WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
@@ -719,7 +719,7 @@ View_stackWindows(arrayName, startPos, len, d, axis, x, y, w, h, padding)
 
   Loop, % len
   {
-    Manager_winMove(%arrayName%%i%, wndX, wndY, wndW, wndH)
+    Window_move(%arrayName%%i%, wndX, wndY, wndW, wndH)
     i += d
     wndX += dx
     wndY += dy

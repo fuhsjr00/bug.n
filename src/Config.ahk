@@ -89,8 +89,8 @@ Config_init()
   Config_rule_#8   := "CalcFrame;.*;;1;0;0;1;1;0;"
   Config_rule_#9   := "MozillaDialogClass;.*;;1;0;0;1;1;0;"
   Config_rule_#10  := "_sp;_sp;;1;0;0;1;0;1;"
-  Config_rule_#11  := "MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;Maximize"
-  Config_rule_#12  := "Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;Maximize"
+  Config_rule_#11  := "MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;maximize"
+  Config_rule_#12  := "Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;maximize"
   ;; @TODO [v9] Config_rule_#13 := "Chrome_WidgetWin_1;.*;0x80000000;0;0;0;1;1;0;"  -- else pop-up windows are treated as new main windows, since #12 overrides #2
   Config_ruleCount := 12                              ;; This variable has to be set to the total number of active rules above.
 
@@ -391,7 +391,7 @@ Config_saveSession(original, target)
 #+Up::View_shuffleWindow(-1)
 #+Enter::View_shuffleWindow(0)
 #c::Manager_closeWindow()
-#+d::Manager_toggleDecor()
+#+d::Window_toggleDecor()
 #+f::View_toggleFloating()
 #+m::Manager_moveWindow()
 #+s::Manager_sizeWindow()

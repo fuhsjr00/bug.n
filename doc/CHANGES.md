@@ -8,7 +8,12 @@
 
 ### 9.0.0
 
+1. `~` Renamed the function `Manager_toggleDecor` to `Window_toggleDecor`
 
+|  # | Configuration variables | Hotkeys                          |
+| --:| ----------------------- | -------------------------------- |
+| 1. |                         | `-` `#+d::Manager_toggleDecor()` |
+|    |                         | `+` `#+d::Window_toggleDecor()`  |
 
 ### 8.4.0
 

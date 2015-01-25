@@ -78,7 +78,7 @@ Monitor_activateView(v)
     Loop, PARSE, wndIds, `;
     {
       If Not (Manager_#%A_LoopField%_tags & (1 << v - 1))
-        Manager_winHide(A_LoopField)
+        Window_hide(A_LoopField)
     }
     SetWinDelay, 10
     DetectHiddenWindows, On
@@ -268,7 +268,7 @@ Monitor_setWindowTag(t)
         Else
         {
           Manager_hideShow := True
-          Manager_winHide(aWndId)
+          Window_hide(aWndId)
           Manager_hideShow := False
           If Config_dynamicTiling
             View_arrange(Manager_aMonitor, aView)
@@ -352,7 +352,7 @@ Monitor_toggleWindowTag(t)
         If (t = Monitor_#%Manager_aMonitor%_aView_#1)
         {
           Manager_hideShow := True
-          Manager_winHide(aWndId)
+          Window_hide(aWndId)
           Manager_hideShow := False
           wndId := SubStr(View_#%Manager_aMonitor%_#%t%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%t%_wndIds, ";")-1)
           Manager_winActivate(wndId)

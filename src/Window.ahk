@@ -13,8 +13,32 @@
   @version 9.0.0
 */
 
+Window_activate(wndId) {
+  If Window_isHung(wndId) {
+    Debug_logMessage("DEBUG[2] Window_activate: Potentially hung window " . wndId, 2)
+    Return, 1
+  } Else {
+    WinActivate, ahk_id %wndId%
+    WinGet, aWndId, ID, A
+    If (wndId != aWndId)
+      Return, 1
+    Else
+      Return, 0
+  }
+}
+
+Window_close(wndId) {
+  If Window_isHung(wndId) {
+    Debug_logMessage("DEBUG[2] Window_close: Potentially hung window " . wndId, 2)
+    Return, 1
+  } Else {
+    WinClose, ahk_id %wndId%
+    Return, 0
+  }
+}
+
 ;; Given a ghost window, try to find its body. This is only known to work on Windows 7
-Manager_findHung(ghostWndId) {
+Window_findHung(ghostWndId) {
   Global Config_ghostWndSubString
 
   WinGetTitle, ghostWndTitle, ahk_id %ghostWndId%
@@ -33,7 +57,17 @@ Manager_findHung(ghostWndId) {
   Return, 0
 }
 
-Manager_isGhost(wndId) {
+Window_hide(wndId) {
+  If Window_isHung(wndId) {
+    Debug_logMessage("DEBUG[2] Window_hide: Potentially hung window " . wndId, 2)
+    Return, 1
+  } Else {
+    WinHide, ahk_id %wndId%
+    Return, 0
+  }
+}
+
+Window_isGhost(wndId) {
   Local wndClass, wndProc
 
   WinGet, wndProc, ProcessName, ahk_id %wndId%
@@ -46,7 +80,7 @@ Manager_isGhost(wndId) {
 
 ;; 0 - Not hung
 ;; 1 - Hung
-Manager_isHung(wndId) {
+Window_isHung(wndId) {
   Local detectSetting, result, WM_NULL
 
   WM_NULL = 0
@@ -72,29 +106,9 @@ Window_isProg(wndId) {
     Return, 0
 }
 
-Manager_winClose(wndId) {
-  If Manager_isHung(wndId) {
-    Debug_logMessage("DEBUG[2] Manager_winClose: Potentially hung window " . wndId, 2)
-    Return, 1
-  } Else {
-    WinClose, ahk_id %wndId%
-    Return, 0
-  }
-}
-
-Manager_winHide(wndId) {
-  If Manager_isHung(wndId) {
-    Debug_logMessage("DEBUG[2] Manager_winHide: Potentially hung window " . wndId, 2)
-    Return, 1
-  } Else {
-    WinHide, ahk_id %wndId%
-    Return, 0
-  }
-}
-
-Manager_winMaximize(wndId) {
-  If Manager_isHung(wndId) {
-    Debug_logMessage("DEBUG[2] Manager_winMaximize: Potentially hung window " . wndId, 2)
+Window_maximize(wndId) {
+  If Window_isHung(wndId) {
+    Debug_logMessage("DEBUG[2] Window_maximize: Potentially hung window " . wndId, 2)
     Return, 1
   } Else {
     WinMaximize, ahk_id %wndId%
@@ -102,9 +116,9 @@ Manager_winMaximize(wndId) {
   }
 }
 
-Manager_winMove(wndId, x, y, width, height) {
-  If Manager_isHung(wndId) {
-    Debug_logMessage("DEBUG[2] Manager_winMove: Potentially hung window " . wndId, 2)
+Window_move(wndId, x, y, width, height) {
+  If Window_isHung(wndId) {
+    Debug_logMessage("DEBUG[2] Window_move: Potentially hung window " . wndId, 2)
     Return, 1
   } Else {
     WinGet, wndMin, MinMax, ahk_id %wndId%
@@ -116,7 +130,7 @@ Manager_winMove(wndId, x, y, width, height) {
   WM_EXITSIZEMOVE  = 0x0232
   SendMessage, WM_ENTERSIZEMOVE, , , , ahk_id %wndId%
   If ErrorLevel {
-    Debug_logMessage("DEBUG[2] Manager_winMove: Potentially hung window " . wndId, 1)
+    Debug_logMessage("DEBUG[2] Window_move: Potentially hung window " . wndId, 1)
     Return, 1
   } Else {
     WinMove, ahk_id %wndId%, , %x%, %y%, %width%, %height%
@@ -125,9 +139,9 @@ Manager_winMove(wndId, x, y, width, height) {
   }
 }
 
-Manager_winSet(type, value, wndId) {
-  If Manager_isHung(wndId) {
-    Debug_logMessage("DEBUG[2] Manager_winSet: Potentially hung window " . wndId, 2)
+Window_set(wndId, type, value) {
+  If Window_isHung(wndId) {
+    Debug_logMessage("DEBUG[2] Window_set: Potentially hung window " . wndId, 2)
     Return, 1
   } Else {
     WinSet, %type%, %value%, ahk_id %wndId%
@@ -135,9 +149,9 @@ Manager_winSet(type, value, wndId) {
   }
 }
 
-Manager_winShow(wndId) {
-  If Manager_isHung(wndId) {
-    Debug_logMessage("DEBUG[2] Manager_winShow: Potentially hung window " . wndId, 2)
+Window_show(wndId) {
+  If Window_isHung(wndId) {
+    Debug_logMessage("DEBUG[2] Window_show: Potentially hung window " . wndId, 2)
     Return, 1
   } Else {
     WinShow, ahk_id %wndId%
@@ -145,7 +159,7 @@ Manager_winShow(wndId) {
   }
 }
 
-Manager_toggleDecor(wndId = 0) {
+Window_toggleDecor(wndId = 0) {
   Global
 
   If (wndId = 0)
@@ -153,21 +167,7 @@ Manager_toggleDecor(wndId = 0) {
 
   Manager_#%wndId%_isDecorated := Not Manager_#%wndId%_isDecorated
   If Manager_#%wndId%_isDecorated
-    Manager_winSet("Style", "+0xC00000", wndId)
+    Window_set(wndId, "Style", "+0xC00000")
   Else
-    Manager_winSet("Style", "-0xC00000", wndId)
-}
-
-Window_activate(wndId) {
-  If Manager_isHung(wndId) {
-    Debug_logMessage("DEBUG[2] Window_activate: Potentially hung window " . wndId, 2)
-    Return, 1
-  } Else {
-    WinActivate, ahk_id %wndId%
-    WinGet, aWndId, ID, A
-    If (wndId != aWndId)
-      Return, 1
-    Else
-      Return, 0
-  }
+    Window_set(wndId, "Style", "-0xC00000")
 }

@@ -36,7 +36,7 @@ quitting bug.n.
 `#c::Manager_closeWindow()`
 > Close the active window.
 
-`#+d::Manager_toggleDecor()`
+`#+d::Window_toggleDecor()`
 > Show / Hide the title bar of the active window.
 
 `#+f::View_toggleFloating()`

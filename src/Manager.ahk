@@ -199,10 +199,10 @@ Manager_cleanup()
   Manager_hideShow := True
   Loop, PARSE, wndIds, `;
   {
-    Manager_winShow(A_LoopField)
+    Window_show(A_LoopField)
     If Not Config_showBorder
-      Manager_winSet("Style", "+0x40000", A_LoopField)
-    Manager_winSet("Style", "+0xC00000", A_LoopField)
+      Window_set(A_LoopField, "Style", "+0x40000")
+    Window_set(A_LoopField, "Style", "+0xC00000")
   }
 
   ;; Show the task bar.
@@ -222,8 +222,8 @@ Manager_cleanup()
       View_arrange(m, A_Index, True)
     }
   }
-  Manager_winSet("AlwaysOnTop", "On", aWndId)
-  Manager_winSet("AlwaysOnTop", "Off", aWndId)
+  Window_set(aWndId, "AlwaysOnTop", "On")
+  Window_set(aWndId, "AlwaysOnTop", "Off")
 
   DllCall("Shell32.dll\SHAppBarMessage", "UInt", (ABM_REMOVE := 0x1), "UInt", &Bar_appBarData)
   ;; SKAN: Crazy Scripting : Quick Launcher for Portable Apps (http://www.autohotkey.com/forum/topic22398.html)
@@ -243,7 +243,7 @@ Manager_closeWindow() {
     } Else {
       View_activateWindow(1)
     }
-    Manager_winClose(aWndId)
+    Window_close(aWndId)
   }
 }
 
@@ -271,7 +271,7 @@ Manager_getWindowInfo()
   } Else
     rule .= ";0;"
   If (aWndMinMax = 1)
-    rule .= "Maximize"
+    rule .= "maximize"
   text .= "`nprocess:`t" aWndProcessName "`nstyle:`t" aWndStyle "`nmetrics:`tx: " aWndX ", y: " aWndY ", width: " aWndWidth ", height: " aWndHeight "`ntags:`t" Manager_#%aWndId%_tags
   If Manager_#%aWndId%_isFloating
     text .= " (floating)"
@@ -337,8 +337,8 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
 
   If (isManaged)
   {
-    If (action = "Close" Or action = "Maximize")
-      Manager_win%action%(wndId)
+    If (action = "close" Or action = "maximize")
+      Window_%action%(wndId)
 
     Manager_managedWndIds .= wndId ";"
     Monitor_moveWindow(m, wndId)
@@ -348,9 +348,9 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
     Manager_#%wndId%_area        := 0
 
     If Not Config_showBorder
-      Manager_winSet("Style", "-0x40000", wndId)
+      Window_set(wndId, "Style", "-0x40000")
     If Not Manager_#%wndId%_isDecorated
-      Manager_winSet("Style", "-0xC00000", wndId)
+      Window_set(wndId, "Style", "-0xC00000")
 
     a := Manager_#%wndId%_tags & (1 << (Monitor_#%m%_aView_#1 - 1))
     If a
@@ -362,7 +362,7 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
     Else
     {
       Manager_hideShow := True
-      Manager_winHide(wndId)
+      Window_hide(wndId)
       Manager_hideShow := False
     }
   }
@@ -384,10 +384,10 @@ Manager_manage(preferredMonitor, preferredView, wndId)
     Return
 
   body := 0
-  If Manager_isGhost(wndId)
+  If Window_isGhost(wndId)
   {
     Debug_logMessage("DEBUG[2] A window has given up the ghost (Ghost wndId: " . wndId . ")", 2)
-    body := Manager_findHung(wndId)
+    body := Window_findHung(wndId)
     If body
     {
       isManaged := InStr(Manager_managedWndIds, body ";")
@@ -445,9 +445,9 @@ Manager_maximizeWindow()
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
   If Not Manager_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
     View_toggleFloating()
-  Manager_winSet("Top", "", aWndId)
+  Window_set(aWndId, "Top", "")
 
-  Manager_winMove(aWndId, Monitor_#%Manager_aMonitor%_x, Monitor_#%Manager_aMonitor%_y, Monitor_#%Manager_aMonitor%_width, Monitor_#%Manager_aMonitor%_height)
+  Window_move(aWndId, Monitor_#%Manager_aMonitor%_x, Monitor_#%Manager_aMonitor%_y, Monitor_#%Manager_aMonitor%_width, Monitor_#%Manager_aMonitor%_height)
 }
 
 Manager_moveWindow()
@@ -459,7 +459,7 @@ Manager_moveWindow()
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
   If Not Manager_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
     View_toggleFloating()
-  Manager_winSet("Top", "", aWndId)
+  Window_set(aWndId, "Top", "")
 
   WM_SYSCOMMAND = 0x112
   SC_MOVE       = 0xF010
@@ -606,7 +606,7 @@ Manager_onShellMessage(wParam, lParam) {
         {
           Loop, % wndId0
           {
-            Manager_winHide(wndId%A_Index%)
+            Window_hide(wndId%A_Index%)
           }
         }
         Else If (Config_onActiveHiddenWnds = "tag")
@@ -833,7 +833,7 @@ Manager_sizeWindow()
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
   If Not Manager_#%aWndId%_isFloating And Not (Config_layoutFunction_#%l% = "")
     View_toggleFloating()
-  Manager_winSet("Top", "", aWndId)
+  Window_set(aWndId, "Top", "")
 
   WM_SYSCOMMAND = 0x112
   SC_SIZE       = 0xF000
@@ -868,7 +868,7 @@ Manager_sync(ByRef wndIds = "")
         If flag
           a := flag
       }
-      Else If Not Manager_isHung(wndId%A_Index%)
+      Else If Not Window_isHung(wndId%A_Index%)
       {
         ;; This is a window that is already managed but was brought into focus by something.
         ;; Maybe it would be useful to do something with it.
@@ -1076,7 +1076,7 @@ Manager__restoreWindowState(filename)
     hideTitle := items%j%
 
     Manager__setWinProperties(i, isManaged, m, v, isDecorated, isFloating, hideTitle )
-    ;Manager_winHide(i)
+    ;Window_hide(i)
 
     candidate_set := candidate_set . i . ";"
   }
@@ -1166,7 +1166,7 @@ Manager_unmanage(wndId) {
     View_activateWindow(1)
 
   ;; Do our best to make sure that any unmanaged windows are left visible.
-  Manager_winShow(wndId)
+  Window_show(wndId)
   a := Manager_#%wndId%_tags & 1 << Monitor_#%Manager_aMonitor%_aView_#1 - 1
   Loop, % Config_viewCount
   {
