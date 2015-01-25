@@ -71,6 +71,28 @@ ResourceMonitor_getText()
   Return, text
 }
 
+ResourceMonitor_getBatteryStatus(ByRef batteryLifePercent, ByRef acLineStatus) {
+  VarSetCapacity(powerStatus, (1 + 1 + 1 + 1 + 4 + 4))
+  success := DllCall("GetSystemPowerStatus", "UInt", &powerStatus)
+  If (ErrorLevel != 0 Or success = 0) {
+    MsgBox 16, Power Status, Can't get the power status...
+    Return
+  }
+  acLineStatus     := NumGet(powerStatus, 0, "Char")
+  batteryLifePercent := NumGet(powerStatus, 2, "Char")
+
+  If acLineStatus = 0
+    acLineStatus = off
+  Else If acLineStatus = 1
+    acLineStatus = on
+  Else If acLineStatus = 255
+    acLineStatus = ?
+
+  If batteryLifePercent = 255
+    batteryLifePercent = ???
+}
+;; PhiLho: AC/Battery status (http://www.autohotkey.com/forum/topic7633.html)
+
 ResourceMonitor_getDiskLoad(ByRef readLoad, ByRef writeLoad)
 {
   Global ResourceMonitor_hDrive

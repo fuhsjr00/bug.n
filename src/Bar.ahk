@@ -230,30 +230,6 @@ Bar_cmdGuiEnter:
   }
 Return
 
-Bar_getBatteryStatus(ByRef batteryLifePercent, ByRef acLineStatus)
-{
-  VarSetCapacity(powerStatus, (1 + 1 + 1 + 1 + 4 + 4))
-  success := DllCall("GetSystemPowerStatus", "UInt", &powerStatus)
-  If (ErrorLevel != 0 Or success = 0)
-  {
-    MsgBox 16, Power Status, Can't get the power status...
-    Return
-  }
-  acLineStatus     := NumGet(powerStatus, 0, "Char")
-  batteryLifePercent := NumGet(powerStatus, 2, "Char")
-
-  If acLineStatus = 0
-    acLineStatus = off
-  Else If acLineStatus = 1
-    acLineStatus = on
-  Else If acLineStatus = 255
-    acLineStatus = ?
-
-  If batteryLifePercent = 255
-    batteryLifePercent = ???
-}
-;; PhiLho: AC/Battery status (http://www.autohotkey.com/forum/topic7633.html)
-
 Bar_getHeight()
 {
   Global Bar_#0_#1, Bar_#0_#1H, Bar_#0_#2, Bar_#0_#2H, Bar_ctrlHeight, Bar_height, Bar_textHeight
@@ -437,7 +413,7 @@ Bar_updateStatus()
     Gui, %GuiN%: Default
     If Config_readinBat
     {
-      Bar_getBatteryStatus(b1, b2)
+      ResourceMonitor_getBatteryStatus(b1, b2)
       b3 := SubStr("  " b1, -2)
       i := Config_viewCount + 3
       If (b1 < 10) And (b2 = "off")
