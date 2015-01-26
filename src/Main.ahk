@@ -244,5 +244,6 @@ Return
 #Include Manager.ahk
 #Include Monitor.ahk
 #Include ResourceMonitor.ahk
+#Include Tiler.ahk
 #Include View.ahk
 #Include Window.ahk
