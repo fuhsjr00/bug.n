@@ -120,49 +120,49 @@ the default configuration).
 > Set the 1<sup><small>st</small></sup> defined layout (i. e. tile layout in
 the default configuration).
 
-`#Left::View_setMFactor(-0.05)`
+`#Left::View_setLayoutProperty("MFactor", 0, -0.05)`
 > Reduce the size of the master area in the active view (only for the "tile"
 layout). You may also set a second parameter for accelerating the first one.
-E. g. with `#Left::View_setMFactor(-0.05, 2)` the first step, by which the
-master area is reduced, is -0.0016% and will be doubled with consecutive calls
-until it reaches -0.05%.
+E. g. with `#Left::View_setLayoutProperty("MFactor", 0, -0.05, 2)` the first
+step, by which the master area is reduced, is -0.0016% and will be doubled with
+consecutive calls until it reaches -0.05%.
 
-`#Right::View_setMFactor(+0.05)`
+`#Right::View_setLayoutProperty("MFactor", 0, +0.05)`
 > Enlarge the size of the master area in the active view (only for the "tile"
 layout). You may also set a second parameter for accelerating the first one.
-E. g. with `#Right::View_setMFactor(0.05, 0.5)` the first step, by which the
-master area is reduced, is 0.05%, but with consecutive calls it will be halved
-until it reaches 0.0016%.
+E. g. with `#Right::View_setLayoutProperty("MFactor", 0, +0.05, 0.5)` the first
+step, by which the master area is reduced, is 0.05%, but with consecutive calls
+it will be halved until it reaches 0.0016%.
 
-`#^t::View_rotateLayoutAxis(1, +1)`
+`#^t::View_setLayoutProperty("Axis", 0, +1, 1)`
 > Rotate the layout axis (i. e. 2 -> 1 = vertical layout, 1 -> 2 = horizontal
 layout, only for the "tile" layout).
 
-`#^Enter::View_rotateLayoutAxis(1, +2)`
+`#^Enter::View_setLayoutProperty("Axis", 0, +2, 1)`
 > Mirror the layout axis (i. e. -1 -> 1 / 1 -> -1 = master on the left / right
 side, -2 -> 2 / 2 -> -2 = master at top / bottom, only for the "tile" layout).
 
-`#^Tab::View_rotateLayoutAxis(2, +1)`
+`#^Tab::View_setLayoutProperty("Axis", 0, +1, 2)`
 > Rotate the master axis (i. e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 =
 y-axis = vertical stack, 2 -> 3 = z-axis = monocle, only for the "tile" layout).
 
-`#^+Tab::View_rotateLayoutAxis(3, +1)`
+`#^+Tab::View_setLayoutProperty("Axis", 0, +1, 3)`
 > Rotate the stack axis (i. e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 =
 y-axis = vertical stack, 2 -> 3 = z-axis = monocle, only for the "tile" layout).
 
-`#^Up::View_setMY(+1)`
+`#^Up::View_setLayoutProperty("MY", 0, +1)`
 > Increase the master Y dimension by 1, i.e. increase the number of windows in
 the master area by X. Maximum of 9 (only for the "tile" layout).
 
-`#^Down::View_setMY(-1)`
+`#^Down::View_setLayoutProperty("MY", 0, -1)`
 > Decrease the master Y dimension by 1, i.e. decrease the number of windows in
 the master area by X. Minimum of 1 (only for the "tile" layout).
 
-`#^Right::View_setMX(+1)`
+`#^Right::View_setLayoutProperty("MX", 0, +1)`
 > Increase the master X dimension by 1, i. e. increase the number of windows in
 the master area by Y. Maximum of 9 (only for the "tile" layout).
 
-`#^Left::View_setMX(-1)`
+`#^Left::View_setLayoutProperty("MX", 0, +1)`
 > Decrease the master X dimension by 1, i. e. decrease the number of windows in
 the master area by Y. Minimum of 1 (only for the "tile" layout).
 

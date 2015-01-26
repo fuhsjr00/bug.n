@@ -202,9 +202,9 @@ Windows version uses " (Keine Rückmeldung)".
 
 `Config_mFactCallInterval=700`
 > The time in milliseconds, in which two consecutive calls to
-`View_setMFactor(<d>, <dFact>)` have to be made, to accelerate the increasing
-or decreasing of `mfact`. See also `View_setMFactor(<d>, <dFact>)` in the
-listing of hotkeys.
+`View_setLayoutProperty("MFactor", 0, <d>, <dFact>)` have to be made, to
+accelerate the increasing or decreasing of `mfact`. See also
+`View_setLayoutProperty("MFactor", 0, <d>, <dFact>)` in the listing of hotkeys.
 
 `Config_mouseFollowsFocus=1`
 > If true (`=1`), the mouse pointer is set over the focused window, if a window

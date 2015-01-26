@@ -204,16 +204,6 @@ View_moveWindow(i=0, d=0) {
   }
 }
 
-View_rotateLayoutAxis(i, d) {
-  Local v
-
-  v := Monitor_#%Manager_aMonitor%_aView_#1
-  If Tiler_isActive(Manager_aMonitor, v) And (i = 1 Or i = 2 Or i = 3) {
-    Tiler_rotateAxis(Manager_aMonitor, v, i, d)
-    View_arrange(Manager_aMonitor, v)
-  }
-}
-
 View_setGapWidth(d)
 {
   Local l, v, w
@@ -255,31 +245,28 @@ View_setLayout(l)
   }
 }
 
-View_setMFactor(d, dFact = 1) {
-  Local v
+View_setLayoutProperty(name, i, d, opt = -1) {
+  Local a, v
 
   v := Monitor_#%Manager_aMonitor%_aView_#1
-  If Tiler_isActive(Manager_aMonitor, v)
-    If Tiler_setMFactor(Manager_aMonitor, v, d, dFact)
+  If Tiler_isActive(Manager_aMonitor, v) {
+    If (name = "MFactor") {
+      If (opt = -1)
+        opt := 1
+      a := Tiler_setMFactor(Manager_aMonitor, v, d, opt)
+    } Else If (name = "MX")
+      a := Tiler_setMX(Manager_aMonitor, v, d)
+    Else If (name = "MY")
+      a := Tiler_setMY(Manager_aMonitor, v, d)
+    Else If (name = "Axis") {
+      If (opt = -1)
+        opt := 0
+      a := Tiler_setAxis(Manager_aMonitor, v, opt, d)
+    }
+
+    If a
       View_arrange(Manager_aMonitor, v)
-}
-
-View_setMX(d) {
-  Local v
-
-  v := Monitor_#%Manager_aMonitor%_aView_#1
-  If Tiler_isActive(Manager_aMonitor, v)
-    If Tiler_setMX(Manager_aMonitor, v, d)
-      View_arrange(Manager_aMonitor, v)
-}
-
-View_setMY(d) {
-  Local v
-
-  v := Monitor_#%Manager_aMonitor%_aView_#1
-  If Tiler_isActive(Manager_aMonitor, v)
-    If Tiler_setMY(Manager_aMonitor, v, d)
-      View_arrange(Manager_aMonitor, v)
+  }
 }
 
 View_shuffleWindow(d)

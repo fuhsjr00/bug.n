@@ -10,13 +10,34 @@
 
 1. `~` Renamed the function `Manager_toggleDecor` to `Window_toggleDecor`
 2. `~` Renamed the function `View_toggleFloating` to `View_toggleFloatingWindow`
+3. `~` Migrated the following functions to `View_setLayoutProperty`: `View_setMFactor`, `View_setMX`, `View_setMY` and `View_rotateLayoutAxis`
 
-|  # | Configuration variables | Hotkeys                                |
-| --:| ----------------------- | -------------------------------------- |
-| 1. |                         | `-` `#+d::Manager_toggleDecor()`       |
-|    |                         | `+` `#+d::Window_toggleDecor()`        |
-| 2. |                         | `-` `#+f::View_toggleFloating()`       |
-|    |                         | `+` `#+f::View_toggleFloatingWindow()` |
+|  # | Configuration variables | Hotkeys                                                   |
+| --:| ----------------------- | --------------------------------------------------------- |
+| 1. |                         | `-` `#+d::Manager_toggleDecor()`                          |
+|    |                         | `+` `#+d::Window_toggleDecor()`                           |
+| 2. |                         | `-` `#+f::View_toggleFloating()`                          |
+|    |                         | `+` `#+f::View_toggleFloatingWindow()`                    |
+| 3. |                         | `-` `#Left::View_setMFactor(-0.05)`                       |
+|    |                         | `+` `#Left::View_setLayoutProperty("MFactor", 0, -0.05)`  |
+|    |                         | `-` `#Right::View_setMFactor(+0.05)`                      |
+|    |                         | `+` `#Right::View_setLayoutProperty("MFactor", 0, +0.05)` |
+|    |                         | `-` `#^t::View_rotateLayoutAxis(1, +1)`                   |
+|    |                         | `+` `#^t::View_setLayoutProperty("Axis", 0, +1, 1)`       |
+|    |                         | `-` `#^Enter::View_rotateLayoutAxis(1, +2)`               |
+|    |                         | `+` `#^Enter::View_setLayoutProperty("Axis", 0, +2, 1)`   |
+|    |                         | `-` `#^Tab::View_rotateLayoutAxis(2, +1)`                 |
+|    |                         | `+` `#^Tab::View_setLayoutProperty("Axis", 0, +1, 2)`     |
+|    |                         | `-` `#^+Tab::View_rotateLayoutAxis(3, +1)`                |
+|    |                         | `+` `#^+Tab::View_setLayoutProperty("Axis", 0, +1, 3)`    |
+|    |                         | `-` `#^Up::View_setMY(+1)`                                |
+|    |                         | `+` `#^Up::View_setLayoutProperty("MY", 0, +1)`           |
+|    |                         | `-` `#^Down::View_setMY(-1)`                              |
+|    |                         | `+` `#^Down::View_setLayoutProperty("MY", 0, -1)`         |
+|    |                         | `-` `#^Right::View_setMX(+1)`                             |
+|    |                         | `+` `#^Right::View_setLayoutProperty("MX", 0, +1)`        |
+|    |                         | `-` `#^Left::View_setMX(-1)`                              |
+|    |                         | `+` `#^Left::View_setLayoutProperty("MX", 0, -1)`         |
 
 ### 8.4.0
 
