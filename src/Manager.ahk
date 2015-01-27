@@ -884,6 +884,18 @@ Manager_saveWindowState(filename, nm, nv) {
     FileMove, %tmpfname%, %filename%, 1
 }
 
+Manager_serCursor(wndId) {
+  Local wndHeight, wndWidth, wndX, wndY
+
+  If Config_mouseFollowsFocus {
+    If wndId {
+      WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
+      DllCall("SetCursorPos", "Int", Round(wndX + wndWidth / 2), "Int", Round(wndY + wndHeight / 2))
+    } Else
+      DllCall("SetCursorPos", "Int", Round(Monitor_#%Manager_aMonitor%_x + Monitor_#%Manager_aMonitor%_width / 2), "Int", Round(Monitor_#%Manager_aMonitor%_y + Monitor_#%Manager_aMonitor%_height / 2))
+  }
+}
+
 Manager_setViewMonitor(d)
 {
   Local aView, aWndId, m, v, wndIds
@@ -1129,16 +1141,7 @@ Manager_unmanage(wndId) {
 }
 
 Manager_winActivate(wndId) {
-  Local wndHeight, wndWidth, wndX, wndY
-
-  If Config_mouseFollowsFocus {
-    If wndId {
-      WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
-      DllCall("SetCursorPos", "Int", Round(wndX + wndWidth / 2), "Int", Round(wndY + wndHeight / 2))
-    } Else
-      DllCall("SetCursorPos", "Int", Round(Monitor_#%Manager_aMonitor%_x + Monitor_#%Manager_aMonitor%_width / 2), "Int", Round(Monitor_#%Manager_aMonitor%_y + Monitor_#%Manager_aMonitor%_height / 2))
-  }
-
+  Manager_serCursor(wndId)
   Debug_logMessage("DEBUG[1] Activating window: " wndId, 1)
   If Not wndId {
     If (A_OSVersion = "WIN_8")

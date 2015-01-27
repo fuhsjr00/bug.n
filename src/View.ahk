@@ -171,6 +171,7 @@ View_getTiledWndIds(m, v)
       tiledWndIds .= A_LoopField ";"
     }
   }
+  View_tiledWndIds := tiledWndIds
   StringTrimRight, tiledWndIds, tiledWndIds, 1
   StringSplit, View_tiledWndId, tiledWndIds, `;
 
@@ -197,10 +198,7 @@ View_moveWindow(i=0, d=0) {
       i := Manager_loop(Window_#%aWndId%_area, d, 1, View_#%m%_#%v%_area_#0)
     Window_move(aWndId, View_#%m%_#%v%_area_#%i%_x, View_#%m%_#%v%_area_#%i%_y, View_#%m%_#%v%_area_#%i%_width, View_#%m%_#%v%_area_#%i%_height)
     Window_#%aWndId%_area := i
-    If Config_mouseFollowsFocus {
-      WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
-      DllCall("SetCursorPos", "Int", Round(aWndX + aWndWidth / 2), "Int", Round(aWndY + aWndHeight / 2))
-    }
+    Manager_serCursor(aWndId)
   }
 }
 
@@ -266,50 +264,36 @@ View_setLayoutProperty(name, i, d, opt = 0) {
   }
 }
 
-View_shuffleWindow(d)
-{
-  Local aWndHeight, aWndId, aWndWidth, aWndX, aWndY, i, j, search, v
+View_shuffleWindow(i, d = 0) {
+  Local aWndId, j, replace, v
 
-  WinGet, aWndId, ID, A
+  Debug_logMessage("DEBUG[2] View_shuffleWindow(" . i . ", " . d . ")", 2)
   v := Monitor_#%Manager_aMonitor%_aView_#1
-  If Tiler_isActive(Manager_aMonitor, v) And InStr(Manager_managedWndIds, aWndId ";")
-  {
+  If Tiler_isActive(Manager_aMonitor, v) {
     View_getTiledWndIds(Manager_aMonitor, v)
-    If (View_tiledWndId0 > 1)
-    {
-      Loop, % View_tiledWndId0
-      {
-        If (View_tiledWndId%A_Index% = aWndId)
-        {
-          i := A_Index
+    WinGet, aWndId, ID, A
+    If InStr(View_tiledWndIds, aWndId ";") And (View_tiledWndId0 > 1) {
+      Loop, % View_tiledWndId0 {
+        If (View_tiledWndId%A_Index% = aWndId) {
+          j := A_Index
           Break
         }
       }
-      If (d = 0 And i = 1)
-        j := 2
-      Else
-        j := Manager_loop(i, d, 1, View_tiledWndId0)
-      If (j > 0 And j <= View_tiledWndId0)
-      {
-        If (j = i)
-        {
-          StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, %aWndId%`;,
-          View_#%Manager_aMonitor%_#%v%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%v%_wndIds
-        }
+      If (i = 0)
+        i := j
+      Else If (i = 1 And j = 1)
+        i := 2
+      i := Manager_loop(i, d, 1, View_tiledWndId0)
+      Debug_logMessage("DEBUG[2] View_shuffleWindow: " . j . " -> " . i, 2)
+      If (i != j) {
+        If (i < j)
+          replace := aWndId ";" View_tiledWndId%i% ";"
         Else
-        {
-          search := View_tiledWndId%j%
-          StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, %aWndId%, SEARCH
-          StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, %search%, %aWndId%
-          StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, SEARCH, %search%
-        }
+          replace := View_tiledWndId%i% ";" aWndId ";"
+        StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, % aWndId ";",
+        StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, % View_tiledWndId%i% ";", %replace%
         View_arrange(Manager_aMonitor, v)
-
-        If Config_mouseFollowsFocus
-        {
-          WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
-          DllCall("SetCursorPos", "Int", Round(aWndX + aWndWidth / 2), "Int", Round(aWndY + aWndHeight / 2))
-        }
+        Manager_serCursor(aWndId)
       }
     }
   }

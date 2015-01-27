@@ -24,14 +24,16 @@ quitting bug.n.
 `#Up::View_activateWindow(-1)`
 > Activate the previous window in the active view.
 
-`#+Down::View_shuffleWindow(+1)`
+`#+Down::View_shuffleWindow(0, +1)`
 > Move the active window to the next position in the window list of the view.
 
-`#+Up::View_shuffleWindow(-1)`
+`#+Up::View_shuffleWindow(0, -1)`
 > Move the active window to the previous position in the window list of the view.
 
-`#+Enter::View_shuffleWindow(0)`
+`#+Enter::View_shuffleWindow(1)`
 > Move the active window to the first position in the window list of the view.
+You may also move the active window to any other absolute position in the
+window list by using the first parameter.
 
 `#c::Manager_closeWindow()`
 > Close the active window.

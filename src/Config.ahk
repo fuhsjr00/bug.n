@@ -385,9 +385,9 @@ Config_UI_saveSession() {
 ;; Window management
 #Down::View_activateWindow(+1)
 #Up::View_activateWindow(-1)
-#+Down::View_shuffleWindow(+1)
-#+Up::View_shuffleWindow(-1)
-#+Enter::View_shuffleWindow(0)
+#+Down::View_shuffleWindow(0, +1)
+#+Up::View_shuffleWindow(0, -1)
+#+Enter::View_shuffleWindow(1)
 #c::Manager_closeWindow()
 #+d::Window_toggleDecor()
 #+f::View_toggleFloatingWindow()
