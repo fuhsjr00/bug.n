@@ -216,16 +216,14 @@ Tiler_setAxis(m, v, id, d) {
     Return, 0
 }
 
-Tiler_setMFactor(m, v, d, dFact) {
+Tiler_setMFactor(m, v, i, d, dFact) {
   Local mFact
 
-  mFact := 0
-  If (d > 1)
-    mFact := d
-  Else {
-    d := Tiler_getMFactorD(m, v, d, dFact)
-    mFact := View_#%m%_#%v%_layoutMFact + d
-  }
+  If (i > 0)
+    mFact := i
+  Else
+    mFact := View_#%m%_#%v%_layoutMFact
+  mFact += Tiler_getMFactorD(m, v, d, dFact)
   If (mFact > 0 And mFact < 1) {
     View_#%m%_#%v%_layoutMFact := mFact
     Return, 1

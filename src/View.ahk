@@ -255,7 +255,7 @@ View_setLayoutProperty(name, i, d, opt = 0) {
     Else If (name = "MFactor") {
       If (opt = 0)
         opt := 1
-      a := Tiler_setMFactor(Manager_aMonitor, v, d, opt)
+      a := Tiler_setMFactor(Manager_aMonitor, v, i, d, opt)
     } Else If (name = "GapWidth")
       View_setGapWidth(d)
     Else If (name = "MX")
