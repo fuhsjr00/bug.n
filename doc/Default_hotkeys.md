@@ -96,11 +96,13 @@ and tiled windows of all views) to the log.
 two log messages (`Manager_logViewWindowList` and
 `Manager_logManagedWindowList`) to the log.
 
-`#^d::Debug_setLogLevel(-1)`
-> Decrement the debug log level. Show fewer debug messages.
+`#^d::Debug_setLogLevel(0, -1)`
+> Decrement the debug log level. Show fewer debug messages. You may also set
+the debug log level to an absolute value by using the first parameter.
 
-`#^+d::Debug_setLogLevel(+1)`
-> Increment the debug log level. Show more debug messages.
+`#^+d::Debug_setLogLevel(0, +1)`
+> Increment the debug log level. Show more debug messages. You may also set
+the debug log level to an absolute value by using the first parameter.
 
 ### Layout management
 

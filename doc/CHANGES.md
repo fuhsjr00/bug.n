@@ -11,6 +11,7 @@
 1. `~` Renamed the function `Manager_toggleDecor` to `Window_toggleDecor`
 2. `~` Renamed the function `View_toggleFloating` to `View_toggleFloatingWindow`
 3. `~` Migrated the following functions to `View_setLayoutProperty`: `View_setGapWidth`, `View_setMFactor`, `View_setMX`, `View_setMY` and `View_rotateLayoutAxis`
+4. `~` Re-implemented the following functions to allow setting absolute and relative values: `Debug_setLogLevel`, `View_setLayout`, `View_setMFactor`
 
 |  # | Configuration variables | Hotkeys                                                   |
 | --:| ----------------------- | --------------------------------------------------------- |
@@ -38,10 +39,14 @@
 |    |                         | `+` `#^Right::View_setLayoutProperty("MX", 0, +1)`        |
 |    |                         | `-` `#^Left::View_setMX(-1)`                              |
 |    |                         | `+` `#^Left::View_setLayoutProperty("MX", 0, -1)`         |
-|    |                         | `-` `View_setGapWidth(-2)`                                |
-|    |                         | `+` `View_setLayoutProperty("GapWidth", 0, -2)`           |
-|    |                         | `-` `View_setGapWidth(+2)`                                |
-|    |                         | `+` `View_setLayoutProperty("GapWidth", 0, +2)`           |
+|    |                         | `-` `#+Left::View_setGapWidth(-2)`                        |
+|    |                         | `+` `#+Left::View_setLayoutProperty("GapWidth", 0, -2)`   |
+|    |                         | `-` `#+Right::View_setGapWidth(+2)`                       |
+|    |                         | `+` `#+Right::View_setLayoutProperty("GapWidth", 0, +2)`  |
+| 4. |                         | `-` `#^d::Debug_setLogLevel(-1)`                          |
+|    |                         | `+` `#^d::Debug_setLogLevel(0, -1)`                       |
+|    |                         | `-` `#^+d::Debug_setLogLevel(+1)`                         |
+|    |                         | `+` `#^+d::Debug_setLogLevel(0, +1)`                      |
 
 ### 8.4.0
 

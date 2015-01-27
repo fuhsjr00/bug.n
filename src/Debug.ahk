@@ -146,13 +146,13 @@ Debug_logWindowInfo(wndId)
   Debug_logMessage(text , 0, False)
 }
 
-Debug_setLogLevel(d)
-{
+Debug_setLogLevel(i, d) {
   Global Debug_logLevel
 
-  i := Debug_logLevel + d
-  If (i >= 0)
-  {
+  If (i = 0)
+    i := Debug_logLevel
+  i += d
+  If (i >= 0) And (i != Debug_logLevel) {
     Debug_logLevel := i
     If (i = 0)
       Debug_logMessage("Logging disabled.", 0)
