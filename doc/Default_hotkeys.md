@@ -105,8 +105,9 @@ two log messages (`Manager_logViewWindowList` and
 ### Layout management
 
 `#Tab::View_setLayout(-1)`
-> Set the previously set layout. You may also use `View_setLayout(>)` for
-setting the next layout in the layout array.
+> Set the previously set layout. You may also use `View_setLayout(0, +1)` for
+setting the next or `View_setLayout(0, -1)` for setting the previous layout in
+the layout array.
 
 `#f::View_setLayout(3)`
 > Set the 3<sup><small>rd</small></sup> defined layout (i. e. floating layout

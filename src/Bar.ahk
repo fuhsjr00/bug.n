@@ -318,7 +318,7 @@ Bar_GuiContextMenu:
     {
       If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
         Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) - Manager_aMonitor)
-      View_setLayout(">")
+      View_setLayout(0, +1)
     }
     Else If (SubStr(A_GuiControl, -4) = "_view")
     {

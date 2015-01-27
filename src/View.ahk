@@ -225,21 +225,19 @@ View_setGapWidth(d)
   }
 }
 
-View_setLayout(l)
-{
+View_setLayout(i, d = 0) {
   Local v
 
   v := Monitor_#%Manager_aMonitor%_aView_#1
-  If (l = -1)
-    l := View_#%Manager_aMonitor%_#%v%_layout_#2
-  If (l = ">")
-    l := Manager_loop(View_#%Manager_aMonitor%_#%v%_layout_#1, +1, 1, Config_layoutCount)
-  If (l > 0) And (l <= Config_layoutCount)
-  {
-    If Not (l = View_#%Manager_aMonitor%_#%v%_layout_#1)
-    {
+  If (i = -1)
+    i := View_#%Manager_aMonitor%_#%v%_layout_#2
+  Else If (i = 0)
+    i := View_#%Manager_aMonitor%_#%v%_layout_#1
+  i := Manager_loop(i, d, 1, Config_layoutCount)
+  If (i > 0) And (i <= Config_layoutCount) {
+    If Not (i = View_#%Manager_aMonitor%_#%v%_layout_#1) {
       View_#%Manager_aMonitor%_#%v%_layout_#2 := View_#%Manager_aMonitor%_#%v%_layout_#1
-      View_#%Manager_aMonitor%_#%v%_layout_#1 := l
+      View_#%Manager_aMonitor%_#%v%_layout_#1 := i
     }
     View_arrange(Manager_aMonitor, v, True)
   }
