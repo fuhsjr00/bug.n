@@ -245,24 +245,23 @@ View_setLayout(l)
   }
 }
 
-View_setLayoutProperty(name, i, d, opt = -1) {
+View_setLayoutProperty(name, i, d, opt = 0) {
   Local a, v
 
   v := Monitor_#%Manager_aMonitor%_aView_#1
   If Tiler_isActive(Manager_aMonitor, v) {
-    If (name = "MFactor") {
-      If (opt = -1)
+    If (name = "Axis")
+      a := Tiler_setAxis(Manager_aMonitor, v, opt, d)
+    Else If (name = "MFactor") {
+      If (opt = 0)
         opt := 1
       a := Tiler_setMFactor(Manager_aMonitor, v, d, opt)
-    } Else If (name = "MX")
+    } Else If (name = "GapWidth")
+      View_setGapWidth(d)
+    Else If (name = "MX")
       a := Tiler_setMX(Manager_aMonitor, v, d)
     Else If (name = "MY")
       a := Tiler_setMY(Manager_aMonitor, v, d)
-    Else If (name = "Axis") {
-      If (opt = -1)
-        opt := 0
-      a := Tiler_setAxis(Manager_aMonitor, v, opt, d)
-    }
 
     If a
       View_arrange(Manager_aMonitor, v)

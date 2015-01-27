@@ -166,11 +166,11 @@ the master area by Y. Maximum of 9 (only for the "tile" layout).
 > Decrease the master X dimension by 1, i. e. decrease the number of windows in
 the master area by Y. Minimum of 1 (only for the "tile" layout).
 
-`#+Left::View_setGapWidth(-2)`
-> Decrease the gap between windows in "tile" layout.
+`#+Left::View_setLayoutProperty("GapWidth", 0, -2)`
+> Decrease the gap between windows in "monocle" and "tile" layout.
 
-`#+Right::View_setGapWidth(+2)`
-> Increase the gap between windows in "tile" layout.
+`#+Right::View_setLayoutProperty("GapWidth", 0, +2)`
+> Increase the gap between windows in "monocle" and "tile" layout.
 
 ### View / Tag management
 

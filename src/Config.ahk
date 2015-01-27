@@ -433,8 +433,8 @@ Config_UI_saveSession() {
 #^Down::View_setLayoutProperty("MY", 0, -1)
 #^Right::View_setLayoutProperty("MX", 0, +1)
 #^Left::View_setLayoutProperty("MX", 0, -1)
-#+Left::View_setGapWidth(-2)
-#+Right::View_setGapWidth(+2)
+#+Left::View_setLayoutProperty("GapWidth", 0, -2)
+#+Right::View_setLayoutProperty("GapWidth", 0, +2)
 
 ;; View/Tag management
 #+n::View_toggleMargins()
