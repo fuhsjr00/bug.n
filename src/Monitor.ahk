@@ -207,65 +207,54 @@ Monitor_moveWindow(m, wndId)
   Window_#%wndId%_monitor := m
 }
 
-Monitor_setWindowTag(t)
-{
+Monitor_setWindowTag(i, d = 0) {
   Local aView, aWndId, wndId
 
-  If (t = ">")
-    t := Manager_loop(Monitor_#%Manager_aMonitor%_aView_#1, +1, 1, Config_viewCount)
-  Else If (t = "<")
-    t := Manager_loop(Monitor_#%Manager_aMonitor%_aView_#1, -1, 1, Config_viewCount)
+  If (i = 0)
+    i := Monitor_#%Manager_aMonitor%_aView_#1
+  Else If (i <= Config_viewCount)
+    i := Manager_loop(i, d, 1, Config_viewCount)
 
   WinGet, aWndId, ID, A
-  If (InStr(Manager_managedWndIds, aWndId ";") And t >= 0 And t <= Config_viewCount)
-  {
-    If (t = 0)
-    {
-      Loop, % Config_viewCount
-      {
-        If Not (Window_#%aWndId%_tags & (1 << A_Index - 1))
-        {
+  If InStr(Manager_managedWndIds, aWndId ";") And (i > 0) And (i <= Config_viewCount Or i = 10) {
+    If (i = 10) {
+      Loop, % Config_viewCount {
+        If Not (Window_#%aWndId%_tags & (1 << A_Index - 1)) {
           View_#%Manager_aMonitor%_#%A_Index%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%A_Index%_wndIds
           View_#%Manager_aMonitor%_#%A_Index%_aWndId := aWndId
           Bar_updateView(Manager_aMonitor, A_Index)
           Window_#%aWndId%_tags += 1 << A_Index - 1
         }
       }
-    }
-    Else
-    {
-      Loop, % Config_viewCount
-      {
-        If Not (A_index = t)
-        {
+    } Else {
+      Loop, % Config_viewCount {
+        If Not (A_index = i) {
           StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %aWndId%`;,
           View_#%Manager_aMonitor%_#%A_Index%_aWndId := 0
           Bar_updateView(Manager_aMonitor, A_Index)
         }
       }
 
-      If Not (Window_#%aWndId%_tags & (1 << t - 1))
-        View_#%Manager_aMonitor%_#%t%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%t%_wndIds
-      View_#%Manager_aMonitor%_#%t%_aWndId := aWndId
-      Window_#%aWndId%_tags := 1 << t - 1
+      If Not (Window_#%aWndId%_tags & (1 << i - 1))
+        View_#%Manager_aMonitor%_#%i%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%i%_wndIds
+      View_#%Manager_aMonitor%_#%i%_aWndId := aWndId
+      Window_#%aWndId%_tags := 1 << i - 1
 
       aView := Monitor_#%Manager_aMonitor%_aView_#1
-      If Not (t = aView)
-      {
+      If Not (i = aView) {
         Manager_hideShow := True
-        wndId := SubStr(View_#%Manager_aMonitor%_#%aView%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%aView%_wndIds, ";")-1)
+        wndId := SubStr(View_#%Manager_aMonitor%_#%aView%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%aView%_wndIds, ";") - 1)
         Manager_winActivate(wndId)
         Manager_hideShow := False
         If Config_viewFollowsTagged
-          Monitor_activateView(t)
-        Else
-        {
+          Monitor_activateView(i)
+        Else {
           Manager_hideShow := True
           Window_hide(aWndId)
           Manager_hideShow := False
           If Config_dynamicTiling
             View_arrange(Manager_aMonitor, aView)
-          Bar_updateView(Manager_aMonitor, t)
+          Bar_updateView(Manager_aMonitor, i)
         }
       }
     }

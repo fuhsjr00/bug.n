@@ -439,7 +439,7 @@ Config_UI_saveSession() {
 ;; View/Tag management
 #+n::View_toggleMargins()
 #BackSpace::Monitor_activateView(-1)
-#+0::Monitor_setWindowTag(0)
+#+0::Monitor_setWindowTag(10)
 #1::Monitor_activateView(1)
 #+1::Monitor_setWindowTag(1)
 #^1::Monitor_toggleWindowTag(1)

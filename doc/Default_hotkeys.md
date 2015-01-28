@@ -193,10 +193,10 @@ the master area by Y. Minimum of 1 (only for the "tile" layout).
 `Monitor_activateView(0, -1)` or `Monitor_activateView(0, +1)` for activating
 the previous or next adjacent view.
 
-`#+0::Monitor_setWindowTag(0)`
+`#+0::Monitor_setWindowTag(10)`
 > Tag the active window with all tags (n = 1..`Config_viewCount`). You may also
-use `Monitor_setWindowTag(<)` or `Monitor_setWindowTag(>)` for setting the tag
-of the previous or next adjacent to the current view.
+use `Monitor_setWindowTag(0, -1)` or `Monitor_setWindowTag(0, +1)` for setting
+the tag of the previous or next adjacent to the current view.
 
 `#<n>::Monitor_activateView(<n>)`
 > Activate the n<sup><small>th</small></sup> view (n = 1..`Config_viewCount`).
