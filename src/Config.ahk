@@ -473,8 +473,8 @@ Config_UI_saveSession() {
 #,::Manager_activateMonitor(0, -1)
 #+.::Manager_setWindowMonitor(0, +1)
 #+,::Manager_setWindowMonitor(0, -1)
-#^+.::Manager_setViewMonitor(+1)
-#^+,::Manager_setViewMonitor(-1)
+#^+.::Manager_setViewMonitor(0, +1)
+#^+,::Manager_setViewMonitor(0, -1)
 
 ;; GUI management
 #+Space::Monitor_toggleBar()

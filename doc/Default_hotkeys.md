@@ -229,11 +229,14 @@ set the active window on the first monitor.
 > Set the active window's view to the active view on the previous monitor in a
 multi-monitor environment.
 
-`#^+.::Manager_setViewMonitor(+1)`
+`#^+.::Manager_setViewMonitor(0, +1)`
 > Set all windows of the active view on the active view of the next monitor in
-a multi-monitor environment.
+a multi-monitor environment. You may also set all windows of the active view on
+a specific monitor by using the first parameter, e. g.
+`Manager_setViewMonitor(1)` will set all windows of the active view on the
+first monitor.
 
-`#^+,::Manager_setViewMonitor(-1)`
+`#^+,::Manager_setViewMonitor(0, -1)`
 > Set all windows of the active view on the active view of the previous monitor
 in a multi-monitor environment.
 

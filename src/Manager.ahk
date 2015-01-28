@@ -894,44 +894,39 @@ Manager_serCursor(wndId) {
   }
 }
 
-Manager_setViewMonitor(d)
-{
-  Local aView, aWndId, m, v, wndIds
+Manager_setViewMonitor(i, d = 0) {
+  Local aView, aWndId, v, wndIds
 
-  If (Manager_monitorCount > 1)
-  {
-    m := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
-    v := Monitor_#%m%_aView_#1
-    aView := Monitor_#%Manager_aMonitor%_aView_#1
-    If View_#%Manager_aMonitor%_#%aView%_wndIds
+  aView := Monitor_#%Manager_aMonitor%_aView_#1
+  If (Manager_monitorCount > 1) And View_#%Manager_aMonitor%_#%aView%_wndIds {
+    If (i = 0)
+      i := Manager_aMonitor
+    i := Manager_loop(i, d, 1, Manager_monitorCount)
+    v := Monitor_#%i%_aView_#1
+    View_#%i%_#%v%_wndIds := View_#%Manager_aMonitor%_#%aView%_wndIds View_#%i%_#%v%_wndIds
+
+    StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%aView%_wndIds, 1
+    Loop, PARSE, wndIds, `;
     {
-      View_#%m%_#%v%_wndIds := View_#%Manager_aMonitor%_#%aView%_wndIds View_#%m%_#%v%_wndIds
-
-      StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%aView%_wndIds, 1
-      Loop, PARSE, wndIds, `;
-      {
-        Loop, % Config_viewCount
-        {
-          StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %A_LoopField%`;,
-          View_#%Manager_aMonitor%_#%A_Index%_aWndId := 0
-        }
-
-        Monitor_moveWindow(m, A_LoopField)
-        Window_#%A_LoopField%_tags := 1 << v - 1
-      }
-      View_arrange(Manager_aMonitor, aView)
-      Loop, % Config_viewCount
-      {
-        Bar_updateView(Manager_aMonitor, A_Index)
+      Loop, % Config_viewCount {
+        StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %A_LoopField%`;,
+        View_#%Manager_aMonitor%_#%A_Index%_aWndId := 0
       }
 
-      ;; Manually set the active monitor.
-      Manager_aMonitor := m
-      View_arrange(m, v)
-      WinGet, aWndId, ID, A
-      Manager_winActivate(aWndId)
-      Bar_updateView(m, v)
+      Monitor_moveWindow(i, A_LoopField)
+      Window_#%A_LoopField%_tags := 1 << v - 1
     }
+    View_arrange(Manager_aMonitor, aView)
+    Loop, % Config_viewCount {
+      Bar_updateView(Manager_aMonitor, A_Index)
+    }
+
+    ;; Manually set the active monitor.
+    Manager_aMonitor := i
+    View_arrange(i, v)
+    WinGet, aWndId, ID, A
+    Manager_winActivate(aWndId)
+    Bar_updateView(i, v)
   }
 }
 
@@ -961,7 +956,7 @@ Manager_setWindowBorders()
   }
 }
 
-Manager_setWindowMonitor(i, d) {
+Manager_setWindowMonitor(i, d = 0) {
   Local aWndId, v
 
   WinGet, aWndId, ID, A
