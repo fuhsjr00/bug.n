@@ -961,15 +961,12 @@ Manager_setWindowBorders()
   }
 }
 
-Manager_setWindowMonitor(d)
-{
+Manager_setWindowMonitor(i, d) {
   Local aWndId, v
 
   WinGet, aWndId, ID, A
-  If (Manager_monitorCount > 1 And InStr(Manager_managedWndIds, aWndId ";"))
-  {
-    Loop, % Config_viewCount
-    {
+  If (Manager_monitorCount > 1 And InStr(Manager_managedWndIds, aWndId ";")) {
+    Loop, % Config_viewCount {
       StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %aWndId%`;,
       If (aWndId = View_#%Manager_aMonitor%_#%A_Index%_aWndId)
         View_#%Manager_aMonitor%_#%A_Index%_aWndId := 0
@@ -979,7 +976,9 @@ Manager_setWindowMonitor(d)
       View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
 
     ;; Manually set the active monitor.
-    Manager_aMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
+    If (i = 0)
+      i := Manager_aMonitor
+    Manager_aMonitor := Manager_loop(i, d, 1, Manager_monitorCount)
     Monitor_moveWindow(Manager_aMonitor, aWndId)
     v := Monitor_#%Manager_aMonitor%_aView_#1
     Window_#%aWndId%_tags := 1 << v - 1

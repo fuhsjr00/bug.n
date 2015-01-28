@@ -471,8 +471,8 @@ Config_UI_saveSession() {
 ;; Monitor management
 #.::Manager_activateMonitor(0, +1)
 #,::Manager_activateMonitor(0, -1)
-#+.::Manager_setWindowMonitor(+1)
-#+,::Manager_setWindowMonitor(-1)
+#+.::Manager_setWindowMonitor(0, +1)
+#+,::Manager_setWindowMonitor(0, -1)
 #^+.::Manager_setViewMonitor(+1)
 #^+,::Manager_setViewMonitor(-1)
 

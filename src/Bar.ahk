@@ -323,7 +323,7 @@ Bar_GuiContextMenu:
     Else If (SubStr(A_GuiControl, -4) = "_view")
     {
       If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
-        Manager_setWindowMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) - Manager_aMonitor)
+        Manager_setWindowMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
       Monitor_setWindowTag(SubStr(A_GuiControl, InStr(A_GuiControl, "_#", False, 0) + 2, 1))
     }
   }
