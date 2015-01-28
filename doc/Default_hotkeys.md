@@ -128,20 +128,20 @@ the default configuration).
 `#Left::View_setLayoutProperty("MFactor", 0, -0.05)`
 > Reduce the size of the master area in the active view (only for the "tile"
 layout). You may also set an additional parameter for accelerating the third
-one. E. g. with `#Left::View_setLayoutProperty("MFactor", 0, -0.05, 2)` the
+one. E. g. with `#Left::View_setLayoutProperty(MFactor, 0, -0.05, 2)` the
 first step, by which the master area is reduced, is -0.0016% and will be
 doubled with consecutive calls until it reaches -0.05%.
 With the second parameter you may set an absolute value, e. g.
-'View_setLayoutProperty("MFactor", 0.5, 0)' splits the view in half.
+'View_setLayoutProperty(MFactor, 0.5, 0)' splits the view in half.
 
 `#Right::View_setLayoutProperty("MFactor", 0, +0.05)`
 > Enlarge the size of the master area in the active view (only for the "tile"
 layout). You may also set a additional parameter for accelerating the third
-one. E. g. with `#Right::View_setLayoutProperty("MFactor", 0, +0.05, 0.5)` the
+one. E. g. with `#Right::View_setLayoutProperty(MFactor, 0, +0.05, 0.5)` the
 first step, by which the master area is reduced, is 0.05%, but with consecutive
 calls it will be halved until it reaches 0.0016%.
 With the second parameter you may set an absolute value, e. g.
-'View_setLayoutProperty("MFactor", 0.67, 0)' makes the master area two thirds
+'View_setLayoutProperty(MFactor, 0.67, 0)' makes the master area two thirds
 and the stacking area one third the size of the view.
 
 `#^t::View_setLayoutProperty("Axis", 0, +1, 1)`
@@ -177,7 +177,10 @@ the master area by Y. Maximum of 9 (only for the "tile" layout).
 the master area by Y. Minimum of 1 (only for the "tile" layout).
 
 `#+Left::View_setLayoutProperty("GapWidth", 0, -2)`
-> Decrease the gap between windows in "monocle" and "tile" layout.
+> Decrease the gap between windows in "monocle" and "tile" layout. You may also
+set an absolute value for the gap width by using the first parameter, e. g.
+`View_setLayoutProperty(GapWidth, 0, 0)` will eliminate the gap and
+`View_setLayoutProperty(GapWidth, 20, 0)` will set it to 20px.
 
 `#+Right::View_setLayoutProperty("GapWidth", 0, +2)`
 > Increase the gap between windows in "monocle" and "tile" layout.

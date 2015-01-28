@@ -101,14 +101,16 @@ Main_evalCommand(command)
     {
       functionName := SubStr(command, 1, i - 1)
       functionArguments := SubStr(command, i + 1, j - (i + 1))
+      StringReplace, functionArguments, functionArguments, %A_SPACE%, , All
       StringSplit, functionArgument, functionArguments, `,
       If (functionArgument0 < 2)
         %functionName%(functionArguments)
       Else If (functionArgument0 = 2)
-      {
-        StringTrimLeft, functionArgument2, functionArgument2, 1
         %functionName%(functionArgument1, functionArgument2)
-      }
+      Else If (functionArgument0 = 3)
+        %functionName%(functionArgument1, functionArgument2, functionArgument3)
+      Else If (functionArgument0 = 4)
+        %functionName%(functionArgument1, functionArgument2, functionArgument3, functionArgument4)
     }
   }
 }

@@ -197,25 +197,19 @@ View_moveWindow(i=0, d=0) {
   }
 }
 
-View_setGapWidth(d)
-{
-  Local l, v, w
+View_setGapWidth(i, d = 0) {
+  Local v
 
   v := Monitor_#%Manager_aMonitor%_aView_#1
-  l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If Tiler_isActive(Manager_aMonitor, v) Or (Config_layoutFunction_#%l% = "monocle")
-  {
-    If (d < 0)
-      d := Floor(d / 2) * 2
-    Else
-      d := Ceil(d / 2) * 2
-    w := View_#%Manager_aMonitor%_#%v%_layoutGapWidth + d
-    If (w < Monitor_#%Manager_aMonitor%_height And w < Monitor_#%Manager_aMonitor%_width)
-    {
-      View_#%Manager_aMonitor%_#%v%_layoutGapWidth := w
-      View_arrange(Manager_aMonitor, v)
-    }
-  }
+  If (i = 0) And (d != 0)
+    i := View_#%Manager_aMonitor%_#%v%_layoutGapWidth
+  i += d
+  If (i >= 0 And i < Monitor_#%Manager_aMonitor%_height And i < Monitor_#%Manager_aMonitor%_width) {
+    i := Ceil(i / 2) * 2
+    View_#%Manager_aMonitor%_#%v%_layoutGapWidth := i
+    Return, 1
+  } Else
+    Return, 0
 }
 
 View_setLayout(i, d = 0) {
@@ -237,9 +231,10 @@ View_setLayout(i, d = 0) {
 }
 
 View_setLayoutProperty(name, i, d, opt = 0) {
-  Local a, v
+  Local a, l, v
 
   v := Monitor_#%Manager_aMonitor%_aView_#1
+  l := View_#%Manager_aMonitor%_#%v%_layout_#1
   If Tiler_isActive(Manager_aMonitor, v) {
     If (name = "Axis")
       a := Tiler_setAxis(Manager_aMonitor, v, opt, d)
@@ -247,16 +242,16 @@ View_setLayoutProperty(name, i, d, opt = 0) {
       If (opt = 0)
         opt := 1
       a := Tiler_setMFactor(Manager_aMonitor, v, i, d, opt)
-    } Else If (name = "GapWidth")
-      View_setGapWidth(d)
-    Else If (name = "MX")
+    } Else If (name = "MX")
       a := Tiler_setMX(Manager_aMonitor, v, d)
     Else If (name = "MY")
       a := Tiler_setMY(Manager_aMonitor, v, d)
-
-    If a
-      View_arrange(Manager_aMonitor, v)
   }
+  If (name = "GapWidth") And (Tiler_isActive(Manager_aMonitor, v) Or (Config_layoutFunction_#%l% = "monocle"))
+    a := View_setGapWidth(i, d)
+
+  If a
+    View_arrange(Manager_aMonitor, v)
 }
 
 View_shuffleWindow(i, d = 0) {
