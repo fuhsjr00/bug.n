@@ -11,7 +11,7 @@
 1. `~` Renamed the function `Manager_toggleDecor` to `Window_toggleDecor`
 2. `~` Renamed the function `View_toggleFloating` to `View_toggleFloatingWindow`
 3. `~` Migrated the following functions to `View_setLayoutProperty`: `View_setGapWidth`, `View_setMFactor`, `View_setMX`, `View_setMY` and `View_rotateLayoutAxis`
-4. `~` Re-implemented the following functions to allow setting absolute and relative values: `Debug_setLogLevel`, `View_setLayout`, `View_setMFactor`, `View_shuffleWindow`
+4. `~` Revised the following functions to allow setting absolute and relative values: `Debug_setLogLevel`, `Monitor_activateView`, `View_setLayout`, `View_setMFactor`, `View_shuffleWindow`
 
 |  # | Configuration variables | Hotkeys                                                   |
 | --:| ----------------------- | --------------------------------------------------------- |

@@ -190,8 +190,8 @@ the master area by Y. Minimum of 1 (only for the "tile" layout).
 
 `#BackSpace::Monitor_activateView(-1)`
 > Activate the previously activated view. You may also use
-`Monitor_activateView(<)` or `Monitor_activateView(>)` for activating the
-previous or next adjacent view.
+`Monitor_activateView(0, -1)` or `Monitor_activateView(0, +1)` for activating
+the previous or next adjacent view.
 
 `#+0::Monitor_setWindowTag(0)`
 > Tag the active window with all tags (n = 1..`Config_viewCount`). You may also

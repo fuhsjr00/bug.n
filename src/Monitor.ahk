@@ -32,24 +32,21 @@ Monitor_init(m, doRestore)
   Bar_init(m)
 }
 
-Monitor_activateView(v)
-{
+Monitor_activateView(i, d = 0) {
   Local aView, aWndId, m, n, wndId, wndIds
 
-  If (v = -1)
-    v := Monitor_#%Manager_aMonitor%_aView_#2
-  Else If (v = ">")
-    v := Manager_loop(Monitor_#%Manager_aMonitor%_aView_#1, +1, 1, Config_viewCount)
-  Else If (v = "<")
-    v := Manager_loop(Monitor_#%Manager_aMonitor%_aView_#1, -1, 1, Config_viewCount)
+  If (i = -1)
+    i := Monitor_#%Manager_aMonitor%_aView_#2
+  Else If (i = 0)
+    i := Monitor_#%Manager_aMonitor%_aView_#1
+  i := Manager_loop(i, d, 1, Config_viewCount)
 
-  Debug_logMessage("DEBUG[1] Monitor_activateView(" . v . ") Manager_aMonitor: " . Manager_aMonitor . "; wndIds: " . View_#%Manager_aMonitor%_#%v%_wndIds, 1)
-  If (v <= 0) Or (v > Config_viewCount) Or Manager_hideShow
+  Debug_logMessage("DEBUG[1] Monitor_activateView; i: " . i . ", d: " . d . ", Manager_aMonitor: " . Manager_aMonitor . ", wndIds: " . View_#%Manager_aMonitor%_#%i%_wndIds, 1)
+  If (i <= 0) Or (i > Config_viewCount) Or Manager_hideShow
     Return
   ;; Re-arrange the windows on the active view.
-  If (v = Monitor_#%Manager_aMonitor%_aView_#1)
-  {
-    View_arrange(Manager_aMonitor, v)
+  If (i = Monitor_#%Manager_aMonitor%_aView_#1) {
+    View_arrange(Manager_aMonitor, i)
     Return
   }
 
@@ -63,28 +60,27 @@ Monitor_activateView(v)
     n := Manager_monitorCount
   Else If (n < 1)
     n := 1
-  Loop, % n
-  {
+  Loop, % n {
     If (n = 1)
       m := Manager_aMonitor
     Else
       m := A_Index
 
     Monitor_#%m%_aView_#2 := aView
-    Monitor_#%m%_aView_#1 := v
+    Monitor_#%m%_aView_#1 := i
     Manager_hideShow := True
     SetWinDelay, 0
     StringTrimRight, wndIds, View_#%m%_#%aView%_wndIds, 1
     Loop, PARSE, wndIds, `;
     {
-      If Not (Window_#%A_LoopField%_tags & (1 << v - 1))
+      If Not (Window_#%A_LoopField%_tags & (1 << i - 1))
         Window_hide(A_LoopField)
     }
     SetWinDelay, 10
     DetectHiddenWindows, On
-    View_arrange(m, v)
+    View_arrange(m, i)
     DetectHiddenWindows, Off
-    StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
+    StringTrimRight, wndIds, View_#%m%_#%i%_wndIds, 1
     SetWinDelay, 0
     Loop, PARSE, wndIds, `;
     {
@@ -94,18 +90,15 @@ Monitor_activateView(v)
     Manager_hideShow := False
 
     Bar_updateView(m, aView)
-    Bar_updateView(m, v)
+    Bar_updateView(m, i)
   }
 
-  wndId := View_#%Manager_aMonitor%_#%v%_aWndId
-  If Not (wndId And WinExist("ahk_id" wndId))
-  {
-    If View_#%Manager_aMonitor%_#%v%_wndIds
-    {
-      wndId := SubStr(View_#%Manager_aMonitor%_#%v%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%v%_wndIds, ";")-1)
-      View_#%Manager_aMonitor%_#%v%_aWndId := wndId
-    }
-    Else
+  wndId := View_#%Manager_aMonitor%_#%i%_aWndId
+  If Not (wndId And WinExist("ahk_id" wndId)) {
+    If View_#%Manager_aMonitor%_#%i%_wndIds {
+      wndId := SubStr(View_#%Manager_aMonitor%_#%i%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%i%_wndIds, ";")-1)
+      View_#%Manager_aMonitor%_#%i%_aWndId := wndId
+    } Else
       wndId := 0
   }
   Manager_winActivate(wndId)
