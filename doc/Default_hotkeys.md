@@ -18,10 +18,10 @@ quitting bug.n.
 
 ### Window management
 
-`#Down::View_activateWindow(+1)`
+`#Down::View_activateWindow(0, +1)`
 > Activate the next window in the active view.
 
-`#Up::View_activateWindow(-1)`
+`#Up::View_activateWindow(0, -1)`
 > Activate the previous window in the active view.
 
 `#+Down::View_shuffleWindow(0, +1)`

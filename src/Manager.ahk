@@ -185,19 +185,19 @@ Manager_cleanup()
 }
 
 Manager_closeWindow() {
-  Local aView, aWndId, c
+  Local aView, aWndId, wndId0, wndIds
 
   WinGet, aWndId, ID, A
   If Window_isProg(aWndId) {
     ;; Prior to closing, find the next window that should have focus.
     ;;   If there is no such window, choose the bar on the same monitor.
     aView := Monitor_#%Manager_aMonitor%_aView_#1
-    StringSplit, c, View_#%Manager_aMonitor%_#%aView%_wndIds, `;
-    If (c0 < 3) {
+    StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%aView%_wndIds, 1
+    StringSplit, wndId, wndIds, `;
+    If (wndId0 >= 2)
+      View_activateWindow(0, +1)
+    Else
       Manager_winActivate(0)
-    } Else {
-      View_activateWindow(1)
-    }
     Window_close(aWndId)
   }
 }
@@ -480,7 +480,7 @@ WINDOW_NOTICE := 32774
       Windows events can't always be caught.
 */
 Manager_onShellMessage(wParam, lParam) {
-  Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, m, t, wndClass, wndId, wndIds, wndPName, wndTitle, x, y
+  Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, m, t, wndClass, wndId, wndId0, wndIds, wndPName, wndTitle, x, y
 
   SetFormat, Integer, hex
   lParam := lParam+0
@@ -828,7 +828,7 @@ Manager_saveState() {
 }
 
 Manager_saveWindowState(filename, nm, nv) {
-  Local allWndId, allWndIds, process, title, text, monitor, wndId, view, isManaged, isTitleHidden
+  Local allWndId0, allWndIds, process, title, text, monitor, wndId, view, isManaged, isTitleHidden
 
   text := "; bug.n - tiling window management`n; @version " VERSION "`n`n"
 
@@ -1010,7 +1010,7 @@ Manager_sizeWindow() {
 ;; No windows are known to the system yet.
 ;; Try to do something smart with the initial layout.
 Manager_initial_sync(doRestore) {
-  Local wndId0, wnd, wndX, wndY, wndW, wndH, x, y, m, len
+  Local wndId, wndId0, wnd, wndX, wndY, wndW, wndH, x, y, m, len
 
   ;; Initialize lists
   ;; Note that these variables make this function non-reentrant.
@@ -1110,20 +1110,18 @@ Manager_unmanage(wndId) {
   ;; Find the next window that should have focus.
   ;;   If there is no such window, choose the bar on the same monitor.
   aView := Monitor_#%Manager_aMonitor%_aView_#1
-  wndIds := View_#%Manager_aMonitor%_#%aView%_wndIds
+  StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%aView%_wndIds, 1
   StringSplit, wndId, wndIds, `;
-  If (wndId0 < 3)
-    Manager_winActivate(0)
+  If (wndId0 >= 2)
+    View_activateWindow(0, +1)
   Else
-    View_activateWindow(1)
+    Manager_winActivate(0)
 
   ;; Do our best to make sure that any unmanaged windows are left visible.
   Window_show(wndId)
-  a := Window_#%wndId%_tags & 1 << Monitor_#%Manager_aMonitor%_aView_#1 - 1
-  Loop, % Config_viewCount
-  {
-    If (Window_#%wndId%_tags & 1 << A_Index - 1)
-    {
+  a := Window_#%wndId%_tags & 1 << aView - 1
+  Loop, % Config_viewCount {
+    If (Window_#%wndId%_tags & 1 << A_Index - 1) {
       StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %wndId%`;,
       Bar_updateView(Manager_aMonitor, A_Index)
     }

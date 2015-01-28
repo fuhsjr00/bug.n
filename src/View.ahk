@@ -35,11 +35,10 @@ View_init(m, v)
   View_#%m%_#%v%_wndIds         := ""
 }
 
-View_activateWindow(d)
-{
-  Local aWndId, direction, failure, i, j, v, wndId, wndId0, wndIds
+View_activateWindow(i, d = 0) {
+  Local aWndId, direction, failure, j, v, wndId, wndId0, wndIds
 
-  Debug_logMessage("DEBUG[1] View_activateWindow(" . d . ")", 1)
+  Debug_logMessage("DEBUG[1] View_activateWindow(" . i . ", " . d . ")", 1)
   If (d = 0)
     Return
 
@@ -50,29 +49,25 @@ View_activateWindow(d)
   StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
   StringSplit, wndId, wndIds, `;
   Debug_logMessage("DEBUG[2] wndId count: " . wndId0, 2, False)
-  If (wndId0 > 1)
-  {
+  If (wndId0 > 1) {
     If Window_#%aWndId%_isFloating
       Window_set(aWndId, "Bottom", "")
-    Loop, % wndId0
-    {
-      If (wndId%A_Index% = aWndId)
-      {
-        i := A_Index
+    Loop, % wndId0 {
+      If (wndId%A_Index% = aWndId) {
+        j := A_Index
         Break
       }
     }
-    Debug_logMessage("DEBUG[2] Current wndId index: " . i, 2, False)
+    Debug_logMessage("DEBUG[2] Current wndId index: " . j, 2, False)
 
     If (d > 0)
       direction = 1
     Else
       direction = -1
-    j := Manager_loop(i, d, 1, wndId0)
-    Loop, % wndId0
-    {
-      Debug_logMessage("DEBUG[2] Next wndId index: " . j, 2, False)
-      wndId := wndId%j%
+    i := Manager_loop(j, d, 1, wndId0)
+    Loop, % wndId0 {
+      Debug_logMessage("DEBUG[2] Next wndId index: " . i, 2, False)
+      wndId := wndId%i%
       Window_set(wndId, "AlwaysOnTop", "On")
       Window_set(wndId, "AlwaysOnTop", "Off")
 
@@ -80,7 +75,7 @@ View_activateWindow(d)
       failure := Manager_winActivate(wndId)
       If Not failure
         Break
-      j := Manager_loop(j, direction, 1, wndId0)
+      i := Manager_loop(i, direction, 1, wndId0)
     }
   }
 }

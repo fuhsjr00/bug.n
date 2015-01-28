@@ -317,38 +317,31 @@ Monitor_toggleTaskBar()
   }
 }
 
-Monitor_toggleWindowTag(t)
-{
+Monitor_toggleWindowTag(i, d = 0) {
   Local aWndId, wndId
 
   WinGet, aWndId, ID, A
-  If (InStr(Manager_managedWndIds, aWndId ";") And t >= 0 And t <= Config_viewCount)
-  {
-    If (Window_#%aWndId%_tags & (1 << t - 1))
-    {
-      If Not ((Window_#%aWndId%_tags - (1 << t - 1)) = 0)
-      {
-        Window_#%aWndId%_tags -= 1 << t - 1
-        StringReplace, View_#%Manager_aMonitor%_#%t%_wndIds, View_#%Manager_aMonitor%_#%t%_wndIds, %aWndId%`;,
-        Bar_updateView(Manager_aMonitor, t)
-        If (t = Monitor_#%Manager_aMonitor%_aView_#1)
-        {
+  If (InStr(Manager_managedWndIds, aWndId ";") And i >= 0 And i <= Config_viewCount) {
+    If (Window_#%aWndId%_tags & (1 << i - 1)) {
+      If Not ((Window_#%aWndId%_tags - (1 << i - 1)) = 0) {
+        Window_#%aWndId%_tags -= 1 << i - 1
+        StringReplace, View_#%Manager_aMonitor%_#%i%_wndIds, View_#%Manager_aMonitor%_#%i%_wndIds, %aWndId%`;,
+        Bar_updateView(Manager_aMonitor, i)
+        If (i = Monitor_#%Manager_aMonitor%_aView_#1) {
           Manager_hideShow := True
           Window_hide(aWndId)
           Manager_hideShow := False
-          wndId := SubStr(View_#%Manager_aMonitor%_#%t%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%t%_wndIds, ";")-1)
+          wndId := SubStr(View_#%Manager_aMonitor%_#%i%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%i%_wndIds, ";")-1)
           Manager_winActivate(wndId)
           If Config_dynamicTiling
-            View_arrange(Manager_aMonitor, t)
+            View_arrange(Manager_aMonitor, i)
         }
       }
-    }
-    Else
-    {
-      View_#%Manager_aMonitor%_#%t%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%t%_wndIds
-      View_#%Manager_aMonitor%_#%t%_aWndId := aWndId
-      Bar_updateView(Manager_aMonitor, t)
-      Window_#%aWndId%_tags += 1 << t - 1
+    } Else {
+      View_#%Manager_aMonitor%_#%i%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%i%_wndIds
+      View_#%Manager_aMonitor%_#%i%_aWndId := aWndId
+      Bar_updateView(Manager_aMonitor, i)
+      Window_#%aWndId%_tags += 1 << i - 1
     }
   }
 }
