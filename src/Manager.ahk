@@ -281,17 +281,17 @@ Manager_lockWorkStation()
 }
 ;; Unambiguous: Re-use WIN+L as a hotkey in bug.n (http://www.autohotkey.com/community/viewtopic.php?p=500903&sid=eb3c7a119259b4015ff045ef80b94a81#p500903)
 
-Manager_loop(index, increment, lowerBound, upperBound)
-{
-  index += increment
-  If (index > upperBound)
-    index := lowerBound
-  If (index < lowerBound)
-    index := upperBound
-  If (upperBound = 0)
-    index := 0
+Manager_loop(index, increment, lowerBound, upperBound) {
+  If (upperBound <= 0) Or (upperBound < lowerBound) Or (upperBound = 0)
+    Return, 0
 
-  Return, index
+  numberOfIndexes := upperBound - lowerBound + 1
+  lowerBoundBasedIndex := index - lowerBound
+  lowerBoundBasedIndex := Mod(lowerBoundBasedIndex + increment, numberOfIndexes)
+  If (lowerBoundBasedIndex < 0)
+    lowerBoundBasedIndex += numberOfIndexes
+
+  Return, lowerBound + lowerBoundBasedIndex
 }
 
 Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hideTitle, action = "")
