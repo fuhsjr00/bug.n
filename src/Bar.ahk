@@ -302,7 +302,7 @@ Bar_GuiClick:
   If (A_GuiEvent = "Normal")
   {
     If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
-      Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) - Manager_aMonitor)
+      Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
     If (SubStr(A_GuiControl, -6) = "_layout")
       View_setLayout(-1)
     Else If (SubStr(A_GuiControl, -4) = "_view")
@@ -317,7 +317,7 @@ Bar_GuiContextMenu:
     If (SubStr(A_GuiControl, -6) = "_layout")
     {
       If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
-        Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) - Manager_aMonitor)
+        Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
       View_setLayout(0, +1)
     }
     Else If (SubStr(A_GuiControl, -4) = "_view")
@@ -347,7 +347,7 @@ Bar_move(m)
 Bar_toggleCommandGui:
   If Not Bar_cmdGuiIsVisible
     If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
-      Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) - Manager_aMonitor)
+      Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
   Bar_toggleCommandGui()
 Return
 

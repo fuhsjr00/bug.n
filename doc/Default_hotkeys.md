@@ -211,10 +211,12 @@ for the active window, if it is not / is already set.
 
 ### Monitor management
 
-`#.::Manager_activateMonitor(+1)`
-> Activate the next monitor in a multi-monitor environment.
+`#.::Manager_activateMonitor(0, +1)`
+> Activate the next monitor in a multi-monitor environment. You may also
+activate a specific monitor by using the first parameter, e. g.
+`Manager_activateMonitor(1)` to activate the first monitor.
 
-`#,::Manager_activateMonitor(-1)`
+`#,::Manager_activateMonitor(0, -1)`
 > Activate the previous monitor in a multi-monitor environment.
 
 `#+.::Manager_setWindowMonitor(+1)`

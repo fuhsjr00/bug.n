@@ -469,8 +469,8 @@ Config_UI_saveSession() {
 #^9::Monitor_toggleWindowTag(9)
 
 ;; Monitor management
-#.::Manager_activateMonitor(+1)
-#,::Manager_activateMonitor(-1)
+#.::Manager_activateMonitor(0, +1)
+#,::Manager_activateMonitor(0, -1)
 #+.::Manager_setWindowMonitor(+1)
 #+,::Manager_setWindowMonitor(-1)
 #^+.::Manager_setViewMonitor(+1)

@@ -68,33 +68,31 @@ Manager_init()
   SetTimer, Bar_loop, %Config_readinInterval%
 }
 
-Manager_activateMonitor(d)
-{
+Manager_activateMonitor(i, d = 0) {
   Local aView, aWndHeight, aWndId, aWndWidth, aWndX, aWndY, v, wndId
 
-  If (Manager_monitorCount > 1)
-  {
+  If (Manager_monitorCount > 1) {
     aView := Monitor_#%Manager_aMonitor%_aView_#1
     aWndId := View_getActiveWindow(Manager_aMonitor, aView)
-    If aWndId
-    {
+    If aWndId {
       WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
       If (Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2) = Manager_aMonitor)
         View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
     }
 
     ;; Manually set the active monitor.
-    Manager_aMonitor := Manager_loop(Manager_aMonitor, d, 1, Manager_monitorCount)
+    If (i = 0)
+      i := Manager_aMonitor
+    Manager_aMonitor := Manager_loop(i, d, 1, Manager_monitorCount)
     v := Monitor_#%Manager_aMonitor%_aView_#1
     wndId := View_#%Manager_aMonitor%_#%v%_aWndId
-    If Not (wndId And WinExist("ahk_id" wndId))
-    {
+    If Not (wndId And WinExist("ahk_id" wndId)) {
       If View_#%Manager_aMonitor%_#%v%_wndIds
-        wndId := SubStr(View_#%Manager_aMonitor%_#%v%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%v%_wndIds, ";")-1)
+        wndId := SubStr(View_#%Manager_aMonitor%_#%v%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%v%_wndIds, ";") - 1)
       Else
         wndId := 0
     }
-    Debug_logMessage("DEBUG[1] Manager_activateMonitor: Manager_aMonitor: " Manager_aMonitor ", d: " d ", wndId: " wndId, 1)
+    Debug_logMessage("DEBUG[1] Manager_activateMonitor: Manager_aMonitor: " Manager_aMonitor ", i: " i ", d: " d ", wndId: " wndId, 1)
     Manager_winActivate(wndId)
   }
 }

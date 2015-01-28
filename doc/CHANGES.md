@@ -12,8 +12,9 @@
 2. `~` Renamed the function `View_toggleFloating` to `View_toggleFloatingWindow`
 3. `~` Migrated the following functions to `View_setLayoutProperty`: `View_setGapWidth`, `View_setMFactor`, `View_setMX`,
 `View_setMY` and `View_rotateLayoutAxis`
-4. `~` Revised the following functions to allow setting absolute and relative values: `Debug_setLogLevel`, `Monitor_activateView`,
-`Monitor_setWindowTag`, `View_setLayout`, `View_setMFactor`, `View_shuffleWindow`
+4. `~` Revised the following functions to allow setting absolute and relative values: `Debug_setLogLevel`,
+`Manager_activateMonitor`, `Monitor_activateView`, `Monitor_setWindowTag`, `View_setLayout`, `View_setMFactor`,
+`View_shuffleWindow`
 5. `~` Revised the interface, i. e. the parameters, of the following functions for setting absolute and relative values -- but did
 not implement the functionality: `Monitor_toggleWindowTag`, `View_activateWindow`
 
@@ -39,6 +40,8 @@ not implement the functionality: `Monitor_toggleWindowTag`, `View_activateWindow
 |    |                         | `#+Up::View_shuffleWindow(-1)`          | `#+Up::View_shuffleWindow(0, -1)`                     |
 |    |                         | `#+Enter::View_shuffleWindow(0)`        | `#+Enter::View_shuffleWindow(1)`                      |
 |    |                         | `#+0::Monitor_setWindowTag(0)`          | `#+0::Monitor_setWindowTag(10)`                       |
+|    |                         | `#.::Manager_activateMonitor(+1)`       | `#.::Manager_activateMonitor(0, +1)`                  |
+|    |                         | `#,::Manager_activateMonitor(-1)`       | `#,::Manager_activateMonitor(0, -1)`                  |
 | 5. |                         | `#Down::View_activateWindow(+1)`        | `#Down::View_activateWindow(0, +1)`                   |
 |    |                         | `#Up::View_activateWindow(-1)`          | `#Up::View_activateWindow(0, -1)`                     |
 
