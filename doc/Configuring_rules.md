@@ -25,7 +25,7 @@ an integer >= 0, 0 means the currently active view)?
 5. Is the window decorated (0 = no, 1 = yes)? If not, the window title bar is
 removed.
 6. Should the title text be hidden in the bug.n bar (0 = no, 1 = yes)?
-7. A special single window action (`Close` or `Maximize` or blank).
+7. A special single window action (`close` or `maximize` or blank).
 
 The general format of a rule added to `Config.ini` is as follows:
 `Config_rule=<class>;<title>;<window style>;<is managed>;<monitor>;<views /
@@ -59,11 +59,11 @@ The following `Config.ini` line replaces rule number 11 in the default
 configuration, putting windows of 'Mozilla Firefox' on view 5, keeping the
 title bar visible and maximizing them.
 
-`Config_rule_#11=MozillaWindowClass;.*Mozilla Firefox;;1;0;16;0;1;0;Maximize`
+`Config_rule_#11=MozillaWindowClass;.*Mozilla Firefox;;1;0;16;0;1;0;maximize`
 
 #### Mozilla Thunderbird
 
 The following `Config.ini` line adds a rule, putting windows of 'Mozilla
 Thunderbird' on view 4, keeping the title bar visible and maximizing them.
 
-`Config_rule=MozillaWindowClass;.*Mozilla Thunderbird;;1;0;8;0;1;0;Maximize`
+`Config_rule=MozillaWindowClass;.*Mozilla Thunderbird;;1;0;8;0;1;0;maximize`

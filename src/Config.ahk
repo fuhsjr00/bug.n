@@ -1,21 +1,16 @@
 /*
   bug.n -- tiling window management
-  Copyright (c) 2010-2014 Joshua Fuhs, joten
-
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+  Copyright (c) 2010-2015 Joshua Fuhs, joten
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>.
+  @license GNU General Public License version 3
+           ../LICENSE.md or <http://www.gnu.org/licenses/>
 
-  @version 8.4.0
+  @version 9.0.0
 */
 
 Config_init()
@@ -94,8 +89,8 @@ Config_init()
   Config_rule_#8   := "CalcFrame;.*;;1;0;0;1;1;0;"
   Config_rule_#9   := "MozillaDialogClass;.*;;1;0;0;1;1;0;"
   Config_rule_#10  := "_sp;_sp;;1;0;0;1;0;1;"
-  Config_rule_#11  := "MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;Maximize"
-  Config_rule_#12  := "Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;Maximize"
+  Config_rule_#11  := "MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;maximize"
+  Config_rule_#12  := "Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;maximize"
   ;; @TODO [v9] Config_rule_#13 := "Chrome_WidgetWin_1;.*;0x80000000;0;0;0;1;1;0;"  -- else pop-up windows are treated as new main windows, since #12 overrides #2
   Config_ruleCount := 12                              ;; This variable has to be set to the total number of active rules above.
 
@@ -257,22 +252,6 @@ Config_redirectHotkey(key)
   }
 }
 
-Config_restoreLayout(filename, m)
-{
-  Local i, var, val
-
-  If Not FileExist(filename)
-    Return
-
-  Loop, READ, %filename%
-    If (SubStr(A_LoopReadLine, 1, 10 + StrLen(m)) = "Monitor_#" m "_" Or SubStr(A_LoopReadLine, 1, 8 + StrLen(m)) = "View_#" m "_#") {
-      i := InStr(A_LoopReadLine, "=")
-      var := SubStr(A_LoopReadLine, 1, i - 1)
-      val := SubStr(A_LoopReadLine, i + 1)
-      %var% := val
-    }
-}
-
 Config_restoreConfig(filename)
 {
   Local cmd, i, key, type, val, var
@@ -321,9 +300,19 @@ Config_restoreConfig(filename)
     }
 }
 
-Config_UI_saveSession()
-{
-  Config_saveSession(Config_filePath, Config_filePath)
+Config_restoreLayout(filename, m) {
+  Local i, var, val
+
+  If Not FileExist(filename)
+    Return
+
+  Loop, READ, %filename%
+    If (SubStr(A_LoopReadLine, 1, 10 + StrLen(m)) = "Monitor_#" m "_" Or SubStr(A_LoopReadLine, 1, 8 + StrLen(m)) = "View_#" m "_#") {
+      i := InStr(A_LoopReadLine, "=")
+      var := SubStr(A_LoopReadLine, 1, i - 1)
+      val := SubStr(A_LoopReadLine, i + 1)
+      %var% := val
+    }
 }
 
 Config_saveSession(original, target)
@@ -388,16 +377,20 @@ Config_saveSession(original, target)
     FileMove, %tmpfilename%, %target%, 1
 }
 
+Config_UI_saveSession() {
+  Config_saveSession(Config_filePath, Config_filePath)
+}
+
 ;; Key definitions
 ;; Window management
-#Down::View_activateWindow(+1)
-#Up::View_activateWindow(-1)
-#+Down::View_shuffleWindow(+1)
-#+Up::View_shuffleWindow(-1)
-#+Enter::View_shuffleWindow(0)
+#Down::View_activateWindow(0, +1)
+#Up::View_activateWindow(0, -1)
+#+Down::View_shuffleWindow(0, +1)
+#+Up::View_shuffleWindow(0, -1)
+#+Enter::View_shuffleWindow(1)
 #c::Manager_closeWindow()
-#+d::Manager_toggleDecor()
-#+f::View_toggleFloating()
+#+d::Window_toggleDecor()
+#+f::View_toggleFloatingWindow()
 #+m::Manager_moveWindow()
 #+s::Manager_sizeWindow()
 #+x::Manager_maximizeWindow()
@@ -422,31 +415,31 @@ Config_saveSession(original, target)
 #^i::Debug_logViewWindowList()
 #+^i::Debug_logManagedWindowList()
 #^h::Debug_logHelp()
-#^d::Debug_setLogLevel(-1)
-#^+d::Debug_setLogLevel(+1)
+#^d::Debug_setLogLevel(0, -1)
+#^+d::Debug_setLogLevel(0, +1)
 
 ;; Layout management
 #Tab::View_setLayout(-1)
 #f::View_setLayout(3)
 #m::View_setLayout(2)
 #t::View_setLayout(1)
-#Left::View_setMFactor(-0.05)
-#Right::View_setMFactor(+0.05)
-#^t::View_rotateLayoutAxis(1, +1)
-#^Enter::View_rotateLayoutAxis(1, +2)
-#^Tab::View_rotateLayoutAxis(2, +1)
-#^+Tab::View_rotateLayoutAxis(3, +1)
-#^Up::View_setMY(+1)
-#^Down::View_setMY(-1)
-#^Right::View_setMX(+1)
-#^Left::View_setMX(-1)
-#+Left::View_setGapWidth(-2)
-#+Right::View_setGapWidth(+2)
+#Left::View_setLayoutProperty("MFactor", 0, -0.05)
+#Right::View_setLayoutProperty("MFactor", 0, +0.05)
+#^t::View_setLayoutProperty("Axis", 0, +1, 1)
+#^Enter::View_setLayoutProperty("Axis", 0, +2, 1)
+#^Tab::View_setLayoutProperty("Axis", 0, +1, 2)
+#^+Tab::View_setLayoutProperty("Axis", 0, +1, 3)
+#^Up::View_setLayoutProperty("MY", 0, +1)
+#^Down::View_setLayoutProperty("MY", 0, -1)
+#^Right::View_setLayoutProperty("MX", 0, +1)
+#^Left::View_setLayoutProperty("MX", 0, -1)
+#+Left::View_setLayoutProperty("GapWidth", 0, -2)
+#+Right::View_setLayoutProperty("GapWidth", 0, +2)
 
 ;; View/Tag management
 #+n::View_toggleMargins()
 #BackSpace::Monitor_activateView(-1)
-#+0::Monitor_setWindowTag(0)
+#+0::Monitor_setWindowTag(10)
 #1::Monitor_activateView(1)
 #+1::Monitor_setWindowTag(1)
 #^1::Monitor_toggleWindowTag(1)
@@ -476,12 +469,12 @@ Config_saveSession(original, target)
 #^9::Monitor_toggleWindowTag(9)
 
 ;; Monitor management
-#.::Manager_activateMonitor(+1)
-#,::Manager_activateMonitor(-1)
-#+.::Manager_setWindowMonitor(+1)
-#+,::Manager_setWindowMonitor(-1)
-#^+.::Manager_setViewMonitor(+1)
-#^+,::Manager_setViewMonitor(-1)
+#.::Manager_activateMonitor(0, +1)
+#,::Manager_activateMonitor(0, -1)
+#+.::Manager_setWindowMonitor(0, +1)
+#+,::Manager_setWindowMonitor(0, -1)
+#^+.::Manager_setViewMonitor(0, +1)
+#^+,::Manager_setViewMonitor(0, -1)
 
 ;; GUI management
 #+Space::Monitor_toggleBar()

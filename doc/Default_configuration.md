@@ -202,9 +202,9 @@ Windows version uses " (Keine Rückmeldung)".
 
 `Config_mFactCallInterval=700`
 > The time in milliseconds, in which two consecutive calls to
-`View_setMFactor(<d>, <dFact>)` have to be made, to accelerate the increasing
-or decreasing of `mfact`. See also `View_setMFactor(<d>, <dFact>)` in the
-listing of hotkeys.
+`View_setLayoutProperty("MFactor", 0, <d>, <dFact>)` have to be made, to
+accelerate the increasing or decreasing of `mfact`. See also
+`View_setLayoutProperty("MFactor", 0, <d>, <dFact>)` in the listing of hotkeys.
 
 `Config_mouseFollowsFocus=1`
 > If true (`=1`), the mouse pointer is set over the focused window, if a window
@@ -276,8 +276,8 @@ reason as above.
     Config_rule_#8=CalcFrame;.*;;1;0;0;1;1;0;
     Config_rule_#9=MozillaDialogClass;.*;;1;0;0;1;1;0;
     Config_rule_#10=_sp;_sp;;1;0;0;1;0;1;
-    Config_rule_#11=MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;Maximize
-    Config_rule_#12=Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;Maximize
+    Config_rule_#11=MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;maximize
+    Config_rule_#12=Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;maximize
 
 `Config_ruleCount=12`
 > This variable will be automatically set to the total number of active rules

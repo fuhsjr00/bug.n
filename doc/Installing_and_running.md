@@ -3,15 +3,15 @@
 #### Requirements
 
 * Microsoft Windows 2000 or higher
-* [AutoHotkey](http://ahkscript.org/download/) (if running bug.n from source as
-a script)
+* [AutoHotkey](http://ahkscript.org/download/) 1.1.10 or higher (if running
+  bug.n from source as a script)
 
 You may either
-[download the stable version of bug.n](https://github.com/fuhsjr00/bug.n/blob/master/bug.n-stable.zip)
+[download the stable version of bug.n](https://github.com/fuhsjr00/bug.n/releases/latest)
 from the repository, or
 [download the current development version](https://github.com/fuhsjr00/bug.n/archive/master.zip)
 as the repository itself. Either way, you will have a `zip` file including an
-executable (`bug.n*.exe`), the source (`src\*`) and documentation (`doc\*`)
+executable (`bugn.exe`), the source (`src\*`) and documentation (`doc\*`)
 files.
 
 There is no installation process for bug.n. Unpack the `zip` file, and you

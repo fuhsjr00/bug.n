@@ -1,21 +1,16 @@
 /*
   bug.n -- tiling window management
-  Copyright (c) 2010-2014 Joshua Fuhs, joten
-
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+  Copyright (c) 2010-2015 Joshua Fuhs, joten
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>.
+  @license GNU General Public License version 3
+           ../LICENSE.md or <http://www.gnu.org/licenses/>
 
-  @version 8.4.0
+  @version 9.0.0
 */
 
 Bar_init(m)
@@ -217,15 +212,8 @@ Bar_initCmdGui()
   Gui, Show, Hide w%Bar_#0_#0W% h%Bar_#0_#0H%, %wndTitle%
 }
 
-Bar_cmdGuiEscape:
-  Bar_cmdGuiIsVisible := False
-  Gui, Cancel
-  WinActivate, ahk_id %Bar_aWndId%
-Return
-
 Bar_cmdGuiEnter:
-  If (A_GuiControl = "OK") Or (A_GuiControl = "Bar_#0_#0" And A_GuiControlEvent = "DoubleClick")
-  {
+  If (A_GuiControl = "OK") Or (A_GuiControl = "Bar_#0_#0" And A_GuiControlEvent = "DoubleClick") {
     Gui, Submit, NoHide
     Bar_cmdGuiIsVisible := False
     Gui, Cancel
@@ -235,29 +223,11 @@ Bar_cmdGuiEnter:
   }
 Return
 
-Bar_getBatteryStatus(ByRef batteryLifePercent, ByRef acLineStatus)
-{
-  VarSetCapacity(powerStatus, (1 + 1 + 1 + 1 + 4 + 4))
-  success := DllCall("GetSystemPowerStatus", "UInt", &powerStatus)
-  If (ErrorLevel != 0 Or success = 0)
-  {
-    MsgBox 16, Power Status, Can't get the power status...
-    Return
-  }
-  acLineStatus     := NumGet(powerStatus, 0, "Char")
-  batteryLifePercent := NumGet(powerStatus, 2, "Char")
-
-  If acLineStatus = 0
-    acLineStatus = off
-  Else If acLineStatus = 1
-    acLineStatus = on
-  Else If acLineStatus = 255
-    acLineStatus = ?
-
-  If batteryLifePercent = 255
-    batteryLifePercent = ???
-}
-;; PhiLho: AC/Battery status (http://www.autohotkey.com/forum/topic7633.html)
+Bar_cmdGuiEscape:
+  Bar_cmdGuiIsVisible := False
+  Gui, Cancel
+  WinActivate, ahk_id %Bar_aWndId%
+Return
 
 Bar_getHeight()
 {
@@ -332,7 +302,7 @@ Bar_GuiClick:
   If (A_GuiEvent = "Normal")
   {
     If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
-      Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) - Manager_aMonitor)
+      Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
     If (SubStr(A_GuiControl, -6) = "_layout")
       View_setLayout(-1)
     Else If (SubStr(A_GuiControl, -4) = "_view")
@@ -347,13 +317,13 @@ Bar_GuiContextMenu:
     If (SubStr(A_GuiControl, -6) = "_layout")
     {
       If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
-        Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) - Manager_aMonitor)
-      View_setLayout(">")
+        Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
+      View_setLayout(0, +1)
     }
     Else If (SubStr(A_GuiControl, -4) = "_view")
     {
       If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
-        Manager_setWindowMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) - Manager_aMonitor)
+        Manager_setWindowMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
       Monitor_setWindowTag(SubStr(A_GuiControl, InStr(A_GuiControl, "_#", False, 0) + 2, 1))
     }
   }
@@ -377,7 +347,7 @@ Bar_move(m)
 Bar_toggleCommandGui:
   If Not Bar_cmdGuiIsVisible
     If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
-      Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) - Manager_aMonitor)
+      Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
   Bar_toggleCommandGui()
 Return
 
@@ -442,7 +412,7 @@ Bar_updateStatus()
     Gui, %GuiN%: Default
     If Config_readinBat
     {
-      Bar_getBatteryStatus(b1, b2)
+      ResourceMonitor_getBatteryStatus(b1, b2)
       b3 := SubStr("  " b1, -2)
       i := Config_viewCount + 3
       If (b1 < 10) And (b2 = "off")
@@ -487,7 +457,7 @@ Bar_updateTitle()
   WinGetTitle, aWndTitle, ahk_id %aWndId%
   If InStr(Bar_hideTitleWndIds, aWndId ";") Or (aWndTitle = "bug.n_BAR_0")
     aWndTitle := ""
-  If Manager_#%aWndId%_isFloating
+  If Window_#%aWndId%_isFloating
     aWndTitle := "~ " aWndTitle
   If (Manager_monitorCount > 1)
     aWndTitle := "[" Manager_aMonitor "] " aWndTitle
