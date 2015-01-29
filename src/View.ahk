@@ -1,21 +1,16 @@
 /*
   bug.n -- tiling window management
-  Copyright (c) 2010-2014 Joshua Fuhs, joten
-
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+  Copyright (c) 2010-2015 Joshua Fuhs, joten
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>.
+  @license GNU General Public License version 3
+           ../LICENSE.md or <http://www.gnu.org/licenses/>
 
-  @version 8.4.0
+  @version 9.0.0
 */
 
 View_init(m, v)
@@ -40,11 +35,10 @@ View_init(m, v)
   View_#%m%_#%v%_wndIds         := ""
 }
 
-View_activateWindow(d)
-{
-  Local aWndId, direction, failure, i, j, v, wndId, wndId0, wndIds
+View_activateWindow(i, d = 0) {
+  Local aWndId, direction, failure, j, v, wndId, wndId0, wndIds
 
-  Debug_logMessage("DEBUG[1] View_activateWindow(" . d . ")", 1)
+  Debug_logMessage("DEBUG[1] View_activateWindow(" . i . ", " . d . ")", 1)
   If (d = 0)
     Return
 
@@ -55,56 +49,48 @@ View_activateWindow(d)
   StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
   StringSplit, wndId, wndIds, `;
   Debug_logMessage("DEBUG[2] wndId count: " . wndId0, 2, False)
-  If (wndId0 > 1)
-  {
-    If Manager_#%aWndId%_isFloating
-      Manager_winSet("Bottom", "", aWndId)
-    Loop, % wndId0
-    {
-      If (wndId%A_Index% = aWndId)
-      {
-        i := A_Index
+  If (wndId0 > 1) {
+    If Window_#%aWndId%_isFloating
+      Window_set(aWndId, "Bottom", "")
+    Loop, % wndId0 {
+      If (wndId%A_Index% = aWndId) {
+        j := A_Index
         Break
       }
     }
-    Debug_logMessage("DEBUG[2] Current wndId index: " . i, 2, False)
+    Debug_logMessage("DEBUG[2] Current wndId index: " . j, 2, False)
 
     If (d > 0)
       direction = 1
     Else
       direction = -1
-    j := Manager_loop(i, d, 1, wndId0)
-    Loop, % wndId0
-    {
-      Debug_logMessage("DEBUG[2] Next wndId index: " . j, 2, False)
-      wndId := wndId%j%
-      Manager_winSet("AlwaysOnTop", "On", wndId)
-      Manager_winSet("AlwaysOnTop", "Off", wndId)
+    i := Manager_loop(j, d, 1, wndId0)
+    Loop, % wndId0 {
+      Debug_logMessage("DEBUG[2] Next wndId index: " . i, 2, False)
+      wndId := wndId%i%
+      Window_set(wndId, "AlwaysOnTop", "On")
+      Window_set(wndId, "AlwaysOnTop", "Off")
 
       ;; If there are hung windows on the screen, we still want to be able to cycle through them.
       failure := Manager_winActivate(wndId)
       If Not failure
         Break
-      j := Manager_loop(j, direction, 1, wndId0)
+      i := Manager_loop(i, direction, 1, wndId0)
     }
   }
 }
 
-View_addWindow(m, v, wndId)
-{
-  Local i, l, mSplit, n, replace, search
+View_addWindow(m, v, wndId) {
+  Local i, mSplit, n, replace, search
 
-  l := View_#%m%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% = "tile") And ((Config_newWndPosition = "masterBottom") Or (Config_newWndPosition = "stackTop"))
-  {
+  If Tiler_isActive(m, v) And ((Config_newWndPosition = "masterBottom") Or (Config_newWndPosition = "stackTop")) {
     n := View_getTiledWndIds(m, v)
     mSplit := View_#%m%_#%v%_layoutMX * View_#%m%_#%v%_layoutMY
     If (mSplit = 1 And Config_newWndPosition = "masterBottom")
       View_#%m%_#%v%_wndIds := wndId ";" . View_#%m%_#%v%_wndIds
     Else If ((Config_newWndPosition = "masterBottom" And n < mSplit) Or (Config_newWndPosition = "stackTop" And n <= mSplit))
       View_#%m%_#%v%_wndIds .= wndId ";"
-    Else
-    {
+    Else {
       If (Config_newWndPosition = "masterBottom")
         i := mSplit - 1
       Else
@@ -120,16 +106,14 @@ View_addWindow(m, v, wndId)
     View_#%m%_#%v%_wndIds := wndId ";" View_#%m%_#%v%_wndIds
 }
 
-View_arrange(m, v, setLayout=False)
-{
+View_arrange(m, v, setLayout = False) {
   Local fn, h, l, w, x, y
 
   Debug_logMessage("DEBUG[1] View_arrange(" . m . ", " . v . ")", 1)
 
   l := View_#%m%_#%v%_layout_#1
   fn := Config_layoutFunction_#%l%
-  If fn
-  {
+  If fn {
     x := Monitor_#%m%_x + View_#%m%_#%v%_layoutGapWidth + View_#%m%_#%v%_margin4
     y := Monitor_#%m%_y + View_#%m%_#%v%_layoutGapWidth + View_#%m%_#%v%_margin1
     w := Monitor_#%m%_width - 2 * View_#%m%_#%v%_layoutGapWidth - View_#%m%_#%v%_margin4 - View_#%m%_#%v%_margin2
@@ -139,9 +123,15 @@ View_arrange(m, v, setLayout=False)
     SetWinDelay, 0
     If Config_dynamicTiling Or setLayout {
       View_getTiledWndIds(m, v)
-      View_arrange_%fn%(m, v, x, y, w, h)
+      If (fn = "monocle") {
+        ;; 'View_getLayoutSymbol_monocle'
+        View_#%m%_#%v%_layoutSymbol := "[" View_tiledWndId0 "]"
+        ;; 'View_arrange_monocle'
+        Tiler_stackTiles(0, 0, 1, View_tiledWndId0, +1, 3, x, y, w, h, 0)
+      } Else    ;; (fn = "tile")
+        Tiler_layoutTiles(m, v, x, y, w, h)
     } Else If (fn = "tile") {
-      View_setAreas(m, v, x, y, w, h)
+      Tiler_layoutTiles(m, v, x, y, w, h, "blank")
       If Config_continuouslyTraceAreas
         View_traceAreas(True)
     }
@@ -153,179 +143,14 @@ View_arrange(m, v, setLayout=False)
   Bar_updateLayout(m)
 }
 
-View_arrange_monocle(m, v, x, y, w, h)
-{
-  Global
-
-  ;; 'View_getLayoutSymbol_monocle'
-  View_#%m%_#%v%_layoutSymbol := "[" View_tiledWndId0 "]"
-  ;; 'View_arrange_monocle'
-  View_stackWindows("View_tiledWndId", 1, View_tiledWndId0, +1, 3, x, y, w, h, 0)
-}
-
-View_arrange_tile(m, v, x, y, w, h)
-{
-  Local axis1, axis2, axis3, flipped, gapW, h1, h2, mFact, mSplit, mWndCount, mXSet, mYActual, mYSet, stackLen, subAreaCount, subAreaWndCount, subH1, subW1, subX1, subY1, w1, w2, x1, x2, y1, y2
-
-  View_#%m%_#%v%_layoutSymbol := View_getLayoutSymbol_tile(m, v, View_tiledWndId0)
-
-  Debug_logMessage("DEBUG[1] View_arrange_tile: (" . View_tiledWndId0 . ") ", 1)
-  If (View_tiledWndId0 = 0)
-    Return
-
-  axis1   := Abs(View_#%m%_#%v%_layoutAxis_#1)
-  axis2   := View_#%m%_#%v%_layoutAxis_#2
-  axis3   := View_#%m%_#%v%_layoutAxis_#3
-  flipped := View_#%m%_#%v%_layoutAxis_#1 < 0
-  gapW    := View_#%m%_#%v%_layoutGapWidth
-  mFact   := View_#%m%_#%v%_layoutMFact
-  mXSet   := (axis2 = 1) ? View_#%m%_#%v%_layoutMX : View_#%m%_#%v%_layoutMY
-  mYSet   := (axis2 = 1) ? View_#%m%_#%v%_layoutMY : View_#%m%_#%v%_layoutMX
-  mSplit  := mXSet * mYSet
-  If (mSplit > View_tiledWndId0)
-    mSplit := View_tiledWndId0
-
-  ;; Areas (master and stack)
-  x1 := x
-  y1 := y
-  w1 := w
-  h1 := h
-  If (View_tiledWndId0 > mSplit)
-  {    ;; There is a stack area.
-    If flipped
-      View_splitArea(axis1 - 1, 1 - mFact, x1, y1, w1, h1, gapW, x2, y2, w2, h2, x1, y1, w1, h1)
-    Else
-      View_splitArea(axis1 - 1, mFact, x1, y1, w1, h1, gapW, x1, y1, w1, h1, x2, y2, w2, h2)
-  }
-
-  ;; Master
-  If (axis2 = 3)
-    View_stackWindows("View_tiledWndId", 1, mSplit, +1, 3, x1, y1, w1, h1, 0)
-  Else
-  {
-    mYActual := Ceil(mSplit / mXSet)
-    subAreaCount := mYActual
-    mWndCount := mSplit
-    Loop, % mYActual
-    {
-      View_splitArea(Not (axis2 - 1), 1 / subAreaCount, x1, y1, w1, h1, gapW, subX1, subY1, subW1, subH1, x1, y1, w1, h1)
-      subAreaWndCount := mXSet
-      If (mWndCount < subAreaWndCount)
-        subAreaWndCount := mWndCount
-      View_stackWindows("View_tiledWndId", mSplit - mWndCount + 1, subAreaWndCount, +1, axis2, subX1, subY1, subW1, subH1, gapW)
-      mWndCount -= subAreaWndCount
-      subAreaCount -= 1
-    }
-  }
-
-  ;; Stack
-  If (View_tiledWndId0 <= mSplit)
-    Return
-
-  stackLen := View_tiledWndId0 - mSplit
-  ;; 161 is the minimal width of an Windows-Explorer window, below which it cannot be resized.
-  ;; The minimal height is 243, but this seems too high for being a limit here;
-  ;; therefor '2 * Bar_height' is used for the minimal height of a window.
-  If (axis3 = 3 Or (axis3 = 1 And (w2 - (stackLen - 1) * gapW) / stackLen < 161) Or (axis3 = 2 And (h2 - (stackLen - 1) * gapW) / stackLen < 2 * Bar_height))
-    View_stackWindows("View_tiledWndId", mSplit + 1, stackLen, +1, 3, x2, y2, w2, h2, 0)
-  Else
-    View_stackWindows("View_tiledWndId", mSplit + 1, stackLen, +1, axis3, x2, y2, w2, h2, gapW)
-}
-
-View_getActiveWindow(m, v)
-{
-  Local aWndClass, aWndId, aWndTitle
+View_getActiveWindow(m, v) {
+  Local aWndId
 
   WinGet, aWndId, ID, A
-  If WinExist("ahk_id" aWndId) And InStr(View_#%m%_#%v%_wndIds, aWndId ";")
-  {
-    WinGetClass, aWndClass, ahk_id %aWndId%
-    WinGetTitle, aWndTitle, ahk_id %aWndId%
-    If Not (aWndClass = "Progman") And Not (aWndClass = "WorkerW") And Not (aWndClass = "AutoHotkeyGui" And SubStr(aWndTitle, 1, 10) = "bug.n_BAR_") And Not (aWndClass = "DesktopBackgroundClass")
-      Return, aWndId
-  }
-  Return, 0
-}
-
-View_getLayoutSymbol_tile(m, v, n)
-{
-  Local axis1, axis2, axis3, masterDim, masterDiv, mx, my, stackSym
-
-  ;; Main axis
-  ;;  1 - vertical divider, master left
-  ;;  2 - horizontal divider, master top
-  ;; -1 - vertical divider, master right
-  ;; -2 - horizontal divider, master bottom
-  axis1 := View_#%m%_#%v%_layoutAxis_#1
-  ;; Master axis
-  ;;  1 - vertical divider
-  ;;  2 - horizontal divider
-  ;;  3 - monocle
-  axis2 := View_#%m%_#%v%_layoutAxis_#2
-  ;; Stack axis
-  ;;  1 - vertical divider
-  ;;  2 - horizontal divider
-  ;;  3 - monocle
-  axis3 := View_#%m%_#%v%_layoutAxis_#3
-  mx := View_#%m%_#%v%_layoutMX
-  my := View_#%m%_#%v%_layoutMY
-
-  If (Abs(axis1) = 1)
-    masterDiv := "|"
+  If WinExist("ahk_id" aWndId) And InStr(View_#%m%_#%v%_wndIds, aWndId ";") And Window_isProg(aWndId)
+    Return, aWndId
   Else
-    masterDiv := "-"
-  If (axis2 = 1)
-    masterDim := mx . "x" . my
-  Else If (axis2 = 2)
-    masterDim := mx . "x" . my
-  Else
-    masterDim := "[" . (mx * my) . "]"
-
-  If (axis3 = 1)
-    stackSym := "|"
-  Else If (axis3 = 2)
-    stackSym := "="
-  Else
-    stackSym := n - (mx * my)
-
-  If (axis1 > 0)
-    Return, masterDim . masterDiv . stackSym
-  Else
-    Return, stackSym . masterDiv . masterDim
-}
-
-View_getMFactorD(m, v, d, dFact) {
-  Local callD, minD
-  Static lastCall, mFactD
-
-  callD := A_TickCount - lastCall
-  lastCall := A_TickCount
-
-  ;; The minimum d, which is reached in 5 steps. maxD is d.
-  If (dFact < 1)
-    minD := d * dFact**5
-  Else
-    minD := d / dFact**5
-
-  If (callD < Config_mFactCallInterval And d * mFactD > 0) {
-    ;; Accelerate mFactD, if the last call is inside the time frame and went in the same direction.
-    mFactD *= dFact
-    ;; Reset mFactD, if it is out of bounds (d).
-    If (dFact < 1 And Abs(mFactD) < Abs(minD))
-      mFactD := minD
-    Else If (Abs(mFactD) > Abs(d))
-      mFactD := d
-    Debug_logMessage("DEBUG[2] View_getMFactorD [on]: callD: " callD ", d: " d ", dFact: " dFact ", mFactD: " mFactD, 2)
-  } Else {
-    ;; Reset after a timeout or a change of direction.
-    If (dFact > 1)
-      mFactD := minD
-    Else
-      mFactD := d
-    Debug_logMessage("DEBUG[2] View_getMFactorD [off]: callD: " callD ", d: " d ", dFact: " dFact ", mFactD: " mFactD, 2)
-  }
-
-  Return, mFactD
+    Return, 0
 }
 
 View_getTiledWndIds(m, v)
@@ -335,12 +160,13 @@ View_getTiledWndIds(m, v)
   StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
   Loop, PARSE, wndIds, `;
   {
-    If Not Manager_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) and Not Manager_isHung(A_LoopField)
+    If Not Window_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) and Not Window_isHung(A_LoopField)
     {
       n += 1
       tiledWndIds .= A_LoopField ";"
     }
   }
+  View_tiledWndIds := tiledWndIds
   StringTrimRight, tiledWndIds, tiledWndIds, 1
   StringSplit, View_tiledWndId, tiledWndIds, `;
 
@@ -357,395 +183,121 @@ View_ghostWindow(m, v, bodyWndId, ghostWndId)
 }
 
 View_moveWindow(i=0, d=0) {
-  Local aWndId, l, m, v
+  Local aWndId, m, v
 
   WinGet, aWndId, ID, A
   m := Manager_aMonitor
   v := Monitor_#%m%_aView_#1
-  l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% = "tile" And InStr(Manager_managedWndIds, aWndId ";") And Not (i = 0 And d = 0) And i <= View_#%m%_#%v%_area_#0) {
+  If Tiler_isActive(Manager_aMonitor, v) And InStr(Manager_managedWndIds, aWndId ";") And Not (i = 0 And d = 0) And (i <= View_#%m%_#%v%_area_#0) {
     If (i = 0)
-      i := Manager_loop(Manager_#%aWndId%_area, d, 1, View_#%m%_#%v%_area_#0)
-    Manager_winMove(aWndId, View_#%m%_#%v%_area_#%i%_x, View_#%m%_#%v%_area_#%i%_y, View_#%m%_#%v%_area_#%i%_width, View_#%m%_#%v%_area_#%i%_height)
-    Manager_#%aWndId%_area := i
-    If Config_mouseFollowsFocus {
-      WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
-      DllCall("SetCursorPos", "Int", Round(aWndX + aWndWidth / 2), "Int", Round(aWndY + aWndHeight / 2))
-    }
+      i := Manager_loop(Window_#%aWndId%_area, d, 1, View_#%m%_#%v%_area_#0)
+    Window_move(aWndId, View_#%m%_#%v%_area_#%i%_x, View_#%m%_#%v%_area_#%i%_y, View_#%m%_#%v%_area_#%i%_width, View_#%m%_#%v%_area_#%i%_height)
+    Window_#%aWndId%_area := i
+    Manager_serCursor(aWndId)
   }
 }
 
-View_rotateLayoutAxis(i, d)
-{
-  Local f, l, n, tmp, v
-
-  v := Monitor_#%Manager_aMonitor%_aView_#1
-  l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% = "tile") And (i = 1 Or i = 2 Or i = 3)
-  {
-    If (i = 1)
-    {
-      If (d = +2)
-        View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% *= -1
-      Else
-      {
-        f := View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% / Abs(View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%)
-        View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% := f * Manager_loop(Abs(View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%), d, 1, 2)
-      }
-    }
-    Else
-    {
-      n := Manager_loop(View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%, d, 1, 3)
-      ;; When we rotate the axis, we may need to swap the X and Y dimensions.
-      ;; We only need to check this when the master axis changes (i = 2)
-      ;; If the original axis was 1 (X) or the new axis is 1 (X)  (Y and Z are defined to be the same)
-      If (i = 2) And Not (n = View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i%) And (n = 1 Or View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% = 1)
-      {
-        tmp := View_#%Manager_aMonitor%_#%v%_layoutMX
-        View_#%Manager_aMonitor%_#%v%_layoutMX := View_#%Manager_aMonitor%_#%v%_layoutMY
-        View_#%Manager_aMonitor%_#%v%_layoutMY := tmp
-      }
-      View_#%Manager_aMonitor%_#%v%_layoutAxis_#%i% := n
-    }
-    View_arrange(Manager_aMonitor, v)
-  }
-}
-
-View_setAreas(m, v, x, y, w, h) {
-  Local axis1, axis2, axis3, gapW, mFact, mSplit, mXSet, mYSet
-  Local h1, h2, mWndCount, stackLen, subAreaCount, subAreaWndCount, subH1, subW1, subX1, subY1, w1, w2, x1, x2, y1, y2
-
-  axis1   := Abs(View_#%m%_#%v%_layoutAxis_#1)
-  axis2   := View_#%m%_#%v%_layoutAxis_#2
-  axis3   := View_#%m%_#%v%_layoutAxis_#3
-  gapW    := View_#%m%_#%v%_layoutGapWidth
-  mFact   := View_#%m%_#%v%_layoutMFact
-  mXSet   := (axis2 = 1) ? View_#%m%_#%v%_layoutMX : View_#%m%_#%v%_layoutMY
-  mYSet   := (axis2 = 1) ? View_#%m%_#%v%_layoutMY : View_#%m%_#%v%_layoutMX
-  mSplit  := mXSet * mYSet
-
-  Debug_logMessage("DEBUG[2] View_setAreas: mX = " mXSet ", mY = " mYSet ", mSplit = " mSplit, 2)
-
-  View_#%m%_#%v%_area_#0 := 0
-  View_#%m%_#%v%_layoutSymbol := View_getLayoutSymbol_tile(m, v, mSplit)
-
-  ;; Areas (master and stack)
-  x1 := x
-  y1 := y
-  w1 := w
-  h1 := h
-  If View_#%m%_#%v%_showStackArea {
-    If (View_#%m%_#%v%_layoutAxis_#1 < 0)
-      View_splitArea(axis1 - 1, 1 - mFact, x1, y1, w1, h1, gapW, x2, y2, w2, h2, x1, y1, w1, h1)
-    Else
-      View_splitArea(axis1 - 1, mFact, x1, y1, w1, h1, gapW, x1, y1, w1, h1, x2, y2, w2, h2)
-  }
-
-  ;; Master
-  If (axis2 = 3)
-    View_setSubAreas(m, v, 1, mSplit, +1, 3, x1, y1, w1, h1, 0)
-  Else {
-    subAreaCount := mYSet
-    mWndCount := mSplit
-    Loop, % mYSet {
-      View_splitArea(Not (axis2 - 1), 1 / subAreaCount, x1, y1, w1, h1, gapW, subX1, subY1, subW1, subH1, x1, y1, w1, h1)
-      subAreaWndCount := mXSet
-      If (mWndCount < subAreaWndCount)
-        subAreaWndCount := mWndCount
-      Debug_logMessage("DEBUG[2] View_setAreas: Master subArea #" A_Index, 2)
-      View_setSubAreas(m, v, mSplit - mWndCount + 1, subAreaWndCount, +1, axis2, subX1, subY1, subW1, subH1, gapW)
-      mWndCount -= subAreaWndCount
-      subAreaCount -= 1
-    }
-  }
-
-  ;; Stack
-  If View_#%m%_#%v%_showStackArea {
-    Debug_logMessage("DEBUG[2] View_setAreas: Stack subArea #" A_Index, 2)
-    View_setSubAreas(m, v, mSplit + 1, 1, +1, 3, x2, y2, w2, h2, 0)
-  }
-}
-
-View_setGapWidth(d)
-{
-  Local l, v, w
-
-  v := Monitor_#%Manager_aMonitor%_aView_#1
-  l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% = "tile" Or Config_layoutFunction_#%l% = "monocle")
-  {
-    If (d < 0)
-      d := Floor(d / 2) * 2
-    Else
-      d := Ceil(d / 2) * 2
-    w := View_#%Manager_aMonitor%_#%v%_layoutGapWidth + d
-    If (w < Monitor_#%Manager_aMonitor%_height And w < Monitor_#%Manager_aMonitor%_width)
-    {
-      View_#%Manager_aMonitor%_#%v%_layoutGapWidth := w
-      View_arrange(Manager_aMonitor, v)
-    }
-  }
-}
-
-View_setLayout(l)
-{
+View_setGapWidth(i, d = 0) {
   Local v
 
   v := Monitor_#%Manager_aMonitor%_aView_#1
-  If (l = -1)
-    l := View_#%Manager_aMonitor%_#%v%_layout_#2
-  If (l = ">")
-    l := Manager_loop(View_#%Manager_aMonitor%_#%v%_layout_#1, +1, 1, Config_layoutCount)
-  If (l > 0) And (l <= Config_layoutCount)
-  {
-    If Not (l = View_#%Manager_aMonitor%_#%v%_layout_#1)
-    {
+  If (i = 0) And (d != 0)
+    i := View_#%Manager_aMonitor%_#%v%_layoutGapWidth
+  i += d
+  If (i >= 0 And i < Monitor_#%Manager_aMonitor%_height And i < Monitor_#%Manager_aMonitor%_width) {
+    i := Ceil(i / 2) * 2
+    View_#%Manager_aMonitor%_#%v%_layoutGapWidth := i
+    Return, 1
+  } Else
+    Return, 0
+}
+
+View_setLayout(i, d = 0) {
+  Local v
+
+  v := Monitor_#%Manager_aMonitor%_aView_#1
+  If (i = -1)
+    i := View_#%Manager_aMonitor%_#%v%_layout_#2
+  Else If (i = 0)
+    i := View_#%Manager_aMonitor%_#%v%_layout_#1
+  i := Manager_loop(i, d, 1, Config_layoutCount)
+  If (i > 0) And (i <= Config_layoutCount) {
+    If Not (i = View_#%Manager_aMonitor%_#%v%_layout_#1) {
       View_#%Manager_aMonitor%_#%v%_layout_#2 := View_#%Manager_aMonitor%_#%v%_layout_#1
-      View_#%Manager_aMonitor%_#%v%_layout_#1 := l
+      View_#%Manager_aMonitor%_#%v%_layout_#1 := i
     }
     View_arrange(Manager_aMonitor, v, True)
   }
 }
 
-View_setMFactor(d, dFact=1)
-{
-  Local l, mFact, v
+View_setLayoutProperty(name, i, d, opt = 0) {
+  Local a, l, v
 
   v := Monitor_#%Manager_aMonitor%_aView_#1
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% = "tile")
-  {
-    mFact := 0
-    If (d > 1)
-      mFact := d
-    Else
-    {
-      d := View_getMFactorD(Manager_aMonitor, v, d, dFact)
-      mFact := View_#%Manager_aMonitor%_#%v%_layoutMFact + d
-    }
-    If (mFact > 0 And mFact < 1)
-    {
-      View_#%Manager_aMonitor%_#%v%_layoutMFact := mFact
-      View_arrange(Manager_aMonitor, v)
-    }
+  If Tiler_isActive(Manager_aMonitor, v) {
+    If (name = "Axis")
+      a := Tiler_setAxis(Manager_aMonitor, v, opt, d)
+    Else If (name = "MFactor") {
+      If (opt = 0)
+        opt := 1
+      a := Tiler_setMFactor(Manager_aMonitor, v, i, d, opt)
+    } Else If (name = "MX")
+      a := Tiler_setMX(Manager_aMonitor, v, d)
+    Else If (name = "MY")
+      a := Tiler_setMY(Manager_aMonitor, v, d)
   }
-}
+  If (name = "GapWidth") And (Tiler_isActive(Manager_aMonitor, v) Or (Config_layoutFunction_#%l% = "monocle"))
+    a := View_setGapWidth(i, d)
 
-View_setMX(d)
-{
-  Local l, n, v
-
-  v := Monitor_#%Manager_aMonitor%_aView_#1
-  l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If Not (Config_layoutFunction_#%l% = "tile")
-    Return
-
-  n := View_#%Manager_aMonitor%_#%v%_layoutMX + d
-  If (n >= 1) And (n <= 9)
-  {
-    View_#%Manager_aMonitor%_#%v%_layoutMX := n
+  If a
     View_arrange(Manager_aMonitor, v)
-  }
 }
 
-View_setMY(d)
-{
-  Local l, n, v
+View_shuffleWindow(i, d = 0) {
+  Local aWndId, j, replace, v
 
+  Debug_logMessage("DEBUG[2] View_shuffleWindow(" . i . ", " . d . ")", 2)
   v := Monitor_#%Manager_aMonitor%_aView_#1
-  l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If Not (Config_layoutFunction_#%l% = "tile")
-    Return
-
-  n := View_#%Manager_aMonitor%_#%v%_layoutMY + d
-  If (n >= 1) And (n <= 9)
-  {
-    View_#%Manager_aMonitor%_#%v%_layoutMY := n
-    View_arrange(Manager_aMonitor, v)
-  }
-}
-
-View_setSubAreas(m, v, i, len, d, axis, x, y, w, h, padding) {
-  Local areaH, areaW, areaX, areaY, dx, dy
-
-  ;; d = +1: Left-to-right and top-to-bottom, depending on axis
-  ;; d = -1: Right-to-left and bottom-to-top, depending on axis
-  If (d < 0)
-    i += len - 1
-
-  areaX := x
-  areaY := y
-  areaW := w
-  areaH := h
-  dx := 0
-  dy := 0
-  If (axis = 1) {
-    areaW := (w - (len - 1) * padding) / len
-    dx := areaW + padding
-  } Else If (axis = 2) {
-    areaH := (h - (len - 1) * padding) / len
-    dy := areaH + padding
-  }
-  ;; Else (axis = 3) and nothing to do
-
-  Debug_logMessage("DEBUG[2] View_setSubAreas: start = " i ", length = " len, 2)
-  Loop, % len {
-    Debug_logMessage("DEBUG[2] View_setSubAreas: areaX = " areax ", areaY = " areaY ", areaW = " areaW ", areaH = " areaH, 2)
-    View_#%m%_#%v%_area_#0 += 1
-    View_#%m%_#%v%_area_#%i%_x := Round(areaX)
-    View_#%m%_#%v%_area_#%i%_y := Round(areaY)
-    View_#%m%_#%v%_area_#%i%_width  := Round(areaW)
-    View_#%m%_#%v%_area_#%i%_height := Round(areaH)
-    i += d
-    areaX += dx
-    areaY += dy
-  }
-}
-
-View_shuffleWindow(d)
-{
-  Local aWndHeight, aWndId, aWndWidth, aWndX, aWndY, i, j, l, search, v
-
-  WinGet, aWndId, ID, A
-  v := Monitor_#%Manager_aMonitor%_aView_#1
-  l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% = "tile" And InStr(Manager_managedWndIds, aWndId ";"))
-  {
+  If Tiler_isActive(Manager_aMonitor, v) {
     View_getTiledWndIds(Manager_aMonitor, v)
-    If (View_tiledWndId0 > 1)
-    {
-      Loop, % View_tiledWndId0
-      {
-        If (View_tiledWndId%A_Index% = aWndId)
-        {
-          i := A_Index
+    WinGet, aWndId, ID, A
+    If InStr(View_tiledWndIds, aWndId ";") And (View_tiledWndId0 > 1) {
+      Loop, % View_tiledWndId0 {
+        If (View_tiledWndId%A_Index% = aWndId) {
+          j := A_Index
           Break
         }
       }
-      If (d = 0 And i = 1)
-        j := 2
-      Else
-        j := Manager_loop(i, d, 1, View_tiledWndId0)
-      If (j > 0 And j <= View_tiledWndId0)
-      {
-        If (j = i)
-        {
-          StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, %aWndId%`;,
-          View_#%Manager_aMonitor%_#%v%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%v%_wndIds
-        }
+      If (i = 0)
+        i := j
+      Else If (i = 1 And j = 1)
+        i := 2
+      i := Manager_loop(i, d, 1, View_tiledWndId0)
+      Debug_logMessage("DEBUG[2] View_shuffleWindow: " . j . " -> " . i, 2)
+      If (i != j) {
+        If (i < j)
+          replace := aWndId ";" View_tiledWndId%i% ";"
         Else
-        {
-          search := View_tiledWndId%j%
-          StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, %aWndId%, SEARCH
-          StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, %search%, %aWndId%
-          StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, SEARCH, %search%
-        }
+          replace := View_tiledWndId%i% ";" aWndId ";"
+        StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, % aWndId ";",
+        StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, % View_tiledWndId%i% ";", %replace%
         View_arrange(Manager_aMonitor, v)
-
-        If Config_mouseFollowsFocus
-        {
-          WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
-          DllCall("SetCursorPos", "Int", Round(aWndX + aWndWidth / 2), "Int", Round(aWndY + aWndHeight / 2))
-        }
+        Manager_serCursor(aWndId)
       }
     }
   }
 }
 
-View_splitArea(axis, splitRatio, x, y, w, h, gapW, ByRef x1, ByRef y1, ByRef w1, ByRef h1, ByRef x2, ByRef y2, ByRef w2, ByRef h2)
-{
-  x1 := x
-  y1 := y
-  If (splitRatio = 1)
-  {
-    w1 := w
-    w2 := 0
-    h1 := h
-    h2 := 0
-    x2 := x + w1
-    y2 := y + h1
-  }
-  Else If (axis = 0)
-  {
-    w1 := w * splitRatio - gapW / 2
-    w2 := w - w1 - gapW
-    h1 := h
-    h2 := h
-    x2 := x + w1 + gapW
-    y2 := y
-  }
-  Else
-  {
-    w1 := w
-    w2 := w
-    h1 := h * splitRatio - gapW / 2
-    h2 := h - h1 - gapW
-    x2 := x
-    y2 := y + h1 + gapW
-  }
-}
+View_toggleFloatingWindow(wndId = 0) {
+  Local l, v
 
-;; ARRAY SPECIFICATION
-;;   arrayName - Name of a globally stored array of windows:
-;;     %arrayName%1, %arrayName%2, ...
-;;    startPos - First entry of the array, which should be used.
-;;         len - Number of entries from the array, which should be used.
-;;           d - +1/-1: In-/Decrement (direction) for traversing through the array.
-;; STACKING SPECIFICATION
-;;        axis - 1/2/3: Stacking axis (X/Y/Z)
-;; AREA SPECIFICATION
-;;           x - X-position of the stacking area
-;;           y - Y-position of the stacking area
-;;           w - Width of the stacking area
-;;           h - Height of the stacking area
-;;     padding - Number of pixels to put between the windows.
-View_stackWindows(arrayName, startPos, len, d, axis, x, y, w, h, padding)
-{
-  Local dx, dy, i, wndH, wndW, wndX, wndY
-
-  ;; d = +1: Left-to-right and top-to-bottom, depending on axis
-  i := startPos
-  ;; d = -1: Right-to-left and bottom-to-top, depending on axis
-  If (d < 0)
-    i += len - 1
-
-  wndX := x
-  wndY := y
-  wndW := w
-  wndH := h
-  dx := 0
-  dy := 0
-  If (axis = 1)
-  {
-    wndW := (w - (len - 1) * padding) / len
-    dx := wndW + padding
-  }
-  Else If (axis = 2)
-  {
-    wndH := (h - (len - 1) * padding) / len
-    dy := wndH + padding
-  }
-  ;; Else (axis = 3) and nothing to do
-
-  Loop, % len
-  {
-    Manager_winMove(%arrayName%%i%, wndX, wndY, wndW, wndH)
-    i += d
-    wndX += dx
-    wndY += dy
-  }
-}
-
-View_toggleFloating()
-{
-  Local aWndId, l, v
-
-  WinGet, aWndId, ID, A
+  If (wndId = 0)
+    WinGet, wndId, ID, A
   v := Monitor_#%Manager_aMonitor%_aView_#1
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% And InStr(Manager_managedWndIds, aWndId ";"))
-  {
-    Manager_#%aWndId%_isFloating := Not Manager_#%aWndId%_isFloating
+  If (Config_layoutFunction_#%l% And InStr(Manager_managedWndIds, wndId ";")) {
+    Window_#%wndId%_isFloating := Not Window_#%wndId%_isFloating
     View_arrange(Manager_aMonitor, v)
     Bar_updateTitle()
   }
@@ -770,59 +322,19 @@ View_toggleMargins()
 }
 
 View_toggleStackArea() {
-  Local l, m, v
+  Local v
 
-  m := Manager_aMonitor
-  v := Monitor_#%m%_aView_#1
-  l := View_#%m%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% = "tile" And Not Config_dynamicTiling) {
-    View_#%m%_#%v%_showStackArea := Not View_#%m%_#%v%_showStackArea
-    If Not View_#%m%_#%v%_showStackArea
-      View_#%m%_#%v%_layoutAxis_#3 := 3
-    View_arrange(m, v)
+  v := Monitor_#%Manager_aMonitor%_aView_#1
+  If Tiler_isActive(Manager_aMonitor, v) And Not Config_dynamicTiling {
+    Tiler_toggleStackArea(Manager_aMonitor, v)
+    View_arrange(Manager_aMonitor, v)
   }
 }
 
-View_traceAreas(continuously=False) {
-  Local GuiN, h1, h2, l, m, n, v, w1, w2, wndTitle, x1, x2, y1, y2
+View_traceAreas(continuously = False) {
+  Local v
 
-  m := Manager_aMonitor
-  v := Monitor_#%m%_aView_#1
-  l := View_#%m%_#%v%_layout_#1
-  If (Config_layoutFunction_#%l% = "tile" And Not Config_dynamicTiling) {
-    x1 := Monitor_#%m%_x + View_#%m%_#%v%_layoutGapWidth + View_#%m%_#%v%_margin4
-    y1 := Monitor_#%m%_y + View_#%m%_#%v%_layoutGapWidth + View_#%m%_#%v%_margin1
-    w1 := Monitor_#%m%_width - 2 * View_#%m%_#%v%_layoutGapWidth - View_#%m%_#%v%_margin4 - View_#%m%_#%v%_margin2
-    h1 := Monitor_#%m%_height - 2 * View_#%m%_#%v%_layoutGapWidth - View_#%m%_#%v%_margin1 - View_#%m%_#%v%_margin3
-    wndTitle := "bug.n_TRACE_" m "_" v
-    Gui, 98: Default
-    Gui, Destroy
-    Gui, -Caption +Disabled +ToolWindow
-    Gui, +AlwaysOnTop
-    Gui, Color, %Config_selFgColor2%
-    Gui, Font, c%Config_normFgColor1% s%Config_largeFontSize%, %Config_fontName%
-
-    n := View_#%m%_#%v%_area_#0
-    Loop, % n {
-      x2 := View_#%m%_#%v%_area_#%A_Index%_x - x1 + Config_borderWidth + Config_borderPadding
-      y2 := View_#%m%_#%v%_area_#%A_Index%_y - y1 + Config_borderWidth + Config_borderPadding
-      w2 := View_#%m%_#%v%_area_#%A_Index%_width - 2 * (Config_borderWidth + Config_borderPadding)
-      h2 := View_#%m%_#%v%_area_#%A_Index%_height - 2 * (Config_borderWidth + Config_borderPadding)
-      y3 := y2 + (h2 - Config_largeFontSize) / 2
-      Gui, Add, Progress, x%x2% y%y2% w%w2% h%h2% Background%Config_normBgColor1%
-      Gui, Add, Text, x%x2% y%y3% w%w2% BackgroundTrans Center, % A_Index
-      Debug_logMessage("DEBUG[2] View_traceAreas: i = " A_Index " / " n ", x = " x2 ", y = " y2 ", w = " w2 ", h = " h2, 2)
-    }
-
-    Gui, Show, NoActivate x%x1% y%y1% w%w1% h%h1%, %wndTitle%
-    WinSet, Transparent, 191, % wndTitle
-    If Not continuously {
-      Sleep, % Config_areaTraceTimeout
-      If Not Config_continuouslyTraceAreas
-        Gui, Destroy
-      Else
-        WinSet, Bottom,, % wndTitle
-    } Else
-      WinSet, Bottom,, % wndTitle
-  }
+  v := Monitor_#%Manager_aMonitor%_aView_#1
+  If Tiler_isActive(Manager_aMonitor, v) And Not Config_dynamicTiling
+    Tiler_traceAreas(Manager_aMonitor, v, continuously)
 }

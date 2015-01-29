@@ -14,20 +14,14 @@ add-on for Microsoft Windows. It is written in the scripting language
 * Dynamically resize and move your windows, applying a specified layout,
   without you having to care about moving them all by mouse
 * Increase the available screen estate by hiding and therewith freeing up the
-  space occupied by
-  + the Microsoft Windows Taskbar and
-  + the title bar for every single window
+  space occupied by the Microsoft Windows Taskbar and the title bar for every
+  single window
 * and replacing all with a single slim status bar (-- but bug.n is not a shell
   replacement)
-* Show window management information in the status bar:
-  + active window title
-  + active layout
-  + overview of the views used
-* Show system information in the status bar:
-  + time and date
-  + CPU and memory usage
-  + disk and network load
-  + battery level
+* Show window management information in the status bar: active window title,
+  active layout, overview of the views used
+* Show system information in the status bar: time and date, CPU and memory
+  usage, disk and network load, battery level
 * Store your settings, i. e. which windows and layout were set on a specific
   view
 * Support multiple monitors
@@ -58,15 +52,15 @@ add-on for Microsoft Windows. It is written in the scripting language
 #### Requirements
 
 * Microsoft Windows 2000 or higher
-* [AutoHotkey](http://ahkscript.org/download/) (if running bug.n from source as
-  a script)
+* [AutoHotkey](http://ahkscript.org/download/) 1.1.10 or higher (if running
+  bug.n from source as a script)
 
 You may either
-[download the stable version of bug.n](https://github.com/fuhsjr00/bug.n/blob/master/bug.n-stable.zip)
+[download the stable version of bug.n](https://github.com/fuhsjr00/bug.n/releases/latest)
 from the repository, or
 [download the current development version](https://github.com/fuhsjr00/bug.n/archive/master.zip)
 as the repository itself. Either way, you will have a `zip` file including an
-executable (`bug.n*.exe`), the source (`src\*`) and documentation (`doc\*`)
+executable (`bugn.exe`), the source (`src\*`) and documentation (`doc\*`)
 files.
 
 There is no installation process for bug.n. Unpack the `zip` file, and you
@@ -90,39 +84,5 @@ the [LICENSE file](./LICENSE.md) for the full license text.
 
 ### Credits
 
-bug.n and its documentation is written by Joshua Fuhs and joten, but some
-source was copied from the AutoHotkey forum
-(http://www.autohotkey.com/forum). These are explicitly marked in the source
-code at the end of the appropriate section. Additionally the following listing
-summarizes these sources (of ideas or code):
-
-#### Patch ideas
-
-* [pitkali](http://pitkali.info/bugn):
-  + Sync window arrays on fussy events and unknown window ids
-  + Dialog detection upon manage
-  + Regular expression support in rules
-  + Window information handling patches
-    - memory leaks
-    - flickering windows
-
-#### Ideas or concepts
-
-* suckless.org: [dwm](http://dwm.suckless.org)
-* jgpaiva: [GridMove](http://jgpaiva.donationcoders.com/gridmove.html)
-* Lexikos: [WindowPad - multi-monitor window-moving tool](http://www.autohotkey.com/forum/topic21703.html)
-
-#### Code snippets
-
-* fures: [System + Network monitor - with net history graph](http://www.autohotkey.com/community/viewtopic.php?p=260329)
-* maestrith: [Script Writer](https://github.com/maestrith/Script_Writer)
-* PhiLho: [AC/Battery status](http://www.autohotkey.com/forum/topic7633.html)
-* Pillus: [System monitor (HDD/Wired/Wireless) using keyboard LEDs](http://www.autohotkey.com/board/topic/65308-system-monitor-hddwiredwireless-using-keyboard-leds/)
-* Sean:
-  + [CPU LoadTimes](http://www.autohotkey.com/forum/topic18913.html)
-  + [Network Download/Upload Meter](http://www.autohotkey.com/community/viewtopic.php?t=18033)
-* SKAN:
-  + [Crazy Scripting : Quick Launcher for Portable Apps](http://www.autohotkey.com/forum/topic22398.html)
-  + [HDD Activity Monitoring LED](http://www.autohotkey.com/community/viewtopic.php?p=113890&sid=64d9824fdf252697ff4d5026faba91f8#p113890)
-  + [How to Hook on to Shell to receive its messages?](http://www.autohotkey.com/forum/viewtopic.php?p=123323#123323)
-* Unambiguous: [Re-use WIN+L as a hotkey in bug.n](http://www.autohotkey.com/community/viewtopic.php?p=500903&sid=eb3c7a119259b4015ff045ef80b94a81#p500903)
+Please see the [CREDITS file](./doc/CREDITS.md) for a list of people and projects,
+which contributed to bug.n.

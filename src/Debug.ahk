@@ -1,21 +1,16 @@
 /*
   bug.n -- tiling window management
-  Copyright (c) 2010-2014 Joshua Fuhs, joten
-
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+  Copyright (c) 2010-2015 Joshua Fuhs, joten
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>.
+  @license GNU General Public License version 3
+           ../LICENSE.md or <http://www.gnu.org/licenses/>
 
-  @version 8.4.0
+  @version 9.0.0
 */
 
 Debug_initLog(filename, level = 0, truncateFile = True)
@@ -99,11 +94,11 @@ Debug_logViewWindowList()
 
 Debug_logWindowInfo(wndId)
 {
-  Local aWndId, detect_state, text, v
+  Local aWndId, detectSetting, text, v
   Local isBugnActive, isDecorated, isFloating, isGhost, isHidden, isResponsive, isWinFocus
   Local wndClass, wndH, wndProc, wndStyle, wndTitle, wndW, wndX, wndY
 
-  detect_state := A_DetectHiddenWindows
+  detectSetting := A_DetectHiddenWindows
   DetectHiddenWindows, On
   WinGet, aWndId, ID, A
   If aWndId = %wndId%
@@ -122,42 +117,42 @@ Debug_logWindowInfo(wndId)
     isHidden := "*"
   Else
     isHidden := " "
-  If Manager_#%wndId%_isFloating
+  If Window_#%wndId%_isFloating
     isFloating := "*"
   Else
     isFloating := " "
-  If Manager_#%wndId%_isDecorated
+  If Window_#%wndId%_isDecorated
     isDecorated := "*"
   Else
     isDecorated := " "
   WinGet, wndStyle, Style, ahk_id %wndId%
   WinGetPos, wndX, wndY, wndW, wndH, ahk_id %wndId%
-  If Manager_isGhost(wndId)
+  If Window_isGhost(wndId)
     isGhost := "*"
   Else
     isGhost := " "
-  DetectHiddenWindows, %detect_state%
+  DetectHiddenWindows, %detectSetting%
 
   ;; Intentionally don't detect hidden windows here to see what Manager_hungTest does
-  If Manager_isHung(wndId)
+  If Window_isHung(wndId)
     isResponsive := " "
   Else
     isResponsive := "*"
 
   text := wndId "`t"
   text .= isHidden " " isWinFocus " " isBugnActive " " isFloating " " isDecorated " " isResponsive " " isGhost " "
-  text .= Manager_#%wndId%_monitor "`t" Manager_#%wndId%_tags "`t"
+  text .= Window_#%wndId%_monitor "`t" Window_#%wndId%_tags "`t"
   text .= wndX "`t" wndY "`t" wndW "`t" wndH "`t" wndStyle "`t" wndProc " / " wndClass " / " wndTitle
   Debug_logMessage(text , 0, False)
 }
 
-Debug_setLogLevel(d)
-{
+Debug_setLogLevel(i, d) {
   Global Debug_logLevel
 
-  i := Debug_logLevel + d
-  If (i >= 0)
-  {
+  If (i = 0)
+    i := Debug_logLevel
+  i += d
+  If (i >= 0) And (i != Debug_logLevel) {
     Debug_logLevel := i
     If (i = 0)
       Debug_logMessage("Logging disabled.", 0)

@@ -1,25 +1,20 @@
 /*
   bug.n -- tiling window management
-  Copyright (c) 2010-2014 Joshua Fuhs, joten
-
-  This program is free software: you can redistribute it and/or modify
-  it under the terms of the GNU General Public License as published by
-  the Free Software Foundation, either version 3 of the License, or
-  (at your option) any later version.
+  Copyright (c) 2010-2015 Joshua Fuhs, joten
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
   GNU General Public License for more details.
 
-  You should have received a copy of the GNU General Public License
-  along with this program. If not, see <http://www.gnu.org/licenses/>.
+  @license GNU General Public License version 3
+           ../LICENSE.md or <http://www.gnu.org/licenses/>
 
-  @version 8.4.0
+  @version 9.0.0
 */
 
 NAME  := "bug.n"
-VERSION := "8.4.0"
+VERSION := "9.0.0"
 
 ;; Script settings
 OnExit, Main_cleanup
@@ -37,7 +32,7 @@ SetWinDelay, 10
 
   Main_setup()
 
-  Debug_initLog(Main_appDir "\log.txt", 0, False)
+  Debug_initLog(Main_logFile, 0, False)
 
   Debug_logMessage("====== Initializing ======", 0)
   Config_filePath := Main_appDir "\Config.ini"
@@ -107,14 +102,16 @@ Main_evalCommand(command)
     {
       functionName := SubStr(command, 1, i - 1)
       functionArguments := SubStr(command, i + 1, j - (i + 1))
+      StringReplace, functionArguments, functionArguments, %A_SPACE%, , All
       StringSplit, functionArgument, functionArguments, `,
       If (functionArgument0 < 2)
         %functionName%(functionArguments)
       Else If (functionArgument0 = 2)
-      {
-        StringTrimLeft, functionArgument2, functionArgument2, 1
         %functionName%(functionArgument1, functionArgument2)
-      }
+      Else If (functionArgument0 = 3)
+        %functionName%(functionArgument1, functionArgument2, functionArgument3)
+      Else If (functionArgument0 = 4)
+        %functionName%(functionArgument1, functionArgument2, functionArgument3, functionArgument4)
     }
   }
 }
@@ -123,11 +120,7 @@ Main_help:
   Run, explore %Main_docDir%
 Return
 
-Main_quit:
-  ExitApp
-Return
-
-; Create bug.n-specific directories.
+;; Create bug.n-specific directories.
 Main_makeDir(dirName) {
   IfNotExist, %dirName%
   {
@@ -149,39 +142,15 @@ Main_makeDir(dirName) {
   }
 }
 
-
-Main_setup() {
-  Local winAppDir
-
-  Main_docDir := A_ScriptDir
-  If (SubStr(A_ScriptDir, -3) = "\src")
-    Main_docDir .= "\.."
-  Main_docDir .= "\doc"
-
-  Main_logFile := ""
-  Main_dataDir := ""
-  Main_autoLayout := ""
-  Main_autoWindowState := ""
-
-  EnvGet, winAppDir, APPDATA
-
-  If (Main_appDir = "")
-    Main_appDir := winAppDir . "\bug.n"
-  Main_logFile := Main_appDir . "\bugn_log.txt"
-  Main_dataDir := Main_appDir . "\data"
-  Main_autoLayout := Main_dataDir . "\_Layout.ini"
-  Main_autoWindowState := Main_dataDir . "\_WindowState.ini"
-
-  Main_makeDir(Main_appDir)
-  Main_makeDir(Main_dataDir)
-}
-
+Main_quit:
+  ExitApp
+Return
 
 Main_reload()
 {
   Local i, ncm, ncmSize
 
-  ;; Reset border color, padding and witdh.
+  ;; Restore border color, padding and witdh.
   If Config_selBorderColor
     DllCall("SetSysColors", "Int", 1, "Int*", 10, "UInt*", Manager_normBorderColor)
   If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA)
@@ -242,6 +211,32 @@ Main_reload()
   SetTimer, Bar_loop, %Config_readinInterval%
 }
 
+Main_setup() {
+  Local winAppDir
+
+  Main_docDir := A_ScriptDir
+  If (SubStr(A_ScriptDir, -3) = "\src")
+    Main_docDir .= "\.."
+  Main_docDir .= "\doc"
+
+  Main_logFile := ""
+  Main_dataDir := ""
+  Main_autoLayout := ""
+  Main_autoWindowState := ""
+
+  EnvGet, winAppDir, APPDATA
+
+  If (Main_appDir = "")
+    Main_appDir := winAppDir . "\bug.n"
+  Main_logFile := Main_appDir . "\log.txt"
+  Main_dataDir := Main_appDir . "\data"
+  Main_autoLayout := Main_dataDir . "\_Layout.ini"
+  Main_autoWindowState := Main_dataDir . "\_WindowState.ini"
+
+  Main_makeDir(Main_appDir)
+  Main_makeDir(Main_dataDir)
+}
+
 Main_toggleBar:
   Monitor_toggleBar()
 Return
@@ -253,4 +248,5 @@ Return
 #Include Monitor.ahk
 #Include ResourceMonitor.ahk
 #Include Server.ahk
-#Include View.ahk
+#Include Tiler.ahk#Include View.ahk
+#Include Window.ahk
