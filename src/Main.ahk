@@ -248,5 +248,6 @@ Return
 #Include Monitor.ahk
 #Include ResourceMonitor.ahk
 #Include Server.ahk
-#Include Tiler.ahk#Include View.ahk
+#Include Tiler.ahk
+#Include View.ahk
 #Include Window.ahk
