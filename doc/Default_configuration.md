@@ -37,35 +37,55 @@ Appearance" settings for the "Active Title Bar".
 `Config_largeFontSize=24`
 > Font size in pixel, i. a. for the numbering of areas in the area trace.
 
-`Config_normBgColor=`
-> The normal background color of the following bar elements:
-  1. inactive views, title and time
-  2. the layout symbol, the any-text (i. a. date) and the button for the
-     command GUI (#!).
-  3. the progress bar indicating a charging or full battery
-  4. the progress bar indicating a discharging battery with a remaining
-     charge of less than ten percent
-  5. the progress bar indicating a charging battery
+`Config_backColor_#1=<COLOR_MENU>;<COLOR_INACTIVECAPTION>;<COLOR_MENU>;<COLOR_INACTIVECAPTION>;<COLOR_MENU>;<COLOR_INACTIVECAPTION>;<COLOR_GRADIENTINACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>`
+> The default background color for bar elements. The value for this and the
+other (following) color related configuration variables is a semicolon
+separated list, which contains the following items:
 
-`Config_normFgColor=`
-> The normal foreground color of the following bar elements:
-  1. the text of inactive views, title and time
-  2. the text of the layout symbol, a full battery, the any-text (i. a.
-     date) and the button for the command GUI (#!)
-  3. the progress bar indicating a charging battery?
-  4. the text indicating a discharging battery
-  5. the progress bar indicating a discharging battery
-  6. the text indicating a discharging battery with a remaining charge of
-     less than ten percent?
-  7. the text indicating a charging battery?
-  8. the progress bar indicating an inactive view and a charging battery?
+* view
+* layout
+* title
+* shebang
+* time
+* "any text", i. a. date
+* battery status
+* cpu load
+* disk load
+* memory usage
+* network load
+* volume level
 
-`Config_selBgColor=`
-> The background color of a progress bar indicating an active view.
+`Config_backColor_#2=<COLOR_GRADIENTACTIVECAPTION>;;;;;;<COLOR_GRADIENTINACTIVECAPTION>;;;;;<COLOR_GRADIENTINACTIVECAPTION>`
+> The background color of bar elements, which are highlighted depending on the
+status, i. a. the active view, a discharging battery and the sound volume.
 
-`Config_selFgColor=`
-> 1. The text color and
-2. the foreground color of a progress bar indicating an active view.
+`Config_backColor_#3=;;;;;;ff8040;;;;;`
+> The background color of bar elements, which are highlighted depending on the
+status, i. a. a discharging battery with a battery level lower than 10%.
+
+`Config_foreColor_#1=<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_MENU>;<COLOR_INACTIVECAPTION>;<COLOR_MENU>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>`
+> The default forground color of bar elements. Every bar element consists of a
+progress bar with a background and a foreground; the visible part of the
+foreground depends on the value of the progress bar.
+
+`Config_foreColor_#2=<COLOR_ACTIVECAPTION>;;;;;;<COLOR_HIGHLIGHT>;;;;;<COLOR_HIGHLIGHT>`
+> The foreground color of bar elements, which are highlighted depending on the
+status, i. a. the active view, a discharging battery and the sound volume.
+
+`Config_foreColor_#3=;;;;;;<COLOR_INACTIVECAPTION>;;;;;`
+> The foreground color of bar elements, which are highlighted depending on the
+status, i. a. a discharging battery with a battery level lower than 10%.
+
+`Config_fontColor_#1=<COLOR_MENUTEXT>;Default;<COLOR_MENUTEXT>;Default;<COLOR_MENUTEXT>;Default;Default;Default;Default;Default;Default;Default`
+> The default font color for the text of bar elements.
+
+`Config_fontColor_#2=<COLOR_CAPTIONTEXT>;;;;;;<COLOR_INACTIVECAPTIONTEXT>;;;;;<COLOR_INACTIVECAPTIONTEXT>`
+> The font color of bar elements, which are highlighted depending on the
+status, i. a. the active view, a discharging battery and the sound volume.
+
+`Config_fontColor_#3=;;;;;;Default;;;;;`
+> The fontground color of bar elements, which are highlighted depending on the
+status, i. a. a discharging battery with a battery level lower than 10%.
 
 The default color values are retrieved from the "Window Color and Appearance"
 settings.

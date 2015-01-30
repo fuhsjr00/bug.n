@@ -13,16 +13,13 @@
   @version 9.0.0
 */
 
-Bar_init(m)
-{
+Bar_init(m) {
   Local appBarMsg, GuiN, h1, h2, i, text, titleWidth, trayWndId, w, wndId, wndTitle, wndWidth, x1, x2, y1, y2
 
-  If (SubStr(Config_barWidth, 0) = "%")
-  {
+  If (SubStr(Config_barWidth, 0) = "%") {
     StringTrimRight, wndWidth, Config_barWidth, 1
     wndWidth := Round(Monitor_#%m%_width * wndWidth / 100)
-  }
-  Else
+  } Else
     wndWidth := Config_barWidth
 
   wndWidth := Round(wndWidth * Config_scalingFactor)
@@ -38,7 +35,7 @@ Bar_init(m)
   x2 := wndWidth
   y1 := 0
   y2 := (Bar_ctrlHeight - Bar_textHeight) / 2
-  h2 := Bar_ctrlHeight - 2 * y2
+  h2 := Bar_textHeight
 
   ;; Create the GUI window
   wndTitle := "bug.n_BAR_" m
@@ -47,97 +44,64 @@ Bar_init(m)
   Gui, %GuiN%: Default
   Gui, Destroy
   Gui, +AlwaysOnTop -Caption +LabelBar_Gui +LastFound +ToolWindow
-  Gui, Color, %Config_normBgColor1%
-  Gui, Font, c%Config_normFgColor1% s%Config_fontSize%, %Config_fontName%
+  Gui, Color, %Config_backColor_#1_#3%
+  Gui, Font, c%Config_fontColor_#1_#3% s%Config_fontSize%, %Config_fontName%
 
-  ;; Tags
-  Loop, % Config_viewCount
-  {
-    i := A_Index
-    text := " " Config_viewNames_#%i% " "
-    w := Bar_getTextWidth(text)
-    Gui, Add, Text, x%x1% y%y1% w%w% h%h1% BackgroundTrans vBar_#%m%_#%i%_view gBar_GuiClick,
-    If (w <= h1)
-      Gui, Add, Progress, x%x1% y%y1% w%w% h%h1% Background%Config_normBgColor1% Vertical vBar_#%m%_#%i%_tagged
-    Else
-      Gui, Add, Progress, x%x1% y%y1% w%w% h%h1% Background%Config_normBgColor1% vBar_#%m%_#%i%_tagged
-    Gui, Add, Text, x%x1% y%y2% w%w% h%h2% -Wrap Center BackgroundTrans vBar_#%m%_#%i%, %text%
+  ;; Views
+  Loop, % Config_viewCount {
+    w := Bar_getTextWidth(" " Config_viewNames_#%A_Index% " ")
+    Bar_addElement(m, "view_#" A_Index, " " Config_viewNames_#%A_Index% " ", x1, y1, w, Config_backColor_#1_#1, Config_foreColor_#1_#1, Config_fontColor_#1_#1)
     titleWidth -= w
     x1 += w
   }
   ;; Layout
-  i := Config_viewCount + 1
-  text := " ?????? "
-  w := Bar_getTextWidth(text)
-  Gui, Add, Text, x%x1% y%y1% w%w% h%h1% BackgroundTrans vBar_#%m%_#%i%_layout gBar_GuiClick,
-  Gui, Add, Progress, x%x1% y%y1% w%w% h%h1% Background%Config_normBgColor2%
-  Gui, Font, c%Config_normFgColor2%
-  Gui, Add, Text, x%x1% y%y2% w%w% h%h2% -Wrap Center BackgroundTrans vBar_#%m%_#%i%, %text%
+  w := Bar_getTextWidth(" ?????? ")
+  Bar_addElement(m, "layout", " ?????? ", x1, y1, w, Config_backColor_#1_#2, Config_foreColor_#1_#2, Config_fontColor_#1_#2)
   titleWidth -= w
   x1 += w
 
   ;; The x-position and width of the sub-windows right of the window title are set from the right.
   ;; @TODO [v9] Maybe add a field (including a progress bar) for sound volume information.
-  Loop, 4
-  {
+  Loop, 4 {
     i := Config_viewCount + 7 - A_Index
     w := 0
-    If (i = Config_viewCount + 6)
-    {    ;; Command gui
+    If (i = Config_viewCount + 6) {
+      ;; Command gui
       Gui, -Disabled
-      w := Bar_getTextWidth(" ?? ")
+      w := Bar_getTextWidth(" #! ")
       x2 -= w
       titleWidth -= w
-      Gui, Add, Text, x%x2% y%y1% w%w% h%h1% BackgroundTrans vBar_#%m%_#%i% gBar_toggleCommandGui,
-      Gui, Add, Progress, x%x2% y%y1% w%w% h%h1% Background%Config_normBgColor2%
-      Gui, Add, Text, x%x2% y%y2% w%w% h%h2% Center BackgroundTrans, #!
-    }
-    Else If (i = Config_viewCount + 5) And Config_readinTime
-    {    ;; Time
+      Bar_addElement(m, "shebang", " #! ", x2, y1, w, Config_backColor_#1_#4, Config_foreColor_#1_#4, Config_fontColor_#1_#4)
+    } Else If (i = Config_viewCount + 5) And Config_readinTime {
+      ;; Time
       w  := Bar_getTextWidth(" ??:?? ")
       x2 -= w
       titleWidth -= w
-      If Config_readinAny() Or Config_readinBat
-      {
-        Gui, Font, c%Config_normFgColor1%
-        Gui, Add, Text, x%x2% y%y1% w%w% h%h1%,
-      }
-      Gui, Add, Text, x%x2% y%y2% w%w% h%h2% BackgroundTrans Center vBar_#%m%_#%i%, ??:??
-    }
-    Else If (i = Config_viewCount + 4) And Config_readinAny()
-    {    ;; Any
+      Bar_addElement(m, "time", " ??:?? ", x2, y1, w, Config_backColor_#1_#5, Config_foreColor_#1_#5, Config_fontColor_#1_#5)
+    } Else If (i = Config_viewCount + 4) And Config_readinAny() {
+      ;; Any
       text := Config_readinAny()
       w := Bar_getTextWidth(text)
       x2 -= w
       titleWidth -= w
-      Gui, Add, Progress, x%x2% y%y1% w%w% h%h1% Background%Config_normBgColor2%
-      Gui, Font, c%Config_normFgColor2%
-      Gui, Add, Text, x%x2% y%y2% w%w% h%h2% Center BackgroundTrans vBar_#%m%_#%i%, %text%
-    }
-    Else If (i = Config_viewCount + 3) And Config_readinBat
-    {    ;; Battery level
+      Bar_addElement(m, "anyText", text, x2, y1, w, Config_backColor_#1_#6, Config_foreColor_#1_#6, Config_fontColor_#1_#6)
+    } Else If (i = Config_viewCount + 3) And Config_readinBat {
+      ;; Battery level
       w := Bar_getTextWidth(" BAT: ???% ")
       x2 -= w
       titleWidth -= w
-      Gui, Add, Progress, x%x2% y%y1% w%w% h%h1% Background%Config_normBgColor2% c%Config_normFgColor3% vBar_#%m%_#%i%_tagged
-      Gui, Font, c%Config_normFgColor2%
-      Gui, Add, Text, x%x2% y%y2% w%w% h%h2% BackgroundTrans Center vBar_#%m%_#%i%, BAT: ???`%
+      Bar_addElement(m, "batteryStatus", " BAT: ???% ", x2, y1, w, Config_backColor_#1_#7, Config_foreColor_#1_#7, Config_fontColor_#1_#7)
     }
   }
 
   ;; Window title (remaining space)
-  Gui, Add, Text, x%x1% y%y1% w%titleWidth% h%h1%,
-  If Not Config_singleRowBar
-  {
+  If Not Config_singleRowBar {
     titleWidth := wndWidth
     x1 := 0
     y1 += h1
     y2 += h1
   }
-  i := Config_viewCount + 2
-  Gui, Font, c%Config_normFgColor1%
-  Gui, Add, Text, x%x1% y%y1% w%titleWidth% h%h1%,
-  Gui, Add, Text, x%x1% y%y2% w%titleWidth% h%h2% BackgroundTrans Center vBar_#%m%_#%i%,
+  Bar_addElement(m, "title", "", x1, y1, titleWidth, Config_backColor_#1_#3, Config_foreColor_#1_#3, Config_fontColor_#1_#3)
 
   If (Config_horizontalBarPos = "left")
     x1 := 0
@@ -163,13 +127,10 @@ Bar_init(m)
     Gui, Show, NoActivate Hide x%x1% y%y1% w%wndWidth% h%Bar_height%, %wndTitle%
   WinSet, Transparent, %Config_barTransparency%, %wndTitle%
   wndId := WinExist(wndTitle)
-  If (Config_verticalBarPos = "tray" And m = Manager_taskBarMonitor)
-  {
+  If (Config_verticalBarPos = "tray" And m = Manager_taskBarMonitor) {
     trayWndId := WinExist("ahk_class Shell_TrayWnd")
     DllCall("SetParent", "UInt", wndId, "UInt", trayWndId)
-  }
-  Else
-  {
+  } Else {
     appBarMsg := DllCall("RegisterWindowMessage", Str, "AppBarMsg")
 
     ;; appBarData: http://msdn2.microsoft.com/en-us/library/ms538008.aspx
@@ -193,7 +154,7 @@ Bar_init(m)
 
 Bar_initCmdGui()
 {
-  Global Bar_#0_#0, Bar_#0_#0H, Bar_#0_#0W, Bar_cmdGuiIsVisible, Config_barCommands, Config_fontName, Config_fontSize, Config_normBgColor1, Config_normFgColor1
+  Global Bar_#0_#0, Bar_#0_#0H, Bar_#0_#0W, Bar_cmdGuiIsVisible, Config_backColor_#1_#3, Config_barCommands, Config_fontName, Config_fontSize, Config_foreColor_#1_#3
 
   Bar_cmdGuiIsVisible := False
   wndTitle := "bug.n_BAR_0"
@@ -205,11 +166,22 @@ Bar_initCmdGui()
   Gui, Color, Default
   Gui, Font, s%Config_fontSize%, %Config_fontName%
   StringSplit, cmd, Config_barCommands, `;
-  Gui, Add, ComboBox, x10 y0 r%cmd0% w300 Background%Config_normBgColor1% c%Config_normFgColor1% Simple vBar_#0_#0 gBar_cmdGuiEnter, % Config_barCommands
+  Gui, Add, ComboBox, x10 y0 r%cmd0% w300 Background%Config_backColor_#1_#3% c%Config_fontColor_#1_#3% Simple vBar_#0_#0 gBar_cmdGuiEnter, % Config_barCommands
   Gui, Add, Button, Y0 Hidden Default gBar_cmdGuiEnter, OK
   GuiControlGet, Bar_#0_#0, Pos
   Bar_#0_#0W += 20
   Gui, Show, Hide w%Bar_#0_#0W% h%Bar_#0_#0H%, %wndTitle%
+}
+
+Bar_addElement(m, id, text, x, y1, width, backColor, foreColor, fontColor) {
+  Local y2
+
+  y2 := y1 + (Bar_ctrlHeight - Bar_textHeight) / 2
+  Gui, Add, Text, x%x% y%y1% w%width% h%Bar_ctrlHeight% BackgroundTrans vBar_#%m%_%id%_event gBar_GuiClick,
+  Gui, Add, Progress, x%x% y%y1% w%width% h%Bar_ctrlHeight% Background%backColor% c%foreColor% vBar_#%m%_%id%_highlighted
+  GuiControl, , Bar_#%m%_%id%_highlighted, 100
+  Gui, Font, c%fontColor%
+  Gui, Add, Text, x%x% y%y2% w%width% h%Bar_textHeight% BackgroundTrans Center vBar_#%m%_%id%, %text%
 }
 
 Bar_cmdGuiEnter:
@@ -299,32 +271,34 @@ Bar_getTextWidth(x, reverse=False)
 
 Bar_GuiClick:
   Manager_winActivate(Bar_aWndId)
-  If (A_GuiEvent = "Normal")
-  {
-    If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
-      Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
-    If (SubStr(A_GuiControl, -6) = "_layout")
-      View_setLayout(-1)
-    Else If (SubStr(A_GuiControl, -4) = "_view")
-      Monitor_activateView(SubStr(A_GuiControl, InStr(A_GuiControl, "_#", False, 0) + 2, 1))
+  If (A_GuiEvent = "Normal") {
+    If (SubStr(A_GuiControl, -13) = "_shebang_event") {
+      If Not Bar_cmdGuiIsVisible
+        If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
+          Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
+      Bar_toggleCommandGui()
+    } Else {
+      If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
+        Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
+      If (SubStr(A_GuiControl, -12) = "_layout_event")
+        View_setLayout(-1)
+      Else If InStr(A_GuiControl, "_view_#") And (SubStr(A_GuiControl, -5) = "_event")
+        Monitor_activateView(SubStr(A_GuiControl, InStr(A_GuiControl, "_view_#", False, 0) + 7, 1))
+    }
   }
 Return
 
 Bar_GuiContextMenu:
   Manager_winActivate(Bar_aWndId)
-  If (A_GuiEvent = "RightClick")
-  {
-    If (SubStr(A_GuiControl, -6) = "_layout")
-    {
+  If (A_GuiEvent = "RightClick") {
+    If (SubStr(A_GuiControl, -12) = "_layout_event") {
       If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
         Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
       View_setLayout(0, +1)
-    }
-    Else If (SubStr(A_GuiControl, -4) = "_view")
-    {
+    } Else If InStr(A_GuiControl, "_view_#") And (SubStr(A_GuiControl, -5) = "_event") {
       If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
         Manager_setWindowMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
-      Monitor_setWindowTag(SubStr(A_GuiControl, InStr(A_GuiControl, "_#", False, 0) + 2, 1))
+      Monitor_setWindowTag(SubStr(A_GuiControl, InStr(A_GuiControl, "_view_#", False, 0) + 7, 1))
     }
   }
 Return
@@ -343,13 +317,6 @@ Bar_move(m)
   wndTitle := "bug.n_BAR_" m
   WinMove, %wndTitle%, , %x%, %y%
 }
-
-Bar_toggleCommandGui:
-  If Not Bar_cmdGuiIsVisible
-    If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
-      Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
-  Bar_toggleCommandGui()
-Return
 
 Bar_toggleCommandGui()
 {
@@ -390,67 +357,52 @@ Bar_toggleVisibility(m)
     Gui, %GuiN%: Cancel
 }
 
-Bar_updateLayout(m)
-{
-  Local aView, GuiN, i
+Bar_updateLayout(m) {
+  Local aView, GuiN
 
   aView := Monitor_#%m%_aView_#1
-  i := Config_viewCount + 1
   GuiN := (m - 1) + 1
-  GuiControl, %GuiN%: , Bar_#%m%_#%i%, % View_#%m%_#%aView%_layoutSymbol
+  GuiControl, %GuiN%: , Bar_#%m%_layout, % View_#%m%_#%aView%_layoutSymbol
 }
 
-Bar_updateStatus()
-{
-  Local anyContent, anyText, b1, b2, b3, GuiN, i, m
+Bar_updateStatus() {
+  Local anyContent, anyText, b1, b2, b3, GuiN, m
 
-  Loop, % Manager_monitorCount
-  {
+  Loop, % Manager_monitorCount {
     m := A_Index
     GuiN := (m - 1) + 1
     Debug_logMessage("DEBUG[6] Bar_updateStatus(): Gui, " . GuiN . ": Default", 6)
     Gui, %GuiN%: Default
-    If Config_readinBat
-    {
+    If Config_readinBat {
       ResourceMonitor_getBatteryStatus(b1, b2)
       b3 := SubStr("  " b1, -2)
-      i := Config_viewCount + 3
-      If (b1 < 10) And (b2 = "off")
-      {    ;; Change the color, if the battery level is below 10%
-        GuiControl, +Background%Config_normBgColor4% +c%Config_normBgColor2%, Bar_#%m%_#%i%_tagged
-        GuiControl, +c%Config_selFgColor6%, Bar_#%m%_#%i%
+      If (b1 < 10) And (b2 = "off") {
+        ;; Change the color, if the battery level is below 10%
+        GuiControl, +Background%Config_backColor_#3_#7% +c%Config_foreColor_#3_#7%, Bar_#%m%_batteryStatus_highlighted
+        GuiControl, +c%Config_fontColor_#3_#7%, Bar_#%m%_batteryStatus
+      } Else If (b2 = "off") {
+        ;; Change the color, if the pc is not plugged in
+        GuiControl, +Background%Config_backColor_#2_#7% +c%Config_foreColor_#2_#7%, Bar_#%m%_batteryStatus_highlighted
+        GuiControl, +c%Config_fontColor_#2_#7%, Bar_#%m%_batteryStatus
+      } Else {
+        GuiControl, +Background%Config_backColor_#1_#7% +c%Config_foreColor_#1_#7%, Bar_#%m%_batteryStatus_highlighted
+        GuiControl, +c%Config_fontColor_#1_#7%, Bar_#%m%_batteryStatus
       }
-      Else If (b2 = "off")
-      {    ;; Change the color, if the pc is not plugged in
-        GuiControl, +Background%Config_normBgColor2% +c%Config_normFgColor5%, Bar_#%m%_#%i%_tagged
-        GuiControl, +c%Config_normFgColor4%, Bar_#%m%_#%i%
-      }
-      Else
-      {
-        GuiControl, +Background%Config_normBgColor3% +c%Config_normFgColor3%, Bar_#%m%_#%i%_tagged
-        GuiControl, +c%Config_normFgColor2%, Bar_#%m%_#%i%
-      }
-      GuiControl, , Bar_#%m%_#%i%_tagged, %b3%
-      GuiControl, , Bar_#%m%_#%i%, % " BAT: " b3 "% "
+      GuiControl, , Bar_#%m%_batteryStatus_highlighted, %b3%
+      GuiControl, , Bar_#%m%_batteryStatus, % " BAT: " b3 "% "
     }
     anyText := Config_readinAny()
-    If anyText
-    {
-      i := Config_viewCount + 4
-      GuiControlGet, anyContent, , Bar_#%m%_#%i%
+    If anyText {
+      GuiControlGet, anyContent, , Bar_#%m%_anyText
       If Not (anyText = anyContent)
-        GuiControl, , Bar_#%m%_#%i%, % anyText
+        GuiControl, , Bar_#%m%_anyText, % anyText
     }
     If Config_readinTime
-    {
-      i := Config_viewCount + 5
-      GuiControl, , Bar_#%m%_#%i%, % " " A_Hour ":" A_Min " "
-    }
+      GuiControl, , Bar_#%m%_time, % " " A_Hour ":" A_Min " "
   }
 }
 
-Bar_updateTitle()
-{
+Bar_updateTitle() {
   Local aWndId, aWndTitle, content, GuiN, i, title
 
   WinGet, aWndId, ID, A
@@ -463,33 +415,29 @@ Bar_updateTitle()
     aWndTitle := "[" Manager_aMonitor "] " aWndTitle
   title := " " . aWndTitle . " "
 
-  If (Bar_getTextWidth(title) > Bar_#%Manager_aMonitor%_titleWidth)
-  {    ;; Shorten the window title if its length exceeds the width of the bar
+  If (Bar_getTextWidth(title) > Bar_#%Manager_aMonitor%_titleWidth) {
+    ;; Shorten the window title if its length exceeds the width of the bar
     i := Bar_getTextWidth(Bar_#%Manager_aMonitor%_titleWidth, True) - 6
     StringLeft, title, aWndTitle, i
     title := " " . title . " ... "
   }
   StringReplace, title, title, &, &&, All     ;; Special character '&', which would underline the next letter.
 
-  i := Config_viewCount + 2
-  Loop, % Manager_monitorCount
-  {
+  Loop, % Manager_monitorCount {
     GuiN := (A_Index - 1) + 1
     Debug_logMessage("DEBUG[6] Bar_updateTitle(): Gui, " . GuiN . ": Default", 6)
     Gui, %GuiN%: Default
-    GuiControlGet, content, , Bar_#%A_Index%_#%i%
-    If (A_Index = Manager_aMonitor)
-    {
+    GuiControlGet, content, , Bar_#%A_Index%_title
+    If (A_Index = Manager_aMonitor) {
       If Not (content = title)
-        GuiControl, , Bar_#%A_Index%_#%i%, % title
+        GuiControl, , Bar_#%A_Index%_title, % title
     } Else If Not (content = "")
-      GuiControl, , Bar_#%A_Index%_#%i%,
+      GuiControl, , Bar_#%A_Index%_title,
   }
   Bar_aWndId := aWndId
 }
 
-Bar_updateView(m, v)
-{
+Bar_updateView(m, v) {
   Local managedWndId0, wndId0, wndIds
 
   GuiN := (m - 1) + 1
@@ -499,27 +447,20 @@ Bar_updateView(m, v)
   StringTrimRight, wndIds, Manager_managedWndIds, 1
   StringSplit, managedWndId, wndIds, `;
 
-  If (v = Monitor_#%m%_aView_#1)
-  { ;; Set foreground/background colors if the view is the current view.
-    GuiControl, +Background%Config_selBgColor1% +c%Config_selFgColor2%, Bar_#%m%_#%v%_tagged
-    GuiControl, +c%Config_selFgColor1%, Bar_#%m%_#%v%
-  }
-  Else If wndId0
-  { ;; Set foreground/background colors if the view contains windows.
-    GuiControl, +Background%Config_normBgColor5% +c%Config_normFgColor8%, Bar_#%m%_#%v%_tagged
-    GuiControl, +c%Config_normFgColor7%, Bar_#%m%_#%v%
-  }
-  Else
-  { ;; Set foreground/background colors if the view is empty.
-    GuiControl, +Background%Config_normBgColor1% +c%Config_normFgColor8%, Bar_#%m%_#%v%_tagged
-    GuiControl, +c%Config_normFgColor1%, Bar_#%m%_#%v%
+  If (v = Monitor_#%m%_aView_#1) {
+    ;; Set foreground/background colors if the view is the current view.
+    GuiControl, +Background%Config_backColor_#2_#1% +c%Config_foreColor_#2_#1%, Bar_#%m%_view_#%v%_highlighted
+    GuiControl, +c%Config_fontColor_#2_#1%, Bar_#%m%_view_#%v%
+  } Else {
+    ;; Set foreground/background colors.
+    GuiControl, +Background%Config_backColor_#1_#1% +c%Config_foreColor_#1_#1%, Bar_#%m%_view_#%v%_highlighted
+    GuiControl, +c%Config_fontColor_#1_#1%, Bar_#%m%_view_#%v%
   }
 
-  Loop, %Config_viewCount%
-  {
+  Loop, %Config_viewCount% {
     StringTrimRight, wndIds, View_#%m%_#%A_Index%_wndIds, 1
     StringSplit, wndId, wndIds, `;
-    GuiControl, , Bar_#%m%_#%A_Index%_tagged, % wndId0 / managedWndId0 * 100    ;; Update the percentage fill for the view.
-    GuiControl, , Bar_#%m%_#%A_Index%, % Config_viewNames_#%A_Index%            ;; Refresh the number on the bar.
+    GuiControl, , Bar_#%m%_view_#%A_Index%_highlighted, % wndId0 / managedWndId0 * 100    ;; Update the percentage fill for the view.
+    GuiControl, , Bar_#%m%_view_#%A_Index%, % Config_viewNames_#%A_Index%                 ;; Refresh the number on the bar.
   }
 }
