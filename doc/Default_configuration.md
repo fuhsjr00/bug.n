@@ -37,7 +37,7 @@ Appearance" settings for the "Active Title Bar".
 `Config_largeFontSize=24`
 > Font size in pixel, i. a. for the numbering of areas in the area trace.
 
-`Config_backColor_#1=<COLOR_MENU>;<COLOR_INACTIVECAPTION>;<COLOR_MENU>;<COLOR_INACTIVECAPTION>;<COLOR_MENU>;<COLOR_INACTIVECAPTION>;<COLOR_GRADIENTINACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>`
+`Config_backColor_#1=<COLOR_GRADIENTINACTIVECAPTION>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_GRADIENTINACTIVECAPTION>;<COLOR_GRADIENTACTIVECAPTION>;<COLOR_GRADIENTACTIVECAPTION>`
 > The default background color for bar elements. The value for this and the
 other (following) color related configuration variables is a semicolon
 separated list, which contains the following items:
@@ -47,43 +47,40 @@ separated list, which contains the following items:
 * title
 * shebang
 * time
-* "any text", i. a. date
+* date
+* "any text"
 * battery status
-* cpu load
-* disk load
-* memory usage
-* network load
 * volume level
 
-`Config_backColor_#2=<COLOR_GRADIENTACTIVECAPTION>;;;;;;<COLOR_GRADIENTINACTIVECAPTION>;;;;;<COLOR_GRADIENTINACTIVECAPTION>`
+`Config_backColor_#2=<COLOR_GRADIENTACTIVECAPTION>;;;;;;;<COLOR_MENU>;<COLOR_MENU>`
 > The background color of bar elements, which are highlighted depending on the
 status, i. a. the active view, a discharging battery and the sound volume.
 
-`Config_backColor_#3=;;;;;;ff8040;;;;;`
+`Config_backColor_#3=;;;;;;;ff8040;`
 > The background color of bar elements, which are highlighted depending on the
 status, i. a. a discharging battery with a battery level lower than 10%.
 
-`Config_foreColor_#1=<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_MENU>;<COLOR_INACTIVECAPTION>;<COLOR_MENU>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_INACTIVECAPTION>`
+`Config_foreColor_#1=<COLOR_INACTIVECAPTION>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_ACTIVECAPTION>;<COLOR_GRADIENTINACTIVECAPTION>`
 > The default forground color of bar elements. Every bar element consists of a
 progress bar with a background and a foreground; the visible part of the
 foreground depends on the value of the progress bar.
 
-`Config_foreColor_#2=<COLOR_ACTIVECAPTION>;;;;;;<COLOR_HIGHLIGHT>;;;;;<COLOR_HIGHLIGHT>`
+`Config_foreColor_#2=<COLOR_ACTIVECAPTION>;;;;;;;<COLOR_HIGHLIGHT>;<COLOR_HIGHLIGHT>`
 > The foreground color of bar elements, which are highlighted depending on the
 status, i. a. the active view, a discharging battery and the sound volume.
 
-`Config_foreColor_#3=;;;;;;<COLOR_INACTIVECAPTION>;;;;;`
+`Config_foreColor_#3=;;;;;;;<COLOR_INACTIVECAPTION>;`
 > The foreground color of bar elements, which are highlighted depending on the
 status, i. a. a discharging battery with a battery level lower than 10%.
 
-`Config_fontColor_#1=<COLOR_MENUTEXT>;Default;<COLOR_MENUTEXT>;Default;<COLOR_MENUTEXT>;Default;Default;Default;Default;Default;Default;Default`
+`Config_fontColor_#1=<COLOR_INACTIVECAPTIONTEXT>;<COLOR_CAPTIONTEXT>;<COLOR_MENUTEXT>;<COLOR_CAPTIONTEXT>;<COLOR_MENUTEXT>;<COLOR_CAPTIONTEXT>;<COLOR_INACTIVECAPTIONTEXT>;<COLOR_CAPTIONTEXT>;<COLOR_INACTIVECAPTIONTEXT>`
 > The default font color for the text of bar elements.
 
-`Config_fontColor_#2=<COLOR_CAPTIONTEXT>;;;;;;<COLOR_INACTIVECAPTIONTEXT>;;;;;<COLOR_INACTIVECAPTIONTEXT>`
+`Config_fontColor_#2=<COLOR_CAPTIONTEXT>;;;;;;;<COLOR_MENUTEXT>;<COLOR_MENUTEXT>`
 > The font color of bar elements, which are highlighted depending on the
 status, i. a. the active view, a discharging battery and the sound volume.
 
-`Config_fontColor_#3=;;;;;;Default;;;;;`
+`Config_fontColor_#3=;;;;;;;<COLOR_INACTIVECAPTIONTEXT>;`
 > The fontground color of bar elements, which are highlighted depending on the
 status, i. a. a discharging battery with a battery level lower than 10%.
 

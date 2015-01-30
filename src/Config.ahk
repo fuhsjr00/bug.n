@@ -13,8 +13,7 @@
   @version 9.0.0
 */
 
-Config_init()
-{
+Config_init() {
   Local i, key, layout0, layout1, layout2, vNames0, vNames1, vNames2, vNames3, vNames4, vNames5, vNames6, vNames7, vNames8, vNames9
 
   ;; Status bar
@@ -102,8 +101,7 @@ Config_init()
   Config_restoreConfig(Config_filePath)
   Config_getSystemSettings()
   Config_initColors()
-  Loop, % Config_layoutCount
-  {
+  Loop, % Config_layoutCount {
     StringSplit, layout, Config_layout_#%A_Index%, `;
     Config_layoutFunction_#%A_Index% := layout2
     Config_layoutSymbol_#%A_Index%   := layout1
@@ -114,9 +112,7 @@ Config_init()
   Else
     Config_viewCount := vNames0
   Loop, % Config_viewCount
-  {
     Config_viewNames_#%A_Index% := vNames%A_Index%
-  }
 }
 
 Config_initColors() {
@@ -196,31 +192,33 @@ Config_getSystemSettings() {
     COLOR_INACTIVECAPTIONTEXT     := Config_convertSystemColor(DllCall("GetSysColor", "Int", 19))
     COLOR_MENU                    := Config_convertSystemColor(DllCall("GetSysColor", "Int",  4))
     COLOR_MENUTEXT                := Config_convertSystemColor(DllCall("GetSysColor", "Int",  7))
-    ;; <view>;<layout>;<title>;<shebang>;<time>;<anyText, i. a. date>;<batteryStatus>;<cpuLoad>;<diskLoad>;<memoryUsage>;<networkLoad>;<volumeLevel>
+    ;; <view>;<layout>;<title>;<shebang>;<time>;<date>;<anyText>;<batteryStatus>;<volumeLevel>
     If Not Config_backColor_#1 {
-      Config_backColor_#1 := COLOR_MENU ";" COLOR_INACTIVECAPTION ";" COLOR_MENU ";" COLOR_INACTIVECAPTION ";" COLOR_MENU ";" COLOR_INACTIVECAPTION ";"
-      Config_backColor_#1 .= COLOR_GRADIENTINACTIVECAPTION ";" COLOR_INACTIVECAPTION ";" COLOR_INACTIVECAPTION ";" COLOR_INACTIVECAPTION ";" COLOR_INACTIVECAPTION ";" COLOR_INACTIVECAPTION
+      Config_backColor_#1 := COLOR_GRADIENTINACTIVECAPTION ";" COLOR_ACTIVECAPTION ";" COLOR_MENU ";" COLOR_ACTIVECAPTION ";" COLOR_MENU ";" COLOR_ACTIVECAPTION ";"
+      Config_backColor_#1 .= COLOR_GRADIENTINACTIVECAPTION ";" COLOR_GRADIENTACTIVECAPTION ";" COLOR_GRADIENTACTIVECAPTION
     }
     If Not Config_backColor_#2
-      Config_backColor_#2 := COLOR_GRADIENTACTIVECAPTION ";;;;;;" COLOR_GRADIENTINACTIVECAPTION ";;;;;" COLOR_GRADIENTINACTIVECAPTION
+      Config_backColor_#2 := COLOR_GRADIENTACTIVECAPTION ";;;;;;;" COLOR_MENU ";" COLOR_MENU
     If Not Config_backColor_#3
-      Config_backColor_#3 := ";;;;;;ff8040;;;;;"
+      Config_backColor_#3 := ";;;;;;;ff8040;"
 
     If Not Config_foreColor_#1 {
-      Config_foreColor_#1 := COLOR_INACTIVECAPTION ";" COLOR_INACTIVECAPTION ";" COLOR_MENU ";" COLOR_INACTIVECAPTION ";" COLOR_MENU ";" COLOR_INACTIVECAPTION ";"
-      Config_foreColor_#1 .= COLOR_INACTIVECAPTION ";" COLOR_INACTIVECAPTION ";" COLOR_INACTIVECAPTION ";" COLOR_INACTIVECAPTION ";" COLOR_INACTIVECAPTION ";" COLOR_INACTIVECAPTION
+      Config_foreColor_#1 := COLOR_INACTIVECAPTION ";" COLOR_ACTIVECAPTION ";" COLOR_MENU ";" COLOR_ACTIVECAPTION ";" COLOR_MENU ";" COLOR_ACTIVECAPTION ";"
+      Config_foreColor_#1 .= COLOR_INACTIVECAPTION ";" COLOR_ACTIVECAPTION ";" COLOR_GRADIENTINACTIVECAPTION
     }
     If Not Config_foreColor_#2
-      Config_foreColor_#2 := COLOR_ACTIVECAPTION ";;;;;;" COLOR_HIGHLIGHT ";;;;;" COLOR_HIGHLIGHT
+      Config_foreColor_#2 := COLOR_ACTIVECAPTION ";;;;;;;" COLOR_HIGHLIGHT ";" COLOR_HIGHLIGHT
     If Not Config_foreColor_#3
-      Config_foreColor_#3 := ";;;;;;" COLOR_INACTIVECAPTION ";;;;;"
+      Config_foreColor_#3 := ";;;;;;;" COLOR_INACTIVECAPTION ";"
 
-    If Not Config_fontColor_#1
-      Config_fontColor_#1 := COLOR_MENUTEXT ";Default;" COLOR_MENUTEXT ";Default;" COLOR_MENUTEXT ";Default;Default;Default;Default;Default;Default;Default"
+    If Not Config_fontColor_#1 {
+      Config_fontColor_#1 := COLOR_INACTIVECAPTIONTEXT ";" COLOR_CAPTIONTEXT ";" COLOR_MENUTEXT ";" COLOR_CAPTIONTEXT ";" COLOR_MENUTEXT ";" COLOR_CAPTIONTEXT ";"
+      Config_fontColor_#1 .= COLOR_INACTIVECAPTIONTEXT ";" COLOR_CAPTIONTEXT ";" COLOR_INACTIVECAPTIONTEXT
+    }
     If Not Config_fontColor_#2
-      Config_fontColor_#2 := COLOR_CAPTIONTEXT ";;;;;;" COLOR_INACTIVECAPTIONTEXT ";;;;;" COLOR_INACTIVECAPTIONTEXT
+      Config_fontColor_#2 := COLOR_CAPTIONTEXT ";;;;;;;" COLOR_MENUTEXT ";" COLOR_MENUTEXT
     If Not Config_fontColor_#3
-      Config_fontColor_#3 := ";;;;;;Default;;;;;"
+      Config_fontColor_#3 := ";;;;;;;" COLOR_INACTIVECAPTIONTEXT ";"
   }
   SetFormat, Integer, d
 
@@ -233,14 +231,13 @@ Config_hotkeyLabel:
   Config_redirectHotkey(A_ThisHotkey)
 Return
 
-Config_readinAny()
-{ ;; Add information to the variable 'text' in this function to display it in the status bar.
-  Global Config_readinDate
+Config_readinAny() {
+  ;; Add information to the variable 'text' in this function to display it in the status bar.
+  Global Config_readinCpu, Config_readinDiskLoad, Config_readinMemoryUsage, Config_readinNetworkLoad
 
   text := ""
-  text .= ResourceMonitor_getText()
-  If Config_readinDate
-    text .= " " A_DDD ", " A_DD ". " A_MMM ". " A_YYYY " "
+  If (Config_readinCpu Or Config_readinDiskLoad Or Config_readinMemoryUsage Or Config_readinNetworkLoad)
+    text .= ResourceMonitor_getText()
 
   Return, text
 }

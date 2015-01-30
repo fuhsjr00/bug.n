@@ -30,43 +30,29 @@ ResourceMonitor_cleanup() {
     DllCall("CloseHandle", "UInt", ResourceMonitor_hDrive)    ;; used in ResourceMonitor_getDiskLoad
 }
 
-ResourceMonitor_getText()
-{
-  Global Config_readinCpu, Config_readinDate, Config_readinDiskLoad, Config_readinMemoryUsage, Config_readinNetworkLoad, Config_readinVolume
+ResourceMonitor_getText() {
+  Global Config_readinCpu, Config_readinDiskLoad, Config_readinMemoryUsage, Config_readinNetworkLoad
 
   text := ""
-  If Config_readinVolume
-  {
-    text .= " VOL: " ResourceMonitor_getSoundVolume() "% "
-  }
   If Config_readinCpu
-  {
-    If Config_readinVolume
-      text .= "|"
     text .= " CPU: " ResourceMonitor_getSystemTimes() "% "
-  }
-  If Config_readinMemoryUsage
-  {
-    If (Config_readinVolume Or Config_readinCpu)
+  If Config_readinMemoryUsage {
+    If (Config_readinCpu)
       text .= "|"
     text .= " RAM: " ResourceMonitor_getMemoryUsage() "% "
   }
-  If Config_readinDiskLoad
-  {
-    If (Config_readinVolume Or Config_readinCpu Or Config_readinMemoryUsage)
+  If Config_readinDiskLoad {
+    If (Config_readinCpu Or Config_readinMemoryUsage)
       text .= "|"
     ResourceMonitor_getDiskLoad(rLoad, wLoad)
     text .= " Dr: " rLoad "% | Dw: " wLoad "% "
   }
-  If Config_readinNetworkLoad
-  {
-    If (Config_readinVolume Or Config_readinCpu Or Config_readinMemoryUsage Or Config_readinDiskLoad)
+  If Config_readinNetworkLoad {
+    If (Config_readinCpu Or Config_readinMemoryUsage Or Config_readinDiskLoad)
       text .= "|"
     ResourceMonitor_getNetworkLoad(upLoad, dnLoad)
     text .= " UP: " upLoad " KB/s | dn: " dnLoad " KB/s "
   }
-  If Config_readinDate And (Config_readinVolume Or Config_readinCpu Or Config_readinMemoryUsage Or Config_readinDiskLoad Or Config_readinNetworkLoad)
-    text .= "|"
 
   Return, text
 }
@@ -93,8 +79,7 @@ ResourceMonitor_getBatteryStatus(ByRef batteryLifePercent, ByRef acLineStatus) {
 }
 ;; PhiLho: AC/Battery status (http://www.autohotkey.com/forum/topic7633.html)
 
-ResourceMonitor_getDiskLoad(ByRef readLoad, ByRef writeLoad)
-{
+ResourceMonitor_getDiskLoad(ByRef readLoad, ByRef writeLoad) {
   Global ResourceMonitor_hDrive
   Static oldReadCount, oldWriteCount
 
@@ -112,8 +97,7 @@ ResourceMonitor_getDiskLoad(ByRef readLoad, ByRef writeLoad)
 ;; fures: System + Network monitor - with net history graph (http://www.autohotkey.com/community/viewtopic.php?p=260329)
 ;; SKAN: HDD Activity Monitoring LED (http://www.autohotkey.com/community/viewtopic.php?p=113890&sid=64d9824fdf252697ff4d5026faba91f8#p113890)
 
-ResourceMonitor_getMemoryUsage()
-{
+ResourceMonitor_getMemoryUsage() {
   VarSetCapacity(memoryStatus, 4 + 4 + 4 + 4 + 4 + 4 + 4 + 4)
   DllCall("kernel32.dll\GlobalMemoryStatus", "UInt", &memoryStatus)
   Return, SubStr("  " Round(*(&memoryStatus + 4)), -2)    ;; LS byte is enough, 0..100
@@ -129,8 +113,7 @@ ResourceMonitor_getNetworkInterface() {
 }
 ;; Pillus: System monitor (HDD/Wired/Wireless) using keyboard LEDs (http://www.autohotkey.com/board/topic/65308-system-monitor-hddwiredwireless-using-keyboard-leds/)
 
-ResourceMonitor_getNetworkLoad(ByRef upLoad, ByRef dnLoad)
-{
+ResourceMonitor_getNetworkLoad(ByRef upLoad, ByRef dnLoad) {
   Global ResourceMonitor_networkInterface
 
   ResourceMonitor_networkInterface.Refresh_
@@ -139,20 +122,8 @@ ResourceMonitor_getNetworkLoad(ByRef upLoad, ByRef dnLoad)
 }
 ;; Pillus: System monitor (HDD/Wired/Wireless) using keyboard LEDs (http://www.autohotkey.com/board/topic/65308-system-monitor-hddwiredwireless-using-keyboard-leds/)
 
-ResourceMonitor_getSoundVolume() {
-  SoundGet, volume, MASTER, VOLUME
-  SoundGet, mute, MASTER, MUTE
-  text := ""
-  If mute = On
-    text .= "m"
-  Else
-    text .= " "
-  text .= SubStr("   " Round(volume), -2)
-  Return, text
-}
-
-ResourceMonitor_getSystemTimes()
-{    ;; Total CPU Load
+ResourceMonitor_getSystemTimes() {
+  ;; Total CPU Load
   Static oldIdleTime, oldKrnlTime, oldUserTime
   Static newIdleTime, newKrnlTime, newUserTime
 
