@@ -24,8 +24,6 @@ Manager_init()
   ; New/closed windows, active changed,
   Manager_windowsDirty := 0
   Manager_aMonitor := 1
-  Manager_taskBarMonitor := ""
-  Manager_showTaskBar := True
 
   doRestore := 0
   If (Config_autoSaveSession = "ask")
@@ -164,11 +162,11 @@ Manager_cleanup()
   Manager_hideShow := False
 
   ;; Restore window positions and sizes.
-  Manager_showTaskBar := True
   Loop, % Manager_monitorCount
   {
     m := A_Index
     Monitor_#%m%_showBar := False
+    Monitor_#%m%_showTaskBar := True
     Monitor_getWorkArea(m)
     Loop, % Config_viewCount
     {

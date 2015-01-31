@@ -23,7 +23,7 @@ Bar_init(m) {
     wndWidth := Config_barWidth
 
   wndWidth := Round(wndWidth * Config_scalingFactor)
-  If (Config_verticalBarPos = "tray" And m = Manager_taskBarMonitor) {
+  If (Config_verticalBarPos = "tray" And Monitor_#%m%_taskBarClass) {
     Bar_ctrlHeight := Round(Bar_ctrlHeight * Config_scalingFactor)
     Bar_height := Round(Bar_height * Config_scalingFactor)
   }
@@ -123,7 +123,7 @@ Bar_init(m) {
     x1 := Config_horizontalBarPos
   Else If (Config_horizontalBarPos < 0)
     x1 := Monitor_#%m%_width - wndWidth / Config_scalingFactor + Config_horizontalBarPos
-  If Not (Config_verticalBarPos = "tray" And m = Manager_taskBarMonitor)
+  If Not (Config_verticalBarPos = "tray" And Monitor_#%m%_taskBarClass)
     x1 += Monitor_#%m%_x
   x1 := Round(x1)
 
@@ -137,8 +137,8 @@ Bar_init(m) {
     Gui, Show, NoActivate Hide x%x1% y%y1% w%wndWidth% h%Bar_height%, %wndTitle%
   WinSet, Transparent, %Config_barTransparency%, %wndTitle%
   wndId := WinExist(wndTitle)
-  If (Config_verticalBarPos = "tray" And m = Manager_taskBarMonitor) {
-    trayWndId := WinExist("ahk_class Shell_TrayWnd")
+  If (Config_verticalBarPos = "tray" And Monitor_#%m%_taskBarClass) {
+    trayWndId := WinExist("ahk_class " Monitor_#%m%_taskBarClass)
     DllCall("SetParent", "UInt", wndId, "UInt", trayWndId)
   } Else {
     appBarMsg := DllCall("RegisterWindowMessage", Str, "AppBarMsg")
@@ -343,7 +343,7 @@ Bar_toggleCommandGui()
   {
     Bar_cmdGuiIsVisible := True
     x := Monitor_#%Manager_aMonitor%_barX + Monitor_#%Manager_aMonitor%_barWidth - Bar_#0_#0W
-    If (Config_verticalBarPos = "top") Or (Config_verticalBarPos = "tray" And (Manager_taskBarPos = "top" Or Not Manager_aMonitor = Manager_taskBarMonitor))
+    If (Config_verticalBarPos = "top") Or (Config_verticalBarPos = "tray") And (Manager_taskBarPos = "top" Or Not Monitor_#%Manager_aMonitor%_taskBarClass)
       y := Monitor_#%Manager_aMonitor%_y
     Else
       y := Monitor_#%Manager_aMonitor%_y + Monitor_#%Manager_aMonitor%_height - Bar_#0_#0H

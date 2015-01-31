@@ -13,17 +13,16 @@
   @version 9.0.0
 */
 
-Monitor_init(m, doRestore)
-{
+Monitor_init(m, doRestore) {
   Global
 
   Monitor_#%m%_aView_#1 := 1
   Monitor_#%m%_aView_#2 := 1
   Monitor_#%m%_showBar  := Config_showBar
+  Monitor_#%m%_showTaskBar  := Config_showTaskBar
+  Monitor_#%m%_taskBarClass := ""
   Loop, % Config_viewCount
-  {
     View_init(m, A_Index)
-  }
   If doRestore
     Config_restoreLayout(Main_autoLayout, m)
   Else
@@ -121,8 +120,7 @@ Monitor_get(x, y)
   Return, m
 }
 
-Monitor_getWorkArea(m)
-{
+Monitor_getWorkArea(m) {
   Local bHeight, bTop, x, y
   Local monitor, monitorBottom, monitorLeft, monitorRight, monitorTop
   Local wndClasses, wndHeight, wndId, wndWidth, wndX, wndY
@@ -136,40 +134,35 @@ Monitor_getWorkArea(m)
   Loop, PARSE, wndClasses, `;
   {
     wndId := WinExist("ahk_class " A_LoopField)
-    If wndId
-    {
+    If wndId {
       WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
       x := wndX + wndWidth / 2
       y := wndY + wndHeight / 2
-      If (x >= monitorLeft && x <= monitorRight && y >= monitorTop && y <= monitorBottom)
-      {
-        If (A_LoopField = "Shell_TrayWnd")
-          Manager_taskBarMonitor := m
+      If (x >= monitorLeft && x <= monitorRight && y >= monitorTop && y <= monitorBottom) {
+        If (A_LoopField = "Shell_TrayWnd") Or (A_LoopField = "Shell_SecondaryTrayWnd")
+          Monitor_#%m%_taskBarClass := A_LoopField
 
-        If (wndHeight < wndWidth)
-        {    ;; Horizontal
-          If (wndY <= monitorTop)
-          {      ;; Top
+        If (wndHeight < wndWidth) {
+          ;; Horizontal
+          If (wndY <= monitorTop) {
+            ;; Top
             wndHeight += wndY - monitorTop
             monitorTop += wndHeight
             If (A_LoopField = "Shell_TrayWnd")
               Manager_taskBarPos := "top"
-          }
-          Else
-          {      ;; Bottom
+          } Else {
+            ;; Bottom
             wndHeight := monitorBottom - wndY
             monitorBottom -= wndHeight
           }
-        }
-        Else
-        {    ;; Vertical
-          If (wndX <= monitorLeft)
-          {      ;; Left
+        } Else {
+          ;; Vertical
+          If (wndX <= monitorLeft) {
+            ;; Left
             wndWidth += wndX
             monitorLeft += wndWidth
-          }
-          Else
-          {      ;; Right
+          } Else {
+            ;; Right
             wndWidth := monitorRight - wndX
             monitorRight -= wndWidth
           }
@@ -179,15 +172,11 @@ Monitor_getWorkArea(m)
   }
   bHeight := Round(Bar_height / Config_scalingFactor)
   bTop := 0
-  If Monitor_#%m%_showBar
-  {
-    If (Config_verticalBarPos = "top" Or (Config_verticalBarPos = "tray" And Not m = Manager_taskBarMonitor))
-    {
+  If Monitor_#%m%_showBar {
+    If (Config_verticalBarPos = "top") Or (Config_verticalBarPos = "tray") And Not Monitor_#%m%_taskBarClass {
       bTop := monitorTop
       monitorTop += bHeight
-    }
-    Else If (Config_verticalBarPos = "bottom")
-    {
+    } Else If (Config_verticalBarPos = "bottom") {
       bTop := monitorBottom - bHeight
       monitorBottom -= bHeight
     }
@@ -291,24 +280,19 @@ Monitor_toggleNotifyIconOverflowWindow()
   }
 }
 
-Monitor_toggleTaskBar()
-{
+Monitor_toggleTaskBar() {
   Local m
 
   m := Manager_aMonitor
-  If (m = Manager_taskBarMonitor)
-  {
-    Manager_showTaskBar := Not Manager_showTaskBar
+  If Monitor_#%m%_taskBarClass {
+    Monitor_#%m%_showTaskBar := Not Monitor_#%m%_showTaskBar
     Manager_hideShow := True
-    If Not Manager_showTaskBar
-    {
+    If Not Monitor_#%m%_showTaskBar {
       WinHide, Start ahk_class Button
-      WinHide, ahk_class Shell_TrayWnd
-    }
-    Else
-    {
+      WinHide, % "ahk_class " Monitor_#%m%_taskBarClass
+    } Else {
       WinShow, Start ahk_class Button
-      WinShow, ahk_class Shell_TrayWnd
+      WinShow, % "ahk_class " Monitor_#%m%_taskBarClass
     }
     Manager_hideShow := False
     Monitor_getWorkArea(m)
