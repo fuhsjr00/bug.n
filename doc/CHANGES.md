@@ -20,6 +20,7 @@ not implement the functionality: `Monitor_toggleWindowTag`, `View_activateWindow
 6. `~` Revised the bar color scheme.
 7. `~` Revised the rule layout. The third parameter is not compared to the window style anymore, but is a function name, which is
 called with the window ID as a paramater, when applying the rule.
+8. `~` Revised the default rule set.
 
 |  # | Configuration variables   | `-` Hotkey functions                    | `+` Hotkey functions                                  |
 | --:| ------------------------- | --------------------------------------- | ----------------------------------------------------- |
@@ -65,6 +66,15 @@ called with the window ID as a paramater, when applying the rule.
 |    | `+` `Config_fontColor_#2` |                                         |                                                       |
 |    | `+` `Config_fontColor_#3` |                                         |                                                       |
 | 7. | `~` `Config_rule_#2`      |                                         |                                                       |
+| 8. | `~` `Config_rule_#3`      |                                         |                                                       |
+|    | `~` `Config_rule_#4`      |                                         |                                                       |
+|    | `~` `Config_rule_#7`      |                                         |                                                       |
+|    | `~` `Config_rule_#9`      |                                         |                                                       |
+|    | `~` `Config_rule_#10`     |                                         |                                                       |
+|    | `~` `Config_rule_#11`     |                                         |                                                       |
+|    | `~` `Config_rule_#12`     |                                         |                                                       |
+|    | `+` `Config_rule_#13`     |                                         |                                                       |
+|    | `+` `Config_rule_#14`     |                                         |                                                       |
 
 ### 8.4.0
 

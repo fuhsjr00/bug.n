@@ -79,20 +79,21 @@ Config_init() {
   Config_viewMargins        := "0;0;0;0"
 
   ;; Config_rule_#<i> := '<class>;<title>;<function name>;<is managed>;<m>;<tags>;<is floating>;<is decorated>;<hide title>;<action>'
-  Config_rule_#1   := ".*;.*;;1;0;0;0;0;0;"               ;; default rule
-  Config_rule_#2   := ".*;.*;Window_isPopup;0;0;0;1;1;1;" ;; Pop-up windows (style WS_POPUP) will not be managed, are floating and the titles are hidden.
-  Config_rule_#3   := "SWT_Window0;.*;;1;0;0;0;0;0;"      ;; Windows created by Java (SWT) e. g. Eclipse have the style WS_POPUP, but should be excluded from the second rule.
-  Config_rule_#4   := "QWidget;.*;;1;0;0;0;0;0;"          ;; ... also windows created by QT (QWidget)
-  Config_rule_#5   := "Xming;.*;;1;0;0;0;0;0;"            ;; ... and Xming windows
+  Config_rule_#1   := ".*;.*;;1;0;0;0;0;0;"
+  Config_rule_#2   := ".*;.*;Window_isPopup;0;0;0;1;1;1;"
+  Config_rule_#3   := "QWidget;.*;;1;0;0;0;0;0;"
+  Config_rule_#4   := "SWT_Window0;.*;;1;0;0;0;0;0;"
+  Config_rule_#5   := "Xming;.*;;1;0;0;0;0;0;"
   Config_rule_#6   := "MsiDialog(No)?CloseClass;.*;;1;0;0;1;1;0;"
-  Config_rule_#7   := "AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;1;"
+  Config_rule_#7   := "AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;0;"
   Config_rule_#8   := "CalcFrame;.*;;1;0;0;1;1;0;"
-  Config_rule_#9   := "MozillaDialogClass;.*;;1;0;0;1;1;0;"
-  Config_rule_#10  := "_sp;_sp;;1;0;0;1;0;1;"
-  Config_rule_#11  := "MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;maximize"
-  Config_rule_#12  := "Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;maximize"
-  ;; @TODO [v9] Config_rule_#13 := "Chrome_WidgetWin_1;.*;0x80000000;0;0;0;1;1;0;"  -- else pop-up windows are treated as new main windows, since #12 overrides #2
-  Config_ruleCount := 12                              ;; This variable has to be set to the total number of active rules above.
+  Config_rule_#9   := "CabinetWClass;.*;;1;0;0;0;1;0;"
+  Config_rule_#10  := "Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;"
+  Config_rule_#11  := "Chrome_WidgetWin_1;.*;Window_isPopup;0;0;0;1;1;1;"
+  Config_rule_#12  := "IEFrame;.*Internet Explorer;;1;0;0;0;1;0;"
+  Config_rule_#13  := "MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;"
+  Config_rule_#14  := "MozillaDialogClass;.*;;1;0;0;1;1;0;"
+  Config_ruleCount := 14  ;; This variable has to be set to the total number of active rules above.
 
   ;; Configuration management
   Config_autoSaveSession := "auto"    ;; "off" | "auto" | "ask"
@@ -382,6 +383,8 @@ Config_saveSession(original, target)
 }
 
 Config_UI_saveSession() {
+  Global Config_filePath
+
   Config_saveSession(Config_filePath, Config_filePath)
 }
 

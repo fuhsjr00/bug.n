@@ -276,27 +276,44 @@ the window first is created.
 > Pop-up windows (style WS_POPUP) will not be managed, are floating and the
 titles are hidden.
 
-`Config_rule_#3=SWT_Window0;.*;;1;0;0;0;0;0;`
-> Windows created by Java (SWT) e. g. Eclipse have the style WS_POPUP, but
-should be excluded from the second rule.
+`Config_rule_#3=QWidget;.*;;1;0;0;0;0;0;`
+> Windows created by QT (QWidget) have the style WS_POPUP, but should be
+excluded from the preceding rule.
 
-`Config_rule_#4=QWidget;.*;;1;0;0;0;0;0;`
-> Also windows created by QT (QWidget) should be excluded from the second rule
-for the same reason as above.
+`Config_rule_#4=SWT_Window0;.*;;1;0;0;0;0;0;`
+> Also windows created by Java (SWT) e. g. Eclipse should be excluded from the
+second rule for the same reason as above.
 
 `Config_rule_#5=Xming;.*;;1;0;0;0;0;0;`
 > Also Xming windows should be excluded from the second rule for the same
 reason as above.
 
     Config_rule_#6=MsiDialog(No)?CloseClass;.*;;1;0;0;1;1;0;
-    Config_rule_#7=AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;1;
-    Config_rule_#8=CalcFrame;.*;;1;0;0;1;1;0;
-    Config_rule_#9=MozillaDialogClass;.*;;1;0;0;1;1;0;
-    Config_rule_#10=_sp;_sp;;1;0;0;1;0;1;
-    Config_rule_#11=MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;maximize
-    Config_rule_#12=Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;maximize
+    Config_rule_#7=AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;0;
 
-`Config_ruleCount=12`
+`Config_rule_#8=CalcFrame;.*;;1;0;0;1;1;0;`
+> Windows calculator.
+
+`Config_rule_#9=CabinetWClass;.*;;1;0;0;0;1;0;`
+> Windows Explorer. If the window's title bar is hidden, it looks distorted.
+
+Config_rule_#10=Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;
+> Chrome web browser. If the window's title bar is hidden, it looks distorted.
+
+Config_rule_#11=Chrome_WidgetWin_1;.*;Window_isPopup;0;0;0;1;1;1;
+> With the preceding rule overriding #2 Chrome pop-up windows would be treated
+as new main windows.
+
+Config_rule_#12=IEFrame;.*Internet Explorer;;1;0;0;0;1;0;
+> Internet Explorer. If the window's title bar is hidden, it looks distorted.
+
+Config_rule_#13=MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;
+> Firefox web browser. If the window's title bar is hidden, it looks distorted.
+
+Config_rule_#14=MozillaDialogClass;.*;;1;0;0;1;1;0;
+> These windows are also pop-up windows.
+
+`Config_ruleCount=14`
 > This variable will be automatically set to the total number of active rules
 above.
 
