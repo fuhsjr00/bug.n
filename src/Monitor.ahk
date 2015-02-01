@@ -21,6 +21,7 @@ Monitor_init(m, doRestore) {
   Monitor_#%m%_showBar  := Config_showBar
   Monitor_#%m%_showTaskBar  := Config_showTaskBar
   Monitor_#%m%_taskBarClass := ""
+  Monitor_%m%_taskBarPos    := ""
   Loop, % Config_viewCount
     View_init(m, A_Index)
   If doRestore
@@ -148,8 +149,8 @@ Monitor_getWorkArea(m) {
             ;; Top
             wndHeight += wndY - monitorTop
             monitorTop += wndHeight
-            If (A_LoopField = "Shell_TrayWnd")
-              Manager_taskBarPos := "top"
+            If (A_LoopField = "Shell_TrayWnd") Or (A_LoopField = "Shell_SecondaryTrayWnd")
+              Monitor_%m%_taskBarPos := "top"
           } Else {
             ;; Bottom
             wndHeight := monitorBottom - wndY

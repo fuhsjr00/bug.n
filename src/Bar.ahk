@@ -284,12 +284,12 @@ Bar_GuiClick:
   If (A_GuiEvent = "Normal") {
     If (SubStr(A_GuiControl, -13) = "_shebang_event") {
       If Not Bar_cmdGuiIsVisible
-        If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
-          Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
+        If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_", False, 6) - 6) = Manager_aMonitor)
+          Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_", False, 6) - 6))
       Bar_toggleCommandGui()
     } Else {
-      If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
-        Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
+      If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_", False, 6) - 6) = Manager_aMonitor)
+        Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_", False, 6) - 6))
       If (SubStr(A_GuiControl, -12) = "_layout_event")
         View_setLayout(-1)
       Else If InStr(A_GuiControl, "_view_#") And (SubStr(A_GuiControl, -5) = "_event")
@@ -302,12 +302,12 @@ Bar_GuiContextMenu:
   Manager_winActivate(Bar_aWndId)
   If (A_GuiEvent = "RightClick") {
     If (SubStr(A_GuiControl, -12) = "_layout_event") {
-      If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
-        Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
+      If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_", False, 6) - 6) = Manager_aMonitor)
+        Manager_activateMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_", False, 6) - 6))
       View_setLayout(0, +1)
     } Else If InStr(A_GuiControl, "_view_#") And (SubStr(A_GuiControl, -5) = "_event") {
-      If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6) = Manager_aMonitor)
-        Manager_setWindowMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_#", False, 0) - 6))
+      If Not (SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_", False, 6) - 6) = Manager_aMonitor)
+        Manager_setWindowMonitor(SubStr(A_GuiControl, 6, InStr(A_GuiControl, "_", False, 6) - 6))
       Monitor_setWindowTag(SubStr(A_GuiControl, InStr(A_GuiControl, "_view_#", False, 0) + 7, 1))
     }
   }
@@ -342,8 +342,8 @@ Bar_toggleCommandGui()
   Else
   {
     Bar_cmdGuiIsVisible := True
-    x := Monitor_#%Manager_aMonitor%_barX + Monitor_#%Manager_aMonitor%_barWidth - Bar_#0_#0W
-    If (Config_verticalBarPos = "top") Or (Config_verticalBarPos = "tray") And (Manager_taskBarPos = "top" Or Not Monitor_#%Manager_aMonitor%_taskBarClass)
+    x := Monitor_#%Manager_aMonitor%_x + Monitor_#%Manager_aMonitor%_barX + Monitor_#%Manager_aMonitor%_barWidth - Bar_#0_#0W
+    If (Config_verticalBarPos = "top") Or (Config_verticalBarPos = "tray") And (Monitor_%Manager_aMonitor%_taskBarPos = "top" Or Not Monitor_#%Manager_aMonitor%_taskBarClass)
       y := Monitor_#%Manager_aMonitor%_y
     Else
       y := Monitor_#%Manager_aMonitor%_y + Monitor_#%Manager_aMonitor%_height - Bar_#0_#0H
@@ -373,6 +373,13 @@ Bar_updateLayout(m) {
   aView := Monitor_#%m%_aView_#1
   GuiN := (m - 1) + 1
   GuiControl, %GuiN%: , Bar_#%m%_layout, % View_#%m%_#%aView%_layoutSymbol
+}
+
+Bar_updateStatic(m) {
+  Local GuiN
+
+  GuiN := (m - 1) + 1
+  GuiControl, %GuiN%: , Bar_#%m%_shebang, #!
 }
 
 Bar_updateStatus() {
@@ -484,7 +491,7 @@ Bar_updateView(m, v) {
     GuiControl, +c%Config_fontColor_#1_#1%, Bar_#%m%_view_#%v%
   }
 
-  Loop, %Config_viewCount% {
+  Loop, % Config_viewCount {
     StringTrimRight, wndIds, View_#%m%_#%A_Index%_wndIds, 1
     StringSplit, wndId, wndIds, `;
     GuiControl, , Bar_#%m%_view_#%A_Index%_highlighted, % wndId0 / managedWndId0 * 100    ;; Update the percentage fill for the view.

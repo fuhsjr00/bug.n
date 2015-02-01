@@ -476,7 +476,7 @@ WINDOW_NOTICE := 32774
       Windows events can't always be caught.
 */
 Manager_onShellMessage(wParam, lParam) {
-  Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, m, t, wndClass, wndId, wndId0, wndIds, wndPName, wndTitle, x, y
+  Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, i, m, t, wndClass, wndId, wndId0, wndIds, wndPName, wndTitle, x, y
 
   SetFormat, Integer, hex
   lParam := lParam+0
@@ -592,7 +592,21 @@ Manager_onShellMessage(wParam, lParam) {
       }
     }
 
-    Bar_updateTitle()
+    ;; This is a workaround for a redrawing problem of the bug.n bar, which
+    ;; seems to get lost, when windows are created or destroyed under the
+    ;; following conditions.
+    If (Manager_monitorCount > 1) And (Config_verticalBarPos = "tray") {
+      Loop, % (Manager_monitorCount - 1) {
+        i := A_Index + 1
+        Bar_updateLayout(i)
+        Bar_updateStatic(i)
+        Loop, % Config_viewCount
+          Bar_updateView(i, A_Index)
+      }
+      Bar_updateStatus()
+      Bar_updateTitle()
+    } Else
+      Bar_updateTitle()
   }
 }
 
