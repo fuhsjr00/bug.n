@@ -96,7 +96,7 @@ Manager_activateMonitor(i, d = 0) {
 }
 
 Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating, ByRef isDecorated, ByRef hideTitle, ByRef action) {
-  Local mouseX, mouseY, wndClass, wndHeight, wndTitle, wndWidth, wndX, wndY
+  Local i, mouseX, mouseY, wndClass, wndHeight, wndTitle, wndWidth, wndX, wndY
   Local rule0, rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10
 
   isManaged   := True
@@ -110,11 +110,12 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
   WinGetClass, wndClass, ahk_id %wndId%
   WinGetTitle, wndTitle, ahk_id %wndId%
   WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
-  If wndClass And wndTitle And Not (wndX < -4999) And Not (wndY < -4999) {
+  If (wndClass Or wndTitle) And Not (wndX < -4999) And Not (wndY < -4999) {
     Loop, % Config_ruleCount {
-      StringSplit, rule, Config_rule_#%A_index%, `;
+      ;; The rules are traversed in reverse order.
+      i := Config_ruleCount - A_Index + 1
+      StringSplit, rule, Config_rule_#%i%, `;
       If RegExMatch(wndClass . ";" . wndTitle, rule1 . ";" . rule2) And (rule3 = "" Or %rule3%(wndId)) {
-        ;; The last matching rule is returned.
         isManaged   := rule4
         m           := rule5
         tags        := rule6
@@ -122,6 +123,8 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
         isDecorated := rule8
         hideTitle   := rule9
         action      := rule10
+        ;; The first matching rule is returned, i. e. the last in the original rder of Config_rule.
+        Break
       }
     }
   } Else {
