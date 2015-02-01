@@ -88,12 +88,13 @@ Config_init() {
   Config_rule_#7   := "AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;0;"
   Config_rule_#8   := "CalcFrame;.*;;1;0;0;1;1;0;"
   Config_rule_#9   := "CabinetWClass;.*;;1;0;0;0;1;0;"
-  Config_rule_#10  := "Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;"
-  Config_rule_#11  := "Chrome_WidgetWin_1;.*;Window_isPopup;0;0;0;1;1;1;"
-  Config_rule_#12  := "IEFrame;.*Internet Explorer;;1;0;0;0;1;0;"
-  Config_rule_#13  := "MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;"
-  Config_rule_#14  := "MozillaDialogClass;.*;;1;0;0;1;1;0;"
-  Config_ruleCount := 14  ;; This variable has to be set to the total number of active rules above.
+  Config_rule_#10  := "OperationStatusWindow;.*;;0;0;0;1;1;0;"
+  Config_rule_#11  := "Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;"
+  Config_rule_#12  := "Chrome_WidgetWin_1;.*;Window_isPopup;0;0;0;1;1;1;"
+  Config_rule_#13  := "IEFrame;.*Internet Explorer;;1;0;0;0;1;0;"
+  Config_rule_#14  := "MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;"
+  Config_rule_#15  := "MozillaDialogClass;.*;;1;0;0;1;1;0;"
+  Config_ruleCount := 15  ;; This variable has to be set to the total number of active rules above.
 
   ;; Configuration management
   Config_autoSaveSession := "auto"    ;; "off" | "auto" | "ask"

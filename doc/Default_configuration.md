@@ -297,23 +297,27 @@ reason as above.
 `Config_rule_#9=CabinetWClass;.*;;1;0;0;0;1;0;`
 > Windows Explorer. If the window's title bar is hidden, it looks distorted.
 
-Config_rule_#10=Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;
+`Config_rule_#10=OperationStatusWindow;.*;;0;0;0;1;1;0;`
+> Windows Explorer dialog.These windows should also be treated as pop-up
+windows.
+
+`Config_rule_#11=Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;`
 > Chrome web browser. If the window's title bar is hidden, it looks distorted.
 
-Config_rule_#11=Chrome_WidgetWin_1;.*;Window_isPopup;0;0;0;1;1;1;
+`Config_rule_#12=Chrome_WidgetWin_1;.*;Window_isPopup;0;0;0;1;1;1;`
 > With the preceding rule overriding #2 Chrome pop-up windows would be treated
 as new main windows.
 
-Config_rule_#12=IEFrame;.*Internet Explorer;;1;0;0;0;1;0;
+`Config_rule_#13=IEFrame;.*Internet Explorer;;1;0;0;0;1;0;`
 > Internet Explorer. If the window's title bar is hidden, it looks distorted.
 
-Config_rule_#13=MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;
+`Config_rule_#14=MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;`
 > Firefox web browser. If the window's title bar is hidden, it looks distorted.
 
-Config_rule_#14=MozillaDialogClass;.*;;1;0;0;1;1;0;
-> These windows are also pop-up windows.
+`Config_rule_#15=MozillaDialogClass;.*;;1;0;0;1;1;0;`
+> These windows should also be treated as pop-up windows.
 
-`Config_ruleCount=14`
+`Config_ruleCount=15`
 > This variable will be automatically set to the total number of active rules
 above.
 
