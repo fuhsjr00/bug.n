@@ -95,9 +95,8 @@ Manager_activateMonitor(i, d = 0) {
   }
 }
 
-Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating, ByRef isDecorated, ByRef hideTitle, ByRef action)
-{
-  Local mouseX, mouseY, wndClass, wndHeight, wndStyle, wndTitle, wndWidth, wndX, wndY
+Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating, ByRef isDecorated, ByRef hideTitle, ByRef action) {
+  Local mouseX, mouseY, wndClass, wndHeight, wndTitle, wndWidth, wndX, wndY
   Local rule0, rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10
 
   isManaged   := True
@@ -111,14 +110,11 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
   WinGetClass, wndClass, ahk_id %wndId%
   WinGetTitle, wndTitle, ahk_id %wndId%
   WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
-  WinGet, wndStyle, Style, ahk_id %wndId%
-  If wndClass And wndTitle And Not (wndX < -4999) And Not (wndY < -4999)
-  {
-    Loop, % Config_ruleCount
-    {
+  If wndClass And wndTitle And Not (wndX < -4999) And Not (wndY < -4999) {
+    Loop, % Config_ruleCount {
       StringSplit, rule, Config_rule_#%A_index%, `;
-      If RegExMatch(wndClass . ";" . wndTitle, rule1 . ";" . rule2) And (rule3 = "" Or wndStyle & rule3)
-      {    ;; The last matching rule is returned.
+      If RegExMatch(wndClass . ";" . wndTitle, rule1 . ";" . rule2) And (rule3 = "" Or %rule3%(wndId)) {
+        ;; The last matching rule is returned.
         isManaged   := rule4
         m           := rule5
         tags        := rule6
@@ -128,9 +124,7 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
         action      := rule10
       }
     }
-  }
-  Else
-  {
+  } Else {
     isManaged := False
     If wndTitle
       hideTitle := True
@@ -223,7 +217,7 @@ Manager_getWindowInfo()
   WinGet, aWndMinMax, MinMax, ahk_id %aWndId%
   WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
   text := "ID: " aWndId "`nclass:`t" aWndClass "`ntitle:`t" aWndTitle
-  rule := "Config_rule=" aWndClass ";" aWndTitle ";" aWndStyle
+  rule := "Config_rule=" aWndClass ";" aWndTitle ";"
   If InStr(Manager_managedWndIds, aWndId ";")
     rule .= ";1"
   Else

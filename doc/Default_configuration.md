@@ -272,9 +272,9 @@ view, not floating (i. e. tiled), the window title bar is not visible, the
 title is not hidden on the bug.n status bar and no window action is taken, when
 the window first is created.
 
-`Config_rule_#2=.*;.*;0x80000000;0;0;0;1;1;1;`
-> Pop-up windows (style WS_POPUP=0x80000000) will not be managed, are floating
-and the titles are hidden.
+`Config_rule_#2=.*;.*;Window_isPopup;0;0;0;1;1;1;`
+> Pop-up windows (style WS_POPUP) will not be managed, are floating and the
+titles are hidden.
 
 `Config_rule_#3=SWT_Window0;.*;;1;0;0;0;0;0;`
 > Windows created by Java (SWT) e. g. Eclipse have the style WS_POPUP, but
