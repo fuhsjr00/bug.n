@@ -13,8 +13,7 @@
   @version 9.0.0
 */
 
-Config_init()
-{
+Config_init() {
   Local i, key, layout0, layout1, layout2, vNames0, vNames1, vNames2, vNames3, vNames4, vNames5, vNames6, vNames7, vNames8, vNames9
 
   ;; Status bar
@@ -27,10 +26,11 @@ Config_init()
   Config_fontName          := "Lucida Console"
   Config_fontSize          :=
   Config_largeFontSize     := 24
-  Config_normBgColor       :=
-  Config_normFgColor       :=
-  Config_selBgColor        :=
-  Config_selFgColor        :=
+  Loop, 3 {
+    Config_backColor_#%A_Index% :=
+    Config_foreColor_#%A_Index% :=
+    Config_fontColor_#%A_Index% :=
+  }
   Config_barTransparency   := "off"
   Config_barCommands       := "Run, explore " Main_docDir ";Monitor_toggleBar();Main_reload();Reload;ExitApp"
   Config_readinBat         := False
@@ -78,21 +78,23 @@ Config_init()
   Config_viewFollowsTagged  := False
   Config_viewMargins        := "0;0;0;0"
 
-  ;; Config_rule_#<i> := '<class>;<title>;<style>;<is managed>;<m>;<tags>;<is floating>;<is decorated>;<hide title>;<action>'
-  Config_rule_#1   := ".*;.*;;1;0;0;0;0;0;"            ;; default rule
-  Config_rule_#2   := ".*;.*;0x80000000;0;0;0;1;1;1;"  ;; Pop-up windows (style WS_POPUP=0x80000000) will not be managed, are floating and the titles are hidden.
-  Config_rule_#3   := "SWT_Window0;.*;;1;0;0;0;0;0;"   ;; Windows created by Java (SWT) e. g. Eclipse have the style WS_POPUP, but should be excluded from the second rule.
-  Config_rule_#4   := "QWidget;.*;;1;0;0;0;0;0;"       ;; ... also windows created by QT (QWidget)
-  Config_rule_#5   := "Xming;.*;;1;0;0;0;0;0;"         ;; ... and Xming windows
+  ;; Config_rule_#<i> := '<class>;<title>;<function name>;<is managed>;<m>;<tags>;<is floating>;<is decorated>;<hide title>;<action>'
+  Config_rule_#1   := ".*;.*;;1;0;0;0;0;0;"
+  Config_rule_#2   := ".*;.*;Window_isPopup;0;0;0;1;1;1;"
+  Config_rule_#3   := "QWidget;.*;;1;0;0;0;0;0;"
+  Config_rule_#4   := "SWT_Window0;.*;;1;0;0;0;0;0;"
+  Config_rule_#5   := "Xming;.*;;1;0;0;0;0;0;"
   Config_rule_#6   := "MsiDialog(No)?CloseClass;.*;;1;0;0;1;1;0;"
-  Config_rule_#7   := "AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;1;"
+  Config_rule_#7   := "AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;0;"
   Config_rule_#8   := "CalcFrame;.*;;1;0;0;1;1;0;"
-  Config_rule_#9   := "MozillaDialogClass;.*;;1;0;0;1;1;0;"
-  Config_rule_#10  := "_sp;_sp;;1;0;0;1;0;1;"
-  Config_rule_#11  := "MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;maximize"
-  Config_rule_#12  := "Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;maximize"
-  ;; @TODO [v9] Config_rule_#13 := "Chrome_WidgetWin_1;.*;0x80000000;0;0;0;1;1;0;"  -- else pop-up windows are treated as new main windows, since #12 overrides #2
-  Config_ruleCount := 12                              ;; This variable has to be set to the total number of active rules above.
+  Config_rule_#9   := "CabinetWClass;.*;;1;0;0;0;1;0;"
+  Config_rule_#10  := "OperationStatusWindow;.*;;0;0;0;1;1;0;"
+  Config_rule_#11  := "Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;"
+  Config_rule_#12  := "Chrome_WidgetWin_1;.*;Window_isPopup;0;0;0;1;1;1;"
+  Config_rule_#13  := "IEFrame;.*Internet Explorer;;1;0;0;0;1;0;"
+  Config_rule_#14  := "MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;"
+  Config_rule_#15  := "MozillaDialogClass;.*;;1;0;0;1;1;0;"
+  Config_ruleCount := 15  ;; This variable has to be set to the total number of active rules above.
 
   ;; Configuration management
   Config_autoSaveSession := "auto"    ;; "off" | "auto" | "ask"
@@ -101,8 +103,7 @@ Config_init()
   Config_restoreConfig(Config_filePath)
   Config_getSystemSettings()
   Config_initColors()
-  Loop, % Config_layoutCount
-  {
+  Loop, % Config_layoutCount {
     StringSplit, layout, Config_layout_#%A_Index%, `;
     Config_layoutFunction_#%A_Index% := layout2
     Config_layoutSymbol_#%A_Index%   := layout1
@@ -113,34 +114,28 @@ Config_init()
   Else
     Config_viewCount := vNames0
   Loop, % Config_viewCount
-  {
     Config_viewNames_#%A_Index% := vNames%A_Index%
-  }
 }
 
-Config_initColors()
-{
+Config_initColors() {
   Global
 
-  StringReplace, Config_normBgColor, Config_normBgColor, `;0`;, `;000000`;, All
-  Config_normBgColor := RegExReplace(Config_normBgColor, "^0;", "000000;")
-  Config_normBgColor := RegExReplace(Config_normBgColor, ";0$", ";000000")
-  StringSplit, Config_normBgColor, Config_normBgColor, `;
+  Loop, 3 {
+    StringReplace, Config_backColor_#%A_Index%, Config_backColor_#%A_Index%, `;0`;, `;000000`;, All
+    Config_backColor_#%A_Index% := RegExReplace(Config_backColor_#%A_Index%, "^0;", "000000;")
+    Config_backColor_#%A_Index% := RegExReplace(Config_backColor_#%A_Index%, ";0$", ";000000")
+    StringSplit, Config_backColor_#%A_Index%_#, Config_backColor_#%A_Index%, `;
 
-  StringReplace, Config_normFgColor, Config_normFgColor, `;0`;, `;000000`;, All
-  Config_normFgColor := RegExReplace(Config_normFgColor, "^0;", "000000;")
-  Config_normFgColor := RegExReplace(Config_normFgColor, ";0$", ";000000")
-  StringSplit, Config_normFgColor, Config_normFgColor, `;
+    StringReplace, Config_foreColor_#%A_Index%, Config_foreColor_#%A_Index%, `;0`;, `;000000`;, All
+    Config_foreColor_#%A_Index% := RegExReplace(Config_foreColor_#%A_Index%, "^0;", "000000;")
+    Config_foreColor_#%A_Index% := RegExReplace(Config_foreColor_#%A_Index%, ";0$", ";000000")
+    StringSplit, Config_foreColor_#%A_Index%_#, Config_foreColor_#%A_Index%, `;
 
-  StringReplace, Config_selBgColor, Config_selBgColor, `;0`;, `;000000`;, All
-  Config_selBgColor := RegExReplace(Config_selBgColor, "^0;", "000000;")
-  Config_selBgColor := RegExReplace(Config_selBgColor, ";0$", ";000000")
-  StringSplit, Config_selBgColor, Config_selBgColor, `;
-
-  StringReplace, Config_selFgColor, Config_selFgColor, `;0`;, `;000000`;, All
-  Config_selFgColor := RegExReplace(Config_selFgColor, "^0;", "000000;")
-  Config_selFgColor := RegExReplace(Config_selFgColor, ";0$", ";000000")
-  StringSplit, Config_selFgColor, Config_selFgColor, `;
+    StringReplace, Config_fontColor_#%A_Index%, Config_fontColor_#%A_Index%, `;0`;, `;000000`;, All
+    Config_fontColor_#%A_Index% := RegExReplace(Config_fontColor_#%A_Index%, "^0;", "000000;")
+    Config_fontColor_#%A_Index% := RegExReplace(Config_fontColor_#%A_Index%, ";0$", ";000000")
+    StringSplit, Config_fontColor_#%A_Index%_#, Config_fontColor_#%A_Index%, `;
+  }
 }
 
 Config_convertSystemColor(systemColor)
@@ -152,12 +147,13 @@ Config_convertSystemColor(systemColor)
   Return, rr gg bb
 }
 
-Config_getSystemSettings()
-{
-  Global Config_fontName, Config_fontSize, Config_normBgColor, Config_normFgColor, Config_selBgColor, Config_selFgColor, Config_scalingFactor
+Config_getSystemSettings() {
+  Global Config_backColor_#1, Config_foreColor_#1, Config_fontColor_#1
+  Global Config_backColor_#2, Config_foreColor_#2, Config_fontColor_#2
+  Global Config_backColor_#3, Config_foreColor_#3, Config_fontColor_#3
+  Global Config_fontName, Config_fontSize, Config_scalingFactor
 
-  If Not Config_fontName
-  {
+  If Not Config_fontName {
     ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
     NumPut(ncmSize, ncm, 0, "UInt")
     DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
@@ -168,8 +164,7 @@ Config_getSystemSettings()
     DllCall("RtlMoveMemory", "Str", Config_fontName, "UInt", &lf + 28, "UInt", 32 * (A_IsUnicode ? 2 : 1))
     ;; maestrith: Script Writer (http://www.autohotkey.net/~maestrith/Script Writer/)
   }
-  If Not Config_fontSize
-  {
+  If Not Config_fontSize {
     ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
     NumPut(ncmSize, ncm, 0, "UInt")
     DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
@@ -187,33 +182,45 @@ Config_getSystemSettings()
     ;; maestrith: Script Writer (http://www.autohotkey.net/~maestrith/Script Writer/)
   }
   SetFormat, Integer, hex
-  If Not Config_normBgColor
-  {
-    Config_normBgColor := Config_convertSystemColor(DllCall("GetSysColor", "Int", 4))       ;; COLOR_MENU
-    Config_normBgColor .= ";" Config_convertSystemColor(DllCall("GetSysColor", "Int", 3))   ;; COLOR_INACTIVECAPTION
-    Config_normBgColor .= ";" Config_convertSystemColor(DllCall("GetSysColor", "Int", 28))  ;; COLOR_GRADIENTINACTIVECAPTION
-    Config_normBgColor .= ";Red"
-    Config_normBgColor .= ";" Config_convertSystemColor(DllCall("GetSysColor", "Int", 28))  ;; COLOR_GRADIENTINACTIVECAPTION
-  }
-  If Not Config_normFgColor
-  {
-    Config_normFgColor := Config_convertSystemColor(DllCall("GetSysColor", "Int", 7))       ;; COLOR_MENUTEXT
-    Config_normFgColor .= ";Default"
-    Config_normFgColor .= ";" Config_convertSystemColor(DllCall("GetSysColor", "Int", 3))   ;; COLOR_INACTIVECAPTION
-    Config_normFgColor .= ";" Config_convertSystemColor(DllCall("GetSysColor", "Int", 19))  ;; COLOR_INACTIVECAPTIONTEXT
-    Config_normFgColor .= ";" Config_convertSystemColor(DllCall("GetSysColor", "Int", 13))  ;; COLOR_HIGHLIGHT
-    Config_normFgColor .= ";White"
-    Config_normFgColor .= ";Default"
-    Config_normFgColor .= ";" Config_convertSystemColor(DllCall("GetSysColor", "Int", 3))   ;; COLOR_INACTIVECAPTION
-  }
-  If Not Config_selBgColor
-  {
-    Config_selBgColor := Config_convertSystemColor(DllCall("GetSysColor", "Int", 27))       ;; COLOR_GRADIENTACTIVECAPTION
-  }
-  If Not Config_selFgColor
-  {
-    Config_selFgColor := Config_convertSystemColor(DllCall("GetSysColor", "Int", 9))        ;; COLOR_CAPTIONTEXT
-    Config_selFgColor .= ";" Config_convertSystemColor(DllCall("GetSysColor", "Int", 2))    ;; COLOR_ACTIVECAPTION
+  If Not (Config_backColor_#1 And Config_foreColor_#1 And Config_fontColor_#1
+      And Config_backColor_#2 And Config_foreColor_#2 And Config_fontColor_#2
+      And Config_backColor_#3 And Config_foreColor_#3 And Config_fontColor_#3) {
+    COLOR_ACTIVECAPTION           := Config_convertSystemColor(DllCall("GetSysColor", "Int",  2))
+    COLOR_CAPTIONTEXT             := Config_convertSystemColor(DllCall("GetSysColor", "Int",  9))
+    COLOR_GRADIENTACTIVECAPTION   := Config_convertSystemColor(DllCall("GetSysColor", "Int", 27))
+    COLOR_GRADIENTINACTIVECAPTION := Config_convertSystemColor(DllCall("GetSysColor", "Int", 28))
+    COLOR_HIGHLIGHT               := Config_convertSystemColor(DllCall("GetSysColor", "Int", 13))
+    COLOR_INACTIVECAPTION         := Config_convertSystemColor(DllCall("GetSysColor", "Int",  3))
+    COLOR_INACTIVECAPTIONTEXT     := Config_convertSystemColor(DllCall("GetSysColor", "Int", 19))
+    COLOR_MENU                    := Config_convertSystemColor(DllCall("GetSysColor", "Int",  4))
+    COLOR_MENUTEXT                := Config_convertSystemColor(DllCall("GetSysColor", "Int",  7))
+    ;; <view>;<layout>;<title>;<shebang>;<time>;<date>;<anyText>;<batteryStatus>;<volumeLevel>
+    If Not Config_backColor_#1 {
+      Config_backColor_#1 := COLOR_GRADIENTINACTIVECAPTION ";" COLOR_ACTIVECAPTION ";" COLOR_MENU ";" COLOR_ACTIVECAPTION ";" COLOR_MENU ";" COLOR_ACTIVECAPTION ";"
+      Config_backColor_#1 .= COLOR_GRADIENTINACTIVECAPTION ";" COLOR_GRADIENTACTIVECAPTION ";" COLOR_GRADIENTACTIVECAPTION
+    }
+    If Not Config_backColor_#2
+      Config_backColor_#2 := COLOR_GRADIENTACTIVECAPTION ";;;;;;;" COLOR_MENU ";" COLOR_MENU
+    If Not Config_backColor_#3
+      Config_backColor_#3 := ";;;;;;;ff8040;"
+
+    If Not Config_foreColor_#1 {
+      Config_foreColor_#1 := COLOR_INACTIVECAPTION ";" COLOR_ACTIVECAPTION ";" COLOR_MENU ";" COLOR_ACTIVECAPTION ";" COLOR_MENU ";" COLOR_ACTIVECAPTION ";"
+      Config_foreColor_#1 .= COLOR_INACTIVECAPTION ";" COLOR_ACTIVECAPTION ";" COLOR_GRADIENTINACTIVECAPTION
+    }
+    If Not Config_foreColor_#2
+      Config_foreColor_#2 := COLOR_ACTIVECAPTION ";;;;;;;" COLOR_HIGHLIGHT ";" COLOR_HIGHLIGHT
+    If Not Config_foreColor_#3
+      Config_foreColor_#3 := ";;;;;;;" COLOR_INACTIVECAPTION ";"
+
+    If Not Config_fontColor_#1 {
+      Config_fontColor_#1 := COLOR_INACTIVECAPTIONTEXT ";" COLOR_CAPTIONTEXT ";" COLOR_MENUTEXT ";" COLOR_CAPTIONTEXT ";" COLOR_MENUTEXT ";" COLOR_CAPTIONTEXT ";"
+      Config_fontColor_#1 .= COLOR_INACTIVECAPTIONTEXT ";" COLOR_CAPTIONTEXT ";" COLOR_INACTIVECAPTIONTEXT
+    }
+    If Not Config_fontColor_#2
+      Config_fontColor_#2 := COLOR_CAPTIONTEXT ";;;;;;;" COLOR_MENUTEXT ";" COLOR_MENUTEXT
+    If Not Config_fontColor_#3
+      Config_fontColor_#3 := ";;;;;;;" COLOR_INACTIVECAPTIONTEXT ";"
   }
   SetFormat, Integer, d
 
@@ -226,14 +233,13 @@ Config_hotkeyLabel:
   Config_redirectHotkey(A_ThisHotkey)
 Return
 
-Config_readinAny()
-{ ;; Add information to the variable 'text' in this function to display it in the status bar.
-  Global Config_readinDate
+Config_readinAny() {
+  ;; Add information to the variable 'text' in this function to display it in the status bar.
+  Global Config_readinCpu, Config_readinDiskLoad, Config_readinMemoryUsage, Config_readinNetworkLoad
 
   text := ""
-  text .= ResourceMonitor_getText()
-  If Config_readinDate
-    text .= " " A_DDD ", " A_DD ". " A_MMM ". " A_YYYY " "
+  If (Config_readinCpu Or Config_readinDiskLoad Or Config_readinMemoryUsage Or Config_readinNetworkLoad)
+    text .= ResourceMonitor_getText()
 
   Return, text
 }
@@ -378,6 +384,8 @@ Config_saveSession(original, target)
 }
 
 Config_UI_saveSession() {
+  Global Config_filePath
+
   Config_saveSession(Config_filePath, Config_filePath)
 }
 

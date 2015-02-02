@@ -11,7 +11,7 @@ following information:
 
 1. class (as a regular expression)
 2. title (as a regular expression)
-3. window style (as a hexadecimal number or blank)
+3. arbitrary criterion (as a function name, e. g. "Window_isPopup", or blank)
 
 With the second part you can give bug.n the following information on how to
 handle the identified windows:
@@ -28,7 +28,7 @@ removed.
 7. A special single window action (`close` or `maximize` or blank).
 
 The general format of a rule added to `Config.ini` is as follows:
-`Config_rule=<class>;<title>;<window style>;<is managed>;<monitor>;<views /
+`Config_rule=<class>;<title>;<function name>;<is managed>;<monitor>;<views /
 tags>;<is floating>;<is decorated>;<hide title>;<action on a single window>`
 (all in one line, ";" is not allowed as a character in the field values)
 
@@ -59,7 +59,7 @@ The following `Config.ini` line replaces rule number 11 in the default
 configuration, putting windows of 'Mozilla Firefox' on view 5, keeping the
 title bar visible and maximizing them.
 
-`Config_rule_#11=MozillaWindowClass;.*Mozilla Firefox;;1;0;16;0;1;0;maximize`
+`Config_rule_#14=MozillaWindowClass;.*Mozilla Firefox;;1;0;16;0;1;0;maximize`
 
 #### Mozilla Thunderbird
 
