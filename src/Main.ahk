@@ -192,10 +192,10 @@ Main_reload()
   {
     Monitor_getWorkArea(A_Index)
     Bar_init(A_Index)
+    If Monitor_%A_Index%_taskBarClass And Not (Monitor_%A_Index%_showTaskBar = Config_showTaskBar)
+      Monitor_toggleTaskBar()
   }
   Bar_initCmdGui()
-  If Not (Manager_showTaskBar = Config_showTaskBar)
-    Monitor_toggleTaskBar()
   Bar_updateStatus()
   Bar_updateTitle()
   Loop, % Manager_monitorCount

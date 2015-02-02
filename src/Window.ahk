@@ -96,6 +96,13 @@ Window_isHung(wndId) {
     Return, 0
 }
 
+Window_isPopup(wndId) {
+  WS_POPUP = 0x80000000
+  WinGet, wndStyle, Style, ahk_id %wndId%
+
+  Return, wndStyle & WS_POPUP
+}
+
 Window_isProg(wndId) {
   WinGetClass, wndClass, ahk_id %wndId%
   WinGetTitle, wndTitle, ahk_id %wndId%

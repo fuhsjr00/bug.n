@@ -24,8 +24,6 @@ Manager_init()
   ; New/closed windows, active changed,
   Manager_windowsDirty := 0
   Manager_aMonitor := 1
-  Manager_taskBarMonitor := ""
-  Manager_showTaskBar := True
 
   doRestore := 0
   If (Config_autoSaveSession = "ask")
@@ -97,9 +95,8 @@ Manager_activateMonitor(i, d = 0) {
   }
 }
 
-Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating, ByRef isDecorated, ByRef hideTitle, ByRef action)
-{
-  Local mouseX, mouseY, wndClass, wndHeight, wndStyle, wndTitle, wndWidth, wndX, wndY
+Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating, ByRef isDecorated, ByRef hideTitle, ByRef action) {
+  Local i, mouseX, mouseY, wndClass, wndHeight, wndTitle, wndWidth, wndX, wndY
   Local rule0, rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10
 
   isManaged   := True
@@ -113,14 +110,12 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
   WinGetClass, wndClass, ahk_id %wndId%
   WinGetTitle, wndTitle, ahk_id %wndId%
   WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
-  WinGet, wndStyle, Style, ahk_id %wndId%
-  If wndClass And wndTitle And Not (wndX < -4999) And Not (wndY < -4999)
-  {
-    Loop, % Config_ruleCount
-    {
-      StringSplit, rule, Config_rule_#%A_index%, `;
-      If RegExMatch(wndClass . ";" . wndTitle, rule1 . ";" . rule2) And (rule3 = "" Or wndStyle & rule3)
-      {    ;; The last matching rule is returned.
+  If (wndClass Or wndTitle) And Not (wndX < -4999) And Not (wndY < -4999) {
+    Loop, % Config_ruleCount {
+      ;; The rules are traversed in reverse order.
+      i := Config_ruleCount - A_Index + 1
+      StringSplit, rule, Config_rule_#%i%, `;
+      If RegExMatch(wndClass . ";" . wndTitle, rule1 . ";" . rule2) And (rule3 = "" Or %rule3%(wndId)) {
         isManaged   := rule4
         m           := rule5
         tags        := rule6
@@ -128,11 +123,11 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
         isDecorated := rule8
         hideTitle   := rule9
         action      := rule10
+        ;; The first matching rule is returned, i. e. the last in the original rder of Config_rule.
+        Break
       }
     }
-  }
-  Else
-  {
+  } Else {
     isManaged := False
     If wndTitle
       hideTitle := True
@@ -164,11 +159,11 @@ Manager_cleanup()
   Manager_hideShow := False
 
   ;; Restore window positions and sizes.
-  Manager_showTaskBar := True
   Loop, % Manager_monitorCount
   {
     m := A_Index
     Monitor_#%m%_showBar := False
+    Monitor_#%m%_showTaskBar := True
     Monitor_getWorkArea(m)
     Loop, % Config_viewCount
     {
@@ -225,7 +220,7 @@ Manager_getWindowInfo()
   WinGet, aWndMinMax, MinMax, ahk_id %aWndId%
   WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
   text := "ID: " aWndId "`nclass:`t" aWndClass "`ntitle:`t" aWndTitle
-  rule := "Config_rule=" aWndClass ";" aWndTitle ";" aWndStyle
+  rule := "Config_rule=" aWndClass ";" aWndTitle ";"
   If InStr(Manager_managedWndIds, aWndId ";")
     rule .= ";1"
   Else
@@ -478,7 +473,7 @@ WINDOW_NOTICE := 32774
       Windows events can't always be caught.
 */
 Manager_onShellMessage(wParam, lParam) {
-  Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, m, t, wndClass, wndId, wndId0, wndIds, wndPName, wndTitle, x, y
+  Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, i, m, t, wndClass, wndId, wndId0, wndIds, wndPName, wndTitle, x, y
 
   SetFormat, Integer, hex
   lParam := lParam+0
@@ -594,7 +589,21 @@ Manager_onShellMessage(wParam, lParam) {
       }
     }
 
-    Bar_updateTitle()
+    ;; This is a workaround for a redrawing problem of the bug.n bar, which
+    ;; seems to get lost, when windows are created or destroyed under the
+    ;; following conditions.
+    If (Manager_monitorCount > 1) And (Config_verticalBarPos = "tray") {
+      Loop, % (Manager_monitorCount - 1) {
+        i := A_Index + 1
+        Bar_updateLayout(i)
+        Bar_updateStatic(i)
+        Loop, % Config_viewCount
+          Bar_updateView(i, A_Index)
+      }
+      Bar_updateStatus()
+      Bar_updateTitle()
+    } Else
+      Bar_updateTitle()
   }
 }
 

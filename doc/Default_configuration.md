@@ -37,35 +37,52 @@ Appearance" settings for the "Active Title Bar".
 `Config_largeFontSize=24`
 > Font size in pixel, i. a. for the numbering of areas in the area trace.
 
-`Config_normBgColor=`
-> The normal background color of the following bar elements:
-  1. inactive views, title and time
-  2. the layout symbol, the any-text (i. a. date) and the button for the
-     command GUI (#!).
-  3. the progress bar indicating a charging or full battery
-  4. the progress bar indicating a discharging battery with a remaining
-     charge of less than ten percent
-  5. the progress bar indicating a charging battery
+`Config_backColor_#1=<COLOR_GRADIENTINACTIVECAPTION>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_GRADIENTINACTIVECAPTION>;<COLOR_GRADIENTACTIVECAPTION>;<COLOR_GRADIENTACTIVECAPTION>`
+> The default background color for bar elements. The value for this and the
+other (following) color related configuration variables is a semicolon
+separated list, which contains the following items:
 
-`Config_normFgColor=`
-> The normal foreground color of the following bar elements:
-  1. the text of inactive views, title and time
-  2. the text of the layout symbol, a full battery, the any-text (i. a.
-     date) and the button for the command GUI (#!)
-  3. the progress bar indicating a charging battery?
-  4. the text indicating a discharging battery
-  5. the progress bar indicating a discharging battery
-  6. the text indicating a discharging battery with a remaining charge of
-     less than ten percent?
-  7. the text indicating a charging battery?
-  8. the progress bar indicating an inactive view and a charging battery?
+* view
+* layout
+* title
+* shebang
+* time
+* date
+* "any text"
+* battery status
+* volume level
 
-`Config_selBgColor=`
-> The background color of a progress bar indicating an active view.
+`Config_backColor_#2=<COLOR_GRADIENTACTIVECAPTION>;;;;;;;<COLOR_MENU>;<COLOR_MENU>`
+> The background color of bar elements, which are highlighted depending on the
+status, i. a. the active view, a discharging battery and the sound volume.
 
-`Config_selFgColor=`
-> 1. The text color and
-2. the foreground color of a progress bar indicating an active view.
+`Config_backColor_#3=;;;;;;;ff8040;`
+> The background color of bar elements, which are highlighted depending on the
+status, i. a. a discharging battery with a battery level lower than 10%.
+
+`Config_foreColor_#1=<COLOR_INACTIVECAPTION>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_ACTIVECAPTION>;<COLOR_GRADIENTINACTIVECAPTION>`
+> The default forground color of bar elements. Every bar element consists of a
+progress bar with a background and a foreground; the visible part of the
+foreground depends on the value of the progress bar.
+
+`Config_foreColor_#2=<COLOR_ACTIVECAPTION>;;;;;;;<COLOR_HIGHLIGHT>;<COLOR_HIGHLIGHT>`
+> The foreground color of bar elements, which are highlighted depending on the
+status, i. a. the active view, a discharging battery and the sound volume.
+
+`Config_foreColor_#3=;;;;;;;<COLOR_INACTIVECAPTION>;`
+> The foreground color of bar elements, which are highlighted depending on the
+status, i. a. a discharging battery with a battery level lower than 10%.
+
+`Config_fontColor_#1=<COLOR_INACTIVECAPTIONTEXT>;<COLOR_CAPTIONTEXT>;<COLOR_MENUTEXT>;<COLOR_CAPTIONTEXT>;<COLOR_MENUTEXT>;<COLOR_CAPTIONTEXT>;<COLOR_INACTIVECAPTIONTEXT>;<COLOR_CAPTIONTEXT>;<COLOR_INACTIVECAPTIONTEXT>`
+> The default font color for the text of bar elements.
+
+`Config_fontColor_#2=<COLOR_CAPTIONTEXT>;;;;;;;<COLOR_MENUTEXT>;<COLOR_MENUTEXT>`
+> The font color of bar elements, which are highlighted depending on the
+status, i. a. the active view, a discharging battery and the sound volume.
+
+`Config_fontColor_#3=;;;;;;;<COLOR_INACTIVECAPTIONTEXT>;`
+> The fontground color of bar elements, which are highlighted depending on the
+status, i. a. a discharging battery with a battery level lower than 10%.
 
 The default color values are retrieved from the "Window Color and Appearance"
 settings.
@@ -255,31 +272,52 @@ view, not floating (i. e. tiled), the window title bar is not visible, the
 title is not hidden on the bug.n status bar and no window action is taken, when
 the window first is created.
 
-`Config_rule_#2=.*;.*;0x80000000;0;0;0;1;1;1;`
-> Pop-up windows (style WS_POPUP=0x80000000) will not be managed, are floating
-and the titles are hidden.
+`Config_rule_#2=.*;.*;Window_isPopup;0;0;0;1;1;1;`
+> Pop-up windows (style WS_POPUP) will not be managed, are floating and the
+titles are hidden.
 
-`Config_rule_#3=SWT_Window0;.*;;1;0;0;0;0;0;`
-> Windows created by Java (SWT) e. g. Eclipse have the style WS_POPUP, but
-should be excluded from the second rule.
+`Config_rule_#3=QWidget;.*;;1;0;0;0;0;0;`
+> Windows created by QT (QWidget) have the style WS_POPUP, but should be
+excluded from the preceding rule.
 
-`Config_rule_#4=QWidget;.*;;1;0;0;0;0;0;`
-> Also windows created by QT (QWidget) should be excluded from the second rule
-for the same reason as above.
+`Config_rule_#4=SWT_Window0;.*;;1;0;0;0;0;0;`
+> Also windows created by Java (SWT) e. g. Eclipse should be excluded from the
+second rule for the same reason as above.
 
 `Config_rule_#5=Xming;.*;;1;0;0;0;0;0;`
 > Also Xming windows should be excluded from the second rule for the same
 reason as above.
 
     Config_rule_#6=MsiDialog(No)?CloseClass;.*;;1;0;0;1;1;0;
-    Config_rule_#7=AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;1;
-    Config_rule_#8=CalcFrame;.*;;1;0;0;1;1;0;
-    Config_rule_#9=MozillaDialogClass;.*;;1;0;0;1;1;0;
-    Config_rule_#10=_sp;_sp;;1;0;0;1;0;1;
-    Config_rule_#11=MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;maximize
-    Config_rule_#12=Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;maximize
+    Config_rule_#7=AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;0;
 
-`Config_ruleCount=12`
+`Config_rule_#8=CalcFrame;.*;;1;0;0;1;1;0;`
+> Windows calculator.
+
+`Config_rule_#9=CabinetWClass;.*;;1;0;0;0;1;0;`
+> Windows Explorer. If the window's title bar is hidden, it looks distorted.
+
+`Config_rule_#10=OperationStatusWindow;.*;;0;0;0;1;1;0;`
+> Windows Explorer dialog.These windows should also be treated as pop-up
+windows.
+
+`Config_rule_#11=Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;`
+> Chrome web browser. If the window's title bar is hidden, it looks distorted.
+
+`Config_rule_#12=Chrome_WidgetWin_1;.*;Window_isPopup;0;0;0;1;1;1;`
+> With the preceding rule overriding #2 Chrome pop-up windows would be treated
+as new main windows.
+
+`Config_rule_#13=IEFrame;.*Internet Explorer;;1;0;0;0;1;0;`
+> Internet Explorer. If the window's title bar is hidden, it looks distorted.
+
+`Config_rule_#14=MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;`
+> Firefox web browser. If the window's title bar is hidden, it looks distorted.
+
+`Config_rule_#15=MozillaDialogClass;.*;;1;0;0;1;1;0;`
+> These windows should also be treated as pop-up windows.
+
+`Config_ruleCount=15`
 > This variable will be automatically set to the total number of active rules
 above.
 
