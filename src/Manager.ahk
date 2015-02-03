@@ -891,7 +891,7 @@ Manager_saveWindowState(filename, nm, nv) {
     FileMove, %tmpfname%, %filename%, 1
 }
 
-Manager_serCursor(wndId) {
+Manager_setCursor(wndId) {
   Local wndHeight, wndWidth, wndX, wndY
 
   If Config_mouseFollowsFocus {
@@ -1140,7 +1140,7 @@ Manager_unmanage(wndId) {
 }
 
 Manager_winActivate(wndId) {
-  Manager_serCursor(wndId)
+  Manager_setCursor(wndId)
   Debug_logMessage("DEBUG[1] Activating window: " wndId, 1)
   If Not wndId {
     If (A_OSVersion = "WIN_8")

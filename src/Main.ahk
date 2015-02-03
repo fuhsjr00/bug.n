@@ -50,6 +50,7 @@ SetWinDelay, 10
   ResourceMonitor_init()
   Manager_init()
   Server_init()
+
   Debug_logMessage("====== Running ======", 0)
 Return          ;; end of the auto-execute section
 
