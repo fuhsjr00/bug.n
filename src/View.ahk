@@ -193,7 +193,7 @@ View_moveWindow(i=0, d=0) {
       i := Manager_loop(Window_#%aWndId%_area, d, 1, View_#%m%_#%v%_area_#0)
     Window_move(aWndId, View_#%m%_#%v%_area_#%i%_x, View_#%m%_#%v%_area_#%i%_y, View_#%m%_#%v%_area_#%i%_width, View_#%m%_#%v%_area_#%i%_height)
     Window_#%aWndId%_area := i
-    Manager_serCursor(aWndId)
+    Manager_setCursor(aWndId)
   }
 }
 
@@ -283,7 +283,7 @@ View_shuffleWindow(i, d = 0) {
         StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, % aWndId ";",
         StringReplace, View_#%Manager_aMonitor%_#%v%_wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, % View_tiledWndId%i% ";", %replace%
         View_arrange(Manager_aMonitor, v)
-        Manager_serCursor(aWndId)
+        Manager_setCursor(aWndId)
       }
     }
   }

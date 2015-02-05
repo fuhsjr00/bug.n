@@ -127,6 +127,7 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
         Break
       }
     }
+    Debug_logMessage("DEBUG[6] Manager_applyRules: class: " wndClass ", title: " wndTitle ", wndId: " wndId ", action: " action, 6)
   } Else {
     isManaged := False
     If wndTitle
@@ -891,7 +892,7 @@ Manager_saveWindowState(filename, nm, nv) {
     FileMove, %tmpfname%, %filename%, 1
 }
 
-Manager_serCursor(wndId) {
+Manager_setCursor(wndId) {
   Local wndHeight, wndWidth, wndX, wndY
 
   If Config_mouseFollowsFocus {
@@ -1140,7 +1141,7 @@ Manager_unmanage(wndId) {
 }
 
 Manager_winActivate(wndId) {
-  Manager_serCursor(wndId)
+  Manager_setCursor(wndId)
   Debug_logMessage("DEBUG[1] Activating window: " wndId, 1)
   If Not wndId {
     If (A_OSVersion = "WIN_8")
