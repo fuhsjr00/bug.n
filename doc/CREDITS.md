@@ -25,7 +25,9 @@ summarizes these sources (of ideas or code):
 
 #### Code snippets
 
-* [franckspike](https://github.com/franckspike): [More general loop function](https://github.com/franckspike/bug.n/commit/e4e615512b363e8c342bf02cf9067cfeb4cc5d57#diff-e42236c27dedd9350fa8c9b9654fd485)
+* [franckspike](https://github.com/franckspike):
+  + [More general loop function](https://github.com/franckspike/bug.n/commit/e4e615512b363e8c342bf02cf9067cfeb4cc5d57#diff-e42236c27dedd9350fa8c9b9654fd485)
+  + [Remote control](https://github.com/franckspike/bug.n/commit/2beacc71aef4d4c46021f97b52ab857efabc871c)
 * fures: System + Network monitor - with net history graph (AutoHotkey forum)
 * maestrith: Script Writer (github.com/maestrith/Script_Writer)
 * PhiLho: [AC/Battery status](http://www.autohotkey.com/forum/topic7633.html)

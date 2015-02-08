@@ -21,6 +21,7 @@ not implement the functionality: `Monitor_toggleWindowTag`, `View_activateWindow
 7. `~` Revised the rule layout. The third parameter is not compared to the window style anymore, but is a function name, which is
 called with the window ID as a paramater, when applying the rule.
 8. `~` Revised the default rule set.
+9. `+` Added the possibility for sending commands to bug.n from another AutoHotkey script.
 
 |  # | Configuration variables   | `-` Hotkey functions                    | `+` Hotkey functions                                  |
 | --:| ------------------------- | --------------------------------------- | ----------------------------------------------------- |
