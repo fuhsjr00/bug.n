@@ -59,7 +59,7 @@ The following `Config.ini` line replaces rule number 11 in the default
 configuration, putting windows of 'Mozilla Firefox' on view 5, keeping the
 title bar visible and maximizing them.
 
-`Config_rule_#14=MozillaWindowClass;.*Mozilla Firefox;;1;0;16;0;1;0;maximize`
+`Config_rule_#15=MozillaWindowClass;.*Mozilla Firefox;;1;0;16;0;1;0;maximize`
 
 #### Mozilla Thunderbird
 
