@@ -252,3 +252,5 @@ Return
 #Include Tiler.ahk
 #Include View.ahk
 #Include Window.ahk
+
+;; vim:sts=2 sw=2

@@ -67,3 +67,4 @@ OnCommandReceived:
 ;     controlsettext, edit1, % "Monitor_setWindowTag(2)", bug.n_BAR_1
 ;     controlsettext, edit1, % "Monitor_setZZZ(1, 3)", bug.n_BAR_1
 
+;; vim:sts=2 sw=2
