@@ -54,7 +54,8 @@ separated list, which contains the following items:
 
 `Config_backColor_#2=<COLOR_GRADIENTACTIVECAPTION>;;;;;;;<COLOR_MENU>;<COLOR_MENU>`
 > The background color of bar elements, which are highlighted depending on the
-status, i. a. the active view, a discharging battery and the sound volume.
+status, i. a. the active view, a discharging battery and the sound volume, if
+it is not muted.
 
 `Config_backColor_#3=;;;;;;;ff8040;`
 > The background color of bar elements, which are highlighted depending on the
@@ -67,7 +68,8 @@ foreground depends on the value of the progress bar.
 
 `Config_foreColor_#2=<COLOR_ACTIVECAPTION>;;;;;;;<COLOR_HIGHLIGHT>;<COLOR_HIGHLIGHT>`
 > The foreground color of bar elements, which are highlighted depending on the
-status, i. a. the active view, a discharging battery and the sound volume.
+status, i. a. the active view, a discharging battery and the sound volume, if
+it is not muted.
 
 `Config_foreColor_#3=;;;;;;;<COLOR_INACTIVECAPTION>;`
 > The foreground color of bar elements, which are highlighted depending on the
@@ -78,7 +80,8 @@ status, i. a. a discharging battery with a battery level lower than 10%.
 
 `Config_fontColor_#2=<COLOR_CAPTIONTEXT>;;;;;;;<COLOR_MENUTEXT>;<COLOR_MENUTEXT>`
 > The font color of bar elements, which are highlighted depending on the
-status, i. a. the active view, a discharging battery and the sound volume.
+status, i. a. the active view, a discharging battery and the sound volume, if
+it is not muted.
 
 `Config_fontColor_#3=;;;;;;;<COLOR_INACTIVECAPTIONTEXT>;`
 > The fontground color of bar elements, which are highlighted depending on the
@@ -304,20 +307,24 @@ windows.
 `Config_rule_#11=Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;`
 > Chrome web browser. If the window's title bar is hidden, it looks distorted.
 
-`Config_rule_#12=Chrome_WidgetWin_1;.*;Window_isPopup;0;0;0;1;1;1;`
+`Config_rule_#12=Chrome_WidgetWin_1;.*;Window_isPopup;0;0;0;1;1;0;`
 > With the preceding rule overriding #2 Chrome pop-up windows would be treated
 as new main windows.
 
-`Config_rule_#13=IEFrame;.*Internet Explorer;;1;0;0;0;1;0;`
+`Config_rule_#13=Chrome_RenderWidgetHostHWND;.*;;0;0;0;1;1;0;`
+> These windows may represent new tabs, which should not be treated as new
+windows.
+
+`Config_rule_#14=IEFrame;.*Internet Explorer;;1;0;0;0;1;0;`
 > Internet Explorer. If the window's title bar is hidden, it looks distorted.
 
-`Config_rule_#14=MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;`
+`Config_rule_#15=MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;`
 > Firefox web browser. If the window's title bar is hidden, it looks distorted.
 
-`Config_rule_#15=MozillaDialogClass;.*;;1;0;0;1;1;0;`
+`Config_rule_#16=MozillaDialogClass;.*;;1;0;0;1;1;0;`
 > These windows should also be treated as pop-up windows.
 
-`Config_ruleCount=15`
+`Config_ruleCount=16`
 > This variable will be automatically set to the total number of active rules
 above.
 

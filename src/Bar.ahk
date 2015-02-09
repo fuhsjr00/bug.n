@@ -164,7 +164,7 @@ Bar_init(m) {
 
 Bar_initCmdGui()
 {
-  Global Bar_#0_#0, Bar_#0_#0H, Bar_#0_#0W, Bar_cmdGuiIsVisible, Config_backColor_#1_#3, Config_barCommands, Config_fontName, Config_fontSize, Config_foreColor_#1_#3
+  Global Bar_#0_#0, Bar_#0_#0H, Bar_#0_#0W, Bar_#0_#1, Bar_cmdGuiIsVisible, Config_backColor_#1_#3, Config_barCommands, Config_fontName, Config_fontSize, Config_foreColor_#1_#3
 
   Bar_cmdGuiIsVisible := False
   wndTitle := "bug.n_BAR_0"
@@ -176,9 +176,11 @@ Bar_initCmdGui()
   Gui, Color, Default
   Gui, Font, s%Config_fontSize%, %Config_fontName%
   StringSplit, cmd, Config_barCommands, `;
-  Gui, Add, ComboBox, x10 y0 r%cmd0% w300 Background%Config_backColor_#1_#3% c%Config_fontColor_#1_#3% Simple vBar_#0_#0 gBar_cmdGuiEnter, % Config_barCommands
+  Gui, Add, ComboBox, x10 y10 r%cmd0% w300 Background%Config_backColor_#1_#3% c%Config_fontColor_#1_#3% Simple vBar_#0_#0 gBar_cmdGuiEnter, % Config_barCommands
+  Gui, Add, Edit, Y0 w300 Hidden vBar_#0_#1 gBar_cmdGuiEnter
   Gui, Add, Button, Y0 Hidden Default gBar_cmdGuiEnter, OK
   GuiControlGet, Bar_#0_#0, Pos
+  Bar_#0_#0H += 20
   Bar_#0_#0W += 20
   Gui, Show, Hide w%Bar_#0_#0W% h%Bar_#0_#0H%, %wndTitle%
 }
@@ -202,6 +204,10 @@ Bar_cmdGuiEnter:
     WinActivate, ahk_id %Bar_aWndId%
     Main_evalCommand(Bar_#0_#0)
     Bar_#0_#0 := ""
+  } Else If (A_GuiControl = "Bar_#0_#1") {
+    Gui, Submit, NoHide
+    Debug_logMessage("DEBUG[6] Bar_cmdGuiEnter; command: " . Bar_#0_#1, 6)
+    Main_evalCommand(Bar_#0_#1)
   }
 Return
 

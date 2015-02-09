@@ -127,6 +127,7 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
         Break
       }
     }
+    Debug_logMessage("DEBUG[6] Manager_applyRules: class: " wndClass ", title: " wndTitle ", wndId: " wndId ", action: " action, 6)
   } Else {
     isManaged := False
     If wndTitle
