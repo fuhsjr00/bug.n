@@ -426,6 +426,7 @@ Config_UI_saveSession() {
 #^h::Debug_logHelp()
 #^d::Debug_setLogLevel(0, -1)
 #^+d::Debug_setLogLevel(0, +1)
+#^+u::Debug_unmanageActiveWindow()
 
 ;; Layout management
 #Tab::View_setLayout(-1)
@@ -498,3 +499,5 @@ Config_UI_saveSession() {
 #^r::Main_reload()
 #^+r::Reload
 #^q::ExitApp
+
+;; vim:sts=2 sw=2

@@ -1158,3 +1158,5 @@ Manager_winActivate(wndId) {
     Return 0
   }
 }
+
+;; vim:sts=2 sw=2

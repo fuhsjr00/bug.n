@@ -91,7 +91,10 @@ Window_isHung(wndId) {
   DetectHiddenWindows, %detectSetting%
 
   If result
+  {
+    Debug_logMessage("DEBUG[6] Window_isHung(" wndId ") = " result, 6)
     Return, 1
+  }
   Else
     Return, 0
 }
@@ -178,3 +181,5 @@ Window_toggleDecor(wndId = 0) {
   Else
     Window_set(wndId, "Style", "-0xC00000")
 }
+
+;; vim:sts=2 sw=2

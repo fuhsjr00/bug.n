@@ -330,3 +330,5 @@ Monitor_toggleWindowTag(i, d = 0) {
     }
   }
 }
+
+;; vim:sts=2 sw=2
