@@ -22,6 +22,15 @@ the list.
 * A function can be selected from a list or entered in the command GUI, which
 is accessible by cklickig on `#!` on the right end of the bug.n bar.
 
+You may also send commands to bug.n from another AutoHotkey script. The sent
+string is interpreted and executed by bug.n either as a bug.n-function (as used
+in the hotkey configuration), the `Run` or `Send` command of AutoHotkey. For
+example, you may use the following lines in an AutoHotkey script:
+
+    DetectHiddenWindows, On
+    ;; ControlSetText, Edit2, % "<function name>(<comma separated list of arguments>)", bug.n_BAR_0
+    ControlSetText, Edit2, % "Monitor_activateView(4)", bug.n_BAR_0
+
 ### Concepts
 
 #### Layouts
