@@ -24,7 +24,7 @@ is accessible by cklickig on `#!` on the right end of the bug.n bar.
 
 You may also send commands to bug.n from another AutoHotkey script. The sent
 string is interpreted and executed by bug.n as one or more (separated by the
-newline character ``n`) either bug.n-functions (as used in the hotkey
+newline character `\`n`) either bug.n-functions (as used in the hotkey
 configuration) or AutoHotkey-commands (only `Run` or `Send`). For example, you
 may use the following lines in an AutoHotkey script:
 
