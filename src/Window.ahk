@@ -67,6 +67,13 @@ Window_hide(wndId) {
   }
 }
 
+Window_isElevated(wndId) {
+  WinGetTitle, wndTitle, ahk_id %wndId%
+  WinSetTitle, ahk_id %wndId%, , % wndTitle " "
+  WinGetTitle, newWndTitle, ahk_id %wndId%
+  Return, (newWndTitle = wndTitle)
+}
+
 Window_isGhost(wndId) {
   Local wndClass, wndProc
 

@@ -380,6 +380,9 @@ Manager_manage(preferredMonitor, preferredView, wndId)
       tags := 1 << (preferredView - 1)
   }
 
+  If Window_isElevated(wndId)
+    isManaged := 0
+
   a := Manager__setWinProperties( wndId, isManaged, m, tags, isDecorated, isFloating, hideTitle, action)
 
   ; Do view placement.
