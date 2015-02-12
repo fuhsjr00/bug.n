@@ -207,7 +207,8 @@ Bar_cmdGuiEnter:
   } Else If (A_GuiControl = "Bar_#0_#1") {
     Gui, Submit, NoHide
     Debug_logMessage("DEBUG[6] Bar_cmdGuiEnter; command: " . Bar_#0_#1, 6)
-    Main_evalCommand(Bar_#0_#1)
+    Loop, Parse, Bar_#0_#1, `n, `r
+      Main_evalCommand(A_LoopField)
   }
 Return
 

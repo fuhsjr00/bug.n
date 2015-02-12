@@ -23,13 +23,29 @@ the list.
 is accessible by cklickig on `#!` on the right end of the bug.n bar.
 
 You may also send commands to bug.n from another AutoHotkey script. The sent
-string is interpreted and executed by bug.n either as a bug.n-function (as used
-in the hotkey configuration), the `Run` or `Send` command of AutoHotkey. For
-example, you may use the following lines in an AutoHotkey script:
+string is interpreted and executed by bug.n as one or more (separated by the
+newline character ``n`) either bug.n-functions (as used in the hotkey
+configuration) or AutoHotkey-commands (only `Run` or `Send`). For example, you
+may use the following lines in an AutoHotkey script:
 
+    ;; The following line is required.
     DetectHiddenWindows, On
-    ;; ControlSetText, Edit2, % "<function name>(<comma separated list of arguments>)", bug.n_BAR_0
-    ControlSetText, Edit2, % "Monitor_activateView(4)", bug.n_BAR_0
+
+    ;; Syntax:
+    ;; ControlSetText, Edit2, % "<function name>(<arguments>)", bug.n_BAR_0
+
+    ;; 1st example:
+    ;ControlSetText, Edit2, % "Monitor_activateView(4)", bug.n_BAR_0
+
+    ;; 2nd example:
+    ;ControlSetText, Edit2, % "Monitor_activateView(4)`nView_setLayout(3)", bug.n_BAR_0
+
+    ;; 3rd example:
+    ControlSetText, Edit2, % "Monitor_activateView(4)`nRun, explorer.exe", bug.n_BAR_0
+
+It might be necessary to put a `Sleep, <delay in milliseconds>`, e. g.
+`Sleep, 200`, between to consecutive `ControlSetText` to give bug.n time to
+recognize the next command.
 
 ### Concepts
 
