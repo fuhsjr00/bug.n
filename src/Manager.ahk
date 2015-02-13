@@ -341,8 +341,8 @@ Manager_manage(preferredMonitor, preferredView, wndId)
   Local a, action, c0, hideTitle, i, isDecorated, isFloating, isManaged, l, m, n, replace, search, tags, body
   Local wndControlList0, wndId0, wndIds, wndX, wndY, wndWidth, wndHeight, wndProcessName
 
-  ; Manage any window only once.
-  If InStr(Manager_managedWndIds, wndId ";")
+  ;; Manage any window only once.
+  If InStr(Manager_allWndIds, wndId ";")
     Return
 
   body := 0
@@ -488,6 +488,13 @@ Manager_onShellMessage(wParam, lParam) {
   WinGetClass, wndClass, ahk_id %lParam%
   WinGetTitle, wndTitle, ahk_id %lParam%
   WinGet, wndPName, ProcessName, ahk_id %lParam%
+  If Not wndClass And Not wndTitle {
+    ;; If there is no window class or title, it is assumed that the window is not identifiable.
+    ;;   The problem was, that i. a. claws-mail triggers Manager_sync, but the application window
+    ;;   would not be ready for being managed, i. e. class and title were not available. Therefore more
+    ;;   attempts were needed.
+    Return
+  }
 
   WinGet, aWndId, ID, A
   WinGetClass, aWndClass, ahk_id %aWndId%
@@ -519,12 +526,6 @@ Manager_onShellMessage(wParam, lParam) {
   ;;   Look into the use of AHK synchronization primitives.
   If (wParam = 1 Or wParam = 2 Or wParam = 4 Or wParam = 6 Or wParam = 32772) And lParam And Not Manager_hideShow And Not Manager_focus
   {
-    If Not wndClass And Not (wParam = 2 Or wParam = 4 Or wParam = 32772)
-    {
-      Sleep, %Config_shellMsgDelay%
-      WinGetClass, wndClass, ahk_id %lParam%
-    }
-
     isChanged := Manager_sync(wndIds)
     If wndIds
       isChanged := False
@@ -859,15 +860,8 @@ Manager_saveWindowState(filename, nm, nv) {
 
     ; wndId;process;Tags;Floating;Decorated;HideTitle;Managed;Title
 
-    If ( InStr(Manager_managedWndIds, wndId . ";") > 0 )
-      isManaged := 1
-    Else
-      isManaged := 0
-
-    If ( InStr(Bar_hideTitleWndIds, wndId . ";") > 0 )
-      isTitleHidden := 1
-    Else
-      isTitleHidden := 0
+    isManaged := InStr(Manager_managedWndIds, wndId . ";")
+    isTitleHidden := InStr(Bar_hideTitleWndIds, wndId . ";")
 
     text .= "Window " . wndId . ";" . process . ";" . Window_#%wndId%_monitor . ";" . Window_#%wndId%_tags . ";" . Window_#%wndId%_isFloating . ";" . Window_#%wndId%_isDecorated . ";" . isTitleHidden . ";" . isManaged . ";" . title . "`n"
   }
