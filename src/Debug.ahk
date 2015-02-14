@@ -96,7 +96,7 @@ Debug_logWindowInfo(wndId)
 {
   Local aWndId, detectSetting, text, v
   Local isBugnActive, isDecorated, isFloating, isGhost, isHidden, isResponsive, isWinFocus
-  Local wndClass, wndH, wndProc, wndStyle, wndTitle, wndW, wndX, wndY
+  Local wndClass, wndH, wndPId, wndPName, wndStyle, wndTitle, wndW, wndX, wndY
 
   detectSetting := A_DetectHiddenWindows
   DetectHiddenWindows, On
@@ -112,7 +112,8 @@ Debug_logWindowInfo(wndId)
     isBugnActive := " "
   WinGetTitle, wndTitle, ahk_id %wndId%
   WinGetClass, wndClass, ahk_id %wndId%
-  WinGet, wndProc, ProcessName, ahk_id %wndId%
+  WinGet, wndPName, ProcessName, ahk_id %wndId%
+  WinGet, wndPId, PID, ahk_id %wndId%
   If InStr(Bar_hiddenWndIds, wndId)
     isHidden := "*"
   Else
@@ -142,7 +143,7 @@ Debug_logWindowInfo(wndId)
   text := wndId "`t"
   text .= isHidden " " isWinFocus " " isBugnActive " " isFloating " " isDecorated " " isResponsive " " isGhost " "
   text .= Window_#%wndId%_monitor "`t" Window_#%wndId%_tags "`t"
-  text .= wndX "`t" wndY "`t" wndW "`t" wndH "`t" wndStyle "`t" wndProc " / " wndClass " / " wndTitle
+  text .= wndX "`t" wndY "`t" wndW "`t" wndH "`t" wndStyle "`t" wndPName " [" wndPId "] / " wndClass " / " wndTitle
   Debug_logMessage(text , 0, False)
 }
 

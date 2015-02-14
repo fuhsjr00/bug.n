@@ -211,12 +211,13 @@ Return
 
 Manager_getWindowInfo()
 {
-  Local aWndClass, aWndHeight, aWndId, aWndMinMax, aWndProcessName, aWndStyle, aWndTitle, aWndWidth, aWndX, aWndY, rule, text, v
+  Local aWndClass, aWndHeight, aWndId, aWndMinMax, aWndPId, aWndPName, aWndStyle, aWndTitle, aWndWidth, aWndX, aWndY, rule, text, v
 
   WinGet, aWndId, ID, A
   WinGetClass, aWndClass, ahk_id %aWndId%
   WinGetTitle, aWndTitle, ahk_id %aWndId%
-  WinGet, aWndProcessName, ProcessName, ahk_id %aWndId%
+  WinGet, aWndPName, ProcessName, ahk_id %aWndId%
+  WinGet, aWndPId, PID, ahk_id %aWndId%
   WinGet, aWndStyle, Style, ahk_id %aWndId%
   WinGet, aWndMinMax, MinMax, ahk_id %aWndId%
   WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
@@ -234,7 +235,7 @@ Manager_getWindowInfo()
     rule .= ";0;"
   If (aWndMinMax = 1)
     rule .= "maximize"
-  text .= "`nprocess:`t" aWndProcessName "`nstyle:`t" aWndStyle "`nmetrics:`tx: " aWndX ", y: " aWndY ", width: " aWndWidth ", height: " aWndHeight "`ntags:`t" Window_#%aWndId%_tags
+  text .= "`nprocess:`t" aWndPName " [" aWndPId "]`nstyle:`t" aWndStyle "`nmetrics:`tx: " aWndX ", y: " aWndY ", width: " aWndWidth ", height: " aWndHeight "`ntags:`t" Window_#%aWndId%_tags
   If Window_#%aWndId%_isFloating
     text .= " (floating)"
   text .= "`n`n" rule
@@ -339,7 +340,7 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
 Manager_manage(preferredMonitor, preferredView, wndId)
 {
   Local a, action, c0, hideTitle, i, isDecorated, isFloating, isManaged, l, m, n, replace, search, tags, body
-  Local wndControlList0, wndId0, wndIds, wndX, wndY, wndWidth, wndHeight, wndProcessName
+  Local wndControlList0, wndId0, wndIds, wndX, wndY, wndWidth, wndHeight
 
   ;; Manage any window only once.
   If InStr(Manager_allWndIds, wndId ";")
@@ -477,7 +478,7 @@ WINDOW_NOTICE := 32774
       Windows events can't always be caught.
 */
 Manager_onShellMessage(wParam, lParam) {
-  Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, i, m, t, wndClass, wndId, wndId0, wndIds, wndPName, wndTitle, x, y
+  Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, i, m, t, wndClass, wndId, wndId0, wndIds, wndTitle, x, y
 
   SetFormat, Integer, hex
   lParam := lParam+0
@@ -487,7 +488,6 @@ Manager_onShellMessage(wParam, lParam) {
 
   WinGetClass, wndClass, ahk_id %lParam%
   WinGetTitle, wndTitle, ahk_id %lParam%
-  WinGet, wndPName, ProcessName, ahk_id %lParam%
   If Not wndClass And Not wndTitle {
     ;; If there is no window class or title, it is assumed that the window is not identifiable.
     ;;   The problem was, that i. a. claws-mail triggers Manager_sync, but the application window
@@ -704,7 +704,7 @@ Manager_restoreWindowBorders()
 ;; If the state is completely different, this function won't do much. However, if restoring from a crash
 ;; or simply restarting bug.n, it should completely recover the window state.
 Manager__restoreWindowState(filename) {
-  Local vidx, widx, i, j, m, v, candidate_set, view_set, excluded_view_set, view_m0, view_v0, view_list0, wnds0, items0, wndProc, view_var, isManaged, isFloating, isDecorated, hideTitle
+  Local vidx, widx, i, j, m, v, candidate_set, view_set, excluded_view_set, view_m0, view_v0, view_list0, wnds0, items0, wndPName, view_var, isManaged, isFloating, isDecorated, hideTitle
 
   If Not FileExist(filename)
     Return
@@ -763,10 +763,10 @@ Manager__restoreWindowState(filename) {
     j := 2
 
     DetectHiddenWindows, On
-    WinGet, wndProc, ProcessName, ahk_id %i%
+    WinGet, wndPName, ProcessName, ahk_id %i%
     DetectHiddenWindows, Off
-    If Not ( items%j% = wndProc ) {
-      Debug_logMessage("Window ahk_id " . i . " process '" . wndProc . "' doesn't match expected '" . items%j% . "', forgetting this window", 0)
+    If Not ( items%j% = wndPName ) {
+      Debug_logMessage("Window ahk_id " . i . " process '" . wndPName . "' doesn't match expected '" . items%j% . "', forgetting this window", 0)
       Continue
     }
 
@@ -840,7 +840,7 @@ Manager_saveState() {
 }
 
 Manager_saveWindowState(filename, nm, nv) {
-  Local allWndId0, allWndIds, process, title, text, monitor, wndId, view, isManaged, isTitleHidden
+  Local allWndId0, allWndIds, wndPName, title, text, monitor, wndId, view, isManaged, isTitleHidden
 
   text := "; bug.n - tiling window management`n; @version " VERSION "`n`n"
 
@@ -854,16 +854,16 @@ Manager_saveWindowState(filename, nm, nv) {
   DetectHiddenWindows, On
   Loop, % allWndId0 {
     wndId := allWndId%A_Index%
-    WinGet, process, ProcessName, ahk_id %wndId%
+    WinGet, wndPName, ProcessName, ahk_id %wndId%
     ; Include title for informative reasons.
     WinGetTitle, title, ahk_id %wndId%
 
-    ; wndId;process;Tags;Floating;Decorated;HideTitle;Managed;Title
+    ; wndId;processName;Tags;Floating;Decorated;HideTitle;Managed;Title
 
     isManaged := InStr(Manager_managedWndIds, wndId . ";")
     isTitleHidden := InStr(Bar_hideTitleWndIds, wndId . ";")
 
-    text .= "Window " . wndId . ";" . process . ";" . Window_#%wndId%_monitor . ";" . Window_#%wndId%_tags . ";" . Window_#%wndId%_isFloating . ";" . Window_#%wndId%_isDecorated . ";" . isTitleHidden . ";" . isManaged . ";" . title . "`n"
+    text .= "Window " . wndId . ";" . wndPName . ";" . Window_#%wndId%_monitor . ";" . Window_#%wndId%_tags . ";" . Window_#%wndId%_isFloating . ";" . Window_#%wndId%_isDecorated . ";" . isTitleHidden . ";" . isManaged . ";" . title . "`n"
   }
   DetectHiddenWindows, Off
 
