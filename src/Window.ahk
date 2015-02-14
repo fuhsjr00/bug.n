@@ -67,6 +67,13 @@ Window_hide(wndId) {
   }
 }
 
+Window_isChild(wndId) {
+  WS_POPUP = 0x40000000
+  WinGet, wndStyle, Style, ahk_id %wndId%
+
+  Return, wndStyle & WS_POPUP
+}
+
 Window_isElevated(wndId) {
   WinGetTitle, wndTitle, ahk_id %wndId%
   WinSetTitle, ahk_id %wndId%, , % wndTitle " "
