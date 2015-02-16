@@ -51,9 +51,9 @@ Monitor_activateView(i, d = 0) {
   }
 
   aView := Monitor_#%Manager_aMonitor%_aView_#1
-  aWndId := View_getActiveWindow(Manager_aMonitor, aView)
-  If aWndId
-    View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
+  WinGet, aWndId, ID, A
+  If WinExist("ahk_id" aWndId) And InStr(View_#%Manager_aMonitor%_#%aView%_wndIds, aWndId ";") And Window_isProg(aWndId)
+    View_setActiveWindow(Manager_aMonitor, aView, aWndId)
 
   n := Config_syncMonitorViews
   If (n = 1)
@@ -93,14 +93,7 @@ Monitor_activateView(i, d = 0) {
     Bar_updateView(m, i)
   }
 
-  wndId := View_#%Manager_aMonitor%_#%i%_aWndId
-  If Not (wndId And WinExist("ahk_id" wndId)) {
-    If View_#%Manager_aMonitor%_#%i%_wndIds {
-      wndId := SubStr(View_#%Manager_aMonitor%_#%i%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%i%_wndIds, ";")-1)
-      View_#%Manager_aMonitor%_#%i%_aWndId := wndId
-    } Else
-      wndId := 0
-  }
+  wndId := View_getActiveWindow(Manager_aMonitor, i)
   Manager_winActivate(wndId)
 }
 
@@ -211,7 +204,7 @@ Monitor_setWindowTag(i, d = 0) {
       Loop, % Config_viewCount {
         If Not (Window_#%aWndId%_tags & (1 << A_Index - 1)) {
           View_#%Manager_aMonitor%_#%A_Index%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%A_Index%_wndIds
-          View_#%Manager_aMonitor%_#%A_Index%_aWndId := aWndId
+          View_setActiveWindow(Manager_aMonitor, A_Index, aWndId)
           Bar_updateView(Manager_aMonitor, A_Index)
           Window_#%aWndId%_tags += 1 << A_Index - 1
         }
@@ -220,14 +213,14 @@ Monitor_setWindowTag(i, d = 0) {
       Loop, % Config_viewCount {
         If Not (A_index = i) {
           StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %aWndId%`;,
-          View_#%Manager_aMonitor%_#%A_Index%_aWndId := 0
+          View_setActiveWindow(Manager_aMonitor, A_Index, 0)
           Bar_updateView(Manager_aMonitor, A_Index)
         }
       }
 
       If Not (Window_#%aWndId%_tags & (1 << i - 1))
         View_#%Manager_aMonitor%_#%i%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%i%_wndIds
-      View_#%Manager_aMonitor%_#%i%_aWndId := aWndId
+      View_setActiveWindow(Manager_aMonitor, i, aWndId)
       Window_#%aWndId%_tags := 1 << i - 1
 
       aView := Monitor_#%Manager_aMonitor%_aView_#1
@@ -324,7 +317,7 @@ Monitor_toggleWindowTag(i, d = 0) {
       }
     } Else {
       View_#%Manager_aMonitor%_#%i%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%i%_wndIds
-      View_#%Manager_aMonitor%_#%i%_aWndId := aWndId
+      View_setActiveWindow(Manager_aMonitor, i, aWndId)
       Bar_updateView(Manager_aMonitor, i)
       Window_#%aWndId%_tags += 1 << i - 1
     }
