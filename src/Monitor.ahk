@@ -79,6 +79,8 @@ Monitor_activateView(i, d = 0) {
     SetWinDelay, 10
     DetectHiddenWindows, On
     View_arrange(m, i)
+    wndId := View_getActiveWindow(m, i)
+    Window_set(wndId, "AlwaysOnTop", "On")
     DetectHiddenWindows, Off
     StringTrimRight, wndIds, View_#%m%_#%i%_wndIds, 1
     SetWinDelay, 0
@@ -86,6 +88,7 @@ Monitor_activateView(i, d = 0) {
     {
       Window_show(A_LoopField)
     }
+    Window_set(wndId, "AlwaysOnTop", "Off")
     SetWinDelay, 10
     Manager_hideShow := False
 
