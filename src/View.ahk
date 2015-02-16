@@ -339,4 +339,4 @@ View_traceAreas(continuously = False) {
     Tiler_traceAreas(Manager_aMonitor, v, continuously)
 }
 
-;; vim:sts=2 sw=2
+;; vim:sts=2 ts=2 sw=2 et
