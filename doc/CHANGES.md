@@ -78,6 +78,7 @@ called with the window ID as a paramater, when applying the rule.
 |    | `+` `Config_rule_#14`     |                                         |                                                       |
 |    | `+` `Config_rule_#15`     |                                         |                                                       |
 |    | `+` `Config_rule_#16`     |                                         |                                                       |
+|    | `+` `Config_rule_#17`     |                                         |                                                       |
 
 ### 8.4.0
 
