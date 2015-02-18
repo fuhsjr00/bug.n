@@ -275,60 +275,61 @@ view, not floating (i. e. tiled), the window title bar is not visible, the
 title is not hidden on the bug.n status bar and no window action is taken, when
 the window first is created.
 
-`Config_rule_#2=.*;.*;Window_isChild;0;0;0;1;1;1;`
+`Config_rule_#2=.*;.*;Window_isChild;1;0;0;1;1;0;`
 > Child windows (style WS_CHILD) will not be managed, are floating and the
 titles are hidden.
 
-`Config_rule_#3=.*;.*;Window_isPopup;0;0;0;1;1;1;`
+`Config_rule_#3=.*;.*;Window_isPopup;0;0;0;1;1;0;`
 > Pop-up windows (style WS_POPUP) will not be managed, are floating and the
 titles are hidden.
 
-`Config_rule_#4=QWidget;.*;;1;0;0;0;0;0;`
+`Config_rule_#4=.*;.*;Window_isElevated;0;0;0;1;1;0;`
+> Windows created by applications run as administrator cannot be managed by
+bug.n and are therefor excluded. If a higher numbered rule also covers elevated
+windows, it would precede rule #4 and therefor needs to be followed by an
+additional rule, which again would exclude those windows identified by the
+rule, but which are elevated.
+
+`Config_rule_#5=QWidget;.*;;1;0;0;0;0;0;`
 > Windows created by QT (QWidget) have the style WS_POPUP, but should be
 excluded from the preceding rule.
 
-`Config_rule_#5=SWT_Window0;.*;;1;0;0;0;0;0;`
+`Config_rule_#6=SWT_Window0;.*;;1;0;0;0;0;0;`
 > Also windows created by Java (SWT) e. g. Eclipse should be excluded from the
 second rule for the same reason as above.
 
-`Config_rule_#6=Xming;.*;;1;0;0;0;0;0;`
+`Config_rule_#7=Xming;.*;;1;0;0;0;0;0;`
 > Also Xming windows should be excluded from the second rule for the same
 reason as above.
 
-    Config_rule_#7=MsiDialog(No)?CloseClass;.*;;1;0;0;1;1;0;
-    Config_rule_#8=AdobeFlashPlayerInstaller;.*;;1;0;0;1;0;0;
-
-`Config_rule_#9=CalcFrame;.*;;1;0;0;1;1;0;`
-> Windows calculator.
-
-`Config_rule_#10=CabinetWClass;.*;;1;0;0;0;1;0;`
+`Config_rule_#8=CabinetWClass;.*;;1;0;0;0;1;0;`
 > Windows Explorer. If the window's title bar is hidden, it looks distorted.
 
-`Config_rule_#11=OperationStatusWindow;.*;;0;0;0;1;1;0;`
+`Config_rule_#9=OperationStatusWindow;.*;;1;0;0;1;1;0;`
 > Windows Explorer dialog.These windows should also be treated as pop-up
 windows.
 
-`Config_rule_#12=Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;`
+`Config_rule_#10=Chrome_WidgetWin_1;.*;;1;0;0;0;1;0;`
 > Chrome web browser. If the window's title bar is hidden, it looks distorted.
 
-`Config_rule_#13=Chrome_WidgetWin_1;.*;Window_isPopup;0;0;0;1;1;0;`
+`Config_rule_#11=Chrome_WidgetWin_1;.*;Window_isPopup;1;0;0;1;1;0;`
 > With the preceding rule overriding #2 Chrome pop-up windows would be treated
 as new main windows.
 
-`Config_rule_#14=Chrome_RenderWidgetHostHWND;.*;;0;0;0;1;1;0;`
+`Config_rule_#12=Chrome_RenderWidgetHostHWND;.*;;0;0;0;1;1;0;`
 > These windows may represent new tabs, which should not be treated as new
 windows.
 
-`Config_rule_#15=IEFrame;.*Internet Explorer;;1;0;0;0;1;0;`
+`Config_rule_#13=IEFrame;.*Internet Explorer;;1;0;0;0;1;0;`
 > Internet Explorer. If the window's title bar is hidden, it looks distorted.
 
-`Config_rule_#16=MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;`
+`Config_rule_#14=MozillaWindowClass;.*Mozilla Firefox;;1;0;0;0;1;0;`
 > Firefox web browser. If the window's title bar is hidden, it looks distorted.
 
-`Config_rule_#17=MozillaDialogClass;.*;;1;0;0;1;1;0;`
+`Config_rule_#15=MozillaDialogClass;.*;;1;0;0;1;1;0;`
 > These windows should also be treated as pop-up windows.
 
-`Config_ruleCount=17`
+`Config_ruleCount=15`
 > This variable will be automatically set to the total number of active rules
 above.
 
