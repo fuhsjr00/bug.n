@@ -18,7 +18,7 @@ View_init(m, v)
   Global
 
   View_#%m%_#%v%_area_#0        := 0
-  View_#%m%_#%v%_aWndId         := 0
+  View_#%m%_#%v%_aWndIds        := "0;"
   View_#%m%_#%v%_layout_#1      := 1
   View_#%m%_#%v%_layout_#2      := 1
   View_#%m%_#%v%_layoutAxis_#1  := Config_layoutAxis_#1
@@ -144,13 +144,25 @@ View_arrange(m, v, setLayout = False) {
 }
 
 View_getActiveWindow(m, v) {
-  Local aWndId
+  Local wndId
 
-  WinGet, aWndId, ID, A
-  If WinExist("ahk_id" aWndId) And InStr(View_#%m%_#%v%_wndIds, aWndId ";") And Window_isProg(aWndId)
-    Return, aWndId
-  Else
-    Return, 0
+  Loop, Parse, View_#%m%_#%v%_aWndIds, `;
+  {
+    If Not A_LoopField
+      Break
+    Else If Not WinExist("ahk_id" A_LoopField)
+      Continue
+    Else {
+      wndId := A_LoopField
+      Break
+    }
+  }
+  If Not wndId And View_#%m%_#%v%_wndIds {
+    wndId := SubStr(View_#%m%_#%v%_wndIds, 1, InStr(View_#%m%_#%v%_wndIds, ";") - 1)
+    View_setActiveWindow(m, v, wndId)
+  }
+
+  Return, wndId
 }
 
 View_getTiledWndIds(m, v)
@@ -194,6 +206,15 @@ View_moveWindow(i=0, d=0) {
     Window_move(aWndId, View_#%m%_#%v%_area_#%i%_x, View_#%m%_#%v%_area_#%i%_y, View_#%m%_#%v%_area_#%i%_width, View_#%m%_#%v%_area_#%i%_height)
     Window_#%aWndId%_area := i
     Manager_setCursor(aWndId)
+  }
+}
+
+View_setActiveWindow(m, v, wndId) {
+  Global
+
+  If wndId {
+    StringReplace, View_#%m%_#%v%_aWndIds, View_#%m%_#%v%_aWndIds, % wndId ";", All
+    View_#%m%_#%v%_aWndIds := wndId ";" View_#%m%_#%v%_aWndIds
   }
 }
 
