@@ -212,4 +212,4 @@ Window_toggleDecor(wndId = 0) {
     Window_set(wndId, "Style", "-0xC00000")
 }
 
-;; vim:sts=2 sw=2
+;; vim:sts=2 ts=2 sw=2 et

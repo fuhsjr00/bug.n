@@ -137,4 +137,4 @@ ResourceMonitor_getSystemTimes() {
 }
 ;; Sean: CPU LoadTimes (http://www.autohotkey.com/forum/topic18913.html)
 
-;; vim:sts=2 sw=2
+;; vim:sts=2 ts=2 sw=2 et
