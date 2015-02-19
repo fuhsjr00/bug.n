@@ -425,7 +425,6 @@ Config_UI_saveSession() {
 #^h::Debug_logHelp()
 #^d::Debug_setLogLevel(0, -1)
 #^+d::Debug_setLogLevel(0, +1)
-#^+u::Debug_unmanageActiveWindow()
 
 ;; Layout management
 #Tab::View_setLayout(-1)

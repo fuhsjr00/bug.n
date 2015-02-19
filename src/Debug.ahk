@@ -162,13 +162,4 @@ Debug_setLogLevel(i, d) {
   }
 }
 
-Debug_unmanageActiveWindow() {
-  Local aView, aWndId
-    
-  aView := Monitor_#%Manager_aMonitor%_aView_#1
-  aWndId := View_getActiveWindow(Manager_aMonitor, aView)
-  If aWndId != 0
-    Manager_unmanage(aWndId)
-}
-
 ;; vim:sts=2 ts=2 sw=2 et
