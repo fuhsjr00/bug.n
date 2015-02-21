@@ -89,7 +89,7 @@ Manager_activateMonitor(i, d = 0) {
 }
 
 Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating, ByRef isDecorated, ByRef hideTitle, ByRef action) {
-  Local i, mouseX, mouseY, wndClass, wndHeight, wndTitle, wndWidth, wndX, wndY
+  Local i, mouseX, mouseY, wndClass, wndTitle
   Local rule0, rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10
 
   isManaged   := True
@@ -102,7 +102,6 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
 
   WinGetClass, wndClass, ahk_id %wndId%
   WinGetTitle, wndTitle, ahk_id %wndId%
-  WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
   If (wndClass Or wndTitle) {
     Loop, % Config_ruleCount {
       ;; The rules are traversed in reverse order.
@@ -125,7 +124,7 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
     If wndTitle
       hideTitle := True
   }
-  Debug_logMessage("DEBUG[3] Manager_applyRules(wndId: " wndId ", isManaged: " isManaged ", m: " m ", tags: " tags ", isFloating: " isFloating ", isDecorated: " isDecorated ", hideTitle: " hideTitle ", action: " action "); class: " wndClass ", title: " wndTitle ", x: " wndX ", y: " wndY, 3)
+  Debug_logMessage("DEBUG[3] Manager_applyRules(wndId: " wndId ", isManaged: " isManaged ", m: " m ", tags: " tags ", isFloating: " isFloating ", isDecorated: " isDecorated ", hideTitle: " hideTitle ", action: " action "); class: " wndClass ", title: " wndTitle, 3)
 }
 
 Manager_cleanup()
@@ -549,14 +548,14 @@ Manager_onShellMessage(wParam, lParam) {
 
   ;; MISSED MESSAGES? FIND ADDITIONAL WINDOWS.
   ;; !! THIS CODE CURRENTLY DOES SOME AWEFUL THINGS!
-;  WinGet, wndId, List, , ,
-;  Loop, % wndId {
-;    If Not InStr(Manager_allWndIds, wndId%A_Index% ";") {
-;      a := Manager_manage(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, wndId%A_Index%)
-;      If a
-;        updateView := a
-;    }
-;  }
+  WinGet, wndId, List, , ,
+  Loop, % wndId {
+    If Not InStr(Manager_allWndIds, wndId%A_Index% ";") {
+      a := Manager_manage(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, wndId%A_Index%)
+      If a
+        updateView := a
+    }
+  }
 
   ;; IN MOST CASES DO THE FOLLOWING.
   If updateView {
