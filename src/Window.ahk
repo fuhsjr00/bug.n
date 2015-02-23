@@ -27,6 +27,13 @@ Window_activate(wndId) {
   }
 }
 
+Window_clipsSiblings(wndId) {
+  WS_CLIPSIBLINGS = 0x04000000
+  WinGet, wndStyle, Style, ahk_id %wndId%
+
+  Return, (wndStyle & WS_CLIPSIBLINGS)
+}
+
 Window_close(wndId) {
   If Window_isHung(wndId) {
     Debug_logMessage("DEBUG[2] Window_close: Potentially hung window " . wndId, 2)
@@ -71,7 +78,7 @@ Window_isChild(wndId) {
   WS_POPUP = 0x40000000
   WinGet, wndStyle, Style, ahk_id %wndId%
 
-  Return, wndStyle & WS_POPUP
+  Return, (wndStyle & WS_POPUP)
 }
 
 Window_isElevated(wndId) {
@@ -127,6 +134,18 @@ Window_isHung(wndId) {
   }
   Else
     Return, 0
+}
+
+Window_isNotVisible(wndId) {
+  WS_VISIBLE = 0x10000000
+  WinGet, wndStyle, Style, ahk_id %wndId%
+  If (wndStyle & WS_VISIBLE) {
+    WinGetPos, wndX, wndY, wndW, wndH, ahk_id %wndId%
+    hasDimensions := wndW And wndH
+    isOnMonitor := Monitor_get(wndX, wndY) Or Monitor_get(wndX + wndW, wndY) Or Monitor_get(wndX + wndW, wndY + wndH) Or Monitor_get(wndX, wndY + wndH)
+    Return, (Not hasDimensions Or Not isOnMonitor)
+  } Else
+    Return, True
 }
 
 Window_isPopup(wndId) {
