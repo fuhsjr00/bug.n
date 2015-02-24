@@ -55,11 +55,11 @@ An example would be the value `17` for views 1 and 5.
 
 #### Mozilla Firefox
 
-The following `Config.ini` line replaces rule number 16 in the default
+The following `Config.ini` line replaces rule number 14 in the default
 configuration, putting windows of 'Mozilla Firefox' on view 5, keeping the
 title bar visible and maximizing them.
 
-`Config_rule_#16=MozillaWindowClass;.*Mozilla Firefox;;1;0;16;0;1;0;maximize`
+`Config_rule_#14=MozillaWindowClass;.*Mozilla Firefox;;1;0;16;0;1;0;maximize`
 
 #### Mozilla Thunderbird
 
