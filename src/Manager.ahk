@@ -46,6 +46,7 @@ Manager_init()
   If Not Config_showTaskBar
     Monitor_toggleTaskBar()
 
+  Manager_focus         := False
   Manager_hideShow      := False
   Bar_hideTitleWndIds   := ""
   Manager_allWndIds     := ""
@@ -109,7 +110,7 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
   WinGetClass, wndClass, ahk_id %wndId%
   WinGetTitle, wndTitle, ahk_id %wndId%
   WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
-  If (wndClass Or wndTitle) {
+  If (wndClass Or wndTitle) And Not (wndX < -4999) And Not (wndY < -4999) {
     Loop, % Config_ruleCount {
       ;; The rules are traversed in reverse order.
       i := Config_ruleCount - A_Index + 1
@@ -126,12 +127,12 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
         Break
       }
     }
+    Debug_logMessage("DEBUG[6] Manager_applyRules: class: " wndClass ", title: " wndTitle ", wndId: " wndId ", action: " action, 6)
   } Else {
     isManaged := False
     If wndTitle
       hideTitle := True
   }
-  Debug_logMessage("DEBUG[3] Manager_applyRules(wndId: " wndId ", isManaged: " isManaged ", m: " m ", tags: " tags ", isFloating: " isFloating ", isDecorated: " isDecorated ", hideTitle: " hideTitle ", action: " action "); class: " wndClass ", title: " wndTitle ", x: " wndX ", y: " wndY, 3)
 }
 
 Manager_cleanup()
@@ -294,8 +295,6 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
 {
   Local a
 
-  Debug_logMessage("DEBUG[3] Manager__setWinProperties(wndId: " wndId ", isManaged: " isManaged ", m: " m ", tags: " tags ", isDecorated: " isDecorated ", isFloating: " isFloating ", hideTitle: " hideTitle ", action: " action ")", 3)
-
   If Not Instr(Manager_allWndIds, wndId ";")
     Manager_allWndIds .= wndId ";"
 
@@ -454,10 +453,9 @@ Manager_onDisplayChange(a, wParam, uMsg, lParam) {
       Windows events can't always be caught.
 */
 Manager_onShellMessage(wParam, lParam) {
-  Local a, aWndHeight, aWndWidth, aWndX, aWndY, i, m, mouseX, mouseY, tags, updateTitleBar, updateView, v, wndClass, wndId, wndIsDesktop, wndIsHidden, wndTitle
+  Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, i, m, t, wndClass, wndId, wndId0, wndIds, wndTitle, x, y
   ;; HSHELL_* become global.
 
-  ;; MESSAGE DEFINITIONS
   HSHELL_WINDOWCREATED        :=  1       ;; A window is shown (shown ID).
   HSHELL_WINDOWDESTROYED      :=  2       ;; Seems to get sent sometimes when windows are deactivated. A window destroyed or hidden, same message for both (destroyed or hidden ID).
   HSHELL_ACTIVATESHELLWINDOW  :=  3
@@ -477,113 +475,123 @@ Manager_onShellMessage(wParam, lParam) {
   HSHELL_FLASH                := 32774    ;; (HSHELL_REDRAW|HSHELL_HIGHBIT); when a window is signalling an application update. The window is flashing due to some event, one message for each flash.
   HSHELL_RUDEAPPACTIVATED     := 32772    ;; (HSHELL_WINDOWACTIVATED|HSHELL_HIGHBIT); full-screen app activated? Root-privileged window activated? The window activated via mouse, Alt+Tab or hotkey (sometimes 4, but always one of them).
 
-  ;; GET WINDOW INFORMATION.
   SetFormat, Integer, hex
-  lParam := lParam + 0
+  lParam := lParam+0
   SetFormat, Integer, d
-  wndIsHidden := Window_isHidden(lParam, wndClass, wndTitle)
-  wndIsDesktop := (lParam = 0)
-  If wndIsDesktop {
-    WinGetClass, wndClass, A
-    WinGetTitle, wndTitle, A
+
+  Debug_logMessage("DEBUG[2] Manager_onShellMessage( wParam: " . wParam . ", lParam: " . lParam . " )", 2)
+
+  WinGetClass, wndClass, ahk_id %lParam%
+  WinGetTitle, wndTitle, ahk_id %lParam%
+  If Not wndClass And Not wndTitle {
+    ;; If there is no window class or title, it is assumed that the window is not identifiable.
+    ;;   The problem was, that i. a. claws-mail triggers Manager_sync, but the application window
+    ;;   would not be ready for being managed, i. e. class and title were not available. Therefore more
+    ;;   attempts were needed.
+    Return
   }
 
-  ;; FILTER MESSAGE.
-  ;; If there is no window class or title information, it is assumed that the window is not identifiable.
-  If Not wndClass And Not wndTitle And Not wndIsDesktop
-    Return
-  ;; Messages received under the following conditions may be misinterpreted.
-  ;; E. g. _bug.n_ is hiding a window, not the process corresponding to the window is hiding or destroying it.
-  If (wParam = HSHELL_WINDOWCREATED Or wParam = HSHELL_WINDOWDESTROYED) And Manager_hideShow
-    Return
-  ;; Do not act on the REDRAWing of hidden windows.
-  ;; @TODO: There are two problems with the use of Manager_hideShow:
+  WinGet, aWndId, ID, A
+  WinGetClass, aWndClass, ahk_id %aWndId%
+  WinGetTitle, aWndTitle, ahk_id %aWndId%
+  If ((wParam = 4 Or wParam = 32772) And (aWndClass = "WorkerW" And aWndTitle = "" Or lParam = 0 And aWndClass = "Progman" And aWndTitle = "Program Manager"))
+  {
+    MouseGetPos, x, y
+    m := Monitor_get(x, y)
+    ;; The current position of the mouse cursor defines the active monitor, if the desktop has been activated.
+    If m
+      Manager_aMonitor := m
+    Bar_updateTitle()
+  }
+
+  If (wParam = HSHELL_WINDOWREPLACED)
+  {    ;; This shouldn't need a redraw because the window was supposedly replaced.
+    Manager_unmanage(lParam)
+  }
+; If (wParam = 14)
+; {    ;; Window recovered from being hung. Maybe force a redraw.
+; }
+
+  ;; @todo: There are two problems with the use of Manager_hideShow:
   ;;   1) If Manager_hideShow is set when we hit this block, we won't take some actions that should eventually be taken.
-  ;;      This _may_ explain why some windows never get picked up when spamming Win+E.
-  ;;   -> The problem is, that closing a window or hiding it, or opening a window or showing it cannot be differentiated.
-  ;;      Therefor setting Manager_hideShow ensures, that the messages from hiding or showing windows are not misinterpreted
-  ;;      as closing or opening new windows.
+  ;;      This _may_ explain why some windows never get picked up when spamming Win+e
   ;;   2) There is a race condition between the time that Manager_hideShow is checked and any other action which we are
   ;;      trying to protect against. If another process (hotkey) enters a hideShow block after Manager_hideShow has
   ;;      been checked here, bad things could happen. I've personally observed that windows may be permanently hidden.
   ;;   Look into the use of AHK synchronization primitives.
-  If (wParam = HSHELL_REDRAW) And wndIsHidden
-    Return
+  If (wParam = 1 Or wParam = 2 Or wParam = 4 Or wParam = 6 Or wParam = 32772) And lParam And Not Manager_hideShow And Not Manager_focus
+  {
+    isChanged := Manager_sync(wndIds)
+    If wndIds
+      isChanged := False
 
-  tags := (InStr(Manager_allWndIds, lParam ";") ? "exists" : (HSHELL_WINDOWCREATED = 1 ? "created" : "")) . (wndIsHidden ? "|hidden" : "")
-  Debug_logMessage("DEBUG[2] Manager_onShellMessage(wParam: " . wParam . ", lParam: " . lParam . "); [" tags "] class: " wndClass ", title: " wndTitle, 2)
+    If isChanged
+    {
+      If Config_dynamicTiling
+        View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
+      Bar_updateView(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
+    }
 
-  ;; ACT ON MESSAGE.
-  If (wParam = HSHELL_WINDOWCREATED) {
-    If InStr(Manager_allWndIds, lParam ";") {
-      ;; If a window has been created, which already exists, ...
-      If (Config_onActiveHiddenWnds = "view") {
-        ;; ... activate (show) the view, to which the window is associated,
-        Loop, % Config_viewCount {
-          If (Window_#%lParam%_tags & 1 << A_Index - 1) {
-            Debug_logMessage("DEBUG[3] Switching view, because " . lParam . " is considered hidden but active", 3)
+    If (Manager_monitorCount > 1)
+    {
+      WinGet, aWndId, ID, A
+      WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
+      m := Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2)
+      Debug_logMessage("DEBUG[1] Manager_onShellMessage: Manager_monitorCount: " Manager_monitorCount ", Manager_aMonitor: " Manager_aMonitor ", m: " m ", aWndId: " aWndId, 1)
+      ;; The currently active window defines the active monitor.
+      If m
+        Manager_aMonitor := m
+    }
+
+    If wndIds
+    {    ;; If there are new (unrecognized) windows, which are hidden ...
+      If (Config_onActiveHiddenWnds = "view")
+      {  ;; ... change the view to show the first hidden window
+        wndId := SubStr(wndIds, 1, InStr(wndIds, ";") - 1)
+        Loop, % Config_viewCount
+        {
+          If (Window_#%wndId%_tags & 1 << A_Index - 1)
+          {
+            Debug_logMessage("DEBUG[3] Switching views because " . wndId . " is considered hidden and active", 3)
             ;; A newly created window defines the active monitor, if it is visible.
-            Manager_aMonitor := Window_#%lParam%_monitor
+            Manager_aMonitor := Window_#%wndId%_monitor
             Monitor_activateView(A_Index)
             Break
           }
         }
-      } Else If (Config_onActiveHiddenWnds = "hide") {
-        ;; ... re-hide the window,
-        Window_hide(%lParam%)
-      } Else If (Config_onActiveHiddenWnds = "tag") {
-        ;; ... or additionally tag the window for the current view.
-        v := Monitor_#%Manager_aMonitor%_aView_#1
-        View_#%Manager_aMonitor%_#%v%_wndIds := lParam ";" View_#%Manager_aMonitor%_#%v%_wndIds
-        View_#%Manager_aMonitor%_#%v%_aWndId := lParam
-        Window_#%lParam%_tags += 1 << v - 1
-        Bar_updateView(Manager_aMonitor, v)
-        If Config_dynamicTiling
-          View_arrange(Manager_aMonitor, v)
       }
-    } Else
-      updateView := Manager_manage(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, lParam)
-  } Else If (wParam = HSHELL_WINDOWDESTROYED) And (Window_#%lParam%_tags & 1 << Monitor_#%Manager_aMonitor%_aView_#1 - 1) {
-    updateView := Manager_unmanage(lParam)
-  } Else If (wParam = HSHELL_WINDOWACTIVATED Or wParam = HSHELL_RUDEAPPACTIVATED Or wParam = HSHELL_REDRAW) {
-    If wndIsDesktop {
-      ;; The current position of the mouse cursor defines the active monitor, if the desktop has been activated.
-      MouseGetPos, mouseX, mouseY
-      m := Monitor_get(mouseX, mouseY)
-    } Else If (Manager_monitorCount > 1) {
-      ;; The currently active window defines the active monitor.
-      WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, A
-      m := Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2)
+      Else
+      {  ;; ... re-hide them
+        StringTrimRight, wndIds, wndIds, 1
+        StringSplit, wndId, wndIds, `;
+        If (Config_onActiveHiddenWnds = "hide")
+        {
+          Loop, % wndId0
+          {
+            Window_hide(wndId%A_Index%)
+          }
+        }
+        Else If (Config_onActiveHiddenWnds = "tag")
+        {
+          ;; ... or tag all of them for the current view.
+          t := Monitor_#%Manager_aMonitor%_aView_#1
+          Loop, % wndId0
+          {
+            wndId := wndId%A_Index%
+            View_#%Manager_aMonitor%_#%t%_wndIds := wndId ";" View_#%Manager_aMonitor%_#%t%_wndIds
+            View_#%Manager_aMonitor%_#%t%_aWndId := wndId
+            Window_#%wndId%_tags += 1 << t - 1
+          }
+          Bar_updateView(Manager_aMonitor, t)
+          If Config_dynamicTiling
+            View_arrange(Manager_aMonitor, t)
+        }
+      }
     }
-    Debug_logMessage("DEBUG[1] Manager_onShellMessage: Manager_monitorCount: " Manager_monitorCount ", Manager_aMonitor: " Manager_aMonitor ", m: " m, 1)
-    If m
-      Manager_aMonitor := m
-    updateTitleBar := True
-  } Else If (wParam = HSHELL_WINDOWREPLACED) {
-    updateView := Manager_unmanage(lParam)
-;  } Else If (wParam = HSHELL_WINDOWREPLACING) {
-    ;; A window recovered from being hung; maybe force a redraw?
-  }
 
-  ;; MISSED MESSAGES? FIND ADDITIONAL WINDOWS.
-  WinGet, wndId, List, , ,
-  Loop, % wndId {
-    If Not InStr(Manager_allWndIds, wndId%A_Index% ";") {
-      a := Manager_manage(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, wndId%A_Index%)
-      If a
-        updateView := a
-    }
-  }
-
-  ;; IN MOST CASES DO THE FOLLOWING.
-  If updateView {
-    If Config_dynamicTiling
-      View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
-    Bar_updateView(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
-    updateTitleBar := True
-  }
-  If updateTitleBar {
-    ;; This is a workaround for a redrawing problem of the bug.n bar, which seems to get lost, when windows are created or destroyed under the following conditions.
+    ;; This is a workaround for a redrawing problem of the bug.n bar, which
+    ;; seems to get lost, when windows are created or destroyed under the
+    ;; following conditions.
     If (Manager_monitorCount > 1) And (Config_verticalBarPos = "tray") {
       Loop, % (Manager_monitorCount - 1) {
         i := A_Index + 1
@@ -1036,6 +1044,60 @@ Manager_initial_sync(doRestore) {
   }
 }
 
+;; @todo: This constantly tries to re-add windows that are never going to be manageable.
+;;   Manager_manage should probably ignore all windows that are already in Manager_allWndIds.
+;;   The problem was, that i. a. claws-mail triggers Manager_sync, but the application window
+;;   would not be ready for being managed, i. e. class and title were not available. Therefore more
+;;   attempts were needed.
+;;   Perhaps this method can be refined by not adding any window to Manager_allWndIds, but only
+;;   those, which have at least a title or class.
+Manager_sync(ByRef wndIds = "")
+{
+  Local a, flag, shownWndIds, v, visibleWndIds, wndId
+
+  Loop, % Manager_monitorCount
+  {
+    v := Monitor_#%A_Index%_aView_#1
+    shownWndIds .= View_#%A_Index%_#%v%_wndIds
+  }
+  ;; Check all visible windows against the known windows
+  WinGet, wndId, List, , ,
+  Loop, % wndId
+  {
+    If Not InStr(shownWndIds, wndId%A_Index% ";")
+    {
+      If Not InStr(Manager_managedWndIds, wndId%A_Index% ";")
+      {
+        flag := Manager_manage(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, wndId%A_Index%)
+        If flag
+          a := flag
+      }
+      Else If Not Window_isHung(wndId%A_Index%)
+      {
+        ;; This is a window that is already managed but was brought into focus by something.
+        ;; Maybe it would be useful to do something with it.
+        wndIds .= wndId%A_Index% ";"
+      }
+    }
+    visibleWndIds := visibleWndIds wndId%A_Index% ";"
+  }
+
+  ;; @todo-future: Find out why this unmanage code exists and if it's still needed.
+  ;; check, if a window, that is known to be visible, is actually not visible
+  StringTrimRight, shownWndIds, shownWndIds, 1
+  Loop, PARSE, shownWndIds, `;
+  {
+    If Not InStr(visibleWndIds, A_LoopField)
+    {
+      flag := Manager_unmanage(A_LoopField)
+      If flag
+        a := flag
+    }
+  }
+
+  Return, a
+}
+
 Manager_unmanage(wndId) {
   Local a, aView, wndId0, wndIds
 
@@ -1049,6 +1111,8 @@ Manager_unmanage(wndId) {
   Else
     Manager_winActivate(0)
 
+  ;; Do our best to make sure that any unmanaged windows are left visible.
+  Window_show(wndId)
   a := Window_#%wndId%_tags & 1 << aView - 1
   Loop, % Config_viewCount {
     If (Window_#%wndId%_tags & 1 << A_Index - 1) {
