@@ -175,8 +175,18 @@ Manager_closeWindow() {
   Local aView, aWndId, wndId0, wndIds
 
   WinGet, aWndId, ID, A
-  If Window_isProg(aWndId)
+  If Window_isProg(aWndId) {
+    ;; Prior to closing, find the next window that should have focus.
+    ;;   If there is no such window, choose the bar on the same monitor.
+    aView := Monitor_#%Manager_aMonitor%_aView_#1
+    StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%aView%_wndIds, 1
+    StringSplit, wndId, wndIds, `;
+    If (wndId0 >= 2)
+      View_activateWindow(0, +1)
+    Else
+      Manager_winActivate(0)
     Window_close(aWndId)
+  }
 }
 
 ; Asynchronous management of various WM properties.
@@ -542,7 +552,6 @@ Manager_onShellMessage(wParam, lParam) {
     Debug_logMessage("DEBUG[1] Manager_onShellMessage: Manager_monitorCount: " Manager_monitorCount ", Manager_aMonitor: " Manager_aMonitor ", m: " m, 1)
     If m
       Manager_aMonitor := m
-    View_setActiveWindow(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, lParam)
     updateTitleBar := True
   } Else If (wParam = HSHELL_WINDOWREPLACED) {
     updateView := Manager_unmanage(lParam)
