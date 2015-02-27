@@ -548,15 +548,14 @@ Manager_onShellMessage(wParam, lParam) {
   }
 
   ;; MISSED MESSAGES? FIND ADDITIONAL WINDOWS.
-  ;; !! THIS CODE CURRENTLY DOES SOME AWEFUL THINGS!
-;  WinGet, wndId, List, , ,
-;  Loop, % wndId {
-;    If Not InStr(Manager_allWndIds, wndId%A_Index% ";") {
-;      a := Manager_manage(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, wndId%A_Index%)
-;      If a
-;        updateView := a
-;    }
-;  }
+  WinGet, wndId, List, , ,
+  Loop, % wndId {
+    If Not InStr(Manager_allWndIds, wndId%A_Index% ";") {
+      a := Manager_manage(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, wndId%A_Index%)
+      If a
+        updateView := a
+    }
+  }
 
   ;; IN MOST CASES DO THE FOLLOWING.
   If updateView {
