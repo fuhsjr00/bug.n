@@ -433,47 +433,52 @@ Manager_onDisplayChange(a, wParam, uMsg, lParam) {
     Manager_resetMonitorConfiguration()
 }
 
+HSHELL_WINDOWCREATED := 1
+;; Seems to get sent sometimes when windows are deactivated.
+HSHELL_WINDOWDESTROYED := 2
+HSHELL_WINDOWACTIVATED := 4
+;; At least title change.
+HSHELL_REDRAW := 6
+;; The following two are seen when a hung window recovers.
+;; lParam notes the ghost process
+HSHELL_WINDOWREPLACED := 13
+;; lParam notes the recovered process
+;;14
+;; Full-screen app activated? Root-privileged window activated?
+HSHELL_RUDEAPPACTIVATED := 32772
+;; When a window is signalling an application update.
+WINDOW_NOTICE := 32774
+
 /*
-  Reliable messages: 1, 2, 4, 6, 13, 14, 32772, 32774. Any message may be missed, if bug.n is hung.
-  Indications of a ...
-    new window:
-      6:     Cmd/shell may be starting a new window.
-      6:     Win+E indicates a new window, as long as the button presses are below a certain frequency.
-      1:     Maybe a new window started from Windows Explorer.
+  Reliable messages and their meanings (note that any message may be missed if bug.n is hung):
+        1 - Window shown (shown ID)
+        2 - Window destroyed or hidden, same message for both (destroyed or hidden ID)
+        4 - Window activated via mouse, alt+tab, or hotkey (sometimes 32772, but always one of them)
+        6 - Window title change (ID of redrawn window)
+       13 - Hung window recovers and replaces ghost window (ghost window ID is provided)
+       14 - Hung window recovered (ID of previously hung window)
+    32772 - Window activated via mouse, alt+tab, or hotkey (sometimes 4, but always one of them)
+    32774 - Window is flashing due to some event, one message for each flash
+
+  Indications of:
+    New windows
+      cmd/shell may be starting a new window on message 6
+      Win+e indicates a new window with message 6 as long as the button
+      presses are below a certain frequency.
+      Message 1 may indicate a new window started from Windows Explorer.
       There doesn't seem to be a reliable way to get all application starts.
-    closed window:
-      13:    Always indicates closed ghost window.
-       2:    Always indicates closed standard window. (?)
-    focus change:
-      4:     Always catch this!
-      32772: Always catch this!
-    window event:
-      6:     Title changes, which can be used in the case of some applications, ...
-      32774: ...works for others.
+    Closed windows
+      13 always indicates closed ghost window
+       2 always indicates closed standard window
+    Focus change
+       4 or 32772 always catch this
+    Window event
+      6 indicates when title changes which can be used
+      in the case of some applications, 32774 works for others
       Windows events can't always be caught.
 */
 Manager_onShellMessage(wParam, lParam) {
   Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, i, m, t, wndClass, wndId, wndId0, wndIds, wndTitle, x, y
-  ;; HSHELL_* become global.
-
-  HSHELL_WINDOWCREATED        :=  1       ;; A window is shown (shown ID).
-  HSHELL_WINDOWDESTROYED      :=  2       ;; Seems to get sent sometimes when windows are deactivated. A window destroyed or hidden, same message for both (destroyed or hidden ID).
-  HSHELL_ACTIVATESHELLWINDOW  :=  3
-  HSHELL_WINDOWACTIVATED      :=  4       ;; At least the title changes. A window is activated via mouse, Alt+Tab or hotkey (sometimes 32772, but always one of them).
-  HSHELL_GETMINRECT           :=  5
-  HSHELL_REDRAW               :=  6       ;; A window title changes (ID of redrawn window).
-  HSHELL_TASKMAN              :=  7
-  HSHELL_LANGUAGE             :=  8
-  HSHELL_SYSMENU              :=  9
-  HSHELL_ENDTASK              := 10
-  HSHELL_ACCESSIBILITYSTATE   := 11
-  HSHELL_APPCOMMAND           := 12
-  ;; The following two are seen when a hung window recovers.
-  HSHELL_WINDOWREPLACED       := 13       ;; lParam notes the ghost process. A hung window recovers and replaces the ghost window (ghost window ID).
-  HSHELL_WINDOWREPLACING      := 14       ;; lParam notes the recovered process. A hung window recovered (ID of previously hung window).
-  HSHELL_HIGHBIT              := 32768    ;; 0x8000
-  HSHELL_FLASH                := 32774    ;; (HSHELL_REDRAW|HSHELL_HIGHBIT); when a window is signalling an application update. The window is flashing due to some event, one message for each flash.
-  HSHELL_RUDEAPPACTIVATED     := 32772    ;; (HSHELL_WINDOWACTIVATED|HSHELL_HIGHBIT); full-screen app activated? Root-privileged window activated? The window activated via mouse, Alt+Tab or hotkey (sometimes 4, but always one of them).
 
   SetFormat, Integer, hex
   lParam := lParam+0
