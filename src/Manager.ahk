@@ -673,8 +673,7 @@ Manager_restoreWindowBorders()
 ;; If the state is completely different, this function won't do much. However, if restoring from a crash
 ;; or simply restarting bug.n, it should completely recover the window state.
 Manager__restoreWindowState(filename) {
-  Local candidate_set, detectHiddenWindows, excluded_view_set, hideTitle, i, isDecorated, isFloating, isManaged, items0, j, m, v
-  Local vidx, view_list0, view_m0, view_set, view_v0, view_var, widx, wndPName, wnds0
+  Local vidx, widx, i, j, m, v, candidate_set, view_set, excluded_view_set, view_m0, view_v0, view_list0, wnds0, items0, wndPName, view_var, isManaged, isFloating, isDecorated, hideTitle
 
   If Not FileExist(filename)
     Return
@@ -732,10 +731,9 @@ Manager__restoreWindowState(filename) {
     i := items%i%
     j := 2
 
-    detectHiddenWindows := DetectHiddenWindows
     DetectHiddenWindows, On
     WinGet, wndPName, ProcessName, ahk_id %i%
-    DetectHiddenWindows, %detectHiddenWindows%
+    DetectHiddenWindows, Off
     If Not ( items%j% = wndPName ) {
       Debug_logMessage("Window ahk_id " . i . " process '" . wndPName . "' doesn't match expected '" . items%j% . "', forgetting this window", 0)
       Continue
@@ -811,7 +809,7 @@ Manager_saveState() {
 }
 
 Manager_saveWindowState(filename, nm, nv) {
-  Local allWndId0, allWndIds, detectHiddenWindows, isManaged, isTitleHidden, monitor, text, title, wndId, view, wndPName
+  Local allWndId0, allWndIds, wndPName, title, text, monitor, wndId, view, isManaged, isTitleHidden
 
   text := "; bug.n - tiling window management`n; @version " VERSION "`n`n"
 
@@ -822,7 +820,6 @@ Manager_saveWindowState(filename, nm, nv) {
   ;   to recover that window.
   StringTrimRight, allWndIds, Manager_allWndIds, 1
   StringSplit, allWndId, allWndIds, `;
-  detectHiddenWindows := DetectHiddenWindows
   DetectHiddenWindows, On
   Loop, % allWndId0 {
     wndId := allWndId%A_Index%
@@ -837,7 +834,7 @@ Manager_saveWindowState(filename, nm, nv) {
 
     text .= "Window " . wndId . ";" . wndPName . ";" . Window_#%wndId%_monitor . ";" . Window_#%wndId%_tags . ";" . Window_#%wndId%_isFloating . ";" . Window_#%wndId%_isDecorated . ";" . isTitleHidden . ";" . isManaged . ";" . title . "`n"
   }
-  DetectHiddenWindows, %detectHiddenWindows%
+  DetectHiddenWindows, Off
 
   text .= "`n"
 
@@ -1022,17 +1019,10 @@ Manager_initial_sync(doRestore) {
 }
 
 Manager_unmanage(wndId) {
-  Local a, aView, aWndId, detectHiddenWindows, wndClass, wndTitle
+  Local a, aView, aWndId
 
   aView := Monitor_#%Manager_aMonitor%_aView_#1
   a := Window_#%wndId%_tags & 1 << aView - 1
-
-  detectHiddenWindows := DetectHiddenWindows
-  DetectHiddenWindows, On
-  WinGetClass, wndClass, ahk_id %wndId%
-  WinGetTitle, wndTitle, ahk_id %wndId%
-  DetectHiddenWindows, %detectHiddenWindows%
-  Debug_logMessage("DEBUG[3] Manager_unmanage(wndId: " wndId "); class: " wndClass ", title: " wndTitle, 3)
 
   Loop, % Config_viewCount {
     If (Window_#%wndId%_tags & 1 << A_Index - 1) {
