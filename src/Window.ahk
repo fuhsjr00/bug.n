@@ -110,6 +110,18 @@ Window_isHung(wndId) {
     Return, 0
 }
 
+Window_isNotVisible(wndId) {
+  WS_VISIBLE = 0x10000000
+  WinGet, wndStyle, Style, ahk_id %wndId%
+  If (wndStyle & WS_VISIBLE) {
+    WinGetPos, wndX, wndY, wndW, wndH, ahk_id %wndId%
+    hasDimensions := wndW And wndH
+    isOnMonitor := Monitor_get(wndX + 5, wndY + 5) Or Monitor_get(wndX + wndW - 5, wndY + 5) Or Monitor_get(wndX + wndW, wndY + wndH - 5) Or Monitor_get(wndX + 5, wndY + wndH - 5)
+    Return, (Not hasDimensions Or Not isOnMonitor)
+  } Else
+    Return, True
+}
+
 Window_isPopup(wndId) {
   WS_POPUP = 0x80000000
   WinGet, wndStyle, Style, ahk_id %wndId%

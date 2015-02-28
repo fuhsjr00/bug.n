@@ -110,7 +110,7 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
   WinGetClass, wndClass, ahk_id %wndId%
   WinGetTitle, wndTitle, ahk_id %wndId%
   WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
-  If (wndClass Or wndTitle) And Not (wndX < -4999) And Not (wndY < -4999) {
+  If (wndClass Or wndTitle) {
     Loop, % Config_ruleCount {
       ;; The rules are traversed in reverse order.
       i := Config_ruleCount - A_Index + 1
@@ -380,9 +380,6 @@ Manager_manage(preferredMonitor, preferredView, wndId)
     If (tags = 0)
       tags := 1 << (preferredView - 1)
   }
-
-  If Window_isElevated(wndId)
-    isManaged := 0
 
   a := Manager__setWinProperties( wndId, isManaged, m, tags, isDecorated, isFloating, hideTitle, action)
 
