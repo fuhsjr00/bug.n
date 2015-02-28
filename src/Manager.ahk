@@ -433,52 +433,38 @@ Manager_onDisplayChange(a, wParam, uMsg, lParam) {
     Manager_resetMonitorConfiguration()
 }
 
-HSHELL_WINDOWCREATED := 1
-;; Seems to get sent sometimes when windows are deactivated.
-HSHELL_WINDOWDESTROYED := 2
-HSHELL_WINDOWACTIVATED := 4
-;; At least title change.
-HSHELL_REDRAW := 6
-;; The following two are seen when a hung window recovers.
-;; lParam notes the ghost process
-HSHELL_WINDOWREPLACED := 13
-;; lParam notes the recovered process
-;;14
-;; Full-screen app activated? Root-privileged window activated?
-HSHELL_RUDEAPPACTIVATED := 32772
-;; When a window is signalling an application update.
-WINDOW_NOTICE := 32774
-
 /*
-  Reliable messages and their meanings (note that any message may be missed if bug.n is hung):
-        1 - Window shown (shown ID)
-        2 - Window destroyed or hidden, same message for both (destroyed or hidden ID)
-        4 - Window activated via mouse, alt+tab, or hotkey (sometimes 32772, but always one of them)
-        6 - Window title change (ID of redrawn window)
-       13 - Hung window recovers and replaces ghost window (ghost window ID is provided)
-       14 - Hung window recovered (ID of previously hung window)
-    32772 - Window activated via mouse, alt+tab, or hotkey (sometimes 4, but always one of them)
-    32774 - Window is flashing due to some event, one message for each flash
-
-  Indications of:
-    New windows
-      cmd/shell may be starting a new window on message 6
-      Win+e indicates a new window with message 6 as long as the button
-      presses are below a certain frequency.
-      Message 1 may indicate a new window started from Windows Explorer.
+  Possible indications for a ...
+    new window: 1 (started by Windows Explorer) or 6 (started by cmd, shell or Win+E).
       There doesn't seem to be a reliable way to get all application starts.
-    Closed windows
-      13 always indicates closed ghost window
-       2 always indicates closed standard window
-    Focus change
-       4 or 32772 always catch this
-    Window event
-      6 indicates when title changes which can be used
-      in the case of some applications, 32774 works for others
-      Windows events can't always be caught.
+    closed window: 2 (always?) or 13 (ghost)
+    focus change: 4 or 32772
+    title change: 6 or 32774
 */
 Manager_onShellMessage(wParam, lParam) {
   Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, i, m, t, wndClass, wndId, wndId0, wndIds, wndTitle, x, y
+  ;; HSHELL_* become global.
+
+  ;; MESSAGE NAME AND         ... NUMBER    COMMENTS, POSSIBLE EVENTS
+  HSHELL_WINDOWCREATED        :=  1         ;; window shown
+  HSHELL_WINDOWDESTROYED      :=  2         ;; window hidden, destroyed or deactivated
+  HSHELL_ACTIVATESHELLWINDOW  :=  3
+  HSHELL_WINDOWACTIVATED      :=  4         ;; window title changed, window activated (by mouse, Alt+Tab or hotkey); alternative message: 32772
+  HSHELL_GETMINRECT           :=  5
+  HSHELL_REDRAW               :=  6         ;; window title changed
+  HSHELL_TASKMAN              :=  7
+  HSHELL_LANGUAGE             :=  8
+  HSHELL_SYSMENU              :=  9
+  HSHELL_ENDTASK              := 10
+  HSHELL_ACCESSIBILITYSTATE   := 11
+  HSHELL_APPCOMMAND           := 12
+  ;; The following two are seen when a hung window recovers.
+  HSHELL_WINDOWREPLACED       := 13         ;; hung window recovered and replaced the ghost window (lParam indicates the ghost window.)
+  HSHELL_WINDOWREPLACING      := 14         ;; hung window recovered (lParam indicates the previously hung and now recovered window.)
+  HSHELL_HIGHBIT              := 32768      ;; 0x8000
+  HSHELL_FLASH                := 32774      ;; (HSHELL_REDRAW|HSHELL_HIGHBIT); window signalling an application update (The window is flashing due to some event, one message for each flash.)
+  HSHELL_RUDEAPPACTIVATED     := 32772      ;; (HSHELL_WINDOWACTIVATED|HSHELL_HIGHBIT); full-screen app or root-privileged window activated? alternative message: 4
+  ;; Any message may be missed, if bug.n is hung or they come in too quickly.
 
   SetFormat, Integer, hex
   lParam := lParam+0
@@ -509,10 +495,13 @@ Manager_onShellMessage(wParam, lParam) {
     Bar_updateTitle()
   }
 
-  If (wParam = HSHELL_WINDOWREPLACED)
-  {    ;; This shouldn't need a redraw because the window was supposedly replaced.
-    Manager_unmanage(lParam)
-  }
+  ;; This was previously inactive due to `HSHELL_WINDOWREPLACED` not being defined in this function.
+  ;; Afterwards it caused problems managing new windows, when messages come in too quickly.
+;  If (wParam = HSHELL_WINDOWREPLACED)
+;  {    ;; This shouldn't need a redraw because the window was supposedly replaced.
+;    Manager_unmanage(lParam)
+;  }
+
 ; If (wParam = 14)
 ; {    ;; Window recovered from being hung. Maybe force a redraw.
 ; }
