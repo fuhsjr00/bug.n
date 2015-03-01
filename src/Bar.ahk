@@ -390,7 +390,18 @@ Bar_updateStatic(m) {
 }
 
 Bar_updateStatus() {
-  Local anyContent, anyText, bat1, bat2, bat3, GuiN, m, mute, vol
+  Local anyText, bat1, bat2, bat3, GuiN, m, mute, vol
+
+  anyText := Config_readinAny()
+  If Config_readinBat {
+    ResourceMonitor_getBatteryStatus(bat1, bat2)
+    bat3 := SubStr("  " bat1, -2)
+  }
+  If Config_readinVolume {
+    SoundGet, vol, MASTER, VOLUME
+    SoundGet, mute, MASTER, MUTE
+    vol := Round(vol)
+  }
 
   Loop, % Manager_monitorCount {
     m := A_Index
@@ -398,8 +409,6 @@ Bar_updateStatus() {
     Debug_logMessage("DEBUG[6] Bar_updateStatus(): Gui, " . GuiN . ": Default", 6)
     Gui, %GuiN%: Default
     If Config_readinBat {
-      ResourceMonitor_getBatteryStatus(bat1, bat2)
-      bat3 := SubStr("  " bat1, -2)
       If (bat1 < 10) And (bat2 = "off") {
         ;; Change the color, if the battery level is below 10%
         GuiControl, +Background%Config_backColor_#3_#8% +c%Config_foreColor_#3_#8%, Bar_#%m%_batteryStatus_highlighted
@@ -415,16 +424,9 @@ Bar_updateStatus() {
       GuiControl, , Bar_#%m%_batteryStatus_highlighted, %bat3%
       GuiControl, , Bar_#%m%_batteryStatus, % " BAT: " bat3 "% "
     }
-    anyText := Config_readinAny()
-    If anyText {
-      GuiControlGet, anyContent, , Bar_#%m%_anyText
-      If Not (anyText = anyContent)
-        GuiControl, , Bar_#%m%_anyText, % anyText
-    }
+    If anyText
+      GuiControl, , Bar_#%m%_anyText, % anyText
     If Config_readinVolume {
-      SoundGet, vol, MASTER, VOLUME
-      SoundGet, mute, MASTER, MUTE
-      vol := Round(vol)
       If (mute = "On") {
         ;; Change the color, if the mute is on
         GuiControl, +Background%Config_backColor_#1_#9% +c%Config_foreColor_#1_#9%, Bar_#%m%_volume_highlighted
