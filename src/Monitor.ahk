@@ -33,7 +33,7 @@ Monitor_init(m, doRestore) {
 }
 
 Monitor_activateView(i, d = 0) {
-  Local aView, aWndId, m, n, wndId, wndIds
+  Local aView, aWndId, detectHidden, m, n, wndId, wndIds
 
   If (i = -1)
     i := Monitor_#%Manager_aMonitor%_aView_#2
@@ -77,12 +77,13 @@ Monitor_activateView(i, d = 0) {
         Window_hide(A_LoopField)
     }
     SetWinDelay, 10
+    detectHidden := A_DetectHiddenWindows
     DetectHiddenWindows, On
     wndId := View_#%m%_#%i%_aWndId
     If wndId
       Window_set(wndId, "AlwaysOnTop", "On")
     View_arrange(m, i)
-    DetectHiddenWindows, Off
+    DetectHiddenWindows, %detectHidden%
     StringTrimRight, wndIds, View_#%m%_#%i%_wndIds, 1
     SetWinDelay, 0
     Loop, PARSE, wndIds, `;
@@ -266,20 +267,17 @@ Monitor_toggleBar()
   Manager_winActivate(Bar_aWndId)
 }
 
-Monitor_toggleNotifyIconOverflowWindow()
-{
+Monitor_toggleNotifyIconOverflowWindow() {
   Static wndId
 
-  If Not WinExist("ahk_class NotifyIconOverflowWindow")
-  {
+  If Not WinExist("ahk_class NotifyIconOverflowWindow") {
     WinGet, wndId, ID, A
+    detectHidden := A_DetectHiddenWindows
     DetectHiddenWindows, On
     WinShow, ahk_class NotifyIconOverflowWindow
     WinActivate, ahk_class NotifyIconOverflowWindow
-    DetectHiddenWindows, Off
-  }
-  Else
-  {
+    DetectHiddenWindows, %detectHidden%
+  } Else {
     WinHide, ahk_class NotifyIconOverflowWindow
     WinActivate, ahk_id %wndId%
   }

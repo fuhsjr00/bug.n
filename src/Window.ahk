@@ -96,14 +96,14 @@ Window_isGhost(wndId) {
 ;; 0 - Not hung
 ;; 1 - Hung
 Window_isHung(wndId) {
-  Local detectSetting, result, WM_NULL
+  Local detectHidden, result, WM_NULL
 
   WM_NULL = 0
-  detectSetting := A_DetectHiddenWindows
+  detectHidden := A_DetectHiddenWindows
   DetectHiddenWindows, On
   SendMessage, WM_NULL, , , , ahk_id %wndId%
   result := ErrorLevel
-  DetectHiddenWindows, %detectSetting%
+  DetectHiddenWindows, %detectHidden%
 
   If result
     Return, 1

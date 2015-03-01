@@ -92,13 +92,12 @@ Debug_logViewWindowList()
   }
 }
 
-Debug_logWindowInfo(wndId)
-{
-  Local aWndId, detectSetting, text, v
+Debug_logWindowInfo(wndId) {
+  Local aWndId, detectHidden, text, v
   Local isBugnActive, isDecorated, isFloating, isGhost, isHidden, isResponsive, isWinFocus
   Local wndClass, wndH, wndPId, wndPName, wndStyle, wndTitle, wndW, wndX, wndY
 
-  detectSetting := A_DetectHiddenWindows
+  detectHidden := A_DetectHiddenWindows
   DetectHiddenWindows, On
   WinGet, aWndId, ID, A
   If aWndId = %wndId%
@@ -132,7 +131,7 @@ Debug_logWindowInfo(wndId)
     isGhost := "*"
   Else
     isGhost := " "
-  DetectHiddenWindows, %detectSetting%
+  DetectHiddenWindows, %detectHidden%
 
   ;; Intentionally don't detect hidden windows here to see what Manager_hungTest does
   If Window_isHung(wndId)
