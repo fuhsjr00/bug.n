@@ -57,6 +57,21 @@ Window_findHung(ghostWndId) {
   Return, 0
 }
 
+Window_getHidden(wndId, ByRef wndClass, ByRef wndTitle) {
+  WinGetClass, wndClass, ahk_id %wndId%
+  WinGetTitle, wndTitle, ahk_id %wndId%
+  If Not wndClass And Not wndTitle {
+    detectHiddenWnds := A_DetectHiddenWindows
+    DetectHiddenWindows, On
+    WinGetClass, wndClass, ahk_id %wndId%
+    WinGetTitle, wndTitle, ahk_id %wndId%
+    DetectHiddenWindows, %detectHiddenWnds%
+    ;; If now wndClass Or wndTitle, but Not wndClass And Not wndTitle before, wnd is hidden.
+    Return, (wndClass Or wndTitle)
+  } Else
+    Return, False
+}
+
 Window_hide(wndId) {
   If Window_isHung(wndId) {
     Debug_logMessage("DEBUG[2] Window_hide: Potentially hung window " . wndId, 2)

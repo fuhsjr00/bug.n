@@ -46,7 +46,6 @@ Manager_init()
   If Not Config_showTaskBar
     Monitor_toggleTaskBar()
 
-  Manager_focus         := False
   Manager_hideShow      := False
   Bar_hideTitleWndIds   := ""
   Manager_allWndIds     := ""
@@ -96,7 +95,7 @@ Manager_activateMonitor(i, d = 0) {
 }
 
 Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating, ByRef isDecorated, ByRef hideTitle, ByRef action) {
-  Local i, mouseX, mouseY, wndClass, wndHeight, wndTitle, wndWidth, wndX, wndY
+  Local i, wndClass, wndTitle
   Local rule0, rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10
 
   isManaged   := True
@@ -109,7 +108,6 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
 
   WinGetClass, wndClass, ahk_id %wndId%
   WinGetTitle, wndTitle, ahk_id %wndId%
-  WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
   If (wndClass Or wndTitle) {
     Loop, % Config_ruleCount {
       ;; The rules are traversed in reverse order.
@@ -439,7 +437,7 @@ Manager_onDisplayChange(a, wParam, uMsg, lParam) {
     title change: 6 or 32774
 */
 Manager_onShellMessage(wParam, lParam) {
-  Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, i, m, t, wndClass, wndId, wndId0, wndIds, wndTitle, x, y
+  Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, i, m, t, wndClass, wndId, wndId0, wndIds, wndIsDesktop, wndIsHidden, wndTitle, x, y
   ;; HSHELL_* become global.
 
   ;; MESSAGE NAME AND         ... NUMBER    COMMENTS, POSSIBLE EVENTS
@@ -464,14 +462,13 @@ Manager_onShellMessage(wParam, lParam) {
   ;; Any message may be missed, if bug.n is hung or they come in too quickly.
 
   SetFormat, Integer, hex
-  lParam := lParam+0
+  lParam := lParam + 0
   SetFormat, Integer, d
 
   Debug_logMessage("DEBUG[2] Manager_onShellMessage( wParam: " . wParam . ", lParam: " . lParam . " )", 2)
 
-  WinGetClass, wndClass, ahk_id %lParam%
-  WinGetTitle, wndTitle, ahk_id %lParam%
-  If Not wndClass And Not wndTitle {
+  wndIsHidden := Window_getHidden(lParam, wndClass, wndTitle)
+  If wndIsHidden {
     ;; If there is no window class or title, it is assumed that the window is not identifiable.
     ;;   The problem was, that i. a. claws-mail triggers Manager_sync, but the application window
     ;;   would not be ready for being managed, i. e. class and title were not available. Therefore more
@@ -479,6 +476,11 @@ Manager_onShellMessage(wParam, lParam) {
     Return
   }
 
+  wndIsDesktop := (lParam = 0)
+  If wndIsDesktop {
+    WinGetClass, wndClass, A
+    WinGetTitle, wndTitle, A
+  }
   WinGet, aWndId, ID, A
   WinGetClass, aWndClass, ahk_id %aWndId%
   WinGetTitle, aWndTitle, ahk_id %aWndId%
@@ -510,7 +512,7 @@ Manager_onShellMessage(wParam, lParam) {
   ;;      trying to protect against. If another process (hotkey) enters a hideShow block after Manager_hideShow has
   ;;      been checked here, bad things could happen. I've personally observed that windows may be permanently hidden.
   ;;   Look into the use of AHK synchronization primitives.
-  If (wParam = 1 Or wParam = 2 Or wParam = 4 Or wParam = 6 Or wParam = 32772) And lParam And Not Manager_hideShow And Not Manager_focus
+  If (wParam = 1 Or wParam = 2 Or wParam = 4 Or wParam = 6 Or wParam = 32772) And lParam And Not Manager_hideShow
   {
     isChanged := Manager_sync(wndIds)
     If wndIds
