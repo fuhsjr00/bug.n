@@ -51,7 +51,7 @@ Debug_logManagedWindowList()
   Local wndIds
 
   Debug_logMessage("Window dump for manager")
-  Debug_logMessage("ID     `tH W A F D R G M Tags`tX   `tY   `tW   `tH   `tStyle     `tProc / Class / Title", 0, False)
+  Debug_logMessage("ID`t`tH W A F D R G M`tTags`tX`tY`tW`tH`tStyle`t`tProc / Class / Title", 0, False)
 
   StringTrimRight, wndIds, Manager_managedWndIds, 1
   Loop, PARSE, wndIds, `;
@@ -77,27 +77,27 @@ Debug_logMessage(text, level = 1, includeTimestamp = True)
   }
 }
 
-Debug_logViewWindowList() {
+Debug_logViewWindowList()
+{
   Local v, wndIds
 
   v := Monitor_#%Manager_aMonitor%_aView_#1
   Debug_logMessage("Window dump for active view (" . Manager_aMonitor . ", " . v . ")")
-  Debug_logMessage("ID     `tH W A F D R G M Tags`tX   `tY   `tW   `tH   `tStyle     `tProc / Class / Title", 0, False)
+  Debug_logMessage("ID`t`tH W A F D R G M`tTags`tX`tY`tW`tH`tStyle`t`tProc / Class / Title", 0, False)
 
   StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
-  Loop, Parse, wndIds, `;
+  Loop, PARSE, wndIds, `;
   {
     Debug_logWindowInfo(A_LoopField)
   }
 }
 
-Debug_logWindowInfo(wndId)
-{
-  Local aWndId, detectSetting, text, v
+Debug_logWindowInfo(wndId) {
+  Local aWndId, detectHidden, text, v
   Local isBugnActive, isDecorated, isFloating, isGhost, isHidden, isResponsive, isWinFocus
   Local wndClass, wndH, wndPId, wndPName, wndStyle, wndTitle, wndW, wndX, wndY
 
-  detectSetting := A_DetectHiddenWindows
+  detectHidden := A_DetectHiddenWindows
   DetectHiddenWindows, On
   WinGet, aWndId, ID, A
   If aWndId = %wndId%
@@ -105,7 +105,7 @@ Debug_logWindowInfo(wndId)
   Else
     isWinFocus := " "
   v := Monitor_#%Manager_aMonitor%_aView_#1
-  If View_getActiveWindow(Manager_aMonitor, v) = %wndId%
+  If View_#%Manager_aMonitor%_#%v%_aWndId = %wndId%
     isBugnActive := "*"
   Else
     isBugnActive := " "
@@ -131,7 +131,7 @@ Debug_logWindowInfo(wndId)
     isGhost := "*"
   Else
     isGhost := " "
-  DetectHiddenWindows, %detectSetting%
+  DetectHiddenWindows, %detectHidden%
 
   ;; Intentionally don't detect hidden windows here to see what Manager_hungTest does
   If Window_isHung(wndId)
@@ -141,7 +141,7 @@ Debug_logWindowInfo(wndId)
 
   text := wndId "`t"
   text .= isHidden " " isWinFocus " " isBugnActive " " isFloating " " isDecorated " " isResponsive " " isGhost " "
-  text .= Window_#%wndId%_monitor " " Window_#%wndId%_tags "   `t"
+  text .= Window_#%wndId%_monitor "`t" Window_#%wndId%_tags "`t"
   text .= wndX "`t" wndY "`t" wndW "`t" wndH "`t" wndStyle "`t" wndPName " [" wndPId "] / " wndClass " / " wndTitle
   Debug_logMessage(text , 0, False)
 }

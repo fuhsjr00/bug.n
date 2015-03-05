@@ -390,7 +390,7 @@ Bar_updateStatic(m) {
 }
 
 Bar_updateStatus() {
-  Local anyContent, anyText, bat1, bat2, bat3, GuiN, m, mute, vol
+  Local anyText, bat1, bat2, bat3, GuiN, m, mute, vol
 
   anyText := Config_readinAny()
   If Config_readinBat {

@@ -27,13 +27,6 @@ Window_activate(wndId) {
   }
 }
 
-Window_clipsSiblings(wndId) {
-  WS_CLIPSIBLINGS = 0x04000000
-  WinGet, wndStyle, Style, ahk_id %wndId%
-
-  Return, (wndStyle & WS_CLIPSIBLINGS)
-}
-
 Window_close(wndId) {
   If Window_isHung(wndId) {
     Debug_logMessage("DEBUG[2] Window_close: Potentially hung window " . wndId, 2)
@@ -78,7 +71,7 @@ Window_isChild(wndId) {
   WS_POPUP = 0x40000000
   WinGet, wndStyle, Style, ahk_id %wndId%
 
-  Return, (wndStyle & WS_POPUP)
+  Return, wndStyle & WS_POPUP
 }
 
 Window_isElevated(wndId) {
@@ -100,32 +93,17 @@ Window_isGhost(wndId) {
     Return, 0
 }
 
-Window_isHidden(wndId, ByRef wndClass, ByRef wndTitle) {
-  WinGetClass, wndClass, ahk_id %wndId%
-  WinGetTitle, wndTitle, ahk_id %wndId%
-  If Not wndClass And Not wndTitle {
-    detectHiddenWnds := A_DetectHiddenWindows
-    DetectHiddenWindows, On
-    WinGetClass, wndClass, ahk_id %wndId%
-    WinGetTitle, wndTitle, ahk_id %wndId%
-    DetectHiddenWindows, %detectHiddenWnds%
-    ;; If now wndClass Or wndTitle, but Not wndClass And Not wndTitle before, wnd is hidden.
-    Return, (wndClass Or wndTitle)
-  } Else
-    Return, False
-}
-
 ;; 0 - Not hung
 ;; 1 - Hung
 Window_isHung(wndId) {
-  Local detectSetting, result, WM_NULL
+  Local detectHidden, result, WM_NULL
 
   WM_NULL = 0
-  detectSetting := A_DetectHiddenWindows
+  detectHidden := A_DetectHiddenWindows
   DetectHiddenWindows, On
   SendMessage, WM_NULL, , , , ahk_id %wndId%
   result := ErrorLevel
-  DetectHiddenWindows, %detectSetting%
+  DetectHiddenWindows, %detectHidden%
 
   If result
   {
@@ -142,7 +120,7 @@ Window_isNotVisible(wndId) {
   If (wndStyle & WS_VISIBLE) {
     WinGetPos, wndX, wndY, wndW, wndH, ahk_id %wndId%
     hasDimensions := wndW And wndH
-    isOnMonitor := Monitor_get(wndX, wndY) Or Monitor_get(wndX + wndW, wndY) Or Monitor_get(wndX + wndW, wndY + wndH) Or Monitor_get(wndX, wndY + wndH)
+    isOnMonitor := Monitor_get(wndX + 5, wndY + 5) Or Monitor_get(wndX + wndW - 5, wndY + 5) Or Monitor_get(wndX + wndW, wndY + wndH - 5) Or Monitor_get(wndX + 5, wndY + wndH - 5)
     Return, (Not hasDimensions Or Not isOnMonitor)
   } Else
     Return, True
