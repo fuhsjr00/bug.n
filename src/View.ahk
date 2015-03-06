@@ -144,13 +144,9 @@ View_arrange(m, v, setLayout = False) {
 }
 
 View_getActiveWindow(m, v) {
-  Local aWndId
+  Global
 
-  WinGet, aWndId, ID, A
-  If WinExist("ahk_id" aWndId) And InStr(View_#%m%_#%v%_wndIds, aWndId ";") And Window_isProg(aWndId)
-    Return, aWndId
-  Else
-    Return, 0
+  Return, View_#%m%_#%v%_aWndId
 }
 
 View_getTiledWndIds(m, v)
@@ -195,6 +191,12 @@ View_moveWindow(i=0, d=0) {
     Window_#%aWndId%_area := i
     Manager_setCursor(aWndId)
   }
+}
+
+View_setActiveWindow(m, v, wndId) {
+  Global
+
+  View_#%m%_#%v%_aWndId := wndId
 }
 
 View_setGapWidth(i, d = 0) {

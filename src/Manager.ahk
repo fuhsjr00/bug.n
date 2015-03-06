@@ -70,11 +70,11 @@ Manager_activateMonitor(i, d = 0) {
 
   If (Manager_monitorCount > 1) {
     aView := Monitor_#%Manager_aMonitor%_aView_#1
-    aWndId := View_getActiveWindow(Manager_aMonitor, aView)
-    If aWndId {
+    WinGet, aWndId, ID, A
+    If WinExist("ahk_id" aWndId) And InStr(View_#%Manager_aMonitor%_#%aView%_wndIds, aWndId ";") And Window_isProg(aWndId) {
       WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
       If (Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2) = Manager_aMonitor)
-        View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
+        View_setActiveWindow(Manager_aMonitor, aView, aWndId)
     }
 
     ;; Manually set the active monitor.
@@ -82,7 +82,7 @@ Manager_activateMonitor(i, d = 0) {
       i := Manager_aMonitor
     Manager_aMonitor := Manager_loop(i, d, 1, Manager_monitorCount)
     v := Monitor_#%Manager_aMonitor%_aView_#1
-    wndId := View_#%Manager_aMonitor%_#%v%_aWndId
+    wndId := View_getActiveWindow(Manager_aMonitor, v)
     If Not (wndId And WinExist("ahk_id" wndId)) {
       If View_#%Manager_aMonitor%_#%v%_wndIds
         wndId := SubStr(View_#%Manager_aMonitor%_#%v%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%v%_wndIds, ";") - 1)
@@ -247,7 +247,7 @@ Manager_getWindowList()
   Local text, v, aWndId, wndIds, aWndTitle
 
   v := Monitor_#%Manager_aMonitor%_aView_#1
-  aWndId := View_#%Manager_aMonitor%_#%v%_aWndId
+  aWndId := View_getActiveWindow(Manager_aMonitor, v)
   WinGetTitle, aWndTitle, ahk_id %aWndId%
   text := "Active Window`n" aWndId ":`t" aWndTitle
 
@@ -572,7 +572,7 @@ Manager_onShellMessage(wParam, lParam) {
           {
             wndId := wndId%A_Index%
             View_#%Manager_aMonitor%_#%t%_wndIds := wndId ";" View_#%Manager_aMonitor%_#%t%_wndIds
-            View_#%Manager_aMonitor%_#%t%_aWndId := wndId
+            View_setActiveWindow(Manager_aMonitor, t, wndId)
             Window_#%wndId%_tags += 1 << t - 1
           }
           Bar_updateView(Manager_aMonitor, t)
@@ -633,7 +633,7 @@ Manager_resetMonitorConfiguration() {
           {
             Loop, % Config_viewCount {
               StringReplace, View_#%i%_#%A_Index%_wndIds, View_#%i%_#%A_Index%_wndIds, %A_LoopField%`;,
-              View_#%i%_#%A_Index%_aWndId := 0
+              View_setActiveWindow(i, A_Index, 0)
             }
             Monitor_moveWindow(1, A_LoopField)
           }
@@ -907,7 +907,7 @@ Manager_setViewMonitor(i, d = 0) {
     {
       Loop, % Config_viewCount {
         StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %A_LoopField%`;,
-        View_#%Manager_aMonitor%_#%A_Index%_aWndId := 0
+        View_setActiveWindow(Manager_aMonitor, A_Index, 0)
       }
 
       Monitor_moveWindow(i, A_LoopField)
@@ -960,8 +960,8 @@ Manager_setWindowMonitor(i, d = 0) {
   If (Manager_monitorCount > 1 And InStr(Manager_managedWndIds, aWndId ";")) {
     Loop, % Config_viewCount {
       StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %aWndId%`;,
-      If (aWndId = View_#%Manager_aMonitor%_#%A_Index%_aWndId)
-        View_#%Manager_aMonitor%_#%A_Index%_aWndId := 0
+      If (View_getActiveWindow(Manager_aMonitor, A_Index) = aWndId)
+        View_setActiveWindow(Manager_aMonitor, A_Index, 0)
       Bar_updateView(Manager_aMonitor, A_Index)
     }
     If Config_dynamicTiling
@@ -975,7 +975,7 @@ Manager_setWindowMonitor(i, d = 0) {
     v := Monitor_#%Manager_aMonitor%_aView_#1
     Window_#%aWndId%_tags := 1 << v - 1
     View_#%Manager_aMonitor%_#%v%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%v%_wndIds
-    View_#%Manager_aMonitor%_#%v%_aWndId := aWndId
+    View_setActiveWindow(Manager_aMonitor, v, aWndId)
     If Config_dynamicTiling
       View_arrange(Manager_aMonitor, v)
     Manager_winActivate(aWndId)
