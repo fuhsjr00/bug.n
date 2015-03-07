@@ -268,7 +268,7 @@ in a multi-monitor environment.
 `#^s::Config_UI_saveSession()`
 > Save the current state of monitors, views, layouts to the configuration file.
 
-`#^+r::Reload`
+`#^r::Reload`
 > Reload bug.n (i. e. the whole script), which resets i. a. the configuration
 and internal variables of bug.n, including the window lists. It is like
 Quitting and restarting bug.n.

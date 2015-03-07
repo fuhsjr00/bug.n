@@ -1107,7 +1107,7 @@ Manager_winActivate(wndId) {
   Manager_setCursor(wndId)
   Debug_logMessage("DEBUG[1] Activating window: " wndId, 1)
   If Not wndId {
-    If (A_OSVersion = "WIN_8")
+    If (A_OSVersion = "WIN_8" Or A_OSVersion = "WIN_8.1")
       WinGet, wndId, ID, ahk_class WorkerW
     Else
       WinGet, wndId, ID, Program Manager ahk_class Progman
