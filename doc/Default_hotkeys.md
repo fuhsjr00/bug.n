@@ -45,6 +45,9 @@ window list by using the first parameter.
 > Toggle the floating status of the active window (i. e. dis- / regard it when
 tiling).
 
+`#^m::Manager_minimizeWindow()`
+> Minimize the active window; this implicitly makes the window floating.
+
 `#+m::Manager_moveWindow()`
 > Move the active window by key (only floating windows).
 

@@ -392,6 +392,19 @@ Manager_maximizeWindow() {
   Window_move(aWndId, Monitor_#%Manager_aMonitor%_x, Monitor_#%Manager_aMonitor%_y, Monitor_#%Manager_aMonitor%_width, Monitor_#%Manager_aMonitor%_height)
 }
 
+Manager_minimizeWindow() {
+  Local aView, aWndId
+
+  WinGet, aWndId, ID, A
+  aView := Monitor_#%Manager_aMonitor%_aView_#1
+  StringReplace, View_#%Manager_aMonitor%_#%aView%_aWndIds, View_#%Manager_aMonitor%_#%aView%_aWndIds, % aWndId ";",, All
+  If Not Window_#%aWndId%_isFloating
+    View_toggleFloatingWindow(aWndId)
+  Window_set(aWndId, "Bottom", "")
+
+  Window_minimize(aWndId)
+}
+
 Manager_moveWindow() {
   Local aWndId, SC_MOVE, WM_SYSCOMMAND
 
@@ -475,7 +488,6 @@ Manager_onShellMessage(wParam, lParam) {
     ;; The current position of the mouse cursor defines the active monitor, if the desktop has been activated.
     If m
       Manager_aMonitor := m
-    View_setActiveWindow(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, lParam)
     Bar_updateTitle()
   }
 
@@ -567,6 +579,15 @@ Manager_onShellMessage(wParam, lParam) {
       }
     }
 
+    If InStr(Manager_managedWndIds, lParam ";") {
+      View_setActiveWindow(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, lParam)
+      If Window_#%lParam%_isMinimized {
+        Window_#%lParam%_isFloating := False
+        Window_#%lParam%_isMinimized := False
+        View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
+      }
+    }
+
     ;; This is a workaround for a redrawing problem of the bug.n bar, which
     ;; seems to get lost, when windows are created or destroyed under the
     ;; following conditions.
@@ -579,9 +600,8 @@ Manager_onShellMessage(wParam, lParam) {
           Bar_updateView(i, A_Index)
       }
       Bar_updateStatus()
-      Bar_updateTitle()
-    } Else
-      Bar_updateTitle()
+    }
+    Bar_updateTitle()
   }
 }
 

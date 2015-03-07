@@ -23,6 +23,7 @@ called with the window ID as a paramater, when applying the rule.
 8. `~` Revised the default rule set.
 9. `+` Added the possibility for sending commands to bug.n from another AutoHotkey script.
 10. `~` Removed the function `Main_reload` and reassigned the hotkey.
+11. `+` Added the possibility to minimize windows, making them floating and thereby excluded from tiling.
 
 |   # | Configuration variables   | `-` Hotkey functions                    | `+` Hotkey functions                                  |
 | ---:| ------------------------- | --------------------------------------- | ----------------------------------------------------- |
@@ -82,6 +83,7 @@ called with the window ID as a paramater, when applying the rule.
 |     | `+` `Config_rule_#17`     |                                         |                                                       |
 | 10. |                           | `#^r::Main_reload()`                    |                                                       |
 |     |                           | `#^+r::Reload`                          | `#^r::Reload`                                         |
+| 11. |                           |                                         | `#^m::Manager_minimizeWindow()`                       |
 
 ### 8.4.0
 

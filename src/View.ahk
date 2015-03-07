@@ -68,13 +68,15 @@ View_activateWindow(i, d = 0) {
     Loop, % wndId0 {
       Debug_logMessage("DEBUG[2] Next wndId index: " . i, 2, False)
       wndId := wndId%i%
-      Window_set(wndId, "AlwaysOnTop", "On")
-      Window_set(wndId, "AlwaysOnTop", "Off")
+      If Not Window_#%wndId%_isMinimized {
+        Window_set(wndId, "AlwaysOnTop", "On")
+        Window_set(wndId, "AlwaysOnTop", "Off")
 
-      ;; If there are hung windows on the screen, we still want to be able to cycle through them.
-      failure := Manager_winActivate(wndId)
-      If Not failure
-        Break
+        ;; If there are hung windows on the screen, we still want to be able to cycle through them.
+        failure := Manager_winActivate(wndId)
+        If Not failure
+          Break
+      }
       i := Manager_loop(i, direction, 1, wndId0)
     }
   }
@@ -144,22 +146,28 @@ View_arrange(m, v, setLayout = False) {
 }
 
 View_getActiveWindow(m, v) {
-  Local wndId
+  Local listId, listIds, wndId
 
-  Loop, Parse, View_#%m%_#%v%_aWndIds, `;
+  listIds := "aWndIds;wndIds"
+  Loop, Parse, listIds, `;
   {
-    If Not A_LoopField
-      Break
-    Else If Not WinExist("ahk_id" A_LoopField)
-      Continue
-    Else {
-      wndId := A_LoopField
+    listId := A_LoopField
+    Loop, Parse, View_#%m%_#%v%_%listId%, `;
+    {
+      If Not A_LoopField
+        Break
+      Else If Not WinExist("ahk_id" A_LoopField) Or Window_#%A_LoopField%_isMinimized
+        Continue
+      Else {
+        wndId := A_LoopField
+        Break
+      }
+    }
+    If wndId {
+      If (listId = "wndIds")
+        View_setActiveWindow(m, v, wndId)
       Break
     }
-  }
-  If Not wndId And View_#%m%_#%v%_wndIds {
-    wndId := SubStr(View_#%m%_#%v%_wndIds, 1, InStr(View_#%m%_#%v%_wndIds, ";") - 1)
-    View_setActiveWindow(m, v, wndId)
   }
 
   Return, wndId

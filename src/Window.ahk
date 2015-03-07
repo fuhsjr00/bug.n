@@ -165,13 +165,28 @@ Window_maximize(wndId) {
   }
 }
 
+Window_minimize(wndId) {
+  Global
+
+  If Window_isHung(wndId) {
+    Debug_logMessage("DEBUG[2] Window_minimize: Potentially hung window " . wndId, 2)
+    Return, 1
+  } Else {
+    WinMinimize, ahk_id %wndId%
+    Window_#%wndId%_isMinimized := True
+    Return, 0
+  }
+}
+
 Window_move(wndId, x, y, width, height) {
+  Local wndMinMax, WM_ENTERSIZEMOVE, WM_EXITSIZEMOVE
+
   If Window_isHung(wndId) {
     Debug_logMessage("DEBUG[2] Window_move: Potentially hung window " . wndId, 2)
     Return, 1
   } Else {
-    WinGet, wndMin, MinMax, ahk_id %wndId%
-    If (wndMin = -1)
+    WinGet, wndMinMax, MinMax, ahk_id %wndId%
+    If (wndMinMax = -1 And Not Window_#%wndId%_isMinimized)
       WinRestore, ahk_id %wndId%
   }
 
