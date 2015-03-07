@@ -1083,8 +1083,6 @@ Manager_unmanage(wndId) {
 
   aView := Monitor_#%Manager_aMonitor%_aView_#1
 
-  ;; Do our best to make sure that any unmanaged windows are left visible.
-  Window_show(wndId)
   a := Window_#%wndId%_tags & 1 << aView - 1
   Loop, % Config_viewCount {
     If (Window_#%wndId%_tags & 1 << A_Index - 1) {
