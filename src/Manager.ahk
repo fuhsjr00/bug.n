@@ -83,12 +83,6 @@ Manager_activateMonitor(i, d = 0) {
     Manager_aMonitor := Manager_loop(i, d, 1, Manager_monitorCount)
     v := Monitor_#%Manager_aMonitor%_aView_#1
     wndId := View_getActiveWindow(Manager_aMonitor, v)
-    If Not (wndId And WinExist("ahk_id" wndId)) {
-      If View_#%Manager_aMonitor%_#%v%_wndIds
-        wndId := SubStr(View_#%Manager_aMonitor%_#%v%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%v%_wndIds, ";") - 1)
-      Else
-        wndId := 0
-    }
     Debug_logMessage("DEBUG[1] Manager_activateMonitor: Manager_aMonitor: " Manager_aMonitor ", i: " i ", d: " d ", wndId: " wndId, 1)
     Manager_winActivate(wndId)
   }
@@ -177,21 +171,11 @@ Manager_cleanup()
 }
 
 Manager_closeWindow() {
-  Local aView, aWndId, wndId0, wndIds
+  Local aWndId
 
   WinGet, aWndId, ID, A
-  If Window_isProg(aWndId) {
-    ;; Prior to closing, find the next window that should have focus.
-    ;;   If there is no such window, choose the bar on the same monitor.
-    aView := Monitor_#%Manager_aMonitor%_aView_#1
-    StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%aView%_wndIds, 1
-    StringSplit, wndId, wndIds, `;
-    If (wndId0 >= 2)
-      View_activateWindow(0, +1)
-    Else
-      Manager_winActivate(0)
+  If Window_isProg(aWndId)
     Window_close(aWndId)
-  }
 }
 
 ; Asynchronous management of various WM properties.
@@ -491,6 +475,7 @@ Manager_onShellMessage(wParam, lParam) {
     ;; The current position of the mouse cursor defines the active monitor, if the desktop has been activated.
     If m
       Manager_aMonitor := m
+    View_setActiveWindow(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, lParam)
     Bar_updateTitle()
   }
 
@@ -1094,24 +1079,17 @@ Manager_sync(ByRef wndIds = "")
 }
 
 Manager_unmanage(wndId) {
-  Local a, aView, wndId0, wndIds
+  Local a, aView
 
-  ;; Find the next window that should have focus.
-  ;;   If there is no such window, choose the bar on the same monitor.
   aView := Monitor_#%Manager_aMonitor%_aView_#1
-  StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%aView%_wndIds, 1
-  StringSplit, wndId, wndIds, `;
-  If (wndId0 >= 2)
-    View_activateWindow(0, +1)
-  Else
-    Manager_winActivate(0)
 
   ;; Do our best to make sure that any unmanaged windows are left visible.
   Window_show(wndId)
   a := Window_#%wndId%_tags & 1 << aView - 1
   Loop, % Config_viewCount {
     If (Window_#%wndId%_tags & 1 << A_Index - 1) {
-      StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %wndId%`;,
+      StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, % wndId ";",, All
+      StringReplace, View_#%Manager_aMonitor%_#%A_Index%_aWndIds, View_#%Manager_aMonitor%_#%A_Index%_aWndIds, % wndId ";",, All
       Bar_updateView(Manager_aMonitor, A_Index)
     }
   }

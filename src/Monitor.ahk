@@ -99,13 +99,6 @@ Monitor_activateView(i, d = 0) {
   }
 
   wndId := View_getActiveWindow(Manager_aMonitor, i)
-  If Not (wndId And WinExist("ahk_id" wndId)) {
-    If View_#%Manager_aMonitor%_#%i%_wndIds {
-      wndId := SubStr(View_#%Manager_aMonitor%_#%i%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%i%_wndIds, ";")-1)
-      View_setActiveWindow(Manager_aMonitor, i, wndId)
-    } Else
-      wndId := 0
-  }
   Manager_winActivate(wndId)
 }
 
