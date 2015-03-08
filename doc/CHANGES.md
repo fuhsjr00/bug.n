@@ -26,7 +26,7 @@ called with the window ID as a paramater, when applying the rule.
 11. `+` Added the possibility to minimize windows, making them floating and thereby excluded from tiling.
 
 |   # | `-` or `~` Configuration Variables or <br/> `-` Hotkey Functions | `+` Configuration Variables or <br/> `+` Hotkey Functions |
-| ---:| ---------------------------------------------------------------- | --------------------------------------------------------- |
+| ---:|:---------------------------------------------------------------- |:--------------------------------------------------------- |
 |  1. | `#+d::Manager_toggleDecor()`                                     | `#+d::Window_toggleDecor()`                               |
 |  2. | `#+f::View_toggleFloating()`                                     | `#+f::View_toggleFloatingWindow()`                        |
 |  3. | `#Left::View_setMFactor(-0.05)`                                  | `#Left::View_setLayoutProperty("MFactor", 0, -0.05)`      |
