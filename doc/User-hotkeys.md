@@ -10,7 +10,7 @@
 | `#t`   | -            | launch a terminal (`Run, C:\Program Files\mintty.exe -`)                                           |
 | `#b`   | -            | launch terminal with an ssh connection (`Run, C:\Program Files\mintty.exe /bin/ssh user@hostname`) |
 
-#### Xmonad hotkeys
+##### Xmonad hotkeys
 
 Here follows an example for configuring hotkeys, which are similar to those of
 [xmonad](http://xmonad.org/); this example was submitted for bug.n version
