@@ -15,7 +15,7 @@ Config_rule=<class>;
             <function name>;
             <is managed>;
             <monitor>;
-            <views tags>;
+            <views / tags>;
             <is floating>;
             <is decorated>;
             <hide title>;
@@ -28,9 +28,6 @@ following information:
 1. class (as a regular expression)
 2. title (as a regular expression)
 3. arbitrary criterion (as a function name, e. g. "Window_isPopup", or blank)
-
-If you encounter a window you want to configure about, you can retrieve its
-identifying information with the hotkey `#I` a.k.a. <kbd>Win</kbd><kbd>I</kbd>.
 
 With the second part you can give bug.n the following information on how to
 handle the identified windows:
@@ -52,6 +49,12 @@ have to use the correct variable name; e. g. you may set a default rule
 by using the variable name `Config_rule_#1`. If you want to _add_ a rule,
 simply use `Config_rule` as the variable name; the numbering will be done
 automatically by bug.n when reading `Config.ini` using the order given there.
+
+To get a draft for a new rule, you can use the hotkey
+`#i::Manager_getWindowInfo()` (<kbd>Win</kbd><kbd>I</kbd>), which will give the
+full class and title, additional information about and the current values for
+the active window included in a string, which can be copied to the
+`Config.ini`.
 
 #### Views / Tags
 
@@ -91,8 +94,7 @@ line-oriented resizing of its own windows (frames).
 
 #### Atlassian SourceTree
 
-The following rule let bug.n refrain from managing the popup confirmation of
-removing file from working copy.
+The following rule excludes the confirmation dialog for removing files from the
+working copy from being managed by bug.n.
 
-`Config_rule=.*SourceTree.*;Confirm Remove Modified or Untracked Files?;;0;0;0;0;0;0;`
-
+`Config_rule=.*SourceTree.*;Confirm Remove Modified or Untracked Files?;;0;0;0;1;1;0;`
