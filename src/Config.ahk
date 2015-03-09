@@ -32,7 +32,7 @@ Config_init() {
     Config_fontColor_#%A_Index% :=
   }
   Config_barTransparency   := "off"
-  Config_barCommands       := "Run, explore " Main_docDir ";Monitor_toggleBar();Main_reload();Reload;ExitApp"
+  Config_barCommands       := "Run, explore " Main_docDir ";Monitor_toggleBar();Reload;ExitApp"
   Config_readinBat         := False
   Config_readinCpu         := False
   Config_readinDate        := True
@@ -402,6 +402,7 @@ Config_UI_saveSession() {
 #+d::Window_toggleDecor()
 #+f::View_toggleFloatingWindow()
 #+m::Manager_moveWindow()
+#^m::Manager_minimizeWindow()
 #+s::Manager_sizeWindow()
 #+x::Manager_maximizeWindow()
 #i::Manager_getWindowInfo()
@@ -496,8 +497,7 @@ Config_UI_saveSession() {
 ;; Administration
 #^e::Run, edit %Config_filePath%
 #^s::Config_UI_saveSession()
-#^r::Main_reload()
-#^+r::Reload
+#^r::Reload
 #^q::ExitApp
 
 ;; vim:sts=2 ts=2 sw=2 et

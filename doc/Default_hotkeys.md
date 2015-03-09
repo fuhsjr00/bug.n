@@ -45,6 +45,9 @@ window list by using the first parameter.
 > Toggle the floating status of the active window (i. e. dis- / regard it when
 tiling).
 
+`#^m::Manager_minimizeWindow()`
+> Minimize the active window; this implicitly makes the window floating.
+
 `#+m::Manager_moveWindow()`
 > Move the active window by key (only floating windows).
 
@@ -268,22 +271,12 @@ in a multi-monitor environment.
 `#^s::Config_UI_saveSession()`
 > Save the current state of monitors, views, layouts to the configuration file.
 
-`#^r::Main_reload()`
-> Reload bug.n (i. e. the configuration and its dependent settings) without
-deleting the window lists of bug.n and restoring windows.
-- It does not reset internal configuration variables, the tray icon or menu,
-hotkeys (unless defined in `Config.ini`), individual window settings like
-`Config_showBorder` (since windows might be hidden) or hiding the title bar, the
-monitor count or views.
-- It does not reload the monitor configuration and therefor does not recognize
-any changes in the number of monitors.
-- It does not reload functions.
-- Changed rules are only applied to new windows.
-
-`#^+r::Reload`
-> Reload bug.n (i. e. the whole script), which resets the configuration, the
-bar, the monitor configuration and window lists of bug.n. It is like Quitting
-and restarting bug.n.
+`#^r::Reload`
+> Reload bug.n (i. e. the whole script), which resets i. a. the configuration
+and internal variables of bug.n, including the window lists. It is like
+Quitting and restarting bug.n.
+If `Config_autoSaveSession` is not set to `off`, the window lists can be
+restored and windows are put to their associated monitor and views.
 
 `#^q::ExitApp`
 > Quit bug.n, restore the default Windows UI and show all windows.

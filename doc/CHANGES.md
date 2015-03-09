@@ -22,63 +22,68 @@ not implement the functionality: `Monitor_toggleWindowTag`, `View_activateWindow
 called with the window ID as a paramater, when applying the rule.
 8. `~` Revised the default rule set.
 9. `+` Added the possibility for sending commands to bug.n from another AutoHotkey script.
+10. `~` Removed the function `Main_reload` and reassigned the hotkey.
+11. `+` Added the possibility to minimize windows, making them floating and thereby excluded from tiling.
 
-|  # | Configuration variables   | `-` Hotkey functions                    | `+` Hotkey functions                                  |
-| --:| ------------------------- | --------------------------------------- | ----------------------------------------------------- |
-| 1. |                           | `#+d::Manager_toggleDecor()`            | `#+d::Window_toggleDecor()`                           |
-| 2. |                           | `#+f::View_toggleFloating()`            | `#+f::View_toggleFloatingWindow()`                    |
-| 3. |                           | `#Left::View_setMFactor(-0.05)`         | `#Left::View_setLayoutProperty("MFactor", 0, -0.05)`  |
-|    |                           | `#Right::View_setMFactor(+0.05)`        | `#Right::View_setLayoutProperty("MFactor", 0, +0.05)` |
-|    |                           | `#^t::View_rotateLayoutAxis(1, +1)`     | `#^t::View_setLayoutProperty("Axis", 0, +1, 1)`       |
-|    |                           | `#^Enter::View_rotateLayoutAxis(1, +2)` | `#^Enter::View_setLayoutProperty("Axis", 0, +2, 1)`   |
-|    |                           | `#^Tab::View_rotateLayoutAxis(2, +1)`   | `#^Tab::View_setLayoutProperty("Axis", 0, +1, 2)`     |
-|    |                           | `#^+Tab::View_rotateLayoutAxis(3, +1)`  | `#^+Tab::View_setLayoutProperty("Axis", 0, +1, 3)`    |
-|    |                           | `#^Up::View_setMY(+1)`                  | `#^Up::View_setLayoutProperty("MY", 0, +1)`           |
-|    |                           | `#^Down::View_setMY(-1)`                | `#^Down::View_setLayoutProperty("MY", 0, -1)`         |
-|    |                           | `#^Right::View_setMX(+1)`               | `#^Right::View_setLayoutProperty("MX", 0, +1)`        |
-|    |                           | `#^Left::View_setMX(-1)`                | `#^Left::View_setLayoutProperty("MX", 0, -1)`         |
-|    |                           | `#+Left::View_setGapWidth(-2)`          | `#+Left::View_setLayoutProperty("GapWidth", 0, -2)`   |
-|    |                           | `#+Right::View_setGapWidth(+2)`         | `#+Right::View_setLayoutProperty("GapWidth", 0, +2)`  |
-| 4. |                           | `#^d::Debug_setLogLevel(-1)`            | `#^d::Debug_setLogLevel(0, -1)`                       |
-|    |                           | `#^+d::Debug_setLogLevel(+1)`           | `#^+d::Debug_setLogLevel(0, +1)`                      |
-|    |                           | `#+Down::View_shuffleWindow(+1)`        | `#+Down::View_shuffleWindow(0, +1)`                   |
-|    |                           | `#+Up::View_shuffleWindow(-1)`          | `#+Up::View_shuffleWindow(0, -1)`                     |
-|    |                           | `#+Enter::View_shuffleWindow(0)`        | `#+Enter::View_shuffleWindow(1)`                      |
-|    |                           | `#+0::Monitor_setWindowTag(0)`          | `#+0::Monitor_setWindowTag(10)`                       |
-|    |                           | `#.::Manager_activateMonitor(+1)`       | `#.::Manager_activateMonitor(0, +1)`                  |
-|    |                           | `#,::Manager_activateMonitor(-1)`       | `#,::Manager_activateMonitor(0, -1)`                  |
-|    |                           | `#+.::Manager_setWindowMonitor(+1)`     | `#+.::Manager_setWindowMonitor(0, +1)`                |
-|    |                           | `#+,::Manager_setWindowMonitor(-1)`     | `#+,::Manager_setWindowMonitor(0, -1)`                |
-|    |                           | `#^+.::Manager_setViewMonitor(+1)`      | `#^+.::Manager_setViewMonitor(0, +1)`                 |
-|    |                           | `#^+,::Manager_setViewMonitor(-1)`      | `#^+,::Manager_setViewMonitor(0, -1)`                 |
-| 5. |                           | `#Down::View_activateWindow(+1)`        | `#Down::View_activateWindow(0, +1)`                   |
-|    |                           | `#Up::View_activateWindow(-1)`          | `#Up::View_activateWindow(0, -1)`                     |
-| 6. | `-` `Config_normBgColor`  |                                         |                                                       |
-|    | `-` `Config_normFgColor`  |                                         |                                                       |
-|    | `-` `Config_selBgColor`   |                                         |                                                       |
-|    | `-` `Config_selFgColor`   |                                         |                                                       |
-|    | `+` `Config_backColor_#1` |                                         |                                                       |
-|    | `+` `Config_backColor_#2` |                                         |                                                       |
-|    | `+` `Config_backColor_#3` |                                         |                                                       |
-|    | `+` `Config_foreColor_#1` |                                         |                                                       |
-|    | `+` `Config_foreColor_#2` |                                         |                                                       |
-|    | `+` `Config_foreColor_#3` |                                         |                                                       |
-|    | `+` `Config_fontColor_#1` |                                         |                                                       |
-|    | `+` `Config_fontColor_#2` |                                         |                                                       |
-|    | `+` `Config_fontColor_#3` |                                         |                                                       |
-| 7. | `~` `Config_rule_#2`      |                                         |                                                       |
-| 8. | `~` `Config_rule_#3`      |                                         |                                                       |
-|    | `~` `Config_rule_#4`      |                                         |                                                       |
-|    | `~` `Config_rule_#7`      |                                         |                                                       |
-|    | `~` `Config_rule_#9`      |                                         |                                                       |
-|    | `~` `Config_rule_#10`     |                                         |                                                       |
-|    | `~` `Config_rule_#11`     |                                         |                                                       |
-|    | `~` `Config_rule_#12`     |                                         |                                                       |
-|    | `+` `Config_rule_#13`     |                                         |                                                       |
-|    | `+` `Config_rule_#14`     |                                         |                                                       |
-|    | `+` `Config_rule_#15`     |                                         |                                                       |
-|    | `+` `Config_rule_#16`     |                                         |                                                       |
-|    | `+` `Config_rule_#17`     |                                         |                                                       |
+|   # | `-` or `~` Configuration Variables or <br/> `-` Hotkey Functions | `+` Configuration Variables or <br/> `+` Hotkey Functions |
+| ---:|:---------------------------------------------------------------- |:--------------------------------------------------------- |
+|  1. | `#+d::Manager_toggleDecor()`                                     | `#+d::Window_toggleDecor()`                               |
+|  2. | `#+f::View_toggleFloating()`                                     | `#+f::View_toggleFloatingWindow()`                        |
+|  3. | `#Left::View_setMFactor(-0.05)`                                  | `#Left::View_setLayoutProperty("MFactor", 0, -0.05)`      |
+|     | `#Right::View_setMFactor(+0.05)`                                 | `#Right::View_setLayoutProperty("MFactor", 0, +0.05)`     |
+|     | `#^t::View_rotateLayoutAxis(1, +1)`                              | `#^t::View_setLayoutProperty("Axis", 0, +1, 1)`           |
+|     | `#^Enter::View_rotateLayoutAxis(1, +2)`                          | `#^Enter::View_setLayoutProperty("Axis", 0, +2, 1)`       |
+|     | `#^Tab::View_rotateLayoutAxis(2, +1)`                            | `#^Tab::View_setLayoutProperty("Axis", 0, +1, 2)`         |
+|     | `#^+Tab::View_rotateLayoutAxis(3, +1)`                           | `#^+Tab::View_setLayoutProperty("Axis", 0, +1, 3)`        |
+|     | `#^Up::View_setMY(+1)`                                           | `#^Up::View_setLayoutProperty("MY", 0, +1)`               |
+|     | `#^Down::View_setMY(-1)`                                         | `#^Down::View_setLayoutProperty("MY", 0, -1)`             |
+|     | `#^Right::View_setMX(+1)`                                        | `#^Right::View_setLayoutProperty("MX", 0, +1)`            |
+|     | `#^Left::View_setMX(-1)`                                         | `#^Left::View_setLayoutProperty("MX", 0, -1)`             |
+|     | `#+Left::View_setGapWidth(-2)`                                   | `#+Left::View_setLayoutProperty("GapWidth", 0, -2)`       |
+|     | `#+Right::View_setGapWidth(+2)`                                  | `#+Right::View_setLayoutProperty("GapWidth", 0, +2)`      |
+|  4. | `#^d::Debug_setLogLevel(-1)`                                     | `#^d::Debug_setLogLevel(0, -1)`                           |
+|     | `#^+d::Debug_setLogLevel(+1)`                                    | `#^+d::Debug_setLogLevel(0, +1)`                          |
+|     | `#+Down::View_shuffleWindow(+1)`                                 | `#+Down::View_shuffleWindow(0, +1)`                       |
+|     | `#+Up::View_shuffleWindow(-1)`                                   | `#+Up::View_shuffleWindow(0, -1)`                         |
+|     | `#+Enter::View_shuffleWindow(0)`                                 | `#+Enter::View_shuffleWindow(1)`                          |
+|     | `#+0::Monitor_setWindowTag(0)`                                   | `#+0::Monitor_setWindowTag(10)`                           |
+|     | `#.::Manager_activateMonitor(+1)`                                | `#.::Manager_activateMonitor(0, +1)`                      |
+|     | `#,::Manager_activateMonitor(-1)`                                | `#,::Manager_activateMonitor(0, -1)`                      |
+|     | `#+.::Manager_setWindowMonitor(+1)`                              | `#+.::Manager_setWindowMonitor(0, +1)`                    |
+|     | `#+,::Manager_setWindowMonitor(-1)`                              | `#+,::Manager_setWindowMonitor(0, -1)`                    |
+|     | `#^+.::Manager_setViewMonitor(+1)`                               | `#^+.::Manager_setViewMonitor(0, +1)`                     |
+|     | `#^+,::Manager_setViewMonitor(-1)`                               | `#^+,::Manager_setViewMonitor(0, -1)`                     |
+|  5. | `#Down::View_activateWindow(+1)`                                 | `#Down::View_activateWindow(0, +1)`                       |
+|     | `#Up::View_activateWindow(-1)`                                   | `#Up::View_activateWindow(0, -1)`                         |
+|  6. | `Config_normBgColor`                                             |                                                           |
+|     | `Config_normFgColor`                                             |                                                           |
+|     | `Config_selBgColor`                                              |                                                           |
+|     | `Config_selFgColor`                                              |                                                           |
+|     |                                                                  | `Config_backColor_#1`                                     |
+|     |                                                                  | `Config_backColor_#2`                                     |
+|     |                                                                  | `Config_backColor_#3`                                     |
+|     |                                                                  | `Config_foreColor_#1`                                     |
+|     |                                                                  | `Config_foreColor_#2`                                     |
+|     |                                                                  | `Config_foreColor_#3`                                     |
+|     |                                                                  | `Config_fontColor_#1`                                     |
+|     |                                                                  | `Config_fontColor_#2`                                     |
+|     |                                                                  | `Config_fontColor_#3`                                     |
+|  7. | `Config_rule_#2`                                                 |                                                           |
+|  8. | `Config_rule_#3`                                                 |                                                           |
+|     | `Config_rule_#4`                                                 |                                                           |
+|     | `Config_rule_#7`                                                 |                                                           |
+|     | `Config_rule_#9`                                                 |                                                           |
+|     | `Config_rule_#10`                                                |                                                           |
+|     | `Config_rule_#11`                                                |                                                           |
+|     | `Config_rule_#12`                                                |                                                           |
+|     |                                                                  | `Config_rule_#13`                                         |
+|     |                                                                  | `Config_rule_#14`                                         |
+|     |                                                                  | `Config_rule_#15`                                         |
+|     |                                                                  | `Config_rule_#16`                                         |
+|     |                                                                  | `Config_rule_#17`                                         |
+| 10. | `#^r::Main_reload()`                                             |                                                           |
+|     | `#^+r::Reload`                                                   | `#^r::Reload`                                             |
+| 11. |                                                                  | `#^m::Manager_minimizeWindow()`                           |
 
 ### 8.4.0
 

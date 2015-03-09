@@ -15,13 +15,12 @@ add-on for Microsoft Windows. It is written in the scripting language
   without you having to care about moving them all by mouse
 * Increase the available screen estate by hiding and therewith freeing up the
   space occupied by the Microsoft Windows Taskbar and the title bar for every
-  single window
-* and replacing all with a single slim status bar (-- but bug.n is not a shell
-  replacement)
+  single window and replacing all with a single slim status bar (-- but bug.n
+  is not a shell replacement)
 * Show window management information in the status bar: active window title,
   active layout, overview of the views used
 * Show system information in the status bar: time and date, CPU and memory
-  usage, disk and network load, battery level
+  usage, disk and network load, battery and volume level
 * Store your settings, i. e. which windows and layout were set on a specific
   view
 * Support multiple monitors
@@ -49,7 +48,7 @@ add-on for Microsoft Windows. It is written in the scripting language
 
 ### Installing and running bug.n
 
-#### Requirements
+##### Requirements
 
 * Microsoft Windows 2000 or higher
 * [AutoHotkey](http://ahkscript.org/download/) 1.1.10 or higher (if running
@@ -67,22 +66,20 @@ There is no installation process for bug.n. Unpack the `zip` file, and you
 should be able to run either the executable as it is or the main script
 (`src\Main.ahk`) with [AutoHotkey](http://ahkscript.org/download/).
 
-By default bug.n stores the session data (configuration, layout, window states
-and log) to the user's APPDATA directory, e. g.
-`C:\Users\joten\AppData\Roaming\bug.n`.
+### Documentation
 
-Please see the [documentation](./doc) or the
-[Wiki](https://github.com/fuhsjr00/bug.n/wiki) for more information on
-installing and running, customizing and using bug.n and for a list of changes
-made with the current version, in particular the changes in the user interface
-(configuration variables and hotkeys).
+Please see the [documentation](./doc) for more information on
+[installing and running](./doc/Installing_and_running.md),
+[customizing](./doc/Customization.md) and [using](./doc/Usage.md) bug.n and for
+a list of [changes](./doc/CHANGES.md) made with the current version, in
+particular the changes in the user interface
+([configuration variables](./doc/Default_configuration.md) and
+[hotkeys](./doc/Default_hotkeys.md)).
+
+Please see the [CREDITS file](./doc/CREDITS.md) for a list of people and projects,
+which contributed to bug.n.
 
 ### License
 
 bug.n is licensed under the GNU General Public License version 3. Please see
 the [LICENSE file](./LICENSE.md) for the full license text.
-
-### Credits
-
-Please see the [CREDITS file](./doc/CREDITS.md) for a list of people and projects,
-which contributed to bug.n.

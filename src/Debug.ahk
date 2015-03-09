@@ -105,7 +105,7 @@ Debug_logWindowInfo(wndId) {
   Else
     isWinFocus := " "
   v := Monitor_#%Manager_aMonitor%_aView_#1
-  If View_#%Manager_aMonitor%_#%v%_aWndId = %wndId%
+  If (View_getActiveWindow(Manager_aMonitor, v) = wndId)
     isBugnActive := "*"
   Else
     isBugnActive := " "

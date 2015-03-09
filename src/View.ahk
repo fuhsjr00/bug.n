@@ -18,7 +18,7 @@ View_init(m, v)
   Global
 
   View_#%m%_#%v%_area_#0        := 0
-  View_#%m%_#%v%_aWndId         := 0
+  View_#%m%_#%v%_aWndIds        := "0;"
   View_#%m%_#%v%_layout_#1      := 1
   View_#%m%_#%v%_layout_#2      := 1
   View_#%m%_#%v%_layoutAxis_#1  := Config_layoutAxis_#1
@@ -68,13 +68,15 @@ View_activateWindow(i, d = 0) {
     Loop, % wndId0 {
       Debug_logMessage("DEBUG[2] Next wndId index: " . i, 2, False)
       wndId := wndId%i%
-      Window_set(wndId, "AlwaysOnTop", "On")
-      Window_set(wndId, "AlwaysOnTop", "Off")
+      If Not Window_#%wndId%_isMinimized {
+        Window_set(wndId, "AlwaysOnTop", "On")
+        Window_set(wndId, "AlwaysOnTop", "Off")
 
-      ;; If there are hung windows on the screen, we still want to be able to cycle through them.
-      failure := Manager_winActivate(wndId)
-      If Not failure
-        Break
+        ;; If there are hung windows on the screen, we still want to be able to cycle through them.
+        failure := Manager_winActivate(wndId)
+        If Not failure
+          Break
+      }
       i := Manager_loop(i, direction, 1, wndId0)
     }
   }
@@ -144,13 +146,31 @@ View_arrange(m, v, setLayout = False) {
 }
 
 View_getActiveWindow(m, v) {
-  Local aWndId
+  Local listId, listIds, wndId
 
-  WinGet, aWndId, ID, A
-  If WinExist("ahk_id" aWndId) And InStr(View_#%m%_#%v%_wndIds, aWndId ";") And Window_isProg(aWndId)
-    Return, aWndId
-  Else
-    Return, 0
+  listIds := "aWndIds;wndIds"
+  Loop, Parse, listIds, `;
+  {
+    listId := A_LoopField
+    Loop, Parse, View_#%m%_#%v%_%listId%, `;
+    {
+      If Not A_LoopField
+        Break
+      Else If Not WinExist("ahk_id" A_LoopField) Or Window_#%A_LoopField%_isMinimized
+        Continue
+      Else {
+        wndId := A_LoopField
+        Break
+      }
+    }
+    If wndId {
+      If (listId = "wndIds")
+        View_setActiveWindow(m, v, wndId)
+      Break
+    }
+  }
+
+  Return, wndId
 }
 
 View_getTiledWndIds(m, v)
@@ -194,6 +214,15 @@ View_moveWindow(i=0, d=0) {
     Window_move(aWndId, View_#%m%_#%v%_area_#%i%_x, View_#%m%_#%v%_area_#%i%_y, View_#%m%_#%v%_area_#%i%_width, View_#%m%_#%v%_area_#%i%_height)
     Window_#%aWndId%_area := i
     Manager_setCursor(aWndId)
+  }
+}
+
+View_setActiveWindow(m, v, wndId) {
+  Global
+
+  If wndId {
+    StringReplace, View_#%m%_#%v%_aWndIds, View_#%m%_#%v%_aWndIds, % wndId ";", All
+    View_#%m%_#%v%_aWndIds := wndId ";" View_#%m%_#%v%_aWndIds
   }
 }
 

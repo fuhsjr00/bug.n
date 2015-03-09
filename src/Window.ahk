@@ -57,6 +57,21 @@ Window_findHung(ghostWndId) {
   Return, 0
 }
 
+Window_getHidden(wndId, ByRef wndClass, ByRef wndTitle) {
+  WinGetClass, wndClass, ahk_id %wndId%
+  WinGetTitle, wndTitle, ahk_id %wndId%
+  If Not wndClass And Not wndTitle {
+    detectHiddenWnds := A_DetectHiddenWindows
+    DetectHiddenWindows, On
+    WinGetClass, wndClass, ahk_id %wndId%
+    WinGetTitle, wndTitle, ahk_id %wndId%
+    DetectHiddenWindows, %detectHiddenWnds%
+    ;; If now wndClass Or wndTitle, but Not wndClass And Not wndTitle before, wnd is hidden.
+    Return, (wndClass Or wndTitle)
+  } Else
+    Return, False
+}
+
 Window_hide(wndId) {
   If Window_isHung(wndId) {
     Debug_logMessage("DEBUG[2] Window_hide: Potentially hung window " . wndId, 2)
@@ -153,13 +168,28 @@ Window_maximize(wndId) {
   }
 }
 
+Window_minimize(wndId) {
+  Global
+
+  If Window_isHung(wndId) {
+    Debug_logMessage("DEBUG[2] Window_minimize: Potentially hung window " . wndId, 2)
+    Return, 1
+  } Else {
+    WinMinimize, ahk_id %wndId%
+    Window_#%wndId%_isMinimized := True
+    Return, 0
+  }
+}
+
 Window_move(wndId, x, y, width, height) {
+  Local wndMinMax, WM_ENTERSIZEMOVE, WM_EXITSIZEMOVE
+
   If Window_isHung(wndId) {
     Debug_logMessage("DEBUG[2] Window_move: Potentially hung window " . wndId, 2)
     Return, 1
   } Else {
-    WinGet, wndMin, MinMax, ahk_id %wndId%
-    If (wndMin = -1)
+    WinGet, wndMinMax, MinMax, ahk_id %wndId%
+    If (wndMinMax = -1 And Not Window_#%wndId%_isMinimized)
       WinRestore, ahk_id %wndId%
   }
 

@@ -46,7 +46,6 @@ Manager_init()
   If Not Config_showTaskBar
     Monitor_toggleTaskBar()
 
-  Manager_focus         := False
   Manager_hideShow      := False
   Bar_hideTitleWndIds   := ""
   Manager_allWndIds     := ""
@@ -71,11 +70,11 @@ Manager_activateMonitor(i, d = 0) {
 
   If (Manager_monitorCount > 1) {
     aView := Monitor_#%Manager_aMonitor%_aView_#1
-    aWndId := View_getActiveWindow(Manager_aMonitor, aView)
-    If aWndId {
+    WinGet, aWndId, ID, A
+    If WinExist("ahk_id" aWndId) And InStr(View_#%Manager_aMonitor%_#%aView%_wndIds, aWndId ";") And Window_isProg(aWndId) {
       WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
       If (Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2) = Manager_aMonitor)
-        View_#%Manager_aMonitor%_#%aView%_aWndId := aWndId
+        View_setActiveWindow(Manager_aMonitor, aView, aWndId)
     }
 
     ;; Manually set the active monitor.
@@ -83,20 +82,14 @@ Manager_activateMonitor(i, d = 0) {
       i := Manager_aMonitor
     Manager_aMonitor := Manager_loop(i, d, 1, Manager_monitorCount)
     v := Monitor_#%Manager_aMonitor%_aView_#1
-    wndId := View_#%Manager_aMonitor%_#%v%_aWndId
-    If Not (wndId And WinExist("ahk_id" wndId)) {
-      If View_#%Manager_aMonitor%_#%v%_wndIds
-        wndId := SubStr(View_#%Manager_aMonitor%_#%v%_wndIds, 1, InStr(View_#%Manager_aMonitor%_#%v%_wndIds, ";") - 1)
-      Else
-        wndId := 0
-    }
+    wndId := View_getActiveWindow(Manager_aMonitor, v)
     Debug_logMessage("DEBUG[1] Manager_activateMonitor: Manager_aMonitor: " Manager_aMonitor ", i: " i ", d: " d ", wndId: " wndId, 1)
     Manager_winActivate(wndId)
   }
 }
 
 Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating, ByRef isDecorated, ByRef hideTitle, ByRef action) {
-  Local i, mouseX, mouseY, wndClass, wndHeight, wndTitle, wndWidth, wndX, wndY
+  Local i, wndClass, wndTitle
   Local rule0, rule1, rule2, rule3, rule4, rule5, rule6, rule7, rule8, rule9, rule10
 
   isManaged   := True
@@ -109,7 +102,6 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
 
   WinGetClass, wndClass, ahk_id %wndId%
   WinGetTitle, wndTitle, ahk_id %wndId%
-  WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
   If (wndClass Or wndTitle) {
     Loop, % Config_ruleCount {
       ;; The rules are traversed in reverse order.
@@ -179,21 +171,11 @@ Manager_cleanup()
 }
 
 Manager_closeWindow() {
-  Local aView, aWndId, wndId0, wndIds
+  Local aWndId
 
   WinGet, aWndId, ID, A
-  If Window_isProg(aWndId) {
-    ;; Prior to closing, find the next window that should have focus.
-    ;;   If there is no such window, choose the bar on the same monitor.
-    aView := Monitor_#%Manager_aMonitor%_aView_#1
-    StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%aView%_wndIds, 1
-    StringSplit, wndId, wndIds, `;
-    If (wndId0 >= 2)
-      View_activateWindow(0, +1)
-    Else
-      Manager_winActivate(0)
+  If Window_isProg(aWndId)
     Window_close(aWndId)
-  }
 }
 
 ; Asynchronous management of various WM properties.
@@ -249,7 +231,7 @@ Manager_getWindowList()
   Local text, v, aWndId, wndIds, aWndTitle
 
   v := Monitor_#%Manager_aMonitor%_aView_#1
-  aWndId := View_#%Manager_aMonitor%_#%v%_aWndId
+  aWndId := View_getActiveWindow(Manager_aMonitor, v)
   WinGetTitle, aWndTitle, ahk_id %aWndId%
   text := "Active Window`n" aWndId ":`t" aWndTitle
 
@@ -410,6 +392,19 @@ Manager_maximizeWindow() {
   Window_move(aWndId, Monitor_#%Manager_aMonitor%_x, Monitor_#%Manager_aMonitor%_y, Monitor_#%Manager_aMonitor%_width, Monitor_#%Manager_aMonitor%_height)
 }
 
+Manager_minimizeWindow() {
+  Local aView, aWndId
+
+  WinGet, aWndId, ID, A
+  aView := Monitor_#%Manager_aMonitor%_aView_#1
+  StringReplace, View_#%Manager_aMonitor%_#%aView%_aWndIds, View_#%Manager_aMonitor%_#%aView%_aWndIds, % aWndId ";",, All
+  If Not Window_#%aWndId%_isFloating
+    View_toggleFloatingWindow(aWndId)
+  Window_set(aWndId, "Bottom", "")
+
+  Window_minimize(aWndId)
+}
+
 Manager_moveWindow() {
   Local aWndId, SC_MOVE, WM_SYSCOMMAND
 
@@ -439,7 +434,7 @@ Manager_onDisplayChange(a, wParam, uMsg, lParam) {
     title change: 6 or 32774
 */
 Manager_onShellMessage(wParam, lParam) {
-  Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, i, m, t, wndClass, wndId, wndId0, wndIds, wndTitle, x, y
+  Local a, isChanged, aWndClass, aWndHeight, aWndId, aWndTitle, aWndWidth, aWndX, aWndY, i, m, t, wndClass, wndId, wndId0, wndIds, wndIsDesktop, wndIsHidden, wndTitle, x, y
   ;; HSHELL_* become global.
 
   ;; MESSAGE NAME AND         ... NUMBER    COMMENTS, POSSIBLE EVENTS
@@ -464,14 +459,13 @@ Manager_onShellMessage(wParam, lParam) {
   ;; Any message may be missed, if bug.n is hung or they come in too quickly.
 
   SetFormat, Integer, hex
-  lParam := lParam+0
+  lParam := lParam + 0
   SetFormat, Integer, d
 
   Debug_logMessage("DEBUG[2] Manager_onShellMessage( wParam: " . wParam . ", lParam: " . lParam . " )", 2)
 
-  WinGetClass, wndClass, ahk_id %lParam%
-  WinGetTitle, wndTitle, ahk_id %lParam%
-  If Not wndClass And Not wndTitle {
+  wndIsHidden := Window_getHidden(lParam, wndClass, wndTitle)
+  If wndIsHidden {
     ;; If there is no window class or title, it is assumed that the window is not identifiable.
     ;;   The problem was, that i. a. claws-mail triggers Manager_sync, but the application window
     ;;   would not be ready for being managed, i. e. class and title were not available. Therefore more
@@ -479,6 +473,11 @@ Manager_onShellMessage(wParam, lParam) {
     Return
   }
 
+  wndIsDesktop := (lParam = 0)
+  If wndIsDesktop {
+    WinGetClass, wndClass, A
+    WinGetTitle, wndTitle, A
+  }
   WinGet, aWndId, ID, A
   WinGetClass, aWndClass, ahk_id %aWndId%
   WinGetTitle, aWndTitle, ahk_id %aWndId%
@@ -510,7 +509,7 @@ Manager_onShellMessage(wParam, lParam) {
   ;;      trying to protect against. If another process (hotkey) enters a hideShow block after Manager_hideShow has
   ;;      been checked here, bad things could happen. I've personally observed that windows may be permanently hidden.
   ;;   Look into the use of AHK synchronization primitives.
-  If (wParam = 1 Or wParam = 2 Or wParam = 4 Or wParam = 6 Or wParam = 32772) And lParam And Not Manager_hideShow And Not Manager_focus
+  If (wParam = 1 Or wParam = 2 Or wParam = 4 Or wParam = 6 Or wParam = 32772) And lParam And Not Manager_hideShow
   {
     isChanged := Manager_sync(wndIds)
     If wndIds
@@ -570,13 +569,22 @@ Manager_onShellMessage(wParam, lParam) {
           {
             wndId := wndId%A_Index%
             View_#%Manager_aMonitor%_#%t%_wndIds := wndId ";" View_#%Manager_aMonitor%_#%t%_wndIds
-            View_#%Manager_aMonitor%_#%t%_aWndId := wndId
+            View_setActiveWindow(Manager_aMonitor, t, wndId)
             Window_#%wndId%_tags += 1 << t - 1
           }
           Bar_updateView(Manager_aMonitor, t)
           If Config_dynamicTiling
             View_arrange(Manager_aMonitor, t)
         }
+      }
+    }
+
+    If InStr(Manager_managedWndIds, lParam ";") {
+      View_setActiveWindow(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, lParam)
+      If Window_#%lParam%_isMinimized {
+        Window_#%lParam%_isFloating := False
+        Window_#%lParam%_isMinimized := False
+        View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
       }
     }
 
@@ -592,9 +600,8 @@ Manager_onShellMessage(wParam, lParam) {
           Bar_updateView(i, A_Index)
       }
       Bar_updateStatus()
-      Bar_updateTitle()
-    } Else
-      Bar_updateTitle()
+    }
+    Bar_updateTitle()
   }
 }
 
@@ -631,7 +638,7 @@ Manager_resetMonitorConfiguration() {
           {
             Loop, % Config_viewCount {
               StringReplace, View_#%i%_#%A_Index%_wndIds, View_#%i%_#%A_Index%_wndIds, %A_LoopField%`;,
-              View_#%i%_#%A_Index%_aWndId := 0
+              View_setActiveWindow(i, A_Index, 0)
             }
             Monitor_moveWindow(1, A_LoopField)
           }
@@ -905,7 +912,7 @@ Manager_setViewMonitor(i, d = 0) {
     {
       Loop, % Config_viewCount {
         StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %A_LoopField%`;,
-        View_#%Manager_aMonitor%_#%A_Index%_aWndId := 0
+        View_setActiveWindow(Manager_aMonitor, A_Index, 0)
       }
 
       Monitor_moveWindow(i, A_LoopField)
@@ -958,8 +965,8 @@ Manager_setWindowMonitor(i, d = 0) {
   If (Manager_monitorCount > 1 And InStr(Manager_managedWndIds, aWndId ";")) {
     Loop, % Config_viewCount {
       StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %aWndId%`;,
-      If (aWndId = View_#%Manager_aMonitor%_#%A_Index%_aWndId)
-        View_#%Manager_aMonitor%_#%A_Index%_aWndId := 0
+      If (View_getActiveWindow(Manager_aMonitor, A_Index) = aWndId)
+        View_setActiveWindow(Manager_aMonitor, A_Index, 0)
       Bar_updateView(Manager_aMonitor, A_Index)
     }
     If Config_dynamicTiling
@@ -973,7 +980,7 @@ Manager_setWindowMonitor(i, d = 0) {
     v := Monitor_#%Manager_aMonitor%_aView_#1
     Window_#%aWndId%_tags := 1 << v - 1
     View_#%Manager_aMonitor%_#%v%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%v%_wndIds
-    View_#%Manager_aMonitor%_#%v%_aWndId := aWndId
+    View_setActiveWindow(Manager_aMonitor, v, aWndId)
     If Config_dynamicTiling
       View_arrange(Manager_aMonitor, v)
     Manager_winActivate(aWndId)
@@ -1092,24 +1099,15 @@ Manager_sync(ByRef wndIds = "")
 }
 
 Manager_unmanage(wndId) {
-  Local a, aView, wndId0, wndIds
+  Local a, aView
 
-  ;; Find the next window that should have focus.
-  ;;   If there is no such window, choose the bar on the same monitor.
   aView := Monitor_#%Manager_aMonitor%_aView_#1
-  StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%aView%_wndIds, 1
-  StringSplit, wndId, wndIds, `;
-  If (wndId0 >= 2)
-    View_activateWindow(0, +1)
-  Else
-    Manager_winActivate(0)
 
-  ;; Do our best to make sure that any unmanaged windows are left visible.
-  Window_show(wndId)
   a := Window_#%wndId%_tags & 1 << aView - 1
   Loop, % Config_viewCount {
     If (Window_#%wndId%_tags & 1 << A_Index - 1) {
-      StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %wndId%`;,
+      StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, % wndId ";",, All
+      StringReplace, View_#%Manager_aMonitor%_#%A_Index%_aWndIds, View_#%Manager_aMonitor%_#%A_Index%_aWndIds, % wndId ";",, All
       Bar_updateView(Manager_aMonitor, A_Index)
     }
   }
@@ -1129,7 +1127,7 @@ Manager_winActivate(wndId) {
   Manager_setCursor(wndId)
   Debug_logMessage("DEBUG[1] Activating window: " wndId, 1)
   If Not wndId {
-    If (A_OSVersion = "WIN_8")
+    If (A_OSVersion = "WIN_8" Or A_OSVersion = "WIN_8.1")
       WinGet, wndId, ID, ahk_class WorkerW
     Else
       WinGet, wndId, ID, Program Manager ahk_class Progman

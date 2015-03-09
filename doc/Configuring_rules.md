@@ -67,3 +67,10 @@ The following `Config.ini` line adds a rule, putting windows of 'Mozilla
 Thunderbird' on view 4, keeping the title bar visible and maximizing them.
 
 `Config_rule=MozillaWindowClass;.*Mozilla Thunderbird;;1;0;8;0;1;0;maximize`
+
+#### GNU Emacs
+
+The following rule avoids the gaps, which would be the result of Emacs'
+line-oriented resizing of its own windows (frames).
+
+`Config_rule=Emacs;.*;;1;0;0;0;0;0;maximize`

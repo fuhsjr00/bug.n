@@ -96,7 +96,7 @@ transparency) or an integer between `0` (fully transparent) and `255` (opaque).
 At least on Windows >= 8 with `Config_verticalBarPos=tray` the bar won't be
 visible at all, if `Config_barTransparency` is not set to `off`.
 
-`Config_barCommands=Run, explore doc;Monitor_toggleBar();Main_reload();Reload;ExitApp`
+`Config_barCommands=Run, explore doc;Monitor_toggleBar();Reload;ExitApp`
 > The commands seperated by semicolon, which are listed in the command GUI of
 the bar (#!) and therewith can be selected rather then typed; bug.n functions
 (as used in the hotkey configuration), the `Run` and `Send` command of
