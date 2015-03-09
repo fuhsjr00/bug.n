@@ -6,12 +6,31 @@ Not all windows should be managed by bug.n the same way, or even may not be
 managable at all. To handle windows differently, you can add rules to the
 configuration.
 
+The general format of a rule added to `Config.ini` is as follows (all in one
+line, ";" is not allowed as a character in the field values):
+
+```
+Config_rule=<class>;
+            <title>;
+            <function name>;
+            <is managed>;
+            <monitor>;
+            <views tags>;
+            <is floating>;
+            <is decorated>;
+            <hide title>;
+            <action on a single window>
+```
+
 With the first part of the rule, you identify the window using the
 following information:
 
 1. class (as a regular expression)
 2. title (as a regular expression)
 3. arbitrary criterion (as a function name, e. g. "Window_isPopup", or blank)
+
+If you encounter a window you want to configure about, you can retrieve its
+identifying information with the hotkey `#I` a.k.a. <kbd>Win</kbd><kbd>I</kbd>.
 
 With the second part you can give bug.n the following information on how to
 handle the identified windows:
@@ -26,11 +45,6 @@ an integer >= 0, 0 means the currently active view)?
 removed.
 6. Should the title text be hidden in the bug.n bar (0 = no, 1 = yes)?
 7. A special single window action (`close` or `maximize` or blank).
-
-The general format of a rule added to `Config.ini` is as follows:
-`Config_rule=<class>;<title>;<function name>;<is managed>;<monitor>;<views /
-tags>;<is floating>;<is decorated>;<hide title>;<action on a single window>`
-(all in one line, ";" is not allowed as a character in the field values)
 
 If you want to replace a rule, which is already set in `Config.ahk`, you will
 have to use the correct variable name; e. g. you may set a default rule
