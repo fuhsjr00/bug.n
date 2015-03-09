@@ -74,3 +74,11 @@ The following rule avoids the gaps, which would be the result of Emacs'
 line-oriented resizing of its own windows (frames).
 
 `Config_rule=Emacs;.*;;1;0;0;0;0;0;maximize`
+
+#### Atlassian SourceTree
+
+The following rule let bug.n refrain from managing the popup confirmation of
+removing file from working copy.
+
+`Config_rule=.*SourceTree.*;Confirm Remove Modified or Untracked Files?;;0;0;0;0;0;0;`
+
