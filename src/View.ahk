@@ -367,3 +367,5 @@ View_traceAreas(continuously = False) {
   If Tiler_isActive(Manager_aMonitor, v) And Not Config_dynamicTiling
     Tiler_traceAreas(Manager_aMonitor, v, continuously)
 }
+
+;; vim:sts=2 ts=2 sw=2 et

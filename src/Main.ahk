@@ -49,6 +49,7 @@ SetWinDelay, 10
 
   ResourceMonitor_init()
   Manager_init()
+
   Debug_logMessage("====== Running ======", 0)
 Return          ;; end of the auto-execute section
 
@@ -184,3 +185,5 @@ Return
 #Include Tiler.ahk
 #Include View.ahk
 #Include Window.ahk
+
+;; vim:sts=2 ts=2 sw=2 et

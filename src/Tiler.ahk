@@ -375,3 +375,5 @@ Tiler_traceAreas(m, v, continuously) {
   } Else
     WinSet, Bottom,, % wndTitle
 }
+
+;; vim:sts=2 ts=2 sw=2 et
