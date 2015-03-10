@@ -223,6 +223,8 @@ Tiler_setMFactor(m, v, i, d, dFact) {
     mFact := i
   Else
     mFact := View_#%m%_#%v%_layoutMFact
+  If (View_#%m%_#%v%_layoutAxis_#1 < 0)
+    d *= -1
   mFact += Tiler_getMFactorD(m, v, d, dFact)
   If (mFact > 0 And mFact < 1) {
     View_#%m%_#%v%_layoutMFact := mFact
