@@ -507,3 +507,5 @@ Bar_updateView(m, v) {
     GuiControl, , Bar_#%m%_view_#%A_Index%, % Config_viewNames_#%A_Index%                 ;; Refresh the number on the bar.
   }
 }
+
+;; vim:sts=2 ts=2 sw=2 et
