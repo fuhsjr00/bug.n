@@ -189,7 +189,7 @@ desktop and therewith changing the active window.
 * `-` `Config_showTitleBars`
 * `~` `Config_rules` have two more parameters (window style and if the window
 is decorated; this replaces `Config_showTitleBars`).
-* `+` <kbd>Win</kbd><kbd>Shift</kbd><kbd>X</kbd>` maximizes a window to the
+* `+` <kbd>Win</kbd><kbd>Shift</kbd><kbd>X</kbd> maximizes a window to the
 bug.n workspace.
 * `+` You may now use `Monitor_activateView(">")` for cycling through the views
 and `View_setLayout(">")` for cycling through the layouts.

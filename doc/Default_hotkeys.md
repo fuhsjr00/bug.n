@@ -4,13 +4,13 @@
 
 The hotkeys, as you can set them in `Config.ini`, are noted in the format
 `Conifg_hotkey=<modifier><key>::<function>(<argument>)`; you may copy the
-string from ` ` and use it as a templete for a new line in `Config.ini`.
+string from ` ` and use it as a template for a new line in `Config.ini`.
 Possible modifiers are the following:
 
-* `!` (<kbd>Alt</kbd>)
-* `^` (<kbd>Ctrl</kbd>, Control)
-* `#` (<kbd>Win</kbd> / LWin, left Windows)
-* `+` (<kbd>Shift</kbd>)
+* `!` <kbd>Alt</kbd>
+* `^` <kbd>Ctrl</kbd>, Control
+* `#` <kbd>Win</kbd> / LWin, the left Windows key
+* `+` <kbd>Shift</kbd>
 
 You will have to press all keys of a hotkey at the same time beginning with the
 modifier for calling the associated function, e. g. `#^q` means pressing the
@@ -137,7 +137,7 @@ one. E. g. with
 step, by which the master area is reduced, is -0.0016% and will be doubled with
 consecutive calls until it reaches -0.05%.
 With the second parameter you may set an absolute value, e. g.
-'View_setLayoutProperty(MFactor, 0.5, 0)' splits the view in half.
+`View_setLayoutProperty(MFactor, 0.5, 0)` splits the view in half.
 
 `Conifg_hotkey=#Right::View_setLayoutProperty(MFactor, 0, +0.05)`
 > Enlarge the size of the master area in the active view (only for the "tile"
@@ -147,7 +147,7 @@ one. E. g. with
 first step, by which the master area is reduced, is 0.05%, but with consecutive
 calls it will be halved until it reaches 0.0016%.
 With the second parameter you may set an absolute value, e. g.
-'View_setLayoutProperty(MFactor, 0.67, 0)' makes the master area two thirds
+`View_setLayoutProperty(MFactor, 0.67, 0)` makes the master area two thirds
 and the stacking area one third the size of the view.
 
 `Conifg_hotkey=#^t::View_setLayoutProperty(Axis, 0, +1, 1)`

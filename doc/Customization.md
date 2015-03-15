@@ -42,7 +42,7 @@ settings.
 You may find a sample configuration file at
 https://github.com/joten/bug.n.config.
 
-### Re-using <kbd>Win</kbd><kbd>L</kbd>
+### Re-using Win+L
 
 The hotkey `#l` (<kbd>Win</kbd><kbd>L</kbd>) is set by Microsoft Windows to
 lock the workstation. If you want to use it as a hotkey in bug.n, you can bind
@@ -51,8 +51,8 @@ another hotkey, e. g. `#^+l`
 function by using the bug.n-function `Manager_lockWorkStation()`, which i. a.
 sets the registry key
 `Software\Microsoft\Windows\CurrentVersion\Policies\System\DisableLockWorkstation`
-and locks the workstation. This than allows to set <kbd>Win</kbd><kbd>L</kbd> as
-a hotkey in `Config.ini`.
+and locks the workstation. This than allows to set `#l` as a hotkey in
+`Config.ini`.
 
 If <kbd>Win</kbd><kbd>L</kbd> still locks the workstation, use the new
 keybinding for locking the workstation at least once and therewith set the
