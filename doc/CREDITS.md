@@ -40,4 +40,4 @@ summarizes these sources (of ideas or code):
   + [Crazy Scripting : Quick Launcher for Portable Apps](http://www.autohotkey.com/forum/topic22398.html)
   + [HDD Activity Monitoring LED](http://www.autohotkey.com/community/viewtopic.php?p=113890&sid=64d9824fdf252697ff4d5026faba91f8#p113890)
   + How to Hook on to Shell to receive its messages? (AutoHotkey forum)
-* Unambiguous: Re-use WIN+L as a hotkey in bug.n (AutoHotkey forum)
+* Unambiguous: Re-use <kbd>Win</kbd><kbd>L</kbd> as a hotkey in bug.n (AutoHotkey forum)

@@ -4,11 +4,11 @@ bug.n is mostly controlled with hotkeys. The available hotkeys are listed in
 the document "[Default hotkeys](./Default_hotkeys.md)". For a quick help there
 are the following hotkeys:
 
-* `#y` (`Win+Y`): Show the command GUI, which allows you to enter
-bug.n-functions.
-* `#Space` (`Win+Space`): Show / Hide the Windows Taskbar.
-* `#^q` (`Win+Ctrl+Q`): Quit bug.n and restore all windows and Windows UI
-elements.
+* `#y` (<kbd>Win</kbd><kbd>Y</kbd>): Show the command GUI, which allows you to
+enter bug.n-functions.
+* `#Space` (<kbd>Win</kbd><kbd>Space</kbd>): Show / Hide the Windows Taskbar.
+* `#^q` (<kbd>Win</kbd><kbd>Ctrl</kbd><kbd>Q</kbd>): Quit bug.n and restore all
+windows and Windows UI elements.
 
 The following functions can also be controlled with the mouse:
 

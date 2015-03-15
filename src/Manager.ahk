@@ -504,7 +504,7 @@ Manager_onShellMessage(wParam, lParam) {
 
   ;; @todo: There are two problems with the use of Manager_hideShow:
   ;;   1) If Manager_hideShow is set when we hit this block, we won't take some actions that should eventually be taken.
-  ;;      This _may_ explain why some windows never get picked up when spamming Win+e
+  ;;      This _may_ explain why some windows never get picked up when spamming Win+E
   ;;   2) There is a race condition between the time that Manager_hideShow is checked and any other action which we are
   ;;      trying to protect against. If another process (hotkey) enters a hideShow block after Manager_hideShow has
   ;;      been checked here, bad things could happen. I've personally observed that windows may be permanently hidden.

@@ -44,8 +44,8 @@ description.
 
 ##### [Customizing bug.n](./Customization.md)
 > A description on how to customize bug.n by setting configuration variables
-and hotkeys. Also described is a method to re-use the hotkey `Win+L`, which is
-blocked by the Windows function to lock the screen.
+and hotkeys. Also described is a method to re-use the hotkey <kbd>Win</kbd><kbd>L</kbd>,
+which is blocked by the Windows function to lock the screen.
 
 ##### [Default setting of configuration variables](./Default_configuration.md)
 > A list of all configuration variables with their default values and a short

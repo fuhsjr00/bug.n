@@ -1,5 +1,9 @@
 ## Default setting of configuration variables
 
+The configuration variables, as you can set them in `Config.ini`, are noted in
+the format `Conifg_<identifier>=<value>`; you may copy the string from ` ` and
+use it as a templete for a new line in `Config.ini`.
+
 ### Status bar
 
 `Config_showBar=1`
@@ -260,9 +264,10 @@ correspondingly set to the tag.
 `Config_viewMargins=0;0;0;0`
 > The margin of a view (around the layout, "monocle" and "tile") as a semicolon
 separated list of values in px (top;right;bottom;left), which by default can be
-activated per view with the hotkey Win+Shift+N (`View_toggleMargins`).
-With view margins you may create an empty area on the monitor, which is not
-occupied by the layout, therewith making a desktop widget visible.
+activated per view with the hotkey <kbd>Win</kbd><kbd>Shift</kbd><kbd>N</kbd>
+(`View_toggleMargins`). With view margins you may create an empty area on the
+monitor, which is not occupied by the layout, therewith making a desktop widget
+visible.
 
 ### Rules
 
