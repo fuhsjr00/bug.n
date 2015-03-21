@@ -325,6 +325,7 @@ View_toggleFloatingWindow(wndId = 0) {
     WinGet, wndId, ID, A
   v := Monitor_#%Manager_aMonitor%_aView_#1
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
+  Debug_logMessage("DEBUG[2] View_toggleFloatingWindow; wndId: " . wndId, 2)
   If (Config_layoutFunction_#%l% And InStr(Manager_managedWndIds, wndId ";")) {
     Window_#%wndId%_isFloating := Not Window_#%wndId%_isFloating
     View_arrange(Manager_aMonitor, v)

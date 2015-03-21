@@ -254,6 +254,7 @@ Config_redirectHotkey(key)
   {
     If (key = Config_hotkey_#%A_index%_key)
     {
+      Debug_logMessage("DEBUG[1] Config_redirectHotkey: Found " Config_hotkey_#%A_index%_key " -> " Config_hotkey_#%A_index%_command, 1)
       Main_evalCommand(Config_hotkey_#%A_index%_command)
       Break
     }

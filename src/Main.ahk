@@ -103,7 +103,10 @@ Main_evalCommand(command)
       functionArguments := SubStr(command, i + 1, j - (i + 1))
       StringReplace, functionArguments, functionArguments, %A_SPACE%, , All
       StringSplit, functionArgument, functionArguments, `,
-      If (functionArgument0 < 2)
+      Debug_logMessage("DEBUG[1] Main_evalCommand: " functionName "(" functionArguments ")", 1)
+      If (functionArgument0 = 0)
+        %functionName%()
+      Else If (functionArgument0 = 1)
         %functionName%(functionArguments)
       Else If (functionArgument0 = 2)
         %functionName%(functionArgument1, functionArgument2)
