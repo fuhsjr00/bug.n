@@ -355,7 +355,9 @@ Bar_toggleCommandGui()
     Else
       y := Monitor_#%Manager_aMonitor%_y + Monitor_#%Manager_aMonitor%_height - Bar_#0_#0H
     Gui, Show
-    WinMove, bug.n_BAR_0, , %x%, %y%
+    WinGet, wndId, ID, bug.n_BAR_0
+    WinMove, ahk_id %wndId%, , %x%, %y%
+    Window_set(wndId, "AlwaysOnTop", "On")
     GuiControl, Focus, % Bar_#0_#0
   }
 }
