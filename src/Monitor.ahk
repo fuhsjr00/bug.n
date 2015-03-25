@@ -186,6 +186,8 @@ Monitor_getWorkArea(m) {
   Monitor_#%m%_x      := monitorLeft
   Monitor_#%m%_y      := monitorTop
   Monitor_#%m%_barY   := bTop
+
+  Monitor_setWorkArea(monitorLeft, monitorTop, monitorRight, monitorBottom)
 }
 
 Monitor_moveWindow(m, wndId)
@@ -247,6 +249,15 @@ Monitor_setWindowTag(i, d = 0) {
       }
     }
   }
+}
+
+Monitor_setWorkArea(left, top, right, bottom) {
+   VarSetCapacity(area, 16)
+   NumPut(left,   area,  0)
+   NumPut(top,    area,  4)
+   NumPut(right,  area,  8)
+   NumPut(bottom, area, 12)
+   DllCall("SystemParametersInfo", UInt, 0x2F, UInt, 0, UInt, &area, UInt, 0)   ; 0x2F = SPI_SETWORKAREA
 }
 
 Monitor_toggleBar()
