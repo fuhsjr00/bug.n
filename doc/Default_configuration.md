@@ -172,7 +172,7 @@ if =0, the system's window border colour is not changed).
 
 `Config_viewNames=1;2;3;4;5;6;7;8;9`
 > The names of the views separated by a semicolon. This variable sets the names
-of the views shown in the status bar and determines the nummber of views
+of the views shown in the status bar and determines the number of views
 (`Config_viewCount`); the total number of names given, i. e. views, should not
 be exceeded by the configured hotkeys.
 
