@@ -62,3 +62,37 @@ Here follows an example for configuring hotkeys, which are similar to those of
     Config_hotkey=#,::View_setMSplit(+1)
     Config_hotkey=#.::View_setMSplit(-1)
     Config_hotkey=#Space::View_setLayout(>)
+
+### AZERTY compatible hotkeys
+
+This configuration was created in order to make view/tagging hotkeys functionnal with AZERTY keyboards. In fact, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9` and `0` triggers respectively `&`, `é`, `"`, `'`, `(`, `-`, `è`, `_`, `ç` and `à` in such a layout.
+
+```
+Config_hotkey=#&::Monitor_activateView(1)
+Config_hotkey=#é::Monitor_activateView(2)
+Config_hotkey=#"::Monitor_activateView(3)
+Config_hotkey=#'::Monitor_activateView(4)
+Config_hotkey=#(::Monitor_activateView(5)
+Config_hotkey=#-::Monitor_activateView(6)
+Config_hotkey=#è::Monitor_activateView(7)
+Config_hotkey=#_::Monitor_activateView(8)
+Config_hotkey=#ç::Monitor_activateView(9)
+Config_hotkey=#+&::Monitor_setWindowTag(1)
+Config_hotkey=#+é::Monitor_setWindowTag(2)
+Config_hotkey=#+"::Monitor_setWindowTag(3)
+Config_hotkey=#+'::Monitor_setWindowTag(4)
+Config_hotkey=#+(::Monitor_setWindowTag(5)
+Config_hotkey=#+-::Monitor_setWindowTag(6)
+Config_hotkey=#+è::Monitor_setWindowTag(7)
+Config_hotkey=#+_::Monitor_setWindowTag(8)
+Config_hotkey=#+ç::Monitor_setWindowTag(9)
+Config_hotkey=#^&::toggleWindowTag(1)
+Config_hotkey=#^é::toggleWindowTag(2)
+Config_hotkey=#^"::toggleWindowTag(3)
+Config_hotkey=#^'::toggleWindowTag(4)
+Config_hotkey=#^(::toggleWindowTag(5)
+Config_hotkey=#^-::toggleWindowTag(6)
+Config_hotkey=#^è::toggleWindowTag(7)
+Config_hotkey=#^_::toggleWindowTag(8)
+Config_hotkey=#^ç::toggleWindowTag(9)
+```
