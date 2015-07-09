@@ -63,42 +63,32 @@ Main_cleanup:
   Debug_logMessage("====== Exiting bug.n ======", 0)
 ExitApp
 
-Main_evalCommand(command)
-{
+Main_evalCommand(command) {
   type := SubStr(command, 1, 5)
-  If (type = "Run, ")
-  {
+  If (type = "Run, ") {
     parameters := SubStr(command, 6)
-    If InStr(parameters, ", ")
-    {
+    If InStr(parameters, ", ") {
       StringSplit, parameter, parameters, `,
-      If (parameter0 = 2)
-      {
+      If (parameter0 = 2) {
         StringTrimLeft, parameter2, parameter2, 1
         Run, %parameter1%, %parameter2%
-      }
-      Else If (parameter0 > 2)
-      {
+      } Else If (parameter0 > 2) {
         StringTrimLeft, parameter2, parameter2, 1
         StringTrimLeft, parameter3, parameter3, 1
         Run, %parameter1%, %parameter2%, %parameter3%
       }
-    }
-    Else
+    } Else
       Run, %parameters%
-  }
-  Else If (type = "Send ")
+  } Else If (type = "Send ")
     Send % SubStr(command, 6)
   Else If (command = "Reload")
     Reload
   Else If (command = "ExitApp")
     ExitApp
-  Else
-  {
+  Else {
     i := InStr(command, "(")
     j := InStr(command, ")", False, i)
-    If i And j
-    {
+    If i And j {
       functionName := SubStr(command, 1, i - 1)
       functionArguments := SubStr(command, i + 1, j - (i + 1))
       StringReplace, functionArguments, functionArguments, %A_SPACE%, , All
@@ -124,20 +114,15 @@ Return
 
 ;; Create bug.n-specific directories.
 Main_makeDir(dirName) {
-  IfNotExist, %dirName%
-  {
+  IfNotExist, %dirName% {
     FileCreateDir, %dirName%
-    If ErrorLevel
-    {
+    If ErrorLevel {
       MsgBox, Error (%ErrorLevel%) when creating '%dirName%'. Aborting.
       ExitApp
     }
-  }
-  Else
-  {
+  } Else {
     FileGetAttrib, attrib, %dirName%
-    IfNotInString, attrib, D
-    {
+    IfNotInString, attrib, D {
       MsgBox, The file path '%dirName%' already exists and is not a directory. Aborting.
       ExitApp
     }

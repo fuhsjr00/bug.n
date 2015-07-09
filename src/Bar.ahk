@@ -162,8 +162,7 @@ Bar_init(m) {
   }
 }
 
-Bar_initCmdGui()
-{
+Bar_initCmdGui() {
   Global Bar_#0_#0, Bar_#0_#0H, Bar_#0_#0W, Bar_#0_#1, Bar_cmdGuiIsVisible, Config_backColor_#1_#3, Config_barCommands, Config_fontName, Config_fontSize, Config_foreColor_#1_#3
 
   Bar_cmdGuiIsVisible := False
@@ -218,8 +217,7 @@ Bar_cmdGuiEscape:
   WinActivate, ahk_id %Bar_aWndId%
 Return
 
-Bar_getHeight()
-{
+Bar_getHeight() {
   Global Bar_#0_#1, Bar_#0_#1H, Bar_#0_#2, Bar_#0_#2H, Bar_ctrlHeight, Bar_height, Bar_textHeight
   Global Config_fontName, Config_fontSize, Config_singleRowBar, Config_spaciousBar, Config_verticalBarPos
 
@@ -229,21 +227,18 @@ Bar_getHeight()
   Gui, Add, Text, x0 y0 vBar_#0_#1, |
   GuiControlGet, Bar_#0_#1, Pos
   Bar_textHeight := Bar_#0_#1H
-  If Config_spaciousBar
-  {
+  If Config_spaciousBar {
     Gui, Add, ComboBox, r9 x0 y0 vBar_#0_#2, |
     GuiControlGet, Bar_#0_#2, Pos
     Bar_ctrlHeight := Bar_#0_#2H
-  }
-  Else
+  } Else
     Bar_ctrlHeight := Bar_textHeight
   Gui, Destroy
 
   Bar_height := Bar_ctrlHeight
   If Not Config_singleRowBar
     Bar_height *= 2
-  If (Config_verticalBarPos = "tray")
-  {
+  If (Config_verticalBarPos = "tray") {
     WinGetPos, , , , buttonH, Start ahk_class Button
     WinGetPos, , , , barH, ahk_class Shell_TrayWnd
     If WinExist("Start ahk_class Button") And (buttonH < barH)
@@ -256,12 +251,11 @@ Bar_getHeight()
   }
 }
 
-Bar_getTextWidth(x, reverse=False)
-{
+Bar_getTextWidth(x, reverse=False) {
   Global Config_fontSize
 
-  If reverse
-  {    ;; 'reverse' calculates the number of characters to a given width.
+  If reverse {
+    ;; 'reverse' calculates the number of characters to a given width.
     w := x
     i := w / (Config_fontSize - 1)
     If (Config_fontSize = 7 Or (Config_fontSize > 8 And Config_fontSize < 13))
@@ -271,9 +265,8 @@ Bar_getTextWidth(x, reverse=False)
     Else If (Config_fontSize > 17)
       i := w / (Config_fontSize - 4)
     textWidth := i
-  }
-  Else
-  {    ;; 'else' calculates the width to a given string.
+  } Else {
+    ;; 'else' calculates the width to a given string.
     textWidth := StrLen(x) * (Config_fontSize - 1)
     If (Config_fontSize = 7 Or (Config_fontSize > 8 And Config_fontSize < 13))
       textWidth := StrLen(x) * (Config_fontSize - 2)
@@ -324,8 +317,7 @@ Bar_loop:
   Bar_updateStatus()
 Return
 
-Bar_move(m)
-{
+Bar_move(m) {
   Local wndTitle, x, y
 
   x := Monitor_#%m%_barX
@@ -335,19 +327,15 @@ Bar_move(m)
   WinMove, %wndTitle%, , %x%, %y%
 }
 
-Bar_toggleCommandGui()
-{
+Bar_toggleCommandGui() {
   Local wndId, x, y
 
   Gui, 99: Default
-  If Bar_cmdGuiIsVisible
-  {
+  If Bar_cmdGuiIsVisible {
     Bar_cmdGuiIsVisible := False
     Gui, Cancel
     Manager_winActivate(Bar_aWndId)
-  }
-  Else
-  {
+  } Else {
     Bar_cmdGuiIsVisible := True
     x := Monitor_#%Manager_aMonitor%_x + Monitor_#%Manager_aMonitor%_barX + Monitor_#%Manager_aMonitor%_barWidth - Bar_#0_#0W
     If (Config_verticalBarPos = "top") Or (Config_verticalBarPos = "tray") And (Monitor_%Manager_aMonitor%_taskBarPos = "top" Or Not Monitor_#%Manager_aMonitor%_taskBarClass)
@@ -362,17 +350,14 @@ Bar_toggleCommandGui()
   }
 }
 
-Bar_toggleVisibility(m)
-{
+Bar_toggleVisibility(m) {
   Local GuiN
 
   GuiN := (m - 1) + 1
-  If Monitor_#%m%_showBar
-  {
+  If Monitor_#%m%_showBar {
     If Not (GuiN = 99) Or Bar_cmdGuiIsVisible
       Gui, %GuiN%: Show
-  }
-  Else
+  } Else
     Gui, %GuiN%: Cancel
 }
 

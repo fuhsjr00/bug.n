@@ -102,15 +102,13 @@ Monitor_activateView(i, d = 0) {
   Manager_winActivate(wndId)
 }
 
-Monitor_get(x, y)
-{
+Monitor_get(x, y) {
   Local m
 
   m := 0
-  Loop, % Manager_monitorCount
-  {    ;; Check if the window is on this monitor.
-    If (x >= Monitor_#%A_Index%_x && x <= Monitor_#%A_Index%_x+Monitor_#%A_Index%_width && y >= Monitor_#%A_Index%_y && y <= Monitor_#%A_Index%_y+Monitor_#%A_Index%_height)
-    {
+  Loop, % Manager_monitorCount {
+    ;; Check if the window is on this monitor.
+    If (x >= Monitor_#%A_Index%_x && x <= Monitor_#%A_Index%_x+Monitor_#%A_Index%_width && y >= Monitor_#%A_Index%_y && y <= Monitor_#%A_Index%_y+Monitor_#%A_Index%_height) {
       m := A_Index
       Break
     }
@@ -130,8 +128,7 @@ Monitor_getWorkArea(m) {
   ;; @TODO What about third and so forth TrayWnd?
   If Config_bbCompatibility
     wndClasses .= ";bbLeanBar;bbSlit;BBToolbar;SystemBarEx"
-  Loop, PARSE, wndClasses, `;
-  {
+  Loop, PARSE, wndClasses, `; {
     wndId := WinExist("ahk_class " A_LoopField)
     If wndId {
       WinGetPos, wndX, wndY, wndWidth, wndHeight, ahk_id %wndId%
@@ -190,8 +187,7 @@ Monitor_getWorkArea(m) {
   Monitor_setWorkArea(monitorLeft, monitorTop, monitorRight, monitorBottom)
 }
 
-Monitor_moveWindow(m, wndId)
-{
+Monitor_moveWindow(m, wndId) {
   Global
 
   Window_#%wndId%_monitor := m
@@ -261,8 +257,7 @@ Monitor_setWorkArea(left, top, right, bottom) {
 }
 ;; flashkid: Send SetWorkArea to second Monitor (http://www.autohotkey.com/board/topic/42564-send-setworkarea-to-second-monitor/)
 
-Monitor_toggleBar()
-{
+Monitor_toggleBar() {
   Global
 
   Monitor_#%Manager_aMonitor%_showBar := Not Monitor_#%Manager_aMonitor%_showBar

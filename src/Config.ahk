@@ -140,8 +140,8 @@ Config_initColors() {
   }
 }
 
-Config_convertSystemColor(systemColor)
-{ ;; systemColor format: 0xBBGGRR
+Config_convertSystemColor(systemColor){
+  ;; systemColor format: 0xBBGGRR
   rr := SubStr(systemColor, 7, 2)
   gg := SubStr(systemColor, 5, 2)
   bb := SubStr(systemColor, 3, 2)
@@ -246,14 +246,11 @@ Config_readinAny() {
   Return, text
 }
 
-Config_redirectHotkey(key)
-{
+Config_redirectHotkey(key) {
   Global
 
-  Loop, % Config_hotkeyCount
-  {
-    If (key = Config_hotkey_#%A_index%_key)
-    {
+  Loop, % Config_hotkeyCount {
+    If (key = Config_hotkey_#%A_index%_key) {
       Debug_logMessage("DEBUG[1] Config_redirectHotkey: Found " Config_hotkey_#%A_index%_key " -> " Config_hotkey_#%A_index%_command, 1)
       Main_evalCommand(Config_hotkey_#%A_index%_command)
       Break
@@ -261,45 +258,38 @@ Config_redirectHotkey(key)
   }
 }
 
-Config_restoreConfig(filename)
-{
+Config_restoreConfig(filename) {
   Local cmd, i, key, type, val, var
 
   If Not FileExist(filename)
     Return
 
   Loop, READ, %filename%
-    If (SubStr(A_LoopReadLine, 1, 7) = "Config_")
-    {
+    If (SubStr(A_LoopReadLine, 1, 7) = "Config_") {
       ;Log_msg("Processing line: " . A_LoopReadLine)
       i := InStr(A_LoopReadLine, "=")
       var := SubStr(A_LoopReadLine, 1, i - 1)
       val := SubStr(A_LoopReadLine, i + 1)
       type := SubStr(var, 1, 13)
-      If (type = "Config_hotkey")
-      {
+      If (type = "Config_hotkey") {
         Debug_logMessage("Processing configured hotkey: " . A_LoopReadLine, 0)
         i := InStr(val, "::")
         key := SubStr(val, 1, i - 1)
         cmd := SubStr(val, i + 2)
         If Not cmd
           Hotkey, %key%, Off
-        Else
-        {
+        Else {
           Debug_logMessage("  Hotkey: " . key . " -> " . cmd, 0)
           Config_hotkeyCount += 1
           Config_hotkey_#%Config_hotkeyCount%_key := key
           Config_hotkey_#%Config_hotkeyCount%_command := cmd
           Hotkey, %key%, Config_hotkeyLabel
         }
-      }
-      Else If (type = "Config_rule")
-      {
+      } Else If (type = "Config_rule") {
         i := 0
         If InStr(var, "Config_rule_#")
           i := SubStr(var, 14)
-        If (i = 0 Or i > Config_ruleCount)
-        {
+        If (i = 0 Or i > Config_ruleCount) {
           Config_ruleCount += 1
           i := Config_ruleCount
         }
@@ -324,26 +314,22 @@ Config_restoreLayout(filename, m) {
     }
 }
 
-Config_saveSession(original, target)
-{
+Config_saveSession(original, target) {
   Local m, text, tmpfilename
 
   tmpfilename := target . ".tmp"
   FileDelete, %tmpfilename%
 
   text := "; bug.n - tiling window management`n; @version " VERSION "`n`n"
-  If FileExist(original)
-  {
-    Loop, READ, %original%
-    {
+  If FileExist(original) {
+    Loop, READ, %original% {
       If (SubStr(A_LoopReadLine, 1, 7) = "Config_")
         text .= A_LoopReadLine "`n"
     }
     text .= "`n"
   }
 
-  Loop, % Manager_monitorCount
-  {
+  Loop, % Manager_monitorCount {
     m := A_Index
     If Not (Monitor_#%m%_aView_#1 = 1)
       text .= "Monitor_#" m "_aView_#1=" Monitor_#%m%_aView_#1 "`n"
@@ -351,8 +337,7 @@ Config_saveSession(original, target)
       text .= "Monitor_#" m "_aView_#2=" Monitor_#%m%_aView_#2 "`n"
     If Not (Monitor_#%m%_showBar = Config_showBar)
       text .= "Monitor_#" m "_showBar=" Monitor_#%m%_showBar "`n"
-    Loop, % Config_viewCount
-    {
+    Loop, % Config_viewCount {
       If Not (View_#%m%_#%A_Index%_layout_#1 = 1)
         text .= "View_#" m "_#" A_Index "_layout_#1=" View_#%m%_#%A_Index%_layout_#1 "`n"
       If Not (View_#%m%_#%A_Index%_layout_#2 = 1)
@@ -377,12 +362,10 @@ Config_saveSession(original, target)
   ;; The FileMove below is an all-or-nothing replacement of the file.
   ;; We don't want to leave this half-finished.
   FileAppend, %text%, %tmpfilename%
-  If ErrorLevel
-  {
+  If ErrorLevel {
     If FileExist(tmpfilename)
       FileDelete, %tmpfilename%
-  }
-  Else
+  } Else
     FileMove, %tmpfilename%, %target%, 1
 }
 
