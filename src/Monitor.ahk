@@ -259,6 +259,7 @@ Monitor_setWorkArea(left, top, right, bottom) {
    NumPut(bottom, area, 12)
    DllCall("SystemParametersInfo", UInt, 0x2F, UInt, 0, UInt, &area, UInt, 0)   ; 0x2F = SPI_SETWORKAREA
 }
+;; flashkid: Send SetWorkArea to second Monitor (http://www.autohotkey.com/board/topic/42564-send-setworkarea-to-second-monitor/)
 
 Monitor_toggleBar()
 {
