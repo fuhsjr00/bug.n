@@ -13,8 +13,7 @@
   @version 9.0.0
 */
 
-Manager_init()
-{
+Manager_init() {
   Local doRestore
 
   Manager_setWindowBorders()
@@ -26,14 +25,11 @@ Manager_init()
   Manager_aMonitor := 1
 
   doRestore := 0
-  If (Config_autoSaveSession = "ask")
-  {
+  If (Config_autoSaveSession = "ask") {
     MsgBox, 0x4, , Would you like to restore an auto-saved session?
     IfMsgBox Yes
       doRestore := 1
-  }
-  Else If (Config_autoSaveSession = "auto")
-  {
+  } Else If (Config_autoSaveSession = "auto") {
     doRestore := 1
   }
 
@@ -54,8 +50,7 @@ Manager_init()
 
   Bar_updateStatus()
   Bar_updateTitle()
-  Loop, % Manager_monitorCount
-  {
+  Loop, % Manager_monitorCount {
     View_arrange(A_Index, Monitor_#%A_Index%_aView_#1)
     Bar_updateView(A_Index, Monitor_#%A_Index%_aView_#1)
   }
@@ -127,8 +122,7 @@ Manager_applyRules(wndId, ByRef isManaged, ByRef m, ByRef tags, ByRef isFloating
   }
 }
 
-Manager_cleanup()
-{
+Manager_cleanup() {
   Local aWndId, m, ncmSize, ncm, wndIds
 
   WinGet, aWndId, ID, A
@@ -138,8 +132,7 @@ Manager_cleanup()
   ;; Show borders and title bars.
   StringTrimRight, wndIds, Manager_managedWndIds, 1
   Manager_hideShow := True
-  Loop, PARSE, wndIds, `;
-  {
+  Loop, PARSE, wndIds, `; {
     Window_show(A_LoopField)
     If Not Config_showBorder
       Window_set(A_LoopField, "Style", "+0x40000")
@@ -152,14 +145,12 @@ Manager_cleanup()
   Manager_hideShow := False
 
   ;; Restore window positions and sizes.
-  Loop, % Manager_monitorCount
-  {
+  Loop, % Manager_monitorCount {
     m := A_Index
     Monitor_#%m%_showBar := False
     Monitor_#%m%_showTaskBar := True
     Monitor_getWorkArea(m)
-    Loop, % Config_viewCount
-    {
+    Loop, % Config_viewCount {
       View_arrange(m, A_Index, True)
     }
   }
@@ -191,8 +182,7 @@ Manager_doMaintenance:
     Manager_saveState()
 Return
 
-Manager_getWindowInfo()
-{
+Manager_getWindowInfo() {
   Local aWndClass, aWndHeight, aWndId, aWndMinMax, aWndPId, aWndPName, aWndStyle, aWndTitle, aWndWidth, aWndX, aWndY, rule, text, v
 
   WinGet, aWndId, ID, A
@@ -226,8 +216,7 @@ Manager_getWindowInfo()
     Clipboard := text
 }
 
-Manager_getWindowList()
-{
+Manager_getWindowList() {
   Local text, v, aWndId, wndIds, aWndTitle
 
   v := Monitor_#%Manager_aMonitor%_aView_#1
@@ -237,8 +226,7 @@ Manager_getWindowList()
 
   StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
   text .= "`n`nWindow List"
-  Loop, PARSE, wndIds, `;
-  {
+  Loop, PARSE, wndIds, `; {
     WinGetTitle, wndTitle, ahk_id %A_LoopField%
     text .= "`n" A_LoopField ":`t" wndTitle
   }
@@ -248,8 +236,7 @@ Manager_getWindowList()
     Clipboard := text
 }
 
-Manager_lockWorkStation()
-{
+Manager_lockWorkStation() {
   Global Config_shellMsgDelay
 
   RegWrite, REG_DWORD, HKEY_CURRENT_USER, Software\Microsoft\Windows\CurrentVersion\Policies\System, DisableLockWorkstation, 0
@@ -273,15 +260,13 @@ Manager_loop(index, increment, lowerBound, upperBound) {
   Return, lowerBound + lowerBoundBasedIndex
 }
 
-Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hideTitle, action = "")
-{
+Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hideTitle, action = "") {
   Local a
 
   If Not Instr(Manager_allWndIds, wndId ";")
     Manager_allWndIds .= wndId ";"
 
-  If (isManaged)
-  {
+  If (isManaged) {
     If (action = "close" Or action = "maximize")
       Window_%action%(wndId)
 
@@ -298,14 +283,11 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
       Window_set(wndId, "Style", "-0xC00000")
 
     a := Window_#%wndId%_tags & (1 << (Monitor_#%m%_aView_#1 - 1))
-    If a
-    {
+    If a {
       ;; A newly created window defines the active monitor, if it is visible.
       Manager_aMonitor := m
       Manager_winActivate(wndId)
-    }
-    Else
-    {
+    } Else {
       Manager_hideShow := True
       Window_hide(wndId)
       Manager_hideShow := False
@@ -319,8 +301,7 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
 
 ;; Accept a window to be added to the system for management.
 ;; Provide a monitor and view preference, but don't override the config.
-Manager_manage(preferredMonitor, preferredView, wndId)
-{
+Manager_manage(preferredMonitor, preferredView, wndId) {
   Local a, action, c0, hideTitle, i, isDecorated, isFloating, isManaged, l, m, n, replace, search, tags, body
   Local wndControlList0, wndId0, wndIds, wndX, wndY, wndWidth, wndHeight
 
@@ -329,12 +310,10 @@ Manager_manage(preferredMonitor, preferredView, wndId)
     Return
 
   body := 0
-  If Window_isGhost(wndId)
-  {
+  If Window_isGhost(wndId) {
     Debug_logMessage("DEBUG[2] A window has given up the ghost (Ghost wndId: " . wndId . ")", 2)
     body := Window_findHung(wndId)
-    If body
-    {
+    If body {
       isManaged := InStr(Manager_managedWndIds, body ";")
       m := Window_#%body%_monitor
       tags := Window_#%body%_tags
@@ -342,16 +321,13 @@ Manager_manage(preferredMonitor, preferredView, wndId)
       isFloating := Window_#%body%_isFloating
       hideTitle := InStr(Bar_hideTitleWndIds, body ";")
       action := ""
-    }
-    Else
-    {
+    } Else {
       Debug_logMessage("DEBUG[1] No body could be found for ghost wndId: " . wndId, 1)
     }
   }
 
   ;; Apply rules if the window is either a normal window or a ghost without a body.
-  If (body = 0)
-  {
+  If (body = 0) {
     Manager_applyRules(wndId, isManaged, m, tags, isFloating, isDecorated, hideTitle, action)
     If (m = 0)
       m := preferredMonitor
@@ -481,8 +457,7 @@ Manager_onShellMessage(wParam, lParam) {
   WinGet, aWndId, ID, A
   WinGetClass, aWndClass, ahk_id %aWndId%
   WinGetTitle, aWndTitle, ahk_id %aWndId%
-  If ((wParam = 4 Or wParam = 32772) And (aWndClass = "WorkerW" And aWndTitle = "" Or lParam = 0 And aWndClass = "Progman" And aWndTitle = "Program Manager"))
-  {
+  If ((wParam = 4 Or wParam = 32772) And (aWndClass = "WorkerW" And aWndTitle = "" Or lParam = 0 And aWndClass = "Progman" And aWndTitle = "Program Manager")) {
     MouseGetPos, x, y
     m := Monitor_get(x, y)
     ;; The current position of the mouse cursor defines the active monitor, if the desktop has been activated.
@@ -509,21 +484,18 @@ Manager_onShellMessage(wParam, lParam) {
   ;;      trying to protect against. If another process (hotkey) enters a hideShow block after Manager_hideShow has
   ;;      been checked here, bad things could happen. I've personally observed that windows may be permanently hidden.
   ;;   Look into the use of AHK synchronization primitives.
-  If (wParam = 1 Or wParam = 2 Or wParam = 4 Or wParam = 6 Or wParam = 32772) And lParam And Not Manager_hideShow
-  {
+  If (wParam = 1 Or wParam = 2 Or wParam = 4 Or wParam = 6 Or wParam = 32772) And lParam And Not Manager_hideShow {
     isChanged := Manager_sync(wndIds)
     If wndIds
       isChanged := False
 
-    If isChanged
-    {
+    If isChanged {
       If Config_dynamicTiling
         View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
       Bar_updateView(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
     }
 
-    If (Manager_monitorCount > 1)
-    {
+    If (Manager_monitorCount > 1) {
       WinGet, aWndId, ID, A
       WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
       m := Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2)
@@ -533,15 +505,13 @@ Manager_onShellMessage(wParam, lParam) {
         Manager_aMonitor := m
     }
 
-    If wndIds
-    {    ;; If there are new (unrecognized) windows, which are hidden ...
-      If (Config_onActiveHiddenWnds = "view")
-      {  ;; ... change the view to show the first hidden window
+    If wndIds {
+      ;; If there are new (unrecognized) windows, which are hidden ...
+      If (Config_onActiveHiddenWnds = "view") {
+        ;; ... change the view to show the first hidden window
         wndId := SubStr(wndIds, 1, InStr(wndIds, ";") - 1)
-        Loop, % Config_viewCount
-        {
-          If (Window_#%wndId%_tags & 1 << A_Index - 1)
-          {
+        Loop, % Config_viewCount {
+          If (Window_#%wndId%_tags & 1 << A_Index - 1) {
             Debug_logMessage("DEBUG[3] Switching views because " . wndId . " is considered hidden and active", 3)
             ;; A newly created window defines the active monitor, if it is visible.
             Manager_aMonitor := Window_#%wndId%_monitor
@@ -549,24 +519,18 @@ Manager_onShellMessage(wParam, lParam) {
             Break
           }
         }
-      }
-      Else
-      {  ;; ... re-hide them
+      } Else {
+        ;; ... re-hide them
         StringTrimRight, wndIds, wndIds, 1
         StringSplit, wndId, wndIds, `;
-        If (Config_onActiveHiddenWnds = "hide")
-        {
-          Loop, % wndId0
-          {
+        If (Config_onActiveHiddenWnds = "hide") {
+          Loop, % wndId0 {
             Window_hide(wndId%A_Index%)
           }
-        }
-        Else If (Config_onActiveHiddenWnds = "tag")
-        {
+        } Else If (Config_onActiveHiddenWnds = "tag") {
           ;; ... or tag all of them for the current view.
           t := Monitor_#%Manager_aMonitor%_aView_#1
-          Loop, % wndId0
-          {
+          Loop, % wndId0 {
             wndId := wndId%A_Index%
             View_#%Manager_aMonitor%_#%t%_wndIds := wndId ";" View_#%Manager_aMonitor%_#%t%_wndIds
             View_setActiveWindow(Manager_aMonitor, t, wndId)
@@ -634,8 +598,7 @@ Manager_resetMonitorConfiguration() {
           View_#1_#%A_Index%_wndIds := View_#%i%_#%A_Index%_wndIds View_#1_#%A_Index%_wndIds
 
           StringTrimRight, wndIds, View_#%i%_#%A_Index%_wndIds, 1
-          Loop, PARSE, wndIds, `;
-          {
+          Loop, PARSE, wndIds, `; {
             Loop, % Config_viewCount {
               StringReplace, View_#%i%_#%A_Index%_wndIds, View_#%i%_#%A_Index%_wndIds, %A_LoopField%`;,
               View_setActiveWindow(i, A_Index, 0)
@@ -674,14 +637,12 @@ Manager_resetMonitorConfiguration() {
   Debug_logMessage("DEBUG[1] Manager_registerShellHook; hWnd: " . hWnd . ", wndClass: " . wndClass . ", wndTitle: " . wndTitle, 1)
 }
 
-Manager_restoreWindowBorders()
-{
+Manager_restoreWindowBorders() {
   Local ncm, ncmSize
 
   If Config_selBorderColor
     DllCall("SetSysColors", "Int", 1, "Int*", 10, "UInt*", Manager_normBorderColor)
-  If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA)
-  {
+  If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA) {
     ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
     NumPut(ncmSize, ncm, 0, "UInt")
     DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
@@ -709,8 +670,7 @@ Manager__restoreWindowState(filename) {
   excluded_view_set := ""
 
   ;; Read all interesting things from the file.
-  Loop, READ, %filename%
-  {
+  Loop, READ, %filename% {
     If (SubStr(A_LoopReadLine, 1, 5) = "View_") {
       i := InStr(A_LoopReadLine, "#")
       j := InStr(A_LoopReadLine, "_", false, i)
@@ -908,8 +868,7 @@ Manager_setViewMonitor(i, d = 0) {
     View_#%i%_#%v%_wndIds := View_#%Manager_aMonitor%_#%aView%_wndIds View_#%i%_#%v%_wndIds
 
     StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%aView%_wndIds, 1
-    Loop, PARSE, wndIds, `;
-    {
+    Loop, PARSE, wndIds, `; {
       Loop, % Config_viewCount {
         StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %A_LoopField%`;,
         View_setActiveWindow(Manager_aMonitor, A_Index, 0)
@@ -932,19 +891,16 @@ Manager_setViewMonitor(i, d = 0) {
   }
 }
 
-Manager_setWindowBorders()
-{
+Manager_setWindowBorders() {
   Local ncm, ncmSize
 
-  If Config_selBorderColor
-  {
+  If Config_selBorderColor {
     SetFormat, Integer, hex
     Manager_normBorderColor := DllCall("GetSysColor", "Int", 10)
     SetFormat, Integer, d
     DllCall("SetSysColors", "Int", 1, "Int*", 10, "UInt*", Config_selBorderColor)
   }
-  If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA)
-  {
+  If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA) {
     ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
     NumPut(ncmSize, ncm, 0, "UInt")
     DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
@@ -1051,29 +1007,22 @@ Manager_initial_sync(doRestore) {
 ;;   attempts were needed.
 ;;   Perhaps this method can be refined by not adding any window to Manager_allWndIds, but only
 ;;   those, which have at least a title or class.
-Manager_sync(ByRef wndIds = "")
-{
+Manager_sync(ByRef wndIds = "") {
   Local a, flag, shownWndIds, v, visibleWndIds, wndId
 
-  Loop, % Manager_monitorCount
-  {
+  Loop, % Manager_monitorCount {
     v := Monitor_#%A_Index%_aView_#1
     shownWndIds .= View_#%A_Index%_#%v%_wndIds
   }
   ;; Check all visible windows against the known windows
   WinGet, wndId, List, , ,
-  Loop, % wndId
-  {
-    If Not InStr(shownWndIds, wndId%A_Index% ";")
-    {
-      If Not InStr(Manager_managedWndIds, wndId%A_Index% ";")
-      {
+  Loop, % wndId {
+    If Not InStr(shownWndIds, wndId%A_Index% ";") {
+      If Not InStr(Manager_managedWndIds, wndId%A_Index% ";") {
         flag := Manager_manage(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, wndId%A_Index%)
         If flag
           a := flag
-      }
-      Else If Not Window_isHung(wndId%A_Index%)
-      {
+      } Else If Not Window_isHung(wndId%A_Index%) {
         ;; This is a window that is already managed but was brought into focus by something.
         ;; Maybe it would be useful to do something with it.
         wndIds .= wndId%A_Index% ";"
@@ -1085,10 +1034,8 @@ Manager_sync(ByRef wndIds = "")
   ;; @todo-future: Find out why this unmanage code exists and if it's still needed.
   ;; check, if a window, that is known to be visible, is actually not visible
   StringTrimRight, shownWndIds, shownWndIds, 1
-  Loop, PARSE, shownWndIds, `;
-  {
-    If Not InStr(visibleWndIds, A_LoopField)
-    {
+  Loop, PARSE, shownWndIds, `; {
+    If Not InStr(visibleWndIds, A_LoopField) {
       flag := Manager_unmanage(A_LoopField)
       If flag
         a := flag

@@ -13,8 +13,7 @@
   @version 9.0.0
 */
 
-View_init(m, v)
-{
+View_init(m, v) {
   Global
 
   View_#%m%_#%v%_area_#0        := 0
@@ -101,8 +100,7 @@ View_addWindow(m, v, wndId) {
       replace := search wndId ";"
       StringReplace, View_#%m%_#%v%_wndIds, View_#%m%_#%v%_wndIds, %search%, %replace%
     }
-  }
-  Else If (Config_newWndPosition = "bottom")
+  } Else If (Config_newWndPosition = "bottom")
     View_#%m%_#%v%_wndIds .= wndId ";"
   Else
     View_#%m%_#%v%_wndIds := wndId ";" View_#%m%_#%v%_wndIds
@@ -149,11 +147,9 @@ View_getActiveWindow(m, v) {
   Local listId, listIds, wndId
 
   listIds := "aWndIds;wndIds"
-  Loop, Parse, listIds, `;
-  {
+  Loop, Parse, listIds, `; {
     listId := A_LoopField
-    Loop, Parse, View_#%m%_#%v%_%listId%, `;
-    {
+    Loop, Parse, View_#%m%_#%v%_%listId%, `; {
       If Not A_LoopField
         Break
       Else If Not WinExist("ahk_id" A_LoopField) Or Window_#%A_LoopField%_isMinimized
@@ -173,15 +169,12 @@ View_getActiveWindow(m, v) {
   Return, wndId
 }
 
-View_getTiledWndIds(m, v)
-{
+View_getTiledWndIds(m, v) {
   Local n, tiledWndIds, wndIds
 
   StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
-  Loop, PARSE, wndIds, `;
-  {
-    If Not Window_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) and Not Window_isHung(A_LoopField)
-    {
+  Loop, PARSE, wndIds, `; {
+    If Not Window_#%A_LoopField%_isFloating And WinExist("ahk_id " A_LoopField) and Not Window_isHung(A_LoopField) {
       n += 1
       tiledWndIds .= A_LoopField ";"
     }
@@ -193,8 +186,7 @@ View_getTiledWndIds(m, v)
   Return, n
 }
 
-View_ghostWindow(m, v, bodyWndId, ghostWndId)
-{
+View_ghostWindow(m, v, bodyWndId, ghostWndId) {
   Local search, replace
 
   search := bodyWndId ";"
@@ -333,8 +325,7 @@ View_toggleFloatingWindow(wndId = 0) {
   }
 }
 
-View_toggleMargins()
-{
+View_toggleMargins() {
   Local v
 
   Debug_logMessage("DEBUG[3] View_toggleMargins(" . View_#%Manager_aMonitor%_#%v%_margin1 . ", " . View_#%Manager_aMonitor%_#%v%_margin2 . ", " . View_#%Manager_aMonitor%_#%v%_margin3 . ", " . View_#%Manager_aMonitor%_#%v%_margin4 . ")", 3)

@@ -13,8 +13,7 @@
   @version 9.0.0
 */
 
-Debug_initLog(filename, level = 0, truncateFile = True)
-{
+Debug_initLog(filename, level = 0, truncateFile = True) {
   Global Debug_logFilename, Debug_logLevel
 
   Debug_logFilename := filename
@@ -24,8 +23,7 @@ Debug_initLog(filename, level = 0, truncateFile = True)
       FileDelete, %Debug_logFilename%
 }
 
-Debug_logHelp()
-{
+Debug_logHelp() {
   Debug_logMessage("Help Display", 0)
   Debug_logMessage("Window list columns", 0, False)
   Debug_logMessage("    ID - Windows ID. Unique, OS-assigned ID", 0, False)
@@ -46,39 +44,32 @@ Debug_logHelp()
   Debug_logMessage("    Proc / Class / Title - Process/Class/Title of the window.", 0, False)
 }
 
-Debug_logManagedWindowList()
-{
+Debug_logManagedWindowList() {
   Local wndIds
 
   Debug_logMessage("Window dump for manager")
   Debug_logMessage("ID`t`tH W A F D R G M`tTags`tX`tY`tW`tH`tStyle`t`tProc / Class / Title", 0, False)
 
   StringTrimRight, wndIds, Manager_managedWndIds, 1
-  Loop, PARSE, wndIds, `;
-  {
+  Loop, PARSE, wndIds, `; {
     Debug_logWindowInfo(A_LoopField)
   }
 }
 
-Debug_logMessage(text, level = 1, includeTimestamp = True)
-{
+Debug_logMessage(text, level = 1, includeTimestamp = True) {
   Global Debug_logFilename, Debug_logLevel
 
-  If (Debug_logLevel >= level)
-  {
-    If includeTimestamp
-    {
+  If (Debug_logLevel >= level) {
+    If includeTimestamp {
       FormatTime, time, , yyyy-MM-dd HH:mm:ss
       text := time " " text
-    }
-    Else
+    } Else
       text := "                    " text
     FileAppend, %text%`r`n, %Debug_logFilename%
   }
 }
 
-Debug_logViewWindowList()
-{
+Debug_logViewWindowList() {
   Local v, wndIds
 
   v := Monitor_#%Manager_aMonitor%_aView_#1
@@ -86,8 +77,7 @@ Debug_logViewWindowList()
   Debug_logMessage("ID`t`tH W A F D R G M`tTags`tX`tY`tW`tH`tStyle`t`tProc / Class / Title", 0, False)
 
   StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
-  Loop, PARSE, wndIds, `;
-  {
+  Loop, PARSE, wndIds, `; {
     Debug_logWindowInfo(A_LoopField)
   }
 }
