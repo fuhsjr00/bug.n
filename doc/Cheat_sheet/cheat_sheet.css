@@ -1,7 +1,7 @@
 /*body { background-color: red; }*/
 .level2 {
   background-color: white;
-  font-family: Ubuntu;
+  font-family: Ubuntu, sans-serif;
   font-size: 12px;
 /*  position: absolute; top: 10mm; left: 10mm;*/
   position: absolute; top: 0; left: 0;
@@ -10,7 +10,7 @@
 }
 h2 {
 /*  background-color: #008AB8;*/
-  border-radius: 4px;
+/*  border-radius: 4px;*/
   border-top: 2px solid #008AB8;
   border-bottom: 2px solid #008AB8;
   color: #008AB8;
@@ -19,19 +19,19 @@ h2 {
   font-weight: bold;
   padding: 8px;
   text-align: center;
-  width: 75.8mm;
+  width: 85.6mm;
 }
 
 .level3 {
   border-bottom: 2px solid;
   border-color: #008AB8;
-  border-radius: 2px;
+/*  border-radius: 4px;*/
   width: 90mm;
 }
 h3 {
   background-color: #008AB8;
-  border-top-left-radius: 2px;
-  border-top-right-radius: 2px;
+  border-top-left-radius: 4px;
+  border-top-right-radius: 4px;
   color: white;
   font-size: 16px;
   font-weight: bold;
@@ -43,7 +43,7 @@ h3 {
 .level4:nth-child(2n+1) { background-color: lightgrey; }
 h4 {
   float: left;
-  font-family: Ubuntu Mono;
+  font-family: Ubuntu Mono, monospace;
   padding: 0 1mm;
   width: 16mm;
 }
@@ -52,25 +52,25 @@ p {
   padding: 0 1mm;
 }
 
-#abbreviations       { position: absolute; top:  0.0mm; left: 0; }
-#layout-management   { position: absolute; top: 41.3mm; left: 0; }
+#abbreviations       { position: absolute; top:    0;   left: 0; }
+#layout-management   { position: absolute; top: 24.7ex; left: 0; }
 #administration      { position: absolute; bottom: 0;   left: 0; }
 
-#window-management   { position: absolute; top:       0;   left: 93.5mm; }
-#window-debugging    { position: absolute; bottom: 10.6mm; left: 93.5mm; }
+#window-management   { position: absolute; top:    0; left: 93.5mm; }
+#window-debugging    { position: absolute; bottom: 0; left: 93.5mm; }
 
-#view-tag-management { position: absolute; top:   0.0mm; right: 0; }
-#monitor-management  { position: absolute; top:  58.3mm; right: 0; }
-h2                   { position: absolute; top: 132.0mm; right: 0; }
-#gui-management      { position: absolute; bottom:  0;   right: 0; }
+#view-tag-management { position: absolute; top:    0;   right: 0; } /* 3.2ex * 3 */
+#monitor-management  { position: absolute; top: 33.7ex; right: 0; }
+h2                   { position: absolute; top: 39.0ex; right: 0; }
+#gui-management      { position: absolute; bottom: 0;   right: 0; }
 
-code { font-family: Ubuntu Mono; }
+code { font-family: Ubuntu Mono, monospace; }
 kbd {
   background-color: lightgrey;
   border: 1px solid grey;
   border-bottom-width: 2px;
-  border-radius: 2px;
-  font-family: Ubuntu Mono;
+  border-radius: 4px;
+  font-family: Ubuntu Mono, monospace;
   font-size: 10px;
   padding: 1px 4px;
 }

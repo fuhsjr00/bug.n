@@ -62,7 +62,7 @@ Manually move the active window to the previous area in the layout.
 Move and resize the active window to the size of the work area (only floating
 windows).
 
-#### !<n>
+#### !&lt;n&gt;
 Manually move the active window to the n<sup><small>th</small></sup> area in
 the layout (n = 1..9).
 
@@ -154,14 +154,14 @@ Activate the previously activated view.
 #### #+0
 Tag the active window with all tags (n = 1..`Config_viewCount`). 
 
-#### #<n>
+#### #&lt;n&gt;
 Activate the n<sup><small>th</small></sup> view (n = 1..`Config_viewCount`).
 
-#### #+<n>
+#### #+&lt;n&gt;
 Tag the active window with the n<sup><small>th</small></sup> tag (n =
 1..`Config_viewCount`).
 
-#### #^<n>
+#### #^&lt;n&gt;
 Add / Remove the n<sup><small>th</small></sup> tag (n = 1..`Config_viewCount`)
 for the active window, if it is not / is already set.
 
