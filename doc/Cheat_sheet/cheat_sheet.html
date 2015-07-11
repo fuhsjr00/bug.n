@@ -1,0 +1,295 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <link rel="stylesheet" href="reset.css" type="text/css" />
+  <link rel="stylesheet" href="cheat_sheet.css" type="text/css" />
+</head>
+<body>
+<div id="bug.n-default-hotkeys" class="section level2">
+<h2>bug.n default hotkeys</h2>
+<div id="abbreviations" class="section level3">
+<h3>Abbreviations</h3>
+<ul>
+<li><code>!</code> <kbd>Alt</kbd></li>
+<li><code>^</code> <kbd>Ctrl</kbd>, Control</li>
+<li><code>#</code> <kbd>Win</kbd> / LWin, the left Windows key</li>
+<li><code>+</code> <kbd>Shift</kbd></li>
+</ul>
+</div>
+<div id="window-management" class="section level3">
+<h3>Window management</h3>
+<div id="down" class="section level4">
+<h4>#Down</h4>
+<p>Activate the next window in the active view.</p>
+</div>
+<div id="up" class="section level4">
+<h4>#Up</h4>
+<p>Activate the previous window in the active view.</p>
+</div>
+<div id="down-1" class="section level4">
+<h4>#+Down</h4>
+<p>Move the active window to the next position in the window list of the view.</p>
+</div>
+<div id="up-1" class="section level4">
+<h4>#+Up</h4>
+<p>Move the active window to the previous position in the window list of the view.</p>
+</div>
+<div id="enter" class="section level4">
+<h4>#+Enter</h4>
+<p>Move the active window to the first position in the window list of the view.</p>
+</div>
+<div id="c" class="section level4">
+<h4>#c</h4>
+<p>Close the active window.</p>
+</div>
+<div id="d" class="section level4">
+<h4>#+d</h4>
+<p>Show / Hide the title bar of the active window.</p>
+</div>
+<div id="f" class="section level4">
+<h4>#+f</h4>
+<p>Toggle the floating status of the active window.</p>
+</div>
+<div id="m" class="section level4">
+<h4>#^m</h4>
+<p>Minimize the active window.</p>
+</div>
+<div id="m-1" class="section level4">
+<h4>#+m</h4>
+<p>Move the active window by key (only floating windows).</p>
+</div>
+<div id="s" class="section level4">
+<h4>#+s</h4>
+<p>Resize the active window by key (only floating windows).</p>
+</div>
+<div id="x" class="section level4">
+<h4>#+x</h4>
+<p>Move and resize the active window to the size of the work area (only floating windows).</p>
+</div>
+<div id="i" class="section level4">
+<h4>#i</h4>
+<p>Get information for the active window.</p>
+</div>
+<div id="i-1" class="section level4">
+<h4>#+i</h4>
+<p>Get a window list for the active view.</p>
+</div>
+<div id="down-2" class="section level4">
+<h4>!Down</h4>
+<p>Manually move the active window to the next area in the layout.</p>
+</div>
+<div id="up-2" class="section level4">
+<h4>!Up</h4>
+<p>Manually move the active window to the previous area in the layout.</p>
+</div>
+<div id="enter-1" class="section level4">
+<h4>!+Enter</h4>
+<p>Move and resize the active window to the size of the work area (only floating windows).</p>
+</div>
+<div id="section" class="section level4">
+<h4>!<n></h4>
+<p>Manually move the active window to the n<sup><small>th</small></sup> area in the layout (n = 1..9).</p>
+</div>
+<div id="section-1" class="section level4">
+<h4>!0</h4>
+<p>Manually move the active window to the n<sup><small>th</small></sup> area in the layout.</p>
+</div>
+<div id="backspace" class="section level4">
+<h4>!BackSpace</h4>
+<p>Toggle the stack area of the layout.</p>
+</div>
+</div>
+<div id="window-debugging" class="section level3">
+<h3>Window debugging</h3>
+<div id="i-2" class="section level4">
+<h4>#^i</h4>
+<p>Dump window information on the windows of the active view to the log.</p>
+</div>
+<div id="i-3" class="section level4">
+<h4>#+^i</h4>
+<p>Dump window information on the contents of the managed window list to the log.</p>
+</div>
+<div id="h" class="section level4">
+<h4>#^h</h4>
+<p>Print a description of the formatting (column headings) used in the previous two log messages to the log.</p>
+</div>
+<div id="d-1" class="section level4">
+<h4>#^d</h4>
+<p>Decrement the debug log level.</p>
+</div>
+<div id="d-2" class="section level4">
+<h4>#^+d</h4>
+<p>Increment the debug log level.</p>
+</div>
+</div>
+<div id="layout-management" class="section level3">
+<h3>Layout management</h3>
+<div id="tab" class="section level4">
+<h4>#Tab</h4>
+<p>Set the previously set layout.</p>
+</div>
+<div id="f-1" class="section level4">
+<h4>#f</h4>
+<p>Set the floating layout.</p>
+</div>
+<div id="m-2" class="section level4">
+<h4>#m</h4>
+<p>Set the monocle layout.</p>
+</div>
+<div id="t" class="section level4">
+<h4>#t</h4>
+<p>Set the tile layout.</p>
+</div>
+<div id="left" class="section level4">
+<h4>#Left</h4>
+<p>Reduce the size of the master area in the active view (only for the “tile” layout).</p>
+</div>
+<div id="right" class="section level4">
+<h4>#Right</h4>
+<p>Enlarge the size of the master area in the active view (only for the “tile” layout).</p>
+</div>
+<div id="t-1" class="section level4">
+<h4>#^t</h4>
+<p>Rotate the layout axis (only for the “tile” layout).</p>
+</div>
+<div id="enter-2" class="section level4">
+<h4>#^Enter</h4>
+<p>Mirror the layout axis (only for the “tile” layout).</p>
+</div>
+<div id="tab-1" class="section level4">
+<h4>#^Tab</h4>
+<p>Rotate the master axis (only for the “tile” layout).</p>
+</div>
+<div id="tab-2" class="section level4">
+<h4>#^+Tab</h4>
+<p>Rotate the stack axis (only for the “tile” layout).</p>
+</div>
+<div id="up-3" class="section level4">
+<h4>#^Up</h4>
+<p>Increase the master Y dimension by 1 (only for the “tile” layout).</p>
+</div>
+<div id="down-3" class="section level4">
+<h4>#^Down</h4>
+<p>Decrease the master Y dimension by 1 (only for the “tile” layout).</p>
+</div>
+<div id="right-1" class="section level4">
+<h4>#^Right</h4>
+<p>Increase the master X dimension by 1 (only for the “tile” layout).</p>
+</div>
+<div id="left-1" class="section level4">
+<h4>#^Left</h4>
+<p>Decrease the master X dimension by 1 (only for the “tile” layout).</p>
+</div>
+<div id="left-2" class="section level4">
+<h4>#+Left</h4>
+<p>Decrease the gap between windows in “monocle” and “tile” layout.</p>
+</div>
+<div id="right-2" class="section level4">
+<h4>#+Right</h4>
+<p>Increase the gap between windows in “monocle” and “tile” layout.</p>
+</div>
+</div>
+<div id="view-tag-management" class="section level3">
+<h3>View / Tag management</h3>
+<div id="n" class="section level4">
+<h4>#+n</h4>
+<p>Toggle the view margins.</p>
+</div>
+<div id="backspace-1" class="section level4">
+<h4>#BackSpace</h4>
+<p>Activate the previously activated view.</p>
+</div>
+<div id="section-2" class="section level4">
+<h4>#+0</h4>
+<p>Tag the active window with all tags (n = 1..<code>Config_viewCount</code>).</p>
+</div>
+<div id="section-3" class="section level4">
+<h4>#<n></h4>
+<p>Activate the n<sup><small>th</small></sup> view (n = 1..<code>Config_viewCount</code>).</p>
+</div>
+<div id="section-4" class="section level4">
+<h4>#+<n></h4>
+<p>Tag the active window with the n<sup><small>th</small></sup> tag (n = 1..<code>Config_viewCount</code>).</p>
+</div>
+<div id="section-5" class="section level4">
+<h4>#^<n></h4>
+<p>Add / Remove the n<sup><small>th</small></sup> tag (n = 1..<code>Config_viewCount</code>) for the active window, if it is not / is already set.</p>
+</div>
+</div>
+<div id="monitor-management" class="section level3">
+<h3>Monitor management</h3>
+<div id="section-6" class="section level4">
+<h4>#.</h4>
+<p>Activate the next monitor in a multi-monitor environment.</p>
+</div>
+<div id="section-7" class="section level4">
+<h4>#,</h4>
+<p>Activate the previous monitor in a multi-monitor environment.</p>
+</div>
+<div id="section-8" class="section level4">
+<h4>#+.</h4>
+<p>Set the active window’s view to the active view on the next monitor in a multi-monitor environment.</p>
+</div>
+<div id="section-9" class="section level4">
+<h4>#+,</h4>
+<p>Set the active window’s view to the active view on the previous monitor in a multi-monitor environment.</p>
+</div>
+<div id="section-10" class="section level4">
+<h4>#^+.</h4>
+<p>Set all windows of the active view on the active view of the next monitor in a multi-monitor environment.</p>
+</div>
+<div id="section-11" class="section level4">
+<h4>#^+,</h4>
+<p>Set all windows of the active view on the active view of the previous monitor in a multi-monitor environment.</p>
+</div>
+</div>
+<div id="gui-management" class="section level3">
+<h3>GUI management</h3>
+<div id="space" class="section level4">
+<h4>#+Space</h4>
+<p>Hide / Show the bar (bug.n status bar) on the active monitor.</p>
+</div>
+<div id="space-1" class="section level4">
+<h4>#Space</h4>
+<p>Hide / Show the task bar.</p>
+</div>
+<div id="y" class="section level4">
+<h4>#y</h4>
+<p>Open the command GUI for executing programmes or bug.n functions.</p>
+</div>
+<div id="y-1" class="section level4">
+<h4>#+y</h4>
+<p>Toggle the overflow window of the ‘notify icons’.</p>
+</div>
+<div id="y-2" class="section level4">
+<h4>!+y</h4>
+<p>Indicate the areas of the “tile” layout.</p>
+</div>
+</div>
+<div id="administration" class="section level3">
+<h3>Administration</h3>
+<div id="e" class="section level4">
+<h4>#^e</h4>
+<p>Open the configuration file in the standard text editor.</p>
+</div>
+<div id="s-1" class="section level4">
+<h4>#^s</h4>
+<p>Save the current state of monitors, views, layouts to the configuration file.</p>
+</div>
+<div id="r" class="section level4">
+<h4>#^r</h4>
+<p>Reload bug.n (i. e. the whole script).</p>
+</div>
+<div id="q" class="section level4">
+<h4>#^q</h4>
+<p>Quit bug.n, restore the default Windows UI and show all windows.</p>
+</div>
+</div>
+</div>
+</body>
+</html>
