@@ -202,6 +202,7 @@ View_ghostWindow(m, v, bodyWndId, ghostWndId)
   StringReplace, View_#%m%_#%v%_wndIds, View_#%m%_#%v%_wndIds, %search%, %replace%
 }
 
+; @TODO: Theoretically, something is wrong here. From the hotkeys this should be manual tiling, but the function says otherwise.
 View_moveWindow(i=0, d=0) {
   Local aWndId, m, v
 

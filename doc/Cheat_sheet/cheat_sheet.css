@@ -8,6 +8,7 @@
   height: 190mm;
   width: 277mm;
 }
+em { font-weight: bold; }
 h2 {
 /*  background-color: #008AB8;*/
 /*  border-radius: 4px;*/
@@ -38,35 +39,37 @@ h3 {
   padding: 4px;
 }
 
-.level4 { margin: 4px 0; }
+.level4 { padding: 4px 0; }
 .level4:last-child { margin: 0px 0; }
 .level4:nth-child(2n+1) { background-color: lightgrey; }
 h4 {
   float: left;
   font-family: Ubuntu Mono, monospace;
+  line-height: 12px;
   padding: 0 1mm;
-  width: 16mm;
+  width: 30mm;
 }
 p {
-  margin-left: 18mm;
+  margin-left: 32mm;
   padding: 0 1mm;
 }
+small { font-size: 8px; }
+sup { vertical-align: top; }
 
-#abbreviations       { position: absolute; top:    0;   left: 0; }
-#layout-management   { position: absolute; top: 24.7ex; left: 0; }
-#administration      { position: absolute; bottom: 0;   left: 0; }
+#layout-management   { position: absolute; top:    0; left: 0; }
+#monitor-management  { position: absolute; bottom: 0; left: 0; }
 
-#window-management   { position: absolute; top:    0; left: 93.5mm; }
-#window-debugging    { position: absolute; bottom: 0; left: 93.5mm; }
+h2                   { position: absolute; top:    0; left: 93.5mm; }
+#window-management   { position: absolute; bottom: 0; left: 93.5mm; }
 
-#view-tag-management { position: absolute; top:    0;   right: 0; } /* 3.2ex * 3 */
-#monitor-management  { position: absolute; top: 33.7ex; right: 0; }
-h2                   { position: absolute; top: 39.0ex; right: 0; }
-#gui-management      { position: absolute; bottom: 0;   right: 0; }
+#view-tag-management { position: absolute; top:    0;   right: 0; }
+#gui-management      { position: absolute; top: 30.4ex; right: 0; }
+#administration      { position: absolute; top: 61.3ex; right: 0; }
+#window-debugging    { position: absolute; bottom: 0;   right: 0; }
 
 code { font-family: Ubuntu Mono, monospace; }
 kbd {
-  background-color: lightgrey;
+  background-color: #f0f0f0;
   border: 1px solid grey;
   border-bottom-width: 2px;
   border-radius: 4px;

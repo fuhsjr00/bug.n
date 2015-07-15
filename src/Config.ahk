@@ -425,7 +425,7 @@ Config_UI_saveSession() {
 
 ;; Window debugging
 #^i::Debug_logViewWindowList()
-#+^i::Debug_logManagedWindowList()
+#^+i::Debug_logManagedWindowList()
 #^h::Debug_logHelp()
 #^d::Debug_setLogLevel(0, -1)
 #^+d::Debug_setLogLevel(0, +1)
