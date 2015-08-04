@@ -932,6 +932,52 @@ Manager_setViewMonitor(i, d = 0) {
   }
 }
 
+Manager__stealView(m, v) {
+  Local om, match
+  
+  match := 0
+  
+  Loop, % Manager_monitorCount {
+    om := A_Index
+    if (Not (m = om)) And View_#%om%_#%v%_wndIds {
+      View_#%m%_#%v%_wndIds := View_#%om%_#%v%_wndIds View_#%m%_#%v%_wndIds
+      StringTrimRight, wndIds, View_#%om%_#%v%_wndIds, 1
+      Loop, PARSE, wndIds, `;
+      {
+        Loop, % Config_viewCount {
+          StringReplace, View_#%om%_#%A_Index%_wndIds, View_#%om%_#%A_Index%_wndIds, %A_LoopField%`;,
+          View_setActiveWindow(om, A_Index, 0)
+        }
+
+        Monitor_moveWindow(m, A_LoopField)
+        Window_#%A_LoopField%_tags := 1 << v - 1
+      }
+      View_#%m%_#%v%_layout_#1      := View_#%om%_#%v%_layout_#1
+      View_#%m%_#%v%_layout_#2      := View_#%om%_#%v%_layout_#2
+      View_#%m%_#%v%_layoutAxis_#1  := View_#%om%_#%v%_layoutAxis_#1
+      View_#%m%_#%v%_layoutAxis_#2  := View_#%om%_#%v%_layoutAxis_#2
+      View_#%m%_#%v%_layoutAxis_#3  := View_#%om%_#%v%_layoutAxis_#3
+      View_#%m%_#%v%_layoutGapWidth := View_#%om%_#%v%_layoutGapWidth
+      View_#%m%_#%v%_layoutMFact    := View_#%om%_#%v%_layoutMFact
+      View_#%m%_#%v%_layoutMX       := View_#%om%_#%v%_layoutMX
+      View_#%m%_#%v%_layoutMY       := View_#%om%_#%v%_layoutMY
+      View_#%m%_#%v%_layoutSymbol   := View_#%om%_#%v%_layoutSymbol
+      View_#%m%_#%v%_margins        := View_#%om%_#%v%_margins
+      View_#%m%_#%v%_showStackArea  := View_#%om%_#%v%_showStackArea
+
+      If (Monitor_#%om%_aView_#1 = v) {
+        View_arrange(om, v)
+        match := om
+      }
+      Loop, % Config_viewCount {
+        Bar_updateView(om, v)
+      }
+    }
+  }
+
+  Return match
+}
+
 Manager_setWindowBorders()
 {
   Local ncm, ncmSize
