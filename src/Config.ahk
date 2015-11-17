@@ -42,6 +42,8 @@ Config_init() {
   Config_readinTime        := True
   Config_readinVolume      := False
   Config_readinInterval    := 30000
+  Config_dateFormat        := "ddd, dd, MM, yyyy"
+  Config_timeFormat        := "HH:mm"
 
   ;; Windows ui elements
   Config_bbCompatibility := False

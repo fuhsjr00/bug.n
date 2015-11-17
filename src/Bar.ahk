@@ -164,7 +164,7 @@ Bar_init(m) {
 
 Bar_initCmdGui()
 {
-  Global Bar_#0_#0, Bar_#0_#0H, Bar_#0_#0W, Bar_#0_#1, Bar_cmdGuiIsVisible, Config_backColor_#1_#3, Config_barCommands, Config_fontName, Config_fontSize, Config_foreColor_#1_#3
+  Global Bar_#0_#0, Bar_#0_#0H, Bar_#0_#0W, Bar_#0_#1, Bar_cmdGuiIsVisible, Config_backColor_#1_#3, Config_barCommands, Config_fontName, Config_fontSize, Config_foreColor_#1_#3, Config_dateFormat, Config_timeFormat
 
   Bar_cmdGuiIsVisible := False
   wndTitle := "bug.n_BAR_0"
@@ -392,7 +392,7 @@ Bar_updateStatic(m) {
 }
 
 Bar_updateStatus() {
-  Local anyText, bat1, bat2, bat3, GuiN, m, mute, vol
+  Local anyText, bat1, bat2, bat3, GuiN, m, mute, vol, date
 
   anyText := Config_readinAny()
   If Config_readinBat {
@@ -441,9 +441,11 @@ Bar_updateStatus() {
       GuiControl, , Bar_#%m%_volume, % " VOL: " SubStr("  " vol, -2) "% "
     }
     If Config_readinDate
-      GuiControl, , Bar_#%m%_date, % " " A_DDD ", " A_DD ". " A_MMM ". " A_YYYY " "
+      FormatTime, date, , % Config_dateFormat
+      GuiControl, , Bar_#%m%_date, % date 
     If Config_readinTime
-      GuiControl, , Bar_#%m%_time, % " " A_Hour ":" A_Min " "
+      FormatTime, time, , % Config_timeFormat
+      GuiControl, , Bar_#%m%_time, % time
   }
 }
 
