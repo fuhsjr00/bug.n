@@ -71,6 +71,9 @@ for non-bug.n hotkeys or to reassign bug.n functions.
 ##### [User proposed hotkeys](./User-hotkeys.md)
 > Some individual hotkeys, proposed by bug.n users.
 
+##### [Users' Config.ini and screenshots](../usr/)
+> A template for `Config.ini` and samples from users with related screenshots.
+
 #### [LICENSE](../LICENSE.md)
 > bug.n is licensed under the GNU General Public License version 3.
 

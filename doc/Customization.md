@@ -39,8 +39,8 @@ associated functions are listed in the document
 especially usefull, if you are not allowed to set the design in the system
 settings.
 
-You may find a sample configuration file at
-https://github.com/joten/bug.n.config.
+You may find a sample and template configuration file in the 
+[usr directory](../usr/).
 
 ### Re-using Win+L
 

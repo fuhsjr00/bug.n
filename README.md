@@ -48,7 +48,7 @@ add-on for Microsoft Windows. It is written in the scripting language
 
 ### What it can look like
 
-![bug.n screenshot](./doc/screenshots/default_01.png "Screenshot of bug.n with the default configuration.")
+![bug.n screenshot](./usr/default_01.png "Screenshot of bug.n with the default configuration.")
 
 ### Installing and running bug.n
 
