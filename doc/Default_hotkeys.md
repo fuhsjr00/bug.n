@@ -83,8 +83,12 @@ The list contains information about the window id, title and class.
 `Config_hotkey=!Down::View_moveWindow(0, +1)`
 > Manually _move_ the active window _to the next area_ in the layout.
 
+This has only an effect, if dynamic tiling is disabled (`Config_dynamicTiling=0`).
+
 `Config_hotkey=!Up::View_moveWindow(0, -1)`
 > Manually _move_ the active window _to the previous area_ in the layout.
+
+This has only an effect, if dynamic tiling is disabled (`Config_dynamicTiling=0`).
 
 `Config_hotkey=!+Enter::Manager_maximizeWindow()`
 > _Move and resize_ the active window _to_ the size of the _work area_.
@@ -95,7 +99,8 @@ This implicitly sets the window to be floating.
 > Manually _move_ the active window _to the n<sup><small>th</small></sup> area_ in
 the layout.
 
-&lt;n&gt; can be an integer between 1 and 9.
+&lt;n&gt; can be an integer between 1 and 9. This has only an effect, if dynamic 
+tiling is disabled (`Config_dynamicTiling=0`).
 
 <!-- Theoreticaly, this function call seems not to be recognized.
 
@@ -103,13 +108,17 @@ the layout.
 > Manually _move_ the active window _to the n<sup><small>th</small></sup> area_ in
 the layout.
 
-And what is the following?
+This has only an effect, if dynamic tiling is disabled (`Config_dynamicTiling=0`).
+
 -->
 
 `Config_hotkey=!BackSpace::View_toggleStackArea()`
 > Toggle the stack area of the layout. 
 
-If the stack area is disabled, the master area takes up the whole view.
+If the stack area is toggled off, the master area takes up the whole view and the 
+stack area cannot be used to position windows.
+
+This has only an effect, if dynamic tiling is disabled (`Config_dynamicTiling=0`).
 
 ### Window debugging
 
