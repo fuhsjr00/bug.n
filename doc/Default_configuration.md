@@ -114,8 +114,14 @@ status bar. This only makes sense, if you have a system battery (notebook).
 > If true (`=1`), the current CPU load is read in and displayed in the status bar.
 
 `Config_readinDate=1`
-> If true (`=1`), the current date is read in (format: "WW, DD. MMM. YYYY") and
+> If true (`=1`), the current date is read in (format: "ddd, dd. MMM. yyyy") and
 displayed in the status bar.
+
+`Config_readinDateFormat=ddd, dd. MMM. yyyy`
+> The format in which the date, if it is read in, should be displayed. Please see
+the documentation at 
+[autohotkey.com](https://www.autohotkey.com/docs/commands/FormatTime.htm#Date_Formats_case_sensitive)
+for a description of the string components.
 
 `Config_readinDiskLoad=0`
 > If true (`=1`), the current disk load (read and write) is read in and displayed
@@ -133,6 +139,12 @@ and displayed in the status bar.
 `Config_readinTime=1`
 > If true (`=1`), the current time is read in (format: "HH:MM") and displayed in
 the status bar.
+
+`Config_readinTimeFormat=HH:mm`
+> The format in which the time, if it is read in, should be displayed. Please see
+the documentation at 
+[autohotkey.com](https://www.autohotkey.com/docs/commands/FormatTime.htm#Time_Formats_case_sensitive)
+for a description of the string components.
 
 `Config_readinVolume=0`
 > If true (`=1`), the current sound volume is read in

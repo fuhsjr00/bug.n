@@ -31,6 +31,7 @@ summarizes these sources (of ideas or code):
   + [Remote control](https://github.com/franckspike/bug.n/commit/2beacc71aef4d4c46021f97b52ab857efabc871c)
   + [Resize the master area correctly, if the first layout axis is inverted.](https://github.com/franckspike/bug.n/commit/8e6f809d33326408fc1c7e249f5b278708b91565)
 * fures: System + Network monitor - with net history graph (AutoHotkey forum)
+* Kenta Oda: [Add configuration variables for custom time format](https://github.com/fuhsjr00/bug.n/pull/63)
 * maestrith: Script Writer (github.com/maestrith/Script_Writer)
 * PhiLho: [AC/Battery status](http://www.autohotkey.com/forum/topic7633.html)
 * Pillus: [System monitor (HDD/Wired/Wireless) using keyboard LEDs](http://www.autohotkey.com/board/topic/65308-system-monitor-hddwiredwireless-using-keyboard-leds/)

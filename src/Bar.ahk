@@ -68,12 +68,12 @@ Bar_init(m) {
   If Config_readinTime {
     color .= ";5"
     id    .= ";time"
-    text  .= "; ??:?? "
+    text  .= "; " . Config_readinTimeFormat . " "
   }
   If Config_readinDate {
     color .= ";6"
     id    .= ";date"
-    text  .= "; ??, ??. ???. ???? "
+    text  .= "; " . Config_readinDateFormat . " "
   }
   If Config_readinVolume {
     color .= ";9"
@@ -164,7 +164,7 @@ Bar_init(m) {
 
 Bar_initCmdGui()
 {
-  Global Bar_#0_#0, Bar_#0_#0H, Bar_#0_#0W, Bar_#0_#1, Bar_cmdGuiIsVisible, Config_backColor_#1_#3, Config_barCommands, Config_fontName, Config_fontSize, Config_foreColor_#1_#3, Config_dateFormat, Config_timeFormat
+  Global Bar_#0_#0, Bar_#0_#0H, Bar_#0_#0W, Bar_#0_#1, Bar_cmdGuiIsVisible, Config_backColor_#1_#3, Config_barCommands, Config_fontName, Config_fontSize, Config_foreColor_#1_#3
 
   Bar_cmdGuiIsVisible := False
   wndTitle := "bug.n_BAR_0"
@@ -392,7 +392,7 @@ Bar_updateStatic(m) {
 }
 
 Bar_updateStatus() {
-  Local anyText, bat1, bat2, bat3, GuiN, m, mute, vol, date
+  Local anyText, bat1, bat2, bat3, GuiN, m, mute, time, vol
 
   anyText := Config_readinAny()
   If Config_readinBat {
@@ -441,10 +441,10 @@ Bar_updateStatus() {
       GuiControl, , Bar_#%m%_volume, % " VOL: " SubStr("  " vol, -2) "% "
     }
     If Config_readinDate
-      FormatTime, date, , % Config_dateFormat
-      GuiControl, , Bar_#%m%_date, % date 
+      FormatTime, time, , % Config_readinDateFormat
+      GuiControl, , Bar_#%m%_date, % time 
     If Config_readinTime
-      FormatTime, time, , % Config_timeFormat
+      FormatTime, time, , % Config_readinTimeFormat
       GuiControl, , Bar_#%m%_time, % time
   }
 }

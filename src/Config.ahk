@@ -36,14 +36,14 @@ Config_init() {
   Config_readinBat         := False
   Config_readinCpu         := False
   Config_readinDate        := True
+  Config_readinDateFormat  := "ddd, dd. MMM. yyyy"
   Config_readinDiskLoad    := False
   Config_readinMemoryUsage := False
   Config_readinNetworkLoad := False
   Config_readinTime        := True
+  Config_readinTimeFormat  := "HH:mm"
   Config_readinVolume      := False
   Config_readinInterval    := 30000
-  Config_dateFormat        := "ddd, dd, MM, yyyy"
-  Config_timeFormat        := "HH:mm"
 
   ;; Windows ui elements
   Config_bbCompatibility := False
