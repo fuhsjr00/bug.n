@@ -81,12 +81,12 @@ floating state.
 The list contains information about the window id, title and class.
 
 `Config_hotkey=!Down::View_moveWindow(0, +1)`
-> Manually _move_ the active window _to the next area_ in the layout.
+> _Move_ the active window _to the next area_ in the layout. (Dynamic tiling must be disabled)
 
 This has only an effect, if dynamic tiling is disabled (`Config_dynamicTiling=0`).
 
 `Config_hotkey=!Up::View_moveWindow(0, -1)`
-> Manually _move_ the active window _to the previous area_ in the layout.
+> _Move_ the active window _to the previous area_ in the layout. (Dynamic tiling must be disabled)
 
 This has only an effect, if dynamic tiling is disabled (`Config_dynamicTiling=0`).
 
@@ -96,8 +96,8 @@ This has only an effect, if dynamic tiling is disabled (`Config_dynamicTiling=0`
 This implicitly sets the window to be floating.
 
 `Config_hotkey=!<n>::View_moveWindow(<n>)`
-> Manually _move_ the active window _to the n<sup><small>th</small></sup> area_ in
-the layout.
+> _Move_ the active window _to the n<sup><small>th</small></sup> area_ in
+the layout. (Dynamic tiling must be disabled)
 
 &lt;n&gt; can be an integer between 1 and 9. This has only an effect, if dynamic 
 tiling is disabled (`Config_dynamicTiling=0`).
@@ -113,7 +113,7 @@ This has only an effect, if dynamic tiling is disabled (`Config_dynamicTiling=0`
 -->
 
 `Config_hotkey=!BackSpace::View_toggleStackArea()`
-> Toggle the stack area of the layout. 
+> Toggle the stack area of the layout.(Dynamic tiling must be disabled)
 
 If the stack area is toggled off, the master area takes up the whole view and the 
 stack area cannot be used to position windows.
