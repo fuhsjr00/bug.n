@@ -30,31 +30,23 @@ ResourceMonitor_cleanup() {
     DllCall("CloseHandle", "UInt", ResourceMonitor_hDrive)    ;; used in ResourceMonitor_getDiskLoad
 }
 
-ResourceMonitor_getText() {
-  Global Config_readinCpu, Config_readinDiskLoad, Config_readinMemoryUsage, Config_readinNetworkLoad
-
-  text := ""
-  If Config_readinCpu
-    text .= " CPU: " ResourceMonitor_getSystemTimes() "% "
-  If Config_readinMemoryUsage {
-    If (Config_readinCpu)
-      text .= "|"
-    text .= " RAM: " ResourceMonitor_getMemoryUsage() "% "
+ResourceMonitor_bytesToString(b) {
+  If (b > 1047527424) {
+    b /= 1024 * 1024 * 1024
+    unit := "GB"
+  } Else If (b > 1022976) {
+    b /= 1024 * 1024
+    unit := "MB"
+  } Else If (b > 999) {
+    b /= 1024
+    unit := "kB"
+  } Else {
+    unit := " B"
   }
-  If Config_readinDiskLoad {
-    If (Config_readinCpu Or Config_readinMemoryUsage)
-      text .= "|"
-    ResourceMonitor_getDiskLoad(rLoad, wLoad)
-    text .= " Dr: " rLoad "% | Dw: " wLoad "% "
-  }
-  If Config_readinNetworkLoad {
-    If (Config_readinCpu Or Config_readinMemoryUsage Or Config_readinDiskLoad)
-      text .= "|"
-    ResourceMonitor_getNetworkLoad(upLoad, dnLoad)
-    text .= " UP: " upLoad " KB/s | dn: " dnLoad " KB/s "
-  }
-
-  Return, text
+  b := Round(b, 1)
+  If (b > 99.9 Or unit = " B")
+    b := Round(b, 0)
+  Return, SubStr("    " b, -3) . unit
 }
 
 ResourceMonitor_getBatteryStatus(ByRef batteryLifePercent, ByRef acLineStatus) {
@@ -64,7 +56,7 @@ ResourceMonitor_getBatteryStatus(ByRef batteryLifePercent, ByRef acLineStatus) {
     MsgBox 16, Power Status, Can't get the power status...
     Return
   }
-  acLineStatus     := NumGet(powerStatus, 0, "Char")
+  acLineStatus       := NumGet(powerStatus, 0, "Char")
   batteryLifePercent := NumGet(powerStatus, 2, "Char")
 
   If acLineStatus = 0
@@ -117,8 +109,8 @@ ResourceMonitor_getNetworkLoad(ByRef upLoad, ByRef dnLoad) {
   Global ResourceMonitor_networkInterface
 
   ResourceMonitor_networkInterface.Refresh_
-  dnLoad := SubStr("   " Round(ResourceMonitor_networkInterface.BytesReceivedPerSec / 1024), -3)
-  upLoad := SubStr("   " Round(ResourceMonitor_networkInterface.BytesSentPerSec / 1024), -3)
+  dnLoad := ResourceMonitor_bytesToString(ResourceMonitor_networkInterface.BytesReceivedPerSec) . "/s"
+  upLoad := ResourceMonitor_bytesToString(ResourceMonitor_networkInterface.BytesSentPerSec) . "/s"
 }
 ;; Pillus: System monitor (HDD/Wired/Wireless) using keyboard LEDs (http://www.autohotkey.com/board/topic/65308-system-monitor-hddwiredwireless-using-keyboard-leds/)
 
@@ -136,3 +128,30 @@ ResourceMonitor_getSystemTimes() {
   Return, sysTime    ;; system time in percent
 }
 ;; Sean: CPU LoadTimes (http://www.autohotkey.com/forum/topic18913.html)
+
+ResourceMonitor_getText() {
+  Global Config_readinCpu, Config_readinDiskLoad, Config_readinMemoryUsage, Config_readinNetworkLoad
+
+  text := ""
+  If Config_readinCpu
+    text .= " CPU: " ResourceMonitor_getSystemTimes() "% "
+  If Config_readinMemoryUsage {
+    If (Config_readinCpu)
+      text .= "|"
+    text .= " RAM: " ResourceMonitor_getMemoryUsage() "% "
+  }
+  If Config_readinDiskLoad {
+    If (Config_readinCpu Or Config_readinMemoryUsage)
+      text .= "|"
+    ResourceMonitor_getDiskLoad(rLoad, wLoad)
+    text .= " Dr: " rLoad "% | Dw: " wLoad "% "
+  }
+  If Config_readinNetworkLoad {
+    If (Config_readinCpu Or Config_readinMemoryUsage Or Config_readinDiskLoad)
+      text .= "|"
+    ResourceMonitor_getNetworkLoad(upLoad, dnLoad)
+    text .= " UP: " upLoad " | dn: " dnLoad " "
+  }
+
+  Return, text
+}
