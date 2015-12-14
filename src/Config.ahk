@@ -406,6 +406,7 @@ Config_UI_saveSession() {
 #+f::View_toggleFloatingWindow()
 #+m::Manager_moveWindow()
 #^m::Manager_minimizeWindow()
+#^+m::Manager_forceManaged()
 #+s::Manager_sizeWindow()
 #+x::Manager_maximizeWindow()
 #i::Manager_getWindowInfo()

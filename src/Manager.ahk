@@ -191,6 +191,16 @@ Manager_doMaintenance:
     Manager_saveState()
 Return
 
+Manager_forceManaged() {
+  Local aWndId
+  
+  WinGet, aWndId, ID, A
+  Manager_manage(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, aWndId, True)
+  If Config_dynamicTiling
+    View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
+  Bar_updateView(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
+}
+
 Manager_getWindowInfo()
 {
   Local aWndClass, aWndHeight, aWndId, aWndMinMax, aWndPId, aWndPName, aWndStyle, aWndTitle, aWndWidth, aWndX, aWndY, rule, text, v
@@ -319,22 +329,19 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
 
 ;; Accept a window to be added to the system for management.
 ;; Provide a monitor and view preference, but don't override the config.
-Manager_manage(preferredMonitor, preferredView, wndId)
-{
+Manager_manage(preferredMonitor, preferredView, wndId, force = False) {
   Local a, action, c0, hideTitle, i, isDecorated, isFloating, isManaged, l, m, n, replace, search, tags, body
   Local wndControlList0, wndId0, wndIds, wndX, wndY, wndWidth, wndHeight
 
   ;; Manage any window only once.
-  If InStr(Manager_allWndIds, wndId ";")
+  If InStr(Manager_allWndIds, wndId ";") And Not force
     Return
 
   body := 0
-  If Window_isGhost(wndId)
-  {
+  If Window_isGhost(wndId) {
     Debug_logMessage("DEBUG[2] A window has given up the ghost (Ghost wndId: " . wndId . ")", 2)
     body := Window_findHung(wndId)
-    If body
-    {
+    If body {
       isManaged := InStr(Manager_managedWndIds, body ";")
       m := Window_#%body%_monitor
       tags := Window_#%body%_tags
@@ -342,17 +349,14 @@ Manager_manage(preferredMonitor, preferredView, wndId)
       isFloating := Window_#%body%_isFloating
       hideTitle := InStr(Bar_hideTitleWndIds, body ";")
       action := ""
-    }
-    Else
-    {
+    } Else
       Debug_logMessage("DEBUG[1] No body could be found for ghost wndId: " . wndId, 1)
-    }
   }
 
   ;; Apply rules if the window is either a normal window or a ghost without a body.
-  If (body = 0)
-  {
+  If (body = 0) {
     Manager_applyRules(wndId, isManaged, m, tags, isFloating, isDecorated, hideTitle, action)
+    isManaged := isManaged Or force
     If (m = 0)
       m := preferredMonitor
     If (m < 0)
@@ -363,7 +367,7 @@ Manager_manage(preferredMonitor, preferredView, wndId)
       tags := 1 << (preferredView - 1)
   }
 
-  a := Manager__setWinProperties( wndId, isManaged, m, tags, isDecorated, isFloating, hideTitle, action)
+  a := Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hideTitle, action)
 
   ; Do view placement.
   If isManaged {

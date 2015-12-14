@@ -31,7 +31,7 @@ There are not many special character keys, which are on both keyboards, US and D
 | f         | x   | x    |      |       |     |      |
 | h         |     |      | x    |       |     |      |
 | i         | x   | x    | x    | x     |     |      |
-| m         | x   | x    | x    |       |     |      |
+| m         | x   | x    | x    | x     |     |      |
 | n         |     | x    |      |       |     |      |
 | q         |     |      | x    |       |     |      |
 | r         |     |      | x    |       |     |      |
