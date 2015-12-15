@@ -220,7 +220,7 @@ Manager_getWindowInfo()
   Else
     rule .= ";0"
   rule .= ";" Window_#%aWndId%_monitor ";" Window_#%aWndId%_tags ";" Window_#%aWndId%_isFloating ";" Window_#%aWndId%_isDecorated
-  If InStr(Bar_hiddenWndIds, aWndId) {
+  If InStr(Bar_hideTitleWndIds, aWndId ";") {
     text .= " (hidden)"
     rule .= ";1;"
   } Else
