@@ -203,6 +203,19 @@ Window_move(wndId, x, y, width, height) {
   }
 }
 
+Window_restore(wndId = 0) {
+  If (wndId = 0)
+    WinGet, wndId, ID, A
+
+  If Window_isHung(wndId) {
+    Debug_logMessage("DEBUG[2] Window_restore: Potentially hung window " . wndId, 2)
+    Return, 1
+  } Else {
+    WinRestore, ahk_id %wndId%
+    Return, 0
+  }
+}
+
 Window_set(wndId, type, value) {
   If Window_isHung(wndId) {
     Debug_logMessage("DEBUG[2] Window_set: Potentially hung window " . wndId, 2)
