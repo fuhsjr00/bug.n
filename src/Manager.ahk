@@ -191,19 +191,8 @@ Manager_doMaintenance:
     Manager_saveState()
 Return
 
-Manager_forceManaged() {
-  Local aWndId
-  
-  WinGet, aWndId, ID, A
-  Manager_manage(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, aWndId, True)
-  If Config_dynamicTiling
-    View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
-  Bar_updateView(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
-}
-
-Manager_getWindowInfo()
-{
-  Local aWndClass, aWndHeight, aWndId, aWndMinMax, aWndPId, aWndPName, aWndStyle, aWndTitle, aWndWidth, aWndX, aWndY, rule, text, v
+Manager_getWindowInfo() {
+  Local aWndClass, aWndHeight, aWndId, aWndPId, aWndPName, aWndStyle, aWndTitle, aWndWidth, aWndX, aWndY, text, v
 
   WinGet, aWndId, ID, A
   WinGetClass, aWndClass, ahk_id %aWndId%
@@ -214,23 +203,12 @@ Manager_getWindowInfo()
   WinGet, aWndMinMax, MinMax, ahk_id %aWndId%
   WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
   text := "ID: " aWndId "`nclass:`t" aWndClass "`ntitle:`t" aWndTitle
-  rule := "Config_rule=" aWndClass ";" aWndTitle ";"
-  If InStr(Manager_managedWndIds, aWndId ";")
-    rule .= ";1"
-  Else
-    rule .= ";0"
-  rule .= ";" Window_#%aWndId%_monitor ";" Window_#%aWndId%_tags ";" Window_#%aWndId%_isFloating ";" Window_#%aWndId%_isDecorated
-  If InStr(Bar_hideTitleWndIds, aWndId ";") {
-    text .= " (hidden)"
-    rule .= ";1;"
-  } Else
-    rule .= ";0;"
-  If (aWndMinMax = 1)
-    rule .= "maximize"
+  If InStr(Bar_hideTitleWndIds, aWndId ";")
+    text .= " [hidden]"
   text .= "`nprocess:`t" aWndPName " [" aWndPId "]`nstyle:`t" aWndStyle "`nmetrics:`tx: " aWndX ", y: " aWndY ", width: " aWndWidth ", height: " aWndHeight "`ntags:`t" Window_#%aWndId%_tags
   If Window_#%aWndId%_isFloating
-    text .= " (floating)"
-  text .= "`n`n" rule
+    text .= " [floating]"
+  text .= "`n`nConfig_rule=" aWndClass ";" aWndTitle ";;" Manager_getWindowRule(aWndId)
   MsgBox, 260, bug.n: Window Information, % text "`n`nCopy text to clipboard?"
   IfMsgBox Yes
     Clipboard := text
@@ -258,6 +236,41 @@ Manager_getWindowList()
     Clipboard := text
 }
 
+Manager_getWindowRule(wndId) {
+  Local rule, wndMinMax
+  
+  rule := ""
+  WinGet, wndMinMax, MinMax, ahk_id %wndId%
+  If InStr(Manager_managedWndIds, wndId ";")
+    rule .= "1;"
+  Else
+    rule .= "0;"
+  If (Window_#%wndId%_monitor = "")
+    rule .= "0;"
+  Else
+    rule .= Window_#%wndId%_monitor ";"
+  If (Window_#%wndId%_tags = "")
+    rule .= "0;"
+  Else
+    rule .= Window_#%wndId%_tags ";"
+  If Window_#%wndId%_isFloating
+    rule .= "1;"
+  Else
+    rule .= "0;"
+  If Window_#%wndId%_isDecorated
+    rule .= "1;"
+  Else
+    rule .= "0;"
+  If InStr(Bar_hideTitleWndIds, wndId ";")
+    rule .= "1;"
+  Else
+    rule .= "0;"
+  If (wndMinMax = 1)
+    rule .= "maximize"
+  
+  Return, rule
+}
+
 Manager_lockWorkStation()
 {
   Global Config_shellMsgDelay
@@ -283,19 +296,18 @@ Manager_loop(index, increment, lowerBound, upperBound) {
   Return, lowerBound + lowerBoundBasedIndex
 }
 
-Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hideTitle, action = "")
-{
+Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hideTitle, action = "") {
   Local a
 
-  If Not Instr(Manager_allWndIds, wndId ";")
+  If Not InStr(Manager_allWndIds, wndId ";")
     Manager_allWndIds .= wndId ";"
 
-  If (isManaged)
-  {
-    If (action = "close" Or action = "maximize")
+  If (isManaged) {
+    If (action = "close" Or action = "maximize" Or action = "restore")
       Window_%action%(wndId)
 
-    Manager_managedWndIds .= wndId ";"
+    If Not InStr(Manager_managedWndIds, wndId ";")
+      Manager_managedWndIds .= wndId ";"
     Monitor_moveWindow(m, wndId)
     Window_#%wndId%_tags        := tags
     Window_#%wndId%_isDecorated := isDecorated
@@ -308,20 +320,17 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
       Window_set(wndId, "Style", "-0xC00000")
 
     a := Window_#%wndId%_tags & (1 << (Monitor_#%m%_aView_#1 - 1))
-    If a
-    {
+    If a {
       ;; A newly created window defines the active monitor, if it is visible.
       Manager_aMonitor := m
       Manager_winActivate(wndId)
-    }
-    Else
-    {
+    } Else {
       Manager_hideShow := True
       Window_hide(wndId)
       Manager_hideShow := False
     }
   }
-  If hideTitle
+  If hideTitle And Not InStr(Bar_hideTitleWndIds, wndId ";")
     Bar_hideTitleWndIds .= wndId . ";"
 
   Return, a
@@ -329,12 +338,13 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
 
 ;; Accept a window to be added to the system for management.
 ;; Provide a monitor and view preference, but don't override the config.
-Manager_manage(preferredMonitor, preferredView, wndId, force = False) {
+Manager_manage(preferredMonitor, preferredView, wndId, rule = "") {
   Local a, action, c0, hideTitle, i, isDecorated, isFloating, isManaged, l, m, n, replace, search, tags, body
+  Local rule0, rule1, rule2, rule3, rule4, rule5, rule6, rule7
   Local wndControlList0, wndId0, wndIds, wndX, wndY, wndWidth, wndHeight
 
   ;; Manage any window only once.
-  If InStr(Manager_allWndIds, wndId ";") And Not force
+  If InStr(Manager_allWndIds, wndId ";") And (rule = "")
     Return
 
   body := 0
@@ -356,7 +366,16 @@ Manager_manage(preferredMonitor, preferredView, wndId, force = False) {
   ;; Apply rules if the window is either a normal window or a ghost without a body.
   If (body = 0) {
     Manager_applyRules(wndId, isManaged, m, tags, isFloating, isDecorated, hideTitle, action)
-    isManaged := isManaged Or force
+    If Not (rule = "") {
+      StringSplit, rule, rule, `;
+      isManaged   := rule1
+      m           := rule2
+      tags        := rule3
+      isFloating  := rule4
+      isDecorated := rule5
+      hideTitle   := rule6
+      action      := rule7
+    }
     If (m = 0)
       m := preferredMonitor
     If (m < 0)
@@ -607,6 +626,22 @@ Manager_onShellMessage(wParam, lParam) {
     }
     Bar_updateTitle()
   }
+}
+
+Manager_override(rule = "") {
+  Local aWndId, aWndMinMax
+  
+  WinGet, aWndId, ID, A
+  If (rule = "") {
+    rule := Manager_getWindowRule(aWndId)
+    InputBox, rule, bug.n: Override, % "Which rule should be applied?`n`n<is managed>;<m>;<tags>;<is floating>;<is decorated>;<hide title>;<action>",, 483, 152,,,,, % rule
+    If Not (ErrorLevel = 0)
+      Return
+  }
+  Manager_manage(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, aWndId, rule)
+  If Config_dynamicTiling
+    View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
+  Bar_updateView(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
 }
 
 Manager_registerShellHook() {

@@ -32,9 +32,6 @@ _Minimize_ the active window.
 #### <kbd>Win</kbd><kbd>Shift</kbd><kbd>m</kbd>
 _Move_ the active window _by key_.
 
-#### <kbd>Win</kbd><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>m</kbd>
-_Force_ the active window to be _managed_.
-
 #### <kbd>Win</kbd><kbd>Shift</kbd><kbd>s</kbd>
 _Resize_ the active window _by key_.
 

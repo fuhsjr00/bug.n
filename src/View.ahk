@@ -85,6 +85,7 @@ View_activateWindow(i, d = 0) {
 View_addWindow(m, v, wndId) {
   Local i, mSplit, n, replace, search
 
+  StringReplace, View_#%m%_#%v%_wndIds, View_#%m%_#%v%_wndIds, % wndId ";",, All
   If Tiler_isActive(m, v) And ((Config_newWndPosition = "masterBottom") Or (Config_newWndPosition = "stackTop")) {
     n := View_getTiledWndIds(m, v)
     mSplit := View_#%m%_#%v%_layoutMX * View_#%m%_#%v%_layoutMY

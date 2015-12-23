@@ -63,8 +63,8 @@ h2                   { position: absolute; top:    0; left: 93.5mm; }
 #window-management   { position: absolute; bottom: 0; left: 93.5mm; }
 
 #view-tag-management { position: absolute; top:    0;   right: 0; }
-#gui-management      { position: absolute; top: 30.4ex; right: 0; }
-#administration      { position: absolute; top: 61.3ex; right: 0; }
+#gui-management      { position: absolute; top: 34.7ex; right: 0; }
+#administration      { position: absolute; top: 70.2ex; right: 0; } /* 76.5ex - 57.5ex => 19ex / 3 */
 #window-debugging    { position: absolute; bottom: 0;   right: 0; }
 
 code { font-family: Ubuntu Mono, monospace; }

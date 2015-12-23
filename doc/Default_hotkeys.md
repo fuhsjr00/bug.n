@@ -59,19 +59,6 @@ This implicitly sets the window to be floating.
 
 This implicitly sets the window to be floating.
 
-`Config_hotkey=#^+m::Manager_forceManaged()`
-> _Force_ the active window to be _managed_.
-
-This function is EXPERIMENTAL, which does not mean that it is in an 
-alpha-development stage, but you should know what you do, if using this hotkey.
-
-It forces the flag "is managed" to be true (1) despite any rule in 
-`Config.ini`. If set improperly, a window, which is not a regular application 
-window, may only be reset by logging out from and back in to Windows.
-
-You may also want to use `#+f::View_toggleFloatingWindow()` to see the full 
-effect.
-
 `Config_hotkey=#+s::Manager_sizeWindow()`
 > _Resize_ the active window _by key_.
 
