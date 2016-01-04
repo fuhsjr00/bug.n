@@ -21,13 +21,14 @@ Monitor_init(m, doRestore) {
   Monitor_#%m%_showBar  := Config_showBar
   Monitor_#%m%_showTaskBar  := Config_showTaskBar
   Monitor_#%m%_taskBarClass := ""
-  Monitor_%m%_taskBarPos    := ""
+  Monitor_#%m%_taskBarPos   := ""
   Loop, % Config_viewCount
     View_init(m, A_Index)
   If doRestore
     Config_restoreLayout(Main_autoLayout, m)
   Else
     Config_restoreLayout(Config_filePath, m)
+  SysGet, Monitor_#%m%_name, MonitorName, %m%
   Monitor_getWorkArea(m)
   Bar_init(m)
 }
@@ -102,6 +103,19 @@ Monitor_activateView(i, d = 0) {
   Manager_winActivate(wndId)
 }
 
+Monitor_find(d, n) {
+  Local mName
+  
+  If (d < 0 Or d > 0) {
+    Loop, % n {
+      SysGet, mName, MonitorName, %A_Index%
+      If Not (mName = Monitor_#%A_Index%_name)
+        Return, A_Index
+    }
+  }
+  Return, 0
+}
+
 Monitor_get(x, y)
 {
   Local m
@@ -148,7 +162,7 @@ Monitor_getWorkArea(m) {
             wndHeight += wndY - monitorTop
             monitorTop += wndHeight
             If (A_LoopField = "Shell_TrayWnd") Or (A_LoopField = "Shell_SecondaryTrayWnd")
-              Monitor_%m%_taskBarPos := "top"
+              Monitor_#%m%_taskBarPos := "top"
           } Else {
             ;; Bottom
             wndHeight := monitorBottom - wndY
@@ -190,11 +204,23 @@ Monitor_getWorkArea(m) {
   Monitor_setWorkArea(monitorLeft, monitorTop, monitorRight, monitorBottom)
 }
 
-Monitor_moveWindow(m, wndId)
-{
+Monitor_moveToIndex(m, n) {
   Global
 
-  Window_#%wndId%_monitor := m
+  Monitor_#%n%_aView_#1 := Monitor_#%m%_aView_#1
+  Monitor_#%n%_aView_#2 := Monitor_#%m%_aView_#2
+  Monitor_#%n%_name     := Monitor_#%m%_name
+  Monitor_#%n%_showBar  := Monitor_#%m%_showBar
+  Monitor_#%n%_showTaskBar  := Monitor_#%m%_showTaskBar
+  Monitor_#%n%_taskBarClass := Monitor_#%m%_taskBarClass
+  Monitor_#%n%_taskBarPos   := Monitor_#%m%_taskBarPos
+  Monitor_#%n%_height := Monitor_#%m%_height
+  Monitor_#%n%_width  := Monitor_#%m%_width
+  Monitor_#%n%_x      := Monitor_#%m%_x
+  Monitor_#%n%_y      := Monitor_#%m%_y
+  Monitor_#%n%_barY   := Monitor_#%m%_barY
+  Loop, % Config_viewCount
+    View_moveToIndex(m, A_Index, n, A_Index)
 }
 
 Monitor_setWindowTag(i, d = 0) {

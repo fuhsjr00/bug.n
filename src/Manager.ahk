@@ -308,7 +308,7 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
 
     If Not InStr(Manager_managedWndIds, wndId ";")
       Manager_managedWndIds .= wndId ";"
-    Monitor_moveWindow(m, wndId)
+    Window_#%wndId%_monitor     := m
     Window_#%wndId%_tags        := tags
     Window_#%wndId%_isDecorated := isDecorated
     Window_#%wndId%_isFloating  := isFloating
@@ -659,42 +659,54 @@ Manager_registerShellHook() {
 ;; SKAN: How to Hook on to Shell to receive its messages? (http://www.autohotkey.com/forum/viewtopic.php?p=123323#123323)
 
 Manager_resetMonitorConfiguration() {
-  Local GuiN, hWnd, i, m, wndClass, wndIds, wndTitle
+  Local GuiN, hWnd, i, j, m, mPrimary, wndClass, wndIds, wndTitle
 
   m := Manager_monitorCount
   SysGet, Manager_monitorCount, MonitorCount
   If (Manager_monitorCount < m) {
-    Loop, % m - Manager_monitorCount {
-      i := Manager_monitorCount + A_Index
-      GuiN := (i - 1) + 1
+    ;; A monitor has been disconnected. Which one?
+    i := Monitor_find(-1, m)
+    If (i > 0) {
+      SysGet, mPrimary, MonitorPrimary
+      GuiN := (m - 1) + 1
       Gui, %GuiN%: Destroy
       Loop, % Config_viewCount {
         If View_#%i%_#%A_Index%_wndIds {
-          View_#1_#%A_Index%_wndIds := View_#%i%_#%A_Index%_wndIds View_#1_#%A_Index%_wndIds
-
+          View_#%mPrimary%_#%A_Index%_wndIds .= View_#%i%_#%A_Index%_wndIds
           StringTrimRight, wndIds, View_#%i%_#%A_Index%_wndIds, 1
           Loop, PARSE, wndIds, `;
           {
-            Loop, % Config_viewCount {
-              StringReplace, View_#%i%_#%A_Index%_wndIds, View_#%i%_#%A_Index%_wndIds, %A_LoopField%`;,
-              View_setActiveWindow(i, A_Index, 0)
-            }
-            Monitor_moveWindow(1, A_LoopField)
+            Window_#%A_LoopField%_monitor := mPrimary
           }
-
-          ;; Manually set the active monitor.
-          Manager_aMonitor := 1
+          If (Manager_aMonitor = i)
+            Manager_aMonitor := mPrimary
         }
       }
+      Loop, % m - i {
+        j := i + A_Index
+        Monitor_moveToIndex(j, j - 1)
+        Monitor_getWorkArea(j - 1)
+        Bar_init(j - 1)
+      }
     }
-    m := Manager_monitorCount
   } Else If (Manager_monitorCount > m) {
-    Loop, % Manager_monitorCount - m
-      Monitor_init(m + A_Index, True)
-  }
-  Loop, % m {
-    Monitor_getWorkArea(A_Index)
-    Bar_init(A_Index)
+    ;; A monitor has been connected. Where has it been put?
+    i := Monitor_find(+1, Manager_monitorCount)
+    If (i > 0) {
+      Loop, % Manager_monitorCount - i {
+        j := Manager_monitorCount - A_Index
+        Monitor_moveToIndex(j, j + 1)
+        Monitor_getWorkArea(j + 1)
+        Bar_init(j + 1)
+      }
+      Monitor_init(i, True)
+    }
+  } Else {
+    ;; Has the resolution of a monitor been changed?
+    Loop, % Manager_monitorCount {
+      Monitor_getWorkArea(A_Index)
+      Bar_init(A_Index)
+    }
   }
   Manager_saveState()
   Loop, % Manager_monitorCount {
@@ -953,8 +965,7 @@ Manager_setViewMonitor(i, d = 0) {
         StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %A_LoopField%`;,
         View_setActiveWindow(Manager_aMonitor, A_Index, 0)
       }
-
-      Monitor_moveWindow(i, A_LoopField)
+      Window_#%A_LoopField%_monitor := i
       Window_#%A_LoopField%_tags := 1 << v - 1
     }
     View_arrange(Manager_aMonitor, aView)
@@ -1015,7 +1026,7 @@ Manager_setWindowMonitor(i, d = 0) {
     If (i = 0)
       i := Manager_aMonitor
     Manager_aMonitor := Manager_loop(i, d, 1, Manager_monitorCount)
-    Monitor_moveWindow(Manager_aMonitor, aWndId)
+    Window_#%aWndId%_monitor := Manager_aMonitor
     v := Monitor_#%Manager_aMonitor%_aView_#1
     Window_#%aWndId%_tags := 1 << v - 1
     View_#%Manager_aMonitor%_#%v%_wndIds := aWndId ";" View_#%Manager_aMonitor%_#%v%_wndIds
