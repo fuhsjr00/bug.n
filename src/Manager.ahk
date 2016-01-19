@@ -1191,3 +1191,8 @@ Manager_winActivate(wndId) {
     Return 0
   }
 }
+
+Manager_windowNotMaximized(width, height) {
+  Global
+  Return, (width < 0.99 * Monitor_#%Manager_aMonitor%_width Or height < 0.99 * Monitor_#%Manager_aMonitor%_height)
+}

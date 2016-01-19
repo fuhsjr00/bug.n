@@ -72,6 +72,68 @@ Window_getHidden(wndId, ByRef wndClass, ByRef wndTitle) {
     Return, False
 }
 
+Window_getPosEx(hWindow, ByRef X = "", ByRef Y = "", ByRef Width = "", ByRef Height = "", ByRef Offset_X = "", ByRef Offset_Y = "") {
+  Static Dummy5693, RECTPlus, S_OK := 0x0, DWMWA_EXTENDED_FRAME_BOUNDS := 9
+
+  ;-- Workaround for AutoHotkey Basic
+  PtrType := (A_PtrSize=8) ? "Ptr" : "UInt"
+
+  ;-- Get the window's dimensions
+  ;   Note: Only the first 16 bytes of the RECTPlus structure are used by the
+  ;   DwmGetWindowAttribute and GetWindowRect functions.
+  VarSetCapacity(RECTPlus, 24,0)
+  DWMRC := DllCall("dwmapi\DwmGetWindowAttribute"
+      ,PtrType,hWindow                                ;-- hwnd
+      ,"UInt",DWMWA_EXTENDED_FRAME_BOUNDS             ;-- dwAttribute
+      ,PtrType,&RECTPlus                              ;-- pvAttribute
+      ,"UInt",16)                                     ;-- cbAttribute
+
+  If (DWMRC <> S_OK) {
+    If ErrorLevel in -3, -4   ;-- Dll or function not found (older than Vista)
+    {
+      ;-- Do nothing else (for now)
+    } Else
+      outputdebug,
+        (LTrim Join`s
+         Function: %A_ThisFunc% -
+         Unknown error calling "dwmapi\DwmGetWindowAttribute".
+         RC = %DWMRC%,
+         ErrorLevel = %ErrorLevel%,
+         A_LastError = %A_LastError%.
+         "GetWindowRect" used instead.
+        )
+
+    ;-- Collect the position and size from "GetWindowRect"
+    DllCall("GetWindowRect", PtrType, hWindow, PtrType, &RECTPlus)
+  }
+
+  ;-- Populate the output variables
+  X := Left :=NumGet(RECTPlus, 0, "Int")
+  Y := Top  :=NumGet(RECTPlus, 4, "Int")
+  Right     :=NumGet(RECTPlus, 8, "Int")
+  Bottom    :=NumGet(RECTPlus, 12, "Int")
+  Width     :=Right-Left
+  Height    :=Bottom-Top
+  OffSet_X  := 0
+  OffSet_Y  := 0
+
+  ;-- If DWM is not used (older than Vista or DWM not enabled), we're done
+  If (DWMRC <> S_OK)
+    Return &RECTPlus
+
+  ;-- Collect dimensions via GetWindowRect
+  VarSetCapacity(RECT, 16, 0)
+  DllCall("GetWindowRect", PtrType, hWindow, PtrType, &RECT)
+  GWR_Width := NumGet(RECT, 8, "Int") - NumGet(RECT, 0, "Int")    ;-- Right minus Left
+  GWR_Height := NumGet(RECT, 12, "Int") - NumGet(RECT, 4, "Int")  ;-- Bottom minus Top
+
+  ;-- Calculate offsets and update output variables
+  NumPut(Offset_X := (Width  - GWR_Width)  // 2, RECTPlus, 16, "Int")
+  NumPut(Offset_Y := (Height - GWR_Height) // 2, RECTPlus, 20, "Int")
+  Return &RECTPlus
+}
+;; unknown: WinGetPosEx (https://autohotkey.com/boards/viewtopic.php?t=3392; 2016-01-18: retrieved "Error 404 - File not found")
+
 Window_hide(wndId) {
   If Window_isHung(wndId) {
     Debug_logMessage("DEBUG[2] Window_hide: Potentially hung window " . wndId, 2)
@@ -180,6 +242,10 @@ Window_minimize(wndId) {
 
 Window_move(wndId, x, y, width, height) {
   Local wndMinMax, WM_ENTERSIZEMOVE, WM_EXITSIZEMOVE
+  Local wndH, wndW, wndX, wndY
+  
+  If Window_getPosEx(wndId, wndX, wndY, wndW, wndH) And (Abs(wndX - x) < 2 And Abs(wndY - y) < 2 And Abs(wndW - width) < 2 And Abs(wndH - height) < 2)
+    Return, 0
 
   If Window_isHung(wndId) {
     Debug_logMessage("DEBUG[2] Window_move: Potentially hung window " . wndId, 2)
@@ -198,6 +264,17 @@ Window_move(wndId, x, y, width, height) {
     Return, 1
   } Else {
     WinMove, ahk_id %wndId%, , %x%, %y%, %width%, %height%
+    
+    If Not (wndMinMax = 1) Or Not Window_#%wndId%_isDecorated Or Manager_windowNotMaximized(width, height) {
+      If Window_getPosEx(wndId, wndX, wndY, wndW, wndH) And (Abs(wndX - x) > 1 Or Abs(wndY - y) > 1 Or Abs(wndW - width) > 1 Or Abs(wndH - height) > 1) {
+        x -= wndX - x
+        y -= wndY - y
+        width  += width - wndW - 1
+        height += height - wndH - 1
+        WinMove, ahk_id %wndId%, , %x%, %y%, %width%, %height%
+      }
+    }
+    
     SendMessage, WM_EXITSIZEMOVE, , , , ahk_id %wndId%
     Return, 0
   }
