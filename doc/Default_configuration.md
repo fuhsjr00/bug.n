@@ -23,7 +23,7 @@ sub-window of the task bar.
 percentage.
 
 `Config_singleRowBar=1`
-> If false, the bar will have to rows, one for the window title and one for all
+> If false, the bar will have two rows, one for the window title and one for all
 other GUI controls.
 
 `Config_spaciousBar=0`
