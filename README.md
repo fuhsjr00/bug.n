@@ -1,9 +1,9 @@
-## bug.n -- Tiling Window Manager
+## bug.n -- Tiling Window Management
 
 bug.n is a
 [tiling window manager](https://en.wikipedia.org/wiki/Tiling_window_manager)
-add-on for Microsoft Windows. It is written in the scripting language
-[AutoHotkey](http://ahkscript.org/download/).
+add-on for the Explorer shell of Microsoft Windows. It is written in the 
+scripting language [AutoHotkey](http://ahkscript.org/download/).
 
 ### What it can do
 

@@ -1,29 +1,27 @@
 /*
-  bug.n -- tiling window management
-  Copyright (c) 2010-2015 Joshua Fuhs, joten
+:title:     bug.n -- Tiling Window Management
+:copyright: (c) 2016 by Joshua Fuhs & joten <https://github.com/fuhsjr00/bug.n>
+:license:   GNU General Public License version 3;
+              LICENSE.md or at <http://www.gnu.org/licenses/>
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-
-  @license GNU General Public License version 3
-           ../LICENSE.md or <http://www.gnu.org/licenses/>
-
-  @version 9.0.0
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
 */
 
-NAME  := "bug.n"
-VERSION := "9.0.0"
+VERSION := "10.0.0"
 
-;; Script settings
+;; script settings
+#NoEnv
 OnExit, Main_cleanup
+SendMode Input
 SetBatchLines, -1
 SetTitleMatchMode, 3
 SetTitleMatchMode, fast
 SetWinDelay, 10
-#NoEnv
+SetWorkingDir %A_ScriptDir%   ; Ensures a consistent starting directory.
 #SingleInstance force
+;#Warn                         ; Enable warnings to assist with detecting common errors.
 #WinActivateForce
 
 ;; Pseudo main function
@@ -38,7 +36,7 @@ SetWinDelay, 10
   Config_filePath := Main_appDir "\Config.ini"
   Config_init()
 
-  Menu, Tray, Tip, %NAME% %VERSION%
+  Menu, Tray, Tip, bug.n %VERSION%
   IfExist %A_ScriptDir%\logo.ico
     Menu, Tray, Icon, %A_ScriptDir%\logo.ico
   Menu, Tray, NoStandard

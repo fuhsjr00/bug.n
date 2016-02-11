@@ -1,16 +1,12 @@
 /*
-  bug.n -- tiling window management
-  Copyright (c) 2010-2015 Joshua Fuhs, joten
+:title:     bug.n -- Tiling Window Management
+:copyright: (c) 2016 by Joshua Fuhs & joten <https://github.com/fuhsjr00/bug.n>
+:license:   GNU General Public License version 3;
+              LICENSE.md or at <http://www.gnu.org/licenses/>
 
-  This program is distributed in the hope that it will be useful,
-  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
-  GNU General Public License for more details.
-
-  @license GNU General Public License version 3
-           ../LICENSE.md or <http://www.gnu.org/licenses/>
-
-  @version 9.0.0
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
 */
 
 Manager_init()
