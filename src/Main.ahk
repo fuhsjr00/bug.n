@@ -26,12 +26,14 @@ SetWorkingDir %A_ScriptDir%   ; Ensures a consistent starting directory.
 
 ;; Pseudo main function
   Main_appDir := ""
+  Log_level   := ""
   If 0 = 1
     Main_appDir = %1%
 
   Main_setup()
 
   Debug_initLog(Main_logFile, 0, False)
+  Log_init()
 
   Debug_logMessage("====== Initializing ======", 0)
   Config_filePath := Main_appDir "\Config.ini"
@@ -165,6 +167,7 @@ Main_setup() {
   If (Main_appDir = "")
     Main_appDir := winAppDir . "\bug.n"
   Main_logFile := Main_appDir . "\log.txt"
+  Log_file := Main_appDir . "\log.md"
   Main_dataDir := Main_appDir . "\data"
   Main_autoLayout := Main_dataDir . "\_Layout.ini"
   Main_autoWindowState := Main_dataDir . "\_WindowState.ini"
@@ -180,6 +183,8 @@ Return
 #Include Bar.ahk
 #Include Config.ahk
 #Include Debug.ahk
+#Include Lib.ahk
+#Include Log.ahk
 #Include Manager.ahk
 #Include Monitor.ahk
 #Include ResourceMonitor.ahk
