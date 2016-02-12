@@ -201,9 +201,13 @@ Manager_getWindowInfo() {
   text := "ID: " aWndId "`nclass:`t" aWndClass "`ntitle:`t" aWndTitle
   If InStr(Bar_hideTitleWndIds, aWndId ";")
     text .= " [hidden]"
-  text .= "`nprocess:`t" aWndPName " [" aWndPId "]`nstyle:`t" aWndStyle "`nmetrics:`tx: " aWndX ", y: " aWndY ", width: " aWndWidth ", height: " aWndHeight "`ntags:`t" Window_#%aWndId%_tags
-  If Window_#%aWndId%_isFloating
-    text .= " [floating]"
+  text .= "`nprocess:`t" aWndPName " [" aWndPId "]`nstyle:`t" aWndStyle "`nmetrics:`tx: " aWndX ", y: " aWndY ", width: " aWndWidth ", height: " aWndHeight
+  If InStr(Manager_managedWndIds, aWndId ";") {
+    text .= "`ntags:`t" Window_#%aWndId%_tags
+    If Window_#%aWndId%_isFloating
+      text .= " [floating]"
+  } Else
+    text .= "`ntags:`t--"
   text .= "`n`nConfig_rule=" aWndClass ";" aWndTitle ";;" Manager_getWindowRule(aWndId)
   MsgBox, 260, bug.n: Window Information, % text "`n`nCopy text to clipboard?"
   IfMsgBox Yes
@@ -212,7 +216,7 @@ Manager_getWindowInfo() {
 
 Manager_getWindowList()
 {
-  Local text, v, aWndId, wndIds, aWndTitle
+  Local text, v, aWndId, aWndTitle, wndIds, wndTitle
 
   v := Monitor_#%Manager_aMonitor%_aView_#1
   aWndId := View_getActiveWindow(Manager_aMonitor, v)
@@ -237,26 +241,26 @@ Manager_getWindowRule(wndId) {
   
   rule := ""
   WinGet, wndMinMax, MinMax, ahk_id %wndId%
-  If InStr(Manager_managedWndIds, wndId ";")
+  If InStr(Manager_managedWndIds, wndId ";") {
     rule .= "1;"
-  Else
-    rule .= "0;"
-  If (Window_#%wndId%_monitor = "")
-    rule .= "0;"
-  Else
-    rule .= Window_#%wndId%_monitor ";"
-  If (Window_#%wndId%_tags = "")
-    rule .= "0;"
-  Else
-    rule .= Window_#%wndId%_tags ";"
-  If Window_#%wndId%_isFloating
-    rule .= "1;"
-  Else
-    rule .= "0;"
-  If Window_#%wndId%_isDecorated
-    rule .= "1;"
-  Else
-    rule .= "0;"
+    If (Window_#%wndId%_monitor = "")
+      rule .= "0;"
+    Else
+      rule .= Window_#%wndId%_monitor ";"
+    If (Window_#%wndId%_tags = "")
+      rule .= "0;"
+    Else
+      rule .= Window_#%wndId%_tags ";"
+    If Window_#%wndId%_isFloating
+      rule .= "1;"
+    Else
+      rule .= "0;"
+    If Window_#%wndId%_isDecorated
+      rule .= "1;"
+    Else
+      rule .= "0;"
+  } Else
+    rule .= "0;;;;;"
   If InStr(Bar_hideTitleWndIds, wndId ";")
     rule .= "1;"
   Else
@@ -293,7 +297,7 @@ Manager_loop(index, increment, lowerBound, upperBound) {
 }
 
 Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hideTitle, action = "") {
-  Local a
+  Local a := False
 
   If Not InStr(Manager_allWndIds, wndId ";")
     Manager_allWndIds .= wndId ";"
@@ -308,6 +312,7 @@ Manager__setWinProperties(wndId, isManaged, m, tags, isDecorated, isFloating, hi
     Window_#%wndId%_tags        := tags
     Window_#%wndId%_isDecorated := isDecorated
     Window_#%wndId%_isFloating  := isFloating
+    Window_#%wndId%_isMinimized := False
     Window_#%wndId%_area        := 0
 
     If Not Config_showBorder
@@ -530,6 +535,7 @@ Manager_onShellMessage(wParam, lParam) {
   ;;   Look into the use of AHK synchronization primitives.
   If (wParam = 1 Or wParam = 2 Or wParam = 4 Or wParam = 6 Or wParam = 32772) And lParam And Not Manager_hideShow
   {
+    wndIds := ""
     isChanged := Manager_sync(wndIds)
     If wndIds
       isChanged := False
@@ -905,7 +911,12 @@ Manager_saveWindowState(filename, nm, nv) {
     isManaged := InStr(Manager_managedWndIds, wndId . ";")
     isTitleHidden := InStr(Bar_hideTitleWndIds, wndId . ";")
 
-    text .= "Window " . wndId . ";" . wndPName . ";" . Window_#%wndId%_monitor . ";" . Window_#%wndId%_tags . ";" . Window_#%wndId%_isFloating . ";" . Window_#%wndId%_isDecorated . ";" . isTitleHidden . ";" . isManaged . ";" . title . "`n"
+    text .= "Window " . wndId . ";" . wndPName . ";"
+    If isManaged
+      text .= Window_#%wndId%_monitor . ";" . Window_#%wndId%_tags . ";" . Window_#%wndId%_isFloating . ";" . Window_#%wndId%_isDecorated . ";"
+    Else
+      text .= ";;;;"
+    text .= isTitleHidden . ";" . isManaged . ";" . title . "`n"
   }
   DetectHiddenWindows, %detectHidden%
 
@@ -1100,13 +1111,16 @@ Manager_initial_sync(doRestore) {
 Manager_sync(ByRef wndIds = "")
 {
   Local a, flag, shownWndIds, v, visibleWndIds, wndId
+  a := False
 
+  shownWndIds := ""
   Loop, % Manager_monitorCount
   {
     v := Monitor_#%A_Index%_aView_#1
     shownWndIds .= View_#%A_Index%_#%v%_wndIds
   }
   ;; Check all visible windows against the known windows
+  visibleWndIds := ""
   WinGet, wndId, List, , ,
   Loop, % wndId
   {

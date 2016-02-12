@@ -100,6 +100,7 @@ Config_init() {
   Config_autoSaveSession := "auto"    ;; "off" | "auto" | "ask"
   Config_maintenanceInterval := 5000
 
+  Config_hotkeyCount := 0
   Config_restoreConfig(Config_filePath)
   Config_getSystemSettings()
   Config_initColors()
@@ -147,6 +148,13 @@ Config_convertSystemColor(systemColor)
   Return, rr gg bb
 }
 
+Config_edit() {
+  Global Config_filePath
+  
+  If FileExist(Config_filePath)
+    Run, edit %Config_filePath%
+}
+
 Config_getSystemSettings() {
   Global Config_backColor_#1, Config_foreColor_#1, Config_fontColor_#1
   Global Config_backColor_#2, Config_foreColor_#2, Config_fontColor_#2
@@ -154,7 +162,7 @@ Config_getSystemSettings() {
   Global Config_fontName, Config_fontSize, Config_scalingFactor
 
   If Not Config_fontName {
-    ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
+    ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = "WIN_VISTA" ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
     NumPut(ncmSize, ncm, 0, "UInt")
     DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
 
@@ -165,7 +173,7 @@ Config_getSystemSettings() {
     ;; maestrith: Script Writer (http://www.autohotkey.net/~maestrith/Script Writer/)
   }
   If Not Config_fontSize {
-    ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
+    ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = "WIN_VISTA" ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
     NumPut(ncmSize, ncm, 0, "UInt")
     DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
 
@@ -494,7 +502,7 @@ Config_UI_saveSession() {
 !+y::View_traceAreas()
 
 ;; Administration
-#^e::Run, edit %Config_filePath%
+#^e::Config_edit()
 #^s::Config_UI_saveSession()
 #^r::Reload
 #^q::ExitApp

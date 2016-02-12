@@ -21,10 +21,11 @@ SetTitleMatchMode, fast
 SetWinDelay, 10
 SetWorkingDir %A_ScriptDir%   ; Ensures a consistent starting directory.
 #SingleInstance force
-;#Warn                         ; Enable warnings to assist with detecting common errors.
+#Warn                         ; Enable warnings to assist with detecting common errors.
 #WinActivateForce
 
 ;; Pseudo main function
+  Main_appDir := ""
   If 0 = 1
     Main_appDir = %1%
 

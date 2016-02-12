@@ -240,7 +240,7 @@ Window_move(wndId, x, y, width, height) {
   Local wndMinMax, WM_ENTERSIZEMOVE, WM_EXITSIZEMOVE
   Local wndH, wndW, wndX, wndY
   
-  If Window_getPosEx(wndId, wndX, wndY, wndW, wndH) And (Abs(wndX - x) < 2 And Abs(wndY - y) < 2 And Abs(wndW - width) < 2 And Abs(wndH - height) < 2)
+  If Not wndId Window_getPosEx(wndId, wndX, wndY, wndW, wndH) And (Abs(wndX - x) < 2 And Abs(wndY - y) < 2 And Abs(wndW - width) < 2 And Abs(wndH - height) < 2)
     Return, 0
 
   If Window_isHung(wndId) {

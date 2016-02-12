@@ -146,6 +146,7 @@ View_getActiveWindow(m, v) {
   Local listId, listIds, wndId
 
   listIds := "aWndIds;wndIds"
+  wndId := 0
   Loop, Parse, listIds, `;
   {
     listId := A_LoopField
@@ -174,6 +175,8 @@ View_getTiledWndIds(m, v)
 {
   Local n, tiledWndIds, wndIds
 
+  n := 0
+  tiledWndIds := ""
   StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
   Loop, PARSE, wndIds, `;
   {
@@ -234,7 +237,7 @@ View_moveWindow(i=0, d=0) {
   WinGet, aWndId, ID, A
   m := Manager_aMonitor
   v := Monitor_#%m%_aView_#1
-  If Tiler_isActive(Manager_aMonitor, v) And InStr(Manager_managedWndIds, aWndId ";") And Not (i = 0 And d = 0) And (i <= View_#%m%_#%v%_area_#0) {
+  If Tiler_isActive(Manager_aMonitor, v) And InStr(Manager_managedWndIds, aWndId ";") And Not (i = 0 And d = 0) And View_#%m%_#%v%_area_#0 And (i <= View_#%m%_#%v%_area_#0) {
     If (i = 0)
       i := Manager_loop(Window_#%aWndId%_area, d, 1, View_#%m%_#%v%_area_#0)
     Window_move(aWndId, View_#%m%_#%v%_area_#%i%_x, View_#%m%_#%v%_area_#%i%_y, View_#%m%_#%v%_area_#%i%_width, View_#%m%_#%v%_area_#%i%_height)
@@ -363,11 +366,11 @@ View_toggleMargins()
 {
   Local v
 
-  Debug_logMessage("DEBUG[3] View_toggleMargins(" . View_#%Manager_aMonitor%_#%v%_margin1 . ", " . View_#%Manager_aMonitor%_#%v%_margin2 . ", " . View_#%Manager_aMonitor%_#%v%_margin3 . ", " . View_#%Manager_aMonitor%_#%v%_margin4 . ")", 3)
 
   If Not (Config_viewMargins = "0;0;0;0")
   {
     v := Monitor_#%Manager_aMonitor%_aView_#1
+    Debug_logMessage("DEBUG[3] View_toggleMargins(" . View_#%Manager_aMonitor%_#%v%_margin1 . ", " . View_#%Manager_aMonitor%_#%v%_margin2 . ", " . View_#%Manager_aMonitor%_#%v%_margin3 . ", " . View_#%Manager_aMonitor%_#%v%_margin4 . ")", 3)
     If (View_#%Manager_aMonitor%_#%v%_margins = "0;0;0;0")
       View_#%Manager_aMonitor%_#%v%_margins := Config_viewMargins
     Else

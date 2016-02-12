@@ -133,6 +133,7 @@ Bar_init(m) {
     Gui, Show, NoActivate Hide x%x1% y%y1% w%wndWidth% h%Bar_height%, %wndTitle%
   WinSet, Transparent, %Config_barTransparency%, %wndTitle%
   wndId := WinExist(wndTitle)
+  Bar_appBarData := ""
   If (Config_verticalBarPos = "tray" And Monitor_#%m%_taskBarClass) {
     trayWndId := WinExist("ahk_class " Monitor_#%m%_taskBarClass)
     DllCall("SetParent", "UInt", wndId, "UInt", trayWndId)
@@ -160,8 +161,10 @@ Bar_init(m) {
 
 Bar_initCmdGui()
 {
-  Global Bar_#0_#0, Bar_#0_#0H, Bar_#0_#0W, Bar_#0_#1, Bar_cmdGuiIsVisible, Config_backColor_#1_#3, Config_barCommands, Config_fontName, Config_fontSize, Config_foreColor_#1_#3
+  Global Bar_#0_#0, Bar_#0_#0H, Bar_#0_#0W, Bar_#0_#1, Bar_cmdGuiIsVisible, Config_barCommands, Config_fontName, Config_fontSize
+  Global Config_backColor_#1_#3, Config_fontColor_#1_#3, Config_foreColor_#1_#3
 
+  Bar_#0_#0 := ""
   Bar_cmdGuiIsVisible := False
   wndTitle := "bug.n_BAR_0"
   Gui, 99: Default
@@ -454,7 +457,7 @@ Bar_updateTitle() {
   WinGetTitle, aWndTitle, ahk_id %aWndId%
   If InStr(Bar_hideTitleWndIds, aWndId ";") Or (aWndTitle = "bug.n_BAR_0")
     aWndTitle := ""
-  If Window_#%aWndId%_isFloating
+  If aWndId And InStr(Manager_managedWndIds, aWndId . ";") And Window_#%aWndId%_isFloating
     aWndTitle := "~ " aWndTitle
   If (Manager_monitorCount > 1)
     aWndTitle := "[" Manager_aMonitor "] " aWndTitle

@@ -67,8 +67,8 @@ Tiler_getLayoutSymbol(m, v, n) {
 }
 
 Tiler_getMFactorD(m, v, d, dFact) {
-  Local callD, minD
-  Static lastCall, mFactD
+  Local callD, mFactD, minD
+  Static lastCall := 0
 
   callD := A_TickCount - lastCall
   lastCall := A_TickCount
@@ -79,6 +79,7 @@ Tiler_getMFactorD(m, v, d, dFact) {
   Else
     minD := d / dFact**5
 
+  mFactD := 0
   If (callD < Config_mFactCallInterval And d * mFactD > 0) {
     ;; Accelerate mFactD, if the last call is inside the time frame and went in the same direction.
     mFactD *= dFact
