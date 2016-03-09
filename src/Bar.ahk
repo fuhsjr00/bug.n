@@ -201,13 +201,13 @@ Bar_cmdGuiEnter:
     Bar_cmdGuiIsVisible := False
     Gui, Cancel
     WinActivate, ahk_id %Bar_aWndId%
-    Cmd_eval(Bar_#0_#0)
+    Main_evalCommand(Bar_#0_#0)
     Bar_#0_#0 := ""
   } Else If (A_GuiControl = "Bar_#0_#1") {
     Gui, Submit, NoHide
     Debug_logMessage("DEBUG[6] Bar_cmdGuiEnter; command: " . Bar_#0_#1, 6)
     Loop, Parse, Bar_#0_#1, `n, `r
-      Cmd_eval(A_LoopField)
+      Main_evalCommand(A_LoopField)
   }
 Return
 
