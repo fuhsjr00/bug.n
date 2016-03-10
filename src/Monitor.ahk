@@ -33,8 +33,89 @@ Monitor_init(m, doRestore) {
   Bar_init(m)
 }
 
+Monitor__hideView(m) {
+  Local aView, wndIds
+  
+  aView := Monitor_#%m%_aView_#1
+  
+  SetWinDelay, 0
+  StringTrimRight, wndIds, View_#%m%_#%aView%_wndIds, 1
+  Loop, PARSE, wndIds, `;
+  {
+    If Not (Window_#%A_LoopField%_tags & (1 << i - 1))
+      Window_hide(A_LoopField)
+  }
+  SetWinDelay, 10
+}
+
+Monitor__showView(m, v) {
+  Local aView, detectHidden, wndId, wndIds
+  
+  aView := Monitor_#%m%_aView_#1
+  Monitor_#%m%_aView_#2 := aView
+  Monitor_#%m%_aView_#1 := v
+
+  detectHidden := A_DetectHiddenWindows
+  DetectHiddenWindows, On
+  wndId := View_getActiveWindow(m, v)
+  If wndId
+    Window_set(wndId, "AlwaysOnTop", "On")
+  View_arrange(m, v)
+  DetectHiddenWindows, %detectHidden%
+  StringTrimRight, wndIds, View_#%m%_#%v%_wndIds, 1
+  SetWinDelay, 0
+  Loop, PARSE, wndIds, `;
+  {
+    Window_show(A_LoopField)
+  }
+  Window_set(wndId, "AlwaysOnTop", "Off")
+  SetWinDelay, 10
+
+  Bar_updateView(m, aView)
+  Bar_updateView(m, v)
+}
+
+Monitor_greedyView(i, d = 0) {
+  Local aView, aWndId, m, n, wndId, om
+
+  If (i = -1)
+    i := Monitor_#%Manager_aMonitor%_aView_#2
+  Else If (i = 0)
+    i := Monitor_#%Manager_aMonitor%_aView_#1
+  i := Manager_loop(i, d, 1, Config_viewCount)
+
+  Debug_logMessage("DEBUG[1] Monitor_greedyView; i: " . i . ", d: " . d . ", Manager_aMonitor: " . Manager_aMonitor . ", wndIds: " . View_#%Manager_aMonitor%_#%i%_wndIds, 1)
+  If (i <= 0) Or (i > Config_viewCount) Or Manager_hideShow
+    Return
+  ;; Re-arrange the windows on the active view.
+  If (i = Monitor_#%Manager_aMonitor%_aView_#1) {
+    Manager__stealView(Manager_aMonitor, i)
+    View_arrange(Manager_aMonitor, i)
+    Return
+  }
+
+  aView := Monitor_#%Manager_aMonitor%_aView_#1
+  WinGet, aWndId, ID, A
+  If WinExist("ahk_id" aWndId) And InStr(View_#%Manager_aMonitor%_#%aView%_wndIds, aWndId ";") And Window_isProg(aWndId)
+    View_setActiveWindow(Manager_aMonitor, aView, aWndId)
+
+  Manager_hideShow := True
+  Monitor__hideView(Manager_aMonitor)
+  om := Manager__stealView(Manager_aMonitor, i)
+  if (om > 0) {
+    Monitor__hideView(om)
+    Manager__stealView(om, aView)
+    Monitor__showView(om, aView)
+  }
+  Monitor__showView(Manager_aMonitor, i)
+  Manager_hideShow := False
+
+  wndId := View_getActiveWindow(Manager_aMonitor, i)
+  Manager_winActivate(wndId)
+}
+
 Monitor_activateView(i, d = 0) {
-  Local aView, aWndId, detectHidden, m, n, wndId, wndIds
+  Local aView, aWndId, m, n, wndId
 
   If (i = -1)
     i := Monitor_#%Manager_aMonitor%_aView_#2
@@ -67,36 +148,10 @@ Monitor_activateView(i, d = 0) {
     Else
       m := A_Index
 
-    Monitor_#%m%_aView_#2 := aView
-    Monitor_#%m%_aView_#1 := i
     Manager_hideShow := True
-    SetWinDelay, 0
-    StringTrimRight, wndIds, View_#%m%_#%aView%_wndIds, 1
-    Loop, PARSE, wndIds, `;
-    {
-      If Not (Window_#%A_LoopField%_tags & (1 << i - 1))
-        Window_hide(A_LoopField)
-    }
-    SetWinDelay, 10
-    detectHidden := A_DetectHiddenWindows
-    DetectHiddenWindows, On
-    wndId := View_getActiveWindow(m, i)
-    If wndId
-      Window_set(wndId, "AlwaysOnTop", "On")
-    View_arrange(m, i)
-    DetectHiddenWindows, %detectHidden%
-    StringTrimRight, wndIds, View_#%m%_#%i%_wndIds, 1
-    SetWinDelay, 0
-    Loop, PARSE, wndIds, `;
-    {
-      Window_show(A_LoopField)
-    }
-    Window_set(wndId, "AlwaysOnTop", "Off")
-    SetWinDelay, 10
+    Monitor__hideView(m)
+    Monitor__showView(m, i)
     Manager_hideShow := False
-
-    Bar_updateView(m, aView)
-    Bar_updateView(m, i)
   }
 
   wndId := View_getActiveWindow(Manager_aMonitor, i)
