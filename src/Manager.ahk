@@ -738,14 +738,14 @@ Manager_restoreWindowBorders()
 
   If Config_selBorderColor
     DllCall("SetSysColors", "Int", 1, "Int*", 10, "UInt*", Manager_normBorderColor)
-  If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA)
+  If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = "WIN_VISTA")
   {
-    ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
+    ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = "WIN_VISTA" ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
     NumPut(ncmSize, ncm, 0, "UInt")
     DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
     If (Config_borderWidth > 0)
       NumPut(Manager_borderWidth, ncm, 4, "Int")
-    If (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA)
+    If (Config_borderPadding >= 0 And A_OSVersion = "WIN_VISTA")
       NumPut(Manager_borderPadding, ncm, 40 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), "Int")
     DllCall("SystemParametersInfo", "UInt", 0x002a, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
   }
@@ -1005,16 +1005,16 @@ Manager_setWindowBorders()
     SetFormat, Integer, d
     DllCall("SetSysColors", "Int", 1, "Int*", 10, "UInt*", Config_selBorderColor)
   }
-  If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA)
+  If (Config_borderWidth > 0) Or (Config_borderPadding >= 0 And A_OSVersion = "WIN_VISTA")
   {
-    ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = WIN_VISTA ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
+    ncmSize := VarSetCapacity(ncm, 4 * (A_OSVersion = "WIN_VISTA" ? 11 : 10) + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), 0)
     NumPut(ncmSize, ncm, 0, "UInt")
     DllCall("SystemParametersInfo", "UInt", 0x0029, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
     Manager_borderWidth := NumGet(ncm, 4, "Int")
     Manager_borderPadding := NumGet(ncm, 40 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), "Int")
     If (Config_borderWidth > 0)
       NumPut(Config_borderWidth, ncm, 4, "Int")
-    If (Config_borderPadding >= 0 And A_OSVersion = WIN_VISTA)
+    If (Config_borderPadding >= 0 And A_OSVersion = "WIN_VISTA")
       NumPut(Config_borderPadding, ncm, 40 + 5 * (28 + 32 * (A_IsUnicode ? 2 : 1)), "Int")
     DllCall("SystemParametersInfo", "UInt", 0x002a, "UInt", ncmSize, "UInt", &ncm, "UInt", 0)
   }
