@@ -350,8 +350,7 @@ Tiler_traceAreas(m, v, continuously) {
   wndTitle := "bug.n_TRACE_" m "_" v
   Gui, 98: Default
   Gui, Destroy
-  Gui, -Caption +Disabled +ToolWindow
-  Gui, +AlwaysOnTop
+  Gui, +AlwaysOnTop -Caption +Disabled +ToolWindow
   Gui, Color, %Config_foreColor_#2_#1%
   Gui, Font, c%Config_fontColor_#1_#3% s%Config_largeFontSize%, %Config_fontName%
 
@@ -362,7 +361,7 @@ Tiler_traceAreas(m, v, continuously) {
     w2 := View_#%m%_#%v%_area_#%A_Index%_width - 2 * (Config_borderWidth + Config_borderPadding)
     h2 := View_#%m%_#%v%_area_#%A_Index%_height - 2 * (Config_borderWidth + Config_borderPadding)
     y3 := y2 + (h2 - Config_largeFontSize) / 2
-    Gui, Add, Progress, x%x2% y%y2% w%w2% h%h2% Background%Config_backColor_#1_#3%
+    Gui, Add, Progress, x%x2% y%y2% w%w2% h%h2% Background%Config_backColor_#1_#3%, 100
     Gui, Add, Text, x%x2% y%y3% w%w2% BackgroundTrans Center, % A_Index
     Debug_logMessage("DEBUG[2] View_traceAreas: i = " A_Index " / " n ", x = " x2 ", y = " y2 ", w = " w2 ", h = " h2, 2)
   }
