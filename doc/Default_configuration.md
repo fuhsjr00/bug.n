@@ -56,6 +56,10 @@ separated list, which contains the following items:
 * battery status
 * volume level
 
+A valid color value is either one of the 16 primary HTML [color names](https://autohotkey.com/docs/commands/Progress.htm#colors)
+or a 6-digit RGB color value. Examples are `Red` or `FF0000`; for a more 
+elaborate example have a look at [joten_01.ini](../usr/joten_01.ini).
+
 `Config_backColor_#2=<COLOR_GRADIENTACTIVECAPTION>;;;;;;;<COLOR_MENU>;<COLOR_MENU>`
 > The background color of bar elements, which are highlighted depending on the
 status, i. a. the active view, a discharging battery and the sound volume, if
@@ -66,7 +70,7 @@ it is not muted.
 status, i. a. a discharging battery with a battery level lower than 10%.
 
 `Config_foreColor_#1=<COLOR_INACTIVECAPTION>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_ACTIVECAPTION>;<COLOR_GRADIENTINACTIVECAPTION>`
-> The default forground color of bar elements. Every bar element consists of a
+> The default foreground color of bar elements. Every bar element consists of a
 progress bar with a background and a foreground; the visible part of the
 foreground depends on the value of the progress bar.
 
