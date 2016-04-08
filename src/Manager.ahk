@@ -24,6 +24,7 @@ Manager_init()
   ; New/closed windows, active changed,
   Manager_windowsDirty := 0
   Manager_aMonitor := 1
+  View_tiledWndId0 := 0
 
   doRestore := 0
   If (Config_autoSaveSession = "ask")
@@ -974,7 +975,7 @@ Manager_setViewMonitor(i, d = 0) {
     {
       Loop, % Config_viewCount {
         StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %A_LoopField%`;,
-        View_setActiveWindow(Manager_aMonitor, A_Index, 0)
+        StringReplace, View_#%Manager_aMonitor%_#%A_Index%_aWndIds, View_#%Manager_aMonitor%_#%A_Index%_aWndIds, %A_LoopField%`;,
       }
       Window_#%A_LoopField%_monitor := i
       Window_#%A_LoopField%_tags := 1 << v - 1
@@ -1026,8 +1027,7 @@ Manager_setWindowMonitor(i, d = 0) {
   If (Manager_monitorCount > 1 And InStr(Manager_managedWndIds, aWndId ";")) {
     Loop, % Config_viewCount {
       StringReplace, View_#%Manager_aMonitor%_#%A_Index%_wndIds, View_#%Manager_aMonitor%_#%A_Index%_wndIds, %aWndId%`;,
-      If (View_getActiveWindow(Manager_aMonitor, A_Index) = aWndId)
-        View_setActiveWindow(Manager_aMonitor, A_Index, 0)
+      StringReplace, View_#%Manager_aMonitor%_#%A_Index%_aWndIds, View_#%Manager_aMonitor%_#%A_Index%_aWndIds, %aWndId%`;, All
       Bar_updateView(Manager_aMonitor, A_Index)
     }
     If Config_dynamicTiling
@@ -1188,13 +1188,12 @@ Manager_unmanage(wndId) {
 }
 
 Manager_winActivate(wndId) {
+  Global Manager_aMonitor
+  
   Manager_setCursor(wndId)
   Debug_logMessage("DEBUG[1] Activating window: " wndId, 1)
   If Not wndId {
-    If (A_OSVersion = "WIN_8" Or A_OSVersion = "WIN_8.1")
-      WinGet, wndId, ID, ahk_class WorkerW
-    Else
-      WinGet, wndId, ID, Program Manager ahk_class Progman
+    wndId := WinExist("bug.n_BAR_" . Manager_aMonitor)
     Debug_logMessage("DEBUG[1] Activating Desktop: " wndId, 1)
   }
 

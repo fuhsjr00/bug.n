@@ -34,27 +34,28 @@ Monitor_init(m, doRestore) {
 }
 
 Monitor_activateView(i, d = 0) {
-  Local aView, aWndId, detectHidden, m, n, wndId, wndIds
+  Local aMonitor, aView, aWndId, detectHidden, m, n, wndId, wndIds
 
+  aMonitor := Manager_aMonitor
   If (i = -1)
-    i := Monitor_#%Manager_aMonitor%_aView_#2
+    i := Monitor_#%aMonitor%_aView_#2
   Else If (i = 0)
-    i := Monitor_#%Manager_aMonitor%_aView_#1
+    i := Monitor_#%aMonitor%_aView_#1
   i := Manager_loop(i, d, 1, Config_viewCount)
 
-  Debug_logMessage("DEBUG[1] Monitor_activateView; i: " . i . ", d: " . d . ", Manager_aMonitor: " . Manager_aMonitor . ", wndIds: " . View_#%Manager_aMonitor%_#%i%_wndIds, 1)
+  Debug_logMessage("DEBUG[1] Monitor_activateView; i: " . i . ", d: " . d . ", Manager_aMonitor: " . aMonitor . ", wndIds: " . View_#%Manager_aMonitor%_#%i%_wndIds, 1)
   If (i <= 0) Or (i > Config_viewCount) Or Manager_hideShow
     Return
   ;; Re-arrange the windows on the active view.
-  If (i = Monitor_#%Manager_aMonitor%_aView_#1) {
-    View_arrange(Manager_aMonitor, i)
+  If (i = Monitor_#%aMonitor%_aView_#1) {
+    View_arrange(aMonitor, i)
     Return
   }
 
-  aView := Monitor_#%Manager_aMonitor%_aView_#1
+  aView := Monitor_#%aMonitor%_aView_#1
   WinGet, aWndId, ID, A
-  If WinExist("ahk_id" aWndId) And InStr(View_#%Manager_aMonitor%_#%aView%_wndIds, aWndId ";") And Window_isProg(aWndId)
-    View_setActiveWindow(Manager_aMonitor, aView, aWndId)
+  If WinExist("ahk_id" aWndId) And InStr(View_#%aMonitor%_#%aView%_wndIds, aWndId ";") And Window_isProg(aWndId)
+    View_setActiveWindow(aMonitor, aView, aWndId)
 
   n := Config_syncMonitorViews
   If (n = 1)
@@ -63,7 +64,7 @@ Monitor_activateView(i, d = 0) {
     n := 1
   Loop, % n {
     If (n = 1)
-      m := Manager_aMonitor
+      m := aMonitor
     Else
       m := A_Index
 
@@ -99,7 +100,7 @@ Monitor_activateView(i, d = 0) {
     Bar_updateView(m, i)
   }
 
-  wndId := View_getActiveWindow(Manager_aMonitor, i)
+  wndId := View_getActiveWindow(aMonitor, i)
   Manager_winActivate(wndId)
 }
 
