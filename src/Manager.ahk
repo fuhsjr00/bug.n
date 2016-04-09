@@ -540,6 +540,7 @@ Manager_onShellMessage(wParam, lParam) {
   ;;   Look into the use of AHK synchronization primitives.
   If (wParam = 1 Or wParam = 2 Or wParam = 4 Or wParam = 6 Or wParam = 32772) And lParam And Not Manager_hideShow
   {
+    Sleep, % Config_shellMsgDelay
     wndIds := ""
     isChanged := Manager_sync(wndIds)
     If wndIds
