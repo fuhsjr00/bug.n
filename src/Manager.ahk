@@ -653,6 +653,8 @@ Manager_override(rule = "") {
 }
 
 Manager_registerShellHook() {
+  Global Config_monitorDisplayChangeMessages
+  
   WM_DISPLAYCHANGE := 126   ;; This message is sent when the display resolution has changed.
   Gui, +LastFound
   hWnd := WinExist()
@@ -662,7 +664,8 @@ Manager_registerShellHook() {
   Debug_logMessage("DEBUG[1] Manager_registerShellHook; hWnd: " . hWnd . ", wndClass: " . wndClass . ", wndTitle: " . wndTitle, 1)
   msgNum := DllCall("RegisterWindowMessage", "Str", "SHELLHOOK")
   OnMessage(msgNum, "Manager_onShellMessage")
-  OnMessage(WM_DISPLAYCHANGE, "Manager_onDisplayChange")
+  If Config_monitorDisplayChangeMessages
+    OnMessage(WM_DISPLAYCHANGE, "Manager_onDisplayChange")
 }
 ;; SKAN: How to Hook on to Shell to receive its messages? (http://www.autohotkey.com/forum/viewtopic.php?p=123323#123323)
 

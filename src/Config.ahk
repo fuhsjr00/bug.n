@@ -103,6 +103,7 @@ Config_init() {
   ;; Configuration management
   Config_autoSaveSession := "auto"    ;; "off" | "auto" | "ask"
   Config_maintenanceInterval := 5000
+  Config_monitorDisplayChangeMessages := True
 
   Config_hotkeyCount := 0
   Config_restoreConfig(Config_filePath)

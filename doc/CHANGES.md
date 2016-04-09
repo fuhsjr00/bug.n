@@ -26,6 +26,7 @@ called with the window ID as a paramater, when applying the rule.
 11. `+` Added the possibility to minimize windows, making them floating and thereby excluded from tiling.
 12. `+` Added configuration variables for customizing the date and time format shown in the status bar.
 13. `+` Added a function to override the rules applied from `Config.ini` for the active window.
+14. `+` Added a configuration variable for customizing the behaviour on display change messages.
 
 |   # | `-` or `~` Configuration Variables or <br/> `-` Hotkey Functions | `+` Configuration Variables or <br/> `+` Hotkey Functions |
 | ---:| ---------------------------------------------------------------- | --------------------------------------------------------- |
@@ -88,6 +89,7 @@ called with the window ID as a paramater, when applying the rule.
 | 11. |                                                                  | `#^m::Manager_minimizeWindow()`                           |
 | 12. |                                                                  | `Config_readinDateFormat`                                 |
 |     |                                                                  | `Config_readinTimeFormat`                                 |
+| 14. |                                                                  | `Config_monitorDisplayChangeMessages`                     |
 
 ### 8.4.0
 

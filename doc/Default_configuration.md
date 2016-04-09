@@ -364,3 +364,8 @@ the data directory of bug.n. Possible values are `off`, `auto` and `ask`.
 > The interval in milliseconds, in which the session will be automatically
 saved to especially support the recovery of window states after bug.n
 unintentionally quits.
+
+`Config_monitorDisplayChangeMessages=1`
+> If true (`=1`) bug.n reacts on `WM_DISPLAYCHANGE` system messages asking to 
+reset the monitor configuration, e. g. if a monitor is dis-/connected or the 
+monitor resolution is changed.
