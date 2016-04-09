@@ -166,11 +166,12 @@ desktop functionality of BlackBox and NOT bug.n is used (=> Hiding and showing
 windows is detected and acted upon).
 
 `Config_borderWidth=0`
-> If > 0, the window border width is set to the given integer value.
+> If > 0, the window border width is set to the given integer value (supported 
+Windows versions: _not_ 10).
 
 `Config_borderPadding=-1`
-> If >= 0, the window border padding is set to the given integer value (only
-for Windows >= Vista).
+> If >= 0, the window border padding is set to the given integer value 
+(supported Windows versions: only Vista).
 
 `Config_showTaskBar=0`
 > If false (`=0`), the task bar is hidden. It can be made visible or hidden by
@@ -178,11 +179,13 @@ hotkey (see below).
 
 `Config_showBorder=1`
 > If false (`=0`), the window borders are hidden; therefor windows cannot be
-resized manually by dragging the border, even if using the according hotkey.
+resized manually by dragging the border, even if using the according hotkey 
+(supported Windows versions: _not_ 10).
 
 `Config_selBorderColor=`
-> Border colour of the active window; format: 0x00BBGGRR (e. g. `0x006A240A`,
-if =0, the system's window border colour is not changed).
+> Border colour of the active window, format: 0x00BBGGRR; e. g. `0x006A240A`,
+if `=0`, the system's window border colour is not changed (supported Windows 
+versions: _not_ 10).
 
 ### Window arrangement
 

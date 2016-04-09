@@ -35,10 +35,6 @@ The available configuration variables are listed in the document
 associated functions are listed in the document
 "[Default hotkeys](./Default_hotkeys.md)".
 
-`Config_borderWidth`, `Config_borderPadding` and `Config_selBorderColor` are
-especially usefull, if you are not allowed to set the design in the system
-settings.
-
 You may find a sample and template configuration file in the 
 [usr directory](../usr/).
 

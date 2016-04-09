@@ -107,6 +107,13 @@ Config_init() {
 
   Config_hotkeyCount := 0
   Config_restoreConfig(Config_filePath)
+  If (SubStr(A_OSVersion, 1, 3) = "10.") {
+    Config_borderWidth    := 0
+    Config_borderPadding  := -1
+    Config_showBorder     := True
+    Config_selBorderColor := ""
+  }
+  
   Config_getSystemSettings()
   Config_initColors()
   Loop, % Config_layoutCount {
