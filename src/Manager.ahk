@@ -193,17 +193,19 @@ Manager_doMaintenance:
 Return
 
 Manager_getWindowInfo() {
-  Local aWndClass, aWndHeight, aWndId, aWndPId, aWndPName, aWndStyle, aWndTitle, aWndWidth, aWndX, aWndY, text, v
+  Local aWndClass, aWndHeight, aWndId, aWndPId, aWndPName, aWndStyle, aWndTitle, aWndWidth, aWndX, aWndY, detectHiddenWnds, isHidden, text, v
 
+  detectHiddenWnds := A_DetectHiddenWindows
+  DetectHiddenWindows, On
   WinGet, aWndId, ID, A
-  WinGetClass, aWndClass, ahk_id %aWndId%
-  WinGetTitle, aWndTitle, ahk_id %aWndId%
+  DetectHiddenWindows, %detectHiddenWnds%
+  isHidden := Window_getHidden(aWndId, aWndClass, aWndTitle)
   WinGet, aWndPName, ProcessName, ahk_id %aWndId%
   WinGet, aWndPId, PID, ahk_id %aWndId%
   WinGet, aWndStyle, Style, ahk_id %aWndId%
   WinGet, aWndMinMax, MinMax, ahk_id %aWndId%
   WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
-  text := "ID: " aWndId "`nclass:`t" aWndClass "`ntitle:`t" aWndTitle
+  text := "ID: " aWndId (isHidden ? " [hidden]" : "") "`nclass:`t" aWndClass "`ntitle:`t" aWndTitle
   If InStr(Bar_hideTitleWndIds, aWndId ";")
     text .= " [hidden]"
   text .= "`nprocess:`t" aWndPName " [" aWndPId "]`nstyle:`t" aWndStyle "`nmetrics:`tx: " aWndX ", y: " aWndY ", width: " aWndWidth ", height: " aWndHeight
@@ -542,7 +544,7 @@ Manager_onShellMessage(wParam, lParam) {
   {
     Sleep, % Config_shellMsgDelay
     wndIds := ""
-    isChanged := Manager_sync(wndIds)
+    a := isChanged := Manager_sync(wndIds)
     If wndIds
       isChanged := False
 
@@ -553,7 +555,7 @@ Manager_onShellMessage(wParam, lParam) {
       Bar_updateView(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
     }
 
-    If (Manager_monitorCount > 1)
+    If (Manager_monitorCount > 1 And a > -1)
     {
       WinGet, aWndId, ID, A
       WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %aWndId%
@@ -611,7 +613,11 @@ Manager_onShellMessage(wParam, lParam) {
     }
 
     If InStr(Manager_managedWndIds, lParam ";") {
-      View_setActiveWindow(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, lParam)
+      WinGetPos, aWndX, aWndY, aWndWidth, aWndHeight, ahk_id %lParam%
+      If (Monitor_get(aWndX + aWndWidth / 2, aWndY + aWndHeight / 2) = Manager_aMonitor)
+        View_setActiveWindow(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, lParam)
+      Else
+        Manager_winActivate(View_getActiveWindow(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1))
       If Window_#%lParam%_isMinimized {
         Window_#%lParam%_isFloating := False
         Window_#%lParam%_isMinimized := False
@@ -1119,7 +1125,7 @@ Manager_initial_sync(doRestore) {
 Manager_sync(ByRef wndIds = "")
 {
   Local a, flag, shownWndIds, v, visibleWndIds, wndId
-  a := False
+  a := 0
 
   shownWndIds := ""
   Loop, % Manager_monitorCount
@@ -1138,7 +1144,7 @@ Manager_sync(ByRef wndIds = "")
       {
         flag := Manager_manage(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1, wndId%A_Index%)
         If flag
-          a := flag
+          a := 1
       }
       Else If Not Window_isHung(wndId%A_Index%)
       {
@@ -1158,8 +1164,8 @@ Manager_sync(ByRef wndIds = "")
     If Not InStr(visibleWndIds, A_LoopField)
     {
       flag := Manager_unmanage(A_LoopField)
-      If flag
-        a := flag
+      If (flag And a = 0)
+        a := -1
     }
   }
 
