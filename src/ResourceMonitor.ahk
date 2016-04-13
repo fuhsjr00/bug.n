@@ -75,6 +75,7 @@ ResourceMonitor_getDiskLoad(ByRef readLoad, ByRef writeLoad) {
   Global ResourceMonitor_hDrive
   Static oldReadCount, oldWriteCount
 
+  nReturn := oldReadCount := oldWriteCount := 0
   dpSize := 5 * 8 + 4 + 4 + 4 + 4 + 8 + 4 + 8 * (A_IsUnicode ? 2 : 1) + 12    ;; 88?
   VarSetCapacity(dp, dpSize)
   DllCall("DeviceIoControl", "UInt", ResourceMonitor_hDrive, "UInt", 0x00070020, "UInt", 0, "UInt", 0, "UInt", &dp, "UInt", dpSize, "UIntP", nReturn, "UInt", 0)    ;; IOCTL_DISK_PERFORMANCE
@@ -119,6 +120,7 @@ ResourceMonitor_getSystemTimes() {
   Static oldIdleTime, oldKrnlTime, oldUserTime
   Static newIdleTime, newKrnlTime, newUserTime
 
+  newIdleTime := newKrnlTime := newUserTime := 0
   oldIdleTime := newIdleTime
   oldKrnlTime := newKrnlTime
   oldUserTime := newUserTime

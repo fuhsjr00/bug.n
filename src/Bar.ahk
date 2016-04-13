@@ -445,12 +445,14 @@ Bar_updateStatus() {
       GuiControl, , Bar_#%m%_volume_highlighted, %vol%
       GuiControl, , Bar_#%m%_volume, % " VOL: " SubStr("  " vol, -2) "% "
     }
-    If Config_readinDate
+    If Config_readinDate {
       FormatTime, time, , % Config_readinDateFormat
       GuiControl, , Bar_#%m%_date, % time 
-    If Config_readinTime
+    }
+    If Config_readinTime {
       FormatTime, time, , % Config_readinTimeFormat
       GuiControl, , Bar_#%m%_time, % time
+    }
   }
 }
 
