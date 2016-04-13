@@ -186,14 +186,14 @@ Monitor_getWorkArea(m) {
   }
   bHeight := Round(Bar_height / Config_scalingFactor)
   bTop := 0
-  If Monitor_#%m%_showBar {
-    If (Config_verticalBarPos = "top") Or (Config_verticalBarPos = "tray") And Not Monitor_#%m%_taskBarClass {
-      bTop := monitorTop
+  If (Config_verticalBarPos = "top") Or (Config_verticalBarPos = "tray") And Not Monitor_#%m%_taskBarClass {
+    bTop := monitorTop
+    If Monitor_#%m%_showBar
       monitorTop += bHeight
-    } Else If (Config_verticalBarPos = "bottom") {
-      bTop := monitorBottom - bHeight
+  } Else If (Config_verticalBarPos = "bottom") {
+    bTop := monitorBottom - bHeight
+    If Monitor_#%m%_showBar
       monitorBottom -= bHeight
-    }
   }
 
   Monitor_#%m%_height := monitorBottom - monitorTop
