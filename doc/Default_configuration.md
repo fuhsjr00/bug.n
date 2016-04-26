@@ -1,7 +1,7 @@
 ## Default setting of configuration variables
 
 The configuration variables, as you can set them in `Config.ini`, are noted in
-the format `Conifg_<identifier>=<value>`; you may copy the string from ` ` and
+the format `Config_<identifier>=<value>`; you may copy the string from ` ` and
 use it as a template for a new line in `Config.ini`.
 
 ### Status bar
