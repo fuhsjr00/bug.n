@@ -43,7 +43,7 @@ SetWinDelay, 10
   Menu, Tray, Tip, %NAME% %VERSION%
   If A_IsCompiled
     Menu, Tray, Icon, %A_ScriptFullPath%, -159
-  Else If FileExist(A_ScriptDir . "\logo.ico")
+  If FileExist(A_ScriptDir . "\logo.ico")
     Menu, Tray, Icon, % A_ScriptDir . "\logo.ico"
   Menu, Tray, NoStandard
   Menu, Tray, Add, Toggle bar, Main_toggleBar
