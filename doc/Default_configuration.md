@@ -342,10 +342,8 @@ Windows version uses " (Keine Rückmeldung)".
 `Config_mFactCallInterval=700`
 
 The time in milliseconds, in which two consecutive calls to
--------------------------------------------------------------------------------
 `View_setLayoutProperty("MFactor", 0, <d>, <dFact>)` have to be made, to
 accelerate the increasing or decreasing of `mfact`. See also
--------------------------------------------------------------------------------
 `View_setLayoutProperty("MFactor", 0, <d>, <dFact>)` in the listing of hotkeys.
 
 -------------------------------------------------------------------------------
@@ -368,7 +366,6 @@ list and the stack area.
 The action, which will be taken, if a window e. g. should be activated, but
 is not visible; `view`: show the view accordng to the first tag of the window
 in question, `tag`: add the window in question to the current visible view,
--------------------------------------------------------------------------------
 `hide`: hide the window again ignoring the activation.
 
 -------------------------------------------------------------------------------
