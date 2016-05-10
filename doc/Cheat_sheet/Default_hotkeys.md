@@ -12,10 +12,12 @@ _Activate_ the _previous_ window in the active view.
 _Move_ the active window _to the next position_ in the window list of the view.
 
 #### <kbd>Win</kbd><kbd>Shift</kbd><kbd>Up</kbd>
-_Move_ the active window _to the previous position_ in the window list of the view.
+_Move_ the active window _to the previous position_ in the window list of the 
+view.
 
 #### <kbd>Win</kbd><kbd>Shift</kbd><kbd>Enter</kbd>
-_Move_ the active window _to the first position_ in the window list of the view.
+_Move_ the active window _to the first position_ in the window list of the 
+view.
 
 #### <kbd>Win</kbd><kbd>c</kbd>
 _Close_ the active window.
@@ -54,12 +56,8 @@ Manually _move_ the active window _to the previous area_ in the layout.
 _Move and resize_ the active window _to_ the size of the _work area_.
 
 #### <kbd>Alt</kbd><kbd>&lt;n&gt;</kbd>
-Manually _move_ the active window _to the n<sup><small>th</small></sup> area_ in
-the layout.
-
-#### <kbd>Alt</kbd><kbd>0</kbd>
-Manually _move_ the active window _to the n<sup><small>th</small></sup> area_ in
-the layout.
+Manually _move_ the active window _to the n<sup><small>th</small></sup> area_ 
+in the layout.
 
 #### <kbd>Alt</kbd><kbd>BackSpace</kbd>
 Toggle the stack area of the layout. 
@@ -149,8 +147,8 @@ Activate the n<sup><small>th</small></sup> view.
 Tag the active window with the n<sup><small>th</small></sup> tag.
 
 #### <kbd>Win</kbd><kbd>Ctrl</kbd><kbd>&lt;n&gt;</kbd>
-Add / Remove the n<sup><small>th</small></sup> tag for the active window, if 
-it is not / is already set.
+Add / Remove the n<sup><small>th</small></sup> tag for the active window, if it
+is not / is already set.
 
 ### Monitor management
 
@@ -165,16 +163,16 @@ _Set_ the active window's view _to_ the active view on _the next monitor_ in a
 multi-monitor environment. 
 
 #### <kbd>Win</kbd><kbd>Shift</kbd><kbd>,</kbd>
-_Set_ the active window's view _to_ the active view on _the previous monitor_ in a
-multi-monitor environment.
+_Set_ the active window's view _to_ the active view on _the previous monitor_ 
+in a multi-monitor environment.
 
 #### <kbd>Win</kbd><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>.</kbd>
-_Set all windows_ of the active view _on_ the active view of _the next monitor_ in
-a multi-monitor environment. 
+_Set all windows_ of the active view _on_ the active view of _the next monitor_
+in a multi-monitor environment. 
 
 #### <kbd>Win</kbd><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>,</kbd>
-_Set all windows_ of the active view _on_ the active view of _the previous monitor_
-in a multi-monitor environment.
+_Set all windows_ of the active view _on_ the active view of 
+_the previous monitor_ in a multi-monitor environment.
 
 ### GUI management
 
