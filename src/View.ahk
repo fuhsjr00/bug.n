@@ -224,7 +224,7 @@ View_moveToIndex(m, v, n, w) {
   View_#%n%_#%w%_margins        := View_#%m%_#%v%_margins
   View_#%n%_#%w%_showStackArea  := View_#%m%_#%v%_showStackArea
   View_#%n%_#%w%_wndIds         := View_#%m%_#%v%_wndIds
-  StringSplit, View_#%n%_#%w%_margin, View_#%n%_#%w%_margin, `;
+  StringSplit, View_#%n%_#%w%_margin, View_#%n%_#%w%_margins, `;
   StringTrimRight, wndIds, View_#%n%_#%w%_wndIds, 1
   Loop, PARSE, wndIds, `;
   {
@@ -295,6 +295,7 @@ View_setLayout(i, d = 0) {
 View_setLayoutProperty(name, i, d, opt = 0) {
   Local a, l, v
 
+  a := False
   v := Monitor_#%Manager_aMonitor%_aView_#1
   l := View_#%Manager_aMonitor%_#%v%_layout_#1
   If Tiler_isActive(Manager_aMonitor, v) {

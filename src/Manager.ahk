@@ -1124,11 +1124,12 @@ Manager_initial_sync(doRestore) {
 ;;   those, which have at least a title or class.
 Manager_sync(ByRef wndIds = "")
 {
-  Local a, flag, shownWndIds, v, visibleWndIds, wndId
+  Local a, flag, mCount, shownWndIds, v, visibleWndIds, wndId
   a := 0
 
   shownWndIds := ""
-  Loop, % Manager_monitorCount
+  SysGet, mCount, MonitorCount
+  Loop, % mCount
   {
     v := Monitor_#%A_Index%_aView_#1
     shownWndIds .= View_#%A_Index%_#%v%_wndIds
