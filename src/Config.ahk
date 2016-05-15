@@ -164,8 +164,9 @@ Config_convertSystemColor(systemColor)
 Config_edit() {
   Global Config_filePath
   
-  If FileExist(Config_filePath)
-    Run, edit %Config_filePath%
+  If Not FileExist(Config_filePath)
+    Config_UI_saveSession()
+  Run, edit %Config_filePath%
 }
 
 Config_getSystemSettings() {
@@ -396,12 +397,10 @@ Config_saveSession(original, target)
   ;; The FileMove below is an all-or-nothing replacement of the file.
   ;; We don't want to leave this half-finished.
   FileAppend, %text%, %tmpfilename%
-  If ErrorLevel
-  {
+  If ErrorLevel And Not (original = Config_filePath And target = Config_filePath And Not FileExist(original)) {
     If FileExist(tmpfilename)
       FileDelete, %tmpfilename%
-  }
-  Else
+  } Else
     FileMove, %tmpfilename%, %target%, 1
 }
 
