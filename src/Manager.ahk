@@ -416,7 +416,7 @@ Manager_maximizeWindow() {
   Local aWndId
 
   WinGet, aWndId, ID, A
-  If Not Window_#%aWndId%_isFloating
+  If InStr(Manager_managedWndIds, aWndId ";") And Not Window_#%aWndId%_isFloating
     View_toggleFloatingWindow(aWndId)
   Window_set(aWndId, "Top", "")
 
@@ -429,7 +429,7 @@ Manager_minimizeWindow() {
   WinGet, aWndId, ID, A
   aView := Monitor_#%Manager_aMonitor%_aView_#1
   StringReplace, View_#%Manager_aMonitor%_#%aView%_aWndIds, View_#%Manager_aMonitor%_#%aView%_aWndIds, % aWndId ";",, All
-  If Not Window_#%aWndId%_isFloating
+  If InStr(Manager_managedWndIds, aWndId ";") And Not Window_#%aWndId%_isFloating
     View_toggleFloatingWindow(aWndId)
   Window_set(aWndId, "Bottom", "")
 
@@ -440,7 +440,7 @@ Manager_moveWindow() {
   Local aWndId, SC_MOVE, WM_SYSCOMMAND
 
   WinGet, aWndId, ID, A
-  If Not Window_#%aWndId%_isFloating
+  If InStr(Manager_managedWndIds, aWndId . ";") And Not Window_#%aWndId%_isFloating
     View_toggleFloatingWindow(aWndId)
   Window_set(aWndId, "Top", "")
 
@@ -1074,7 +1074,7 @@ Manager_sizeWindow() {
   Local aWndId, SC_SIZE, WM_SYSCOMMAND
 
   WinGet, aWndId, ID, A
-  If Not Window_#%aWndId%_isFloating
+  If InStr(Manager_managedWndIds, aWndId . ";") And Not Window_#%aWndId%_isFloating
     View_toggleFloatingWindow(aWndId)
   Window_set(aWndId, "Top", "")
 
@@ -1135,12 +1135,11 @@ Manager_initial_sync(doRestore) {
 ;;   those, which have at least a title or class.
 Manager_sync(ByRef wndIds = "")
 {
-  Local a, flag, mCount, shownWndIds, v, visibleWndIds, wndId
+  Local a, flag, shownWndIds, v, visibleWndIds, wndId
   a := 0
 
   shownWndIds := ""
-  SysGet, mCount, MonitorCount
-  Loop, % mCount
+  Loop, % Manager_monitorCount
   {
     v := Monitor_#%A_Index%_aView_#1
     shownWndIds .= View_#%A_Index%_#%v%_wndIds

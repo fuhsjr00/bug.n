@@ -117,7 +117,7 @@ Debug_logWindowInfo(wndId) {
     isHidden := "*"
   Else
     isHidden := " "
-  If Window_#%wndId%_isFloating
+  If InStr(Manager_managedWndIds, wndId . ";") Or Window_#%wndId%_isFloating
     isFloating := "*"
   Else
     isFloating := " "

@@ -75,7 +75,7 @@ Monitor_activateView(i, d = 0) {
     StringTrimRight, wndIds, View_#%m%_#%aView%_wndIds, 1
     Loop, PARSE, wndIds, `;
     {
-      If Not (Window_#%A_LoopField%_tags & (1 << i - 1))
+      If A_LoopField And Not (Window_#%A_LoopField%_tags & (1 << i - 1))
         Window_hide(A_LoopField)
     }
     SetWinDelay, 10

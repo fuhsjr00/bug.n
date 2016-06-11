@@ -50,7 +50,7 @@ View_activateWindow(i, d = 0) {
   StringSplit, wndId, wndIds, `;
   Debug_logMessage("DEBUG[2] wndId count: " . wndId0, 2, False)
   If (wndId0 > 1) {
-    If Window_#%aWndId%_isFloating
+    If Not InStr(Manager_managedWndIds, aWndId . ";") Or Window_#%aWndId%_isFloating
       Window_set(aWndId, "Bottom", "")
     Loop, % wndId0 {
       If (wndId%A_Index% = aWndId) {
