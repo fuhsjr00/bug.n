@@ -311,7 +311,7 @@ Maximum of 9.
 > This has only an effect, if the tile layout is active.
 
 -------------------------------------------------------------------------------
-`Config_hotkey=#^Left::View_setLayoutProperty(MX, 0, +1)`
+`Config_hotkey=#^Left::View_setLayoutProperty(MX, 0, -1)`
 
 Decrease the master X dimension.
 
