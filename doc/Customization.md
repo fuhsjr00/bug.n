@@ -21,7 +21,7 @@ To set a hotkey, use the variable name `Config_hotkey` and [the hotkey notation
 from AutoHotkey](http://ahkscript.org/docs/Hotkeys.htm) as value:
 `Config_hotkey=<key name>::<command or function name>`.
 You may overwrite default or add new hotkeys.
-* To deacivate a hotkey from the default configuration, add a new line in the
+* To deactivate a hotkey from the default configuration, add a new line in the
 format `Config_hotkey=<key name>::` (without a function name).
 * To assign an external program to a new hotkey, add a line in the general
 format, using the `Run` command of AutoHotkey as described in
