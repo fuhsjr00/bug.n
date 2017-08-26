@@ -277,7 +277,7 @@ _Reduce_ the size of _the master area_ in the active view.
 
 > This has only an effect, if the tile layout is active.
 
-> You may also set an additional parameter for accelerating the third one. e.g.
+> You may also set an additional parameter for accelerating the third one. E.g.
 with `Config_hotkey=#Left::View_setLayoutProperty(MFactor, 0, -0.05, 2)` the
 first step, by which the master area is reduced, is -0.0016% and will be
 doubled with consecutive calls until it reaches -0.05%.
@@ -293,7 +293,7 @@ _Enlarge_ the size of _the master area_ in the active view.
 
 > This has only an effect, if the tile layout is active.
 
-> You may also set a additional parameter for accelerating the third one. e.g.
+> You may also set a additional parameter for accelerating the third one. E.g.
 with `Config_hotkey=#Right::View_setLayoutProperty(MFactor, 0, +0.05, 0.5)` the
 first step, by which the master area is reduced, is 0.05%, but with consecutive
 calls it will be halved until it reaches 0.0016%.
