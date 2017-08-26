@@ -18,7 +18,7 @@ There is no installation process for bug.n. Unpack the `zip` file, and you
 should be able to run either the executable as it is or the main script
 (`src\Main.ahk`) with [AutoHotkey](http://ahkscript.org/download/).
 
-You may copy bug.n anywhere you like -- at least if you have write acces
+You may copy bug.n anywhere you like -- at least if you have write access
 there -- e. g. `C:\Program Files\bugn` or link it to the 'Windows Start Menu'
 or the 'Windows Taskbar', for example.
 
@@ -48,7 +48,7 @@ i. e. _without_ administrator privileges, bug.n will not be able to manage the
 associated windows. If you want those application windows to be managed, you
 need to run bug.n with administrator privileges, too.
 You can set the option `Run this program as an administrator` on the
-'Compatiblity' tab, section 'Privilege level' of the bug.n executable file
+'Compatibility' tab, section 'Privilege level' of the bug.n executable file
 properties. But if you also want to run bug.n when Windows starts, you will
 have to create a task in 'Task Scheduler'.
 

@@ -20,7 +20,7 @@ to the last one used.
 * With a right-click on the layout symbol you can set the layout to the next in
 the list.
 * A function can be selected from a list or entered in the command GUI, which
-is accessible by cklickig on `#!` on the right end of the bug.n bar.
+is accessible by clicking on `#!` on the right end of the bug.n bar.
 
 You may also send commands to bug.n from another AutoHotkey script. The sent
 string is interpreted and executed by bug.n as one or more (separated by the

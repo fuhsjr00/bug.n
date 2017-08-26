@@ -56,7 +56,7 @@ Appearance" settings for the "Active Title Bar".
 -------------------------------------------------------------------------------
 `Config_largeFontSize=24`
 
-Font size in pixel, i. a. for the numbering of areas in the area trace.
+Font size in pixel, i.a. for the numbering of areas in the area trace.
 
 -------------------------------------------------------------------------------
 `Config_backColor_#1=<COLOR_GRADIENTINACTIVECAPTION>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_GRADIENTINACTIVECAPTION>;<COLOR_GRADIENTACTIVECAPTION>;<COLOR_GRADIENTACTIVECAPTION>`
@@ -75,23 +75,23 @@ separated list, which contains the following items:
 * battery status
 * volume level
 
-> A valid color value is either one of the 16 primary HTML 
+> A valid color value is either one of the 16 primary HTML
 [color names](https://autohotkey.com/docs/commands/Progress.htm#colors)
-or a 6-digit RGB color value. Examples are `Red` or `FF0000`; for a more 
+or a 6-digit RGB color value. Examples are `Red` or `FF0000`; for a more
 elaborate example have a look at [joten_01.ini](../usr/joten_01.ini).
 
 -------------------------------------------------------------------------------
 `Config_backColor_#2=<COLOR_GRADIENTACTIVECAPTION>;;;;;;;<COLOR_MENU>;<COLOR_MENU>`
 
 The background color of bar elements, which are highlighted depending on the
-status, i. a. the active view, a discharging battery and the sound volume, if
+status, i.a. the active view, a discharging battery and the sound volume, if
 it is not muted.
 
 -------------------------------------------------------------------------------
 `Config_backColor_#3=;;;;;;;ff8040;`
 
 The background color of bar elements, which are highlighted depending on the
-status, i. a. a discharging battery with a battery level lower than 10%.
+status, i.a. a discharging battery with a battery level lower than 10%.
 
 -------------------------------------------------------------------------------
 `Config_foreColor_#1=<COLOR_INACTIVECAPTION>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_ACTIVECAPTION>;<COLOR_GRADIENTINACTIVECAPTION>`
@@ -104,14 +104,14 @@ foreground depends on the value of the progress bar.
 `Config_foreColor_#2=<COLOR_ACTIVECAPTION>;;;;;;;<COLOR_HIGHLIGHT>;<COLOR_HIGHLIGHT>`
 
 The foreground color of bar elements, which are highlighted depending on the
-status, i. a. the active view, a discharging battery and the sound volume, if
+status, i.a. the active view, a discharging battery and the sound volume, if
 it is not muted.
 
 -------------------------------------------------------------------------------
 `Config_foreColor_#3=;;;;;;;<COLOR_INACTIVECAPTION>;`
 
 The foreground color of bar elements, which are highlighted depending on the
-status, i. a. a discharging battery with a battery level lower than 10%.
+status, i.a. a discharging battery with a battery level lower than 10%.
 
 -------------------------------------------------------------------------------
 `Config_fontColor_#1=<COLOR_INACTIVECAPTIONTEXT>;<COLOR_CAPTIONTEXT>;<COLOR_MENUTEXT>;<COLOR_CAPTIONTEXT>;<COLOR_MENUTEXT>;<COLOR_CAPTIONTEXT>;<COLOR_INACTIVECAPTIONTEXT>;<COLOR_CAPTIONTEXT>;<COLOR_INACTIVECAPTIONTEXT>`
@@ -122,14 +122,15 @@ The default font color for the text of bar elements.
 `Config_fontColor_#2=<COLOR_CAPTIONTEXT>;;;;;;;<COLOR_MENUTEXT>;<COLOR_MENUTEXT>`
 
 The font color of bar elements, which are highlighted depending on the
-status, i. a. the active view, a discharging battery and the sound volume, if
+status, i.a. the active view, a discharging battery and the sound volume, if
 it is not muted.
 
 -------------------------------------------------------------------------------
 `Config_fontColor_#3=;;;;;;;<COLOR_INACTIVECAPTIONTEXT>;`
 
-The fontground color of bar elements, which are highlighted depending on the
-status, i. a. a discharging battery with a battery level lower than 10%.
+The foreground color of bar elements (i.e., the text color), which are
+highlighted depending on the status, i.a. a discharging battery with a
+battery level lower than 10%.
 
 > The default color values are retrieved from the "Window Color and Appearance"
 settings.
@@ -145,7 +146,7 @@ visible at all, if `Config_barTransparency` is not set to `off`.
 -------------------------------------------------------------------------------
 `Config_barCommands=Run, explore doc;Monitor_toggleBar();Reload;ExitApp`
 
-The commands seperated by semicolon, which are listed in the command GUI of
+The commands separated by semicolon, which are listed in the command GUI of
 the bar (#!) and therewith can be selected rather then typed; bug.n functions
 (as used in the hotkey configuration), the `Run` and `Send` command of
 AutoHotkey can be used here.
@@ -159,7 +160,7 @@ status bar. This only makes sense, if you have a system battery (notebook).
 -------------------------------------------------------------------------------
 `Config_readinCpu=0`
 
-If true (`=1`), the current CPU load is read in and displayed in the status 
+If true (`=1`), the current CPU load is read in and displayed in the status
 bar.
 
 -------------------------------------------------------------------------------
@@ -172,7 +173,7 @@ displayed in the status bar.
 `Config_readinDateFormat=ddd, dd. MMM. yyyy`
 
 The format in which the date, if it is read in, should be displayed. Please see
-the documentation at 
+the documentation at
 [autohotkey.com](https://www.autohotkey.com/docs/commands/FormatTime.htm#Date_Formats_case_sensitive)
 for a description of the string components.
 
@@ -205,7 +206,7 @@ the status bar.
 `Config_readinTimeFormat=HH:mm`
 
 The format in which the time, if it is read in, should be displayed. Please see
-the documentation at 
+the documentation at
 [autohotkey.com](https://www.autohotkey.com/docs/commands/FormatTime.htm#Time_Formats_case_sensitive)
 for a description of the string components.
 
@@ -232,13 +233,13 @@ windows is detected and acted upon).
 -------------------------------------------------------------------------------
 `Config_borderWidth=0`
 
-If > 0, the window border width is set to the given integer value (supported 
+If > 0, the window border width is set to the given integer value (supported
 Windows versions: _not_ 10).
 
 -------------------------------------------------------------------------------
 `Config_borderPadding=-1`
 
-If >= 0, the window border padding is set to the given integer value 
+If >= 0, the window border padding is set to the given integer value
 (supported Windows versions: only Vista).
 
 -------------------------------------------------------------------------------
@@ -251,14 +252,14 @@ hotkey (see below).
 `Config_showBorder=1`
 
 If false (`=0`), the window borders are hidden; therefor windows cannot be
-resized manually by dragging the border, even if using the according hotkey 
+resized manually by dragging the border, even if using the according hotkey
 (supported Windows versions: _not_ 10).
 
 -------------------------------------------------------------------------------
 `Config_selBorderColor=`
 
 Border colour of the active window, format: 0x00BBGGRR; e. g. `0x006A240A`,
-if `=0`, the system's window border colour is not changed (supported Windows 
+if `=0`, the system's window border colour is not changed (supported Windows
 versions: _not_ 10).
 
 ### Window arrangement
@@ -364,7 +365,7 @@ list and the stack area.
 `Config_onActiveHiddenWnds=view`
 
 The action, which will be taken, if a window e. g. should be activated, but
-is not visible; `view`: show the view accordng to the first tag of the window
+is not visible; `view`: show the view according to the first tag of the window
 in question, `tag`: add the window in question to the current visible view,
 `hide`: hide the window again ignoring the activation.
 
@@ -517,6 +518,6 @@ unintentionally quits.
 -------------------------------------------------------------------------------
 `Config_monitorDisplayChangeMessages=1`
 
-If true (`=1`) bug.n reacts on `WM_DISPLAYCHANGE` system messages asking to 
-reset the monitor configuration, e. g. if a monitor is dis-/connected or the 
+If true (`=1`) bug.n reacts on `WM_DISPLAYCHANGE` system messages asking to
+reset the monitor configuration, e. g. if a monitor is dis-/connected or the
 monitor resolution is changed.

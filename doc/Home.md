@@ -18,7 +18,7 @@ hotkeys) for each version of bug.n.
 #### [Installing and running bug.n](./Installing_and_running.md)
 > A description of how to install and run bug.n. Also described is a method to
 run bug.n as Administrator to solve problems with the User Access Control of
-Microsft Windows higher than Vista.
+Microsoft Windows higher than Vista.
 
 ##### [Stable version](../../../releases/latest)
 > The current stable version of bug.n as a package (`.zip` file); it includes
@@ -63,10 +63,6 @@ description.
 > An overview of those hotkeys, already in use by bug.n with the default
 configuration. With this overview you may find unused keys, which can be used
 for non-bug.n hotkeys or to reassign bug.n functions.
-
-##### [Xmonad hotkeys](./Xmonad-hotkeys.md)
-> A list of hotkeys, which are similar to those used in
-[xmonad](http://xmonad.org/), a dynamically tiling X11 window manager on *n?x.
 
 ##### [User proposed hotkeys](./User-hotkeys.md)
 > Some individual hotkeys, proposed by bug.n users.
