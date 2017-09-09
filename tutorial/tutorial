@@ -1,0 +1,154 @@
+<!doctype html>
+<html>
+<head> 
+	<title>tutorial | suckless.org dwm - dynamic window manager</title>
+	<link rel="stylesheet" type="text/css" href="/pub/style.css">
+	<meta charset="utf-8"> 
+</head> 
+<body>
+	<div id="header">
+		<a href="/"><img src="//suckless.org/logo.svg" /></a>
+		<a id="headerLink" href="/">suckless.org</a> <span id="headerSubtitle">dwm - dynamic window manager</span>
+	</div>
+
+	<div id="menu">
+		<span class="left">
+		<a href="//suckless.org">home</a>
+		<a class="thisSite" href="//dwm.suckless.org">dwm</a>
+		<a href="//st.suckless.org">st</a>
+		<a href="//core.suckless.org">core</a>
+		<a href="//sta.li">stali</a>
+		<a href="//surf.suckless.org">surf</a>
+		<a href="//tools.suckless.org">tools</a>
+		<a href="//libs.suckless.org">libs</a>
+		</span>
+		<span class="right">
+			<a href="//dl.suckless.org">download</a>
+			<a href="//git.suckless.org">source</a>
+		</span>
+	</div>
+
+	<div id="content">
+	<div id="nav">
+<ul>
+<li><a href="/">about</a></li>
+<li><a href="/customisation/">customisation/</a></li>
+<li><a href="/dwmgetstatus">dwmgetstatus</a></li>
+<li><a href="/dwmstatus/">dwmstatus/</a></li>
+<li><a href="/dynamic_window_management">dynamic window management</a></li>
+<li><a href="/faq">faq</a></li>
+<li><a href="/multi-monitor">multi monitor</a></li>
+<li><a href="/multi-pointer">multi pointer</a></li>
+<li><a href="/patches/">patches/</a></li>
+<li><a href="/screenshots/">screenshots/</a></li>
+<li><a href="/scripts/">scripts/</a></li>
+<li><a href="/tutorial" class="thisPage"> tutorial</a></li>
+</ul>
+	</div>
+
+	<div id="main">
+
+
+<h2>Launching</h2>
+
+<p>To launch dwm, ideally you should setup a <code>~/.xinitrc</code> with at least <code>exec dwm</code>.</p>
+
+<h2>Introduction</h2>
+
+<p>Using dwm can be done in pure keyboard control or through some extra mouse
+handling. See the
+<a href="//git.suckless.org/dwm/plain/config.def.h">config.def.h</a> for what
+are the default bindings. They are used in this tutorial.</p>
+
+<pre><code>[Shift]+[Alt]+[Enter] - launch terminal
+[Alt]+[p] - dmenu for running programs like the x-www-browser
+</code></pre>
+
+<p>By default there are 9 tags.</p>
+
+<h2>Window model</h2>
+
+<p>Launch a few terminals with <code>[Shift]+[Alt]+[Enter]</code> and dwm will <em>tile</em> the windows
+between the <strong>master</strong> and <strong>stack</strong>. A new terminal appears on the <strong>master</strong>
+window. Existing windows are pushed upon a <strong>stack</strong> to the right of the
+screen. <code>[Alt]+[Enter]</code> toggles windows between master and stack.</p>
+
+<pre><code>    +------+----------------------------------+--------+
+    | tags | title                            | status +
+    +------+---------------------+------------+--------+
+    |                            |                     |
+    |                            |                     |
+    |                            |                     |
+    |                            |                     |
+    |          master            |        stack        |
+    |                            |                     |
+    |                            |                     |
+    |                            |                     |
+    |                            |                     |
+    +----------------------------+---------------------+
+</code></pre>
+
+<h2>Moving Around</h2>
+
+<p>To <strong>move to another terminal</strong>, press <code>[Alt]+[j]</code> or <code>[Alt]+[k]</code>.</p>
+
+<p>To <strong>move a terminal to another <em>tag</em></strong>, hover to the terminal and press <code>[Shift]+[Alt]+[2]</code>.
+
+<p>To <strong>focus on another <em>tag</em></strong>, press <code>[Alt]+[tag number]</code>.</p>
+
+<p>To <strong>move a terminal to master or stack</strong>, press <code>[Alt]+[d]</code> or <code>[Alt]+[i]</code>.</p>
+
+<p>As stated in the dwm manpage, you can click tags with the left mouse button and simulating <code>[Alt]+[tag number]</code>, but you can also click another tag with the right mouse button in order to bring those windows additionally
+into your current focus.</p>
+
+<p>To <strong>kill a window</strong>, press <code>[Win]+[c]</code>.</p>
+
+<h2>Layouts</h2>
+
+<p>By default dwm is in <strong>tiled</strong> layout mode. Ensure it is tiled mode with:</p>
+
+<pre><code>[Win]+[t]
+</code></pre>
+
+<p>You should also notice the <code>[]=</code> symbol between the tag numbers and the title bar.</p>
+
+<p>dwm has two further layout modes, <strong>floating</strong> <code>&gt;&lt;&gt;</code> <code>[Win]+[f]</code> and
+<strong>monocle</strong> <code>[M]</code> <code>[Win]+[m]</code>. Monocle is good for ensuring a window is kept
+maximized and focused. This is useful in web kiosk environments and watching
+flash videos. Further layout modes can be included through <a href="https://github.com/fuhsjr00/bug.n">patches</a>.</p>
+
+<h2>Floating</h2>
+
+<p>Floating layout will be familiar to Windows users. To change a window from tile to Floating, use <code>[Win]+[Shift]+[f]</code>. To change the size of the floating window using keys, you have to enable resizing of hte window using <code>[Win]+[Shift]+[s] </code>. If the starting configuration of the window, is in tile mode, pressing <code> [Win]+[Shift]+[s]</code>, will automatically convert it into a floating window, and you can use the arrow keys to modify the window size. To
+move the window in floating mode, using <code> [Win]+[Shift]+[m]</code>.</p>
+
+<h2>Quitting</h2>
+
+<p>To quit dwm cleanly:</p>
+
+<pre><code>[Win]+[Cntrl]+[q]
+</code></pre>
+
+<h2>Status</h2>
+
+<p>By default bug.n is showing <code>bug.n</code> in its statusbar. This text can be
+changed by setting the <code>WM_NAME</code> property of the root window.</p>
+
+<p>There are various tools and methods to populate this text with useful
+information from your system or services running on your system. A barebone for
+doing this in C is <a href="//dwm.suckless.org/dwmstatus/">dwmstatus</a>.  See the
+<a href="//dwm.suckless.org/xinitrc.example">xinitrc</a> example for how to do it
+using a script.</p>
+
+
+	</div>
+
+	</div>
+
+	<div id="footer">
+	<span class="right">
+	&copy; 2006-2017 suckless.org community | <a href="//ev.suckless.org/impressum">Impressum</a> | <a href="//ev.suckless.org">e.V.</a>
+	</span>
+	</div>
+</body>
+</html>
