@@ -27,14 +27,69 @@ handling. See the
 <a href="https://github.com/fuhsjr00/bug.n/blob/master/doc/Default_hotkeys.md">Default_hotkeys</a> for what
 are the default bindings. They are used in this tutorial.</p>
 
-<p>By default there are 9 tags. These appear at the left hand side of the title bar. Each monitor has its own set of tags</p>
-
 <h2>Window model</h2>
 
-<p>Launch a few folders using <code>[Win]+[e]</code> and bug.n will <em>tile</em> the windows
-between the <strong>master</strong> and <strong>stack</strong>. A new terminal appears on the <strong>master</strong>
-window. Existing windows are pushed upon a <strong>stack</strong> to the right of the
-screen. <code>[Win]+[Cntrl]+[Enter]</code> toggles windows between master and stack.</p>
+<p>For this tutorial, we will use git-bash (https://git-for-windows.github.io/), 
+since the target audience is programmers and most programmers are already 
+very familiar with VIM and git. Git bash comes with VIM installed, 
+so you can try it out for yourself. Further a lot of use work with terminals 
+and lots of them, and it directly shows a use case which will be helpful 
+to a lot of us. Start bug.n by executing the bug.n exe file, 
+and then launch git bash. It will look something like this: 
+
+</p>
+<p>
+<img src = "start_up.bmp"
+   alt = "Picture of command prompt and bug.n at startup" />
+</p>
+<p>
+Now lets open VIM installed in git bash in the git-bash window, as we will use that for demonstration of the windowing capabilities.
+</p>
+<img src = "1_window.bmp"
+   alt = "Picture of VIM opened up showing title bar" />
+</p>
+<p>
+
+Lets open a second Window (Window_2) and see what happens
+</p>
+
+<p>
+<img src = "2_window.bmp"
+   alt = "Picture of 2 VIM windows opened" />
+
+</p>
+
+Existing windows are pushed upon a <strong>stack</strong> to the right of the
+screen. We will come back to the meaning of stack, and master later. For now just assume that the 
+Window on the Right is <strong>Master</strong> and the Window on the left is <strong>stack</strong>
+
+If you open more windows, the newest window will become the master. The previous windows will
+be put on the stack. As a result, in this current configuration, you will have only 1 large master
+Window, and several smaller windows in stack, looking something like this
+
+Two Windows opened:
+
+<p>
+<img src = "2_window.bmp"
+   alt = "Picture of 2 VIM windows opened" />
+
+</p>
+
+Three Windows opened:
+
+<p>
+<img src = "2_window.bmp"
+   alt = "Picture of 2 VIM windows opened" />
+
+</p>
+
+Four Windows opened:
+
+<p>
+<img src = "2_window.bmp"
+   alt = "Picture of 2 VIM windows opened" />
+
+</p>
 
 <pre><code>    +------+----------------------------------+--------+
     | tags | title                            | status +
@@ -51,48 +106,38 @@ screen. <code>[Win]+[Cntrl]+[Enter]</code> toggles windows between master and st
     +----------------------------+---------------------+
 </code></pre>
 
-<h2>Moving Around</h2>
+<h2>Part of the Window</h2>
 
-<p>To <strong>move to the next window in the list of windows</strong>, press <code>[Win]+[DownArrow]</code>. To <strong>move to the window, before the current window, in the list of windows</strong>, press <code>[Win]+[UpArrow]</code>. The window numbering information can be obtained by using <code>[Win]+[Shift]+[i].</code>.</p>
+In the default configuration, bug.n hides the default title-bar of any window currently opened as best as possible. As a result, you can use the maximum screen-real-estate possible. It displays a thin bar at the top, which in turn consists of 4 main parts:
 
-<p>To <strong>focus on another <em>tag</em></strong>, press <code>[Win]+[tag number]</code>.</p>
+<p>
+1. <strong>Tags</strong>: Tags are like Virtual desktop, and each tag can hold multiple windows together.
+<p>
+2. <strong>Current Window Config</strong>: This displays the current configuration (Monocole). Bug.n has a number of other modes, that we will discuss in upcoming tutorials. 
+<p>
+3. <strong>Title Bar</strong>: This displays the name of the application, as well as the name of the current file. 
+<p>
+4. <strong>Info Bar</strong>: displays the time, and date. 
 
-<!--<p>To <strong>move a terminal to master or stack</strong>, press <code>[Alt]+[d]</code> or <code>[Alt]+[i]</code>.</p> -->
+<p>
+<img src = "Window_parts.bmp"
+   alt = "different parts of the bug.n title bar" />
 
-<p> You can click tags with the left mouse button and simulating <code>[Win]+[tag number]</code>, but you can also click another tag with the right mouse button in order to bring those windows additionally
-into your current focus.</p>
+</p>
 
-<p>To <strong>kill a window</strong>, press <code>[Win]+[c]</code>.</p>
+<h2>Resetting and Quitting</h2>
+As you learn the ins and outs of how bug.n works, if you have a lot of applications/fancy GUIs opened and as we work to make bug.n resolve edge cases better, and make it more stable, you may find that its not behaving as expected. The easiest way to get it working is to reset bug.n to its default configuration. 
 
-<h2>Layouts</h2>
+<p>To reset bug.n cleanly:</p>
 
-<p>By default bug.n is in <strong>tiled</strong> layout mode. Ensure it is tiled mode with:</p>
-
-<pre><code>[Win]+[t]
-</code></pre>
-
-<p>You should also notice the <code>[]=</code> symbol between the tag numbers and the title bar.</p>
-
-<p>bug.n has two further layout modes, <strong>floating</strong> <code>&gt;&lt;&gt;</code> <code>[Win]+[f]</code> and
-<strong>monocle</strong> <code>[M]</code> <code>[Win]+[m]</code>. Monocle is good for ensuring a window is kept
-maximized and focused. This is useful in web kiosk environments and watching
-flash videos. Further layout modes can be included through <a href="https://github.com/fuhsjr00/bug.n">patches</a>.</p>
-
-<h2>Floating</h2>
-
-<p>Floating layout will be familiar to Windows users. To toggle/change a window from tile to Floating, use <code>[Win]+[Shift]+[f]</code>. To change the size of the floating window using keys, you have to enable resizing of the window using <code>[Win]+[Shift]+[s] </code>. If the starting configuration of the window, is in tile mode, pressing <code> [Win]+[Shift]+[s]</code>, will automatically convert it into a floating window, and you can use the arrow keys to modify the window size. To
-move the window in floating mode, using <code> [Win]+[Shift]+[m]</code>.</p>
-
-<h2>Quitting</h2>
+<pre><code>[Win]+[Cntrl]+[r]
 
 <p>To quit bug.n cleanly:</p>
 
 <pre><code>[Win]+[Cntrl]+[q]
+
 </code></pre>
 
-<h2>Status</h2>
-
-<p>By default bug.n is showing <code>bug.n</code> in its statusbar. </p>
 
 	</div>
 

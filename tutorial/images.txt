@@ -1,0 +1,15 @@
+  This is the first window.  ^
+                             ^
+  As you can see right above ^ the top it says [1]=. 
+  
+  That means that you are in MONOCOLE mode.
+
+
+
+  NOW LETS OPEN A SECOND WINDOW
+
+
+
+
+
+  <<--- Boundary between Window_1 and Window_2, after Window_2 was opened.
