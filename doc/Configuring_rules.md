@@ -98,3 +98,10 @@ The following rule excludes the confirmation dialog for removing files from the
 working copy from being managed by bug.n.
 
 `Config_rule=.*SourceTree.*;Confirm Remove Modified or Untracked Files?;;0;0;0;1;1;0;`
+
+#### hunt-n-peck
+
+As provided by [NickSeagull](https://github.com/NickSeagull) in 
+[issue #146](https://github.com/fuhsjr00/bug.n/issues/146):
+
+`Config_rule=*hap*;.*hap*;*hap*;0;0;1;1;1;1;`
