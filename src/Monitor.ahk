@@ -229,7 +229,7 @@ Monitor_setWindowTag(i, d = 0) {
 
   If (i = 0)
     i := Monitor_#%Manager_aMonitor%_aView_#1
-  Else If (i <= Config_viewCount)
+  If Not (i = 10)
     i := Manager_loop(i, d, 1, Config_viewCount)
 
   WinGet, aWndId, ID, A
