@@ -244,7 +244,8 @@ Window_move(wndId, x, y, width, height) {
   Local wndMinMax, WM_ENTERSIZEMOVE, WM_EXITSIZEMOVE
   Local wndH, wndW, wndX, wndY
   
-  If Not wndId Window_getPosEx(wndId, wndX, wndY, wndW, wndH) And (Abs(wndX - x) < 2 And Abs(wndY - y) < 2 And Abs(wndW - width) < 2 And Abs(wndH - height) < 2)
+  ;; Check, if the window has already the given position and size and no action is required.
+  If Not wndId Or Window_getPosEx(wndId, wndX, wndY, wndW, wndH) And (Abs(wndX - x) < 2 And Abs(wndY - y) < 2 And Abs(wndW - width) < 2 And Abs(wndH - height) < 2)
     Return, 0
 
   If Window_isHung(wndId) {
