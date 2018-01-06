@@ -30,6 +30,10 @@ Monitor_init(m, doRestore) {
     Config_restoreLayout(Config_filePath, m)
   SysGet, Monitor_#%m%_name, MonitorName, %m%
   Monitor_getWorkArea(m)
+  If Not Monitor_#%m%_showTaskBar {
+    Monitor_#%m%_showTaskBar := True
+    Monitor_toggleTaskBar(m)
+  }
   Bar_init(m)
 }
 
@@ -315,10 +319,10 @@ Monitor_toggleNotifyIconOverflowWindow() {
   }
 }
 
-Monitor_toggleTaskBar() {
-  Local m
+Monitor_toggleTaskBar(m := 0) {
+  Global
 
-  m := Manager_aMonitor
+  m := m ? m : Manager_aMonitor
   If Monitor_#%m%_taskBarClass {
     Monitor_#%m%_showTaskBar := Not Monitor_#%m%_showTaskBar
     Manager_hideShow := True

@@ -44,8 +44,6 @@ Manager_init()
     Monitor_init(A_Index, doRestore)
   }
   Bar_initCmdGui()
-  If Not Config_showTaskBar
-    Monitor_toggleTaskBar()
 
   Manager_hideShow      := False
   Bar_hideTitleWndIds   := ""
