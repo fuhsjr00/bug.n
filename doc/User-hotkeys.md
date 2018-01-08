@@ -65,7 +65,7 @@ Here follows an example for configuring hotkeys, which are similar to those of
 
 ### AZERTY compatible hotkeys
 
-This configuration was created in order to make view/tagging hotkeys functionnal with AZERTY keyboards. In fact, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9` and `0` triggers respectively `&`, `é`, `"`, `'`, `(`, `-`, `è`, `_`, `ç` and `à` in such a layout.
+This configuration was created in order to make view/tagging hotkeys functional with AZERTY keyboards. In fact, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9` and `0` triggers respectively `&`, `é`, `"`, `'`, `(`, `-`, `è`, `_`, `ç` and `à` in such a layout.
 
 ```
 Config_hotkey=#&::Monitor_activateView(1)

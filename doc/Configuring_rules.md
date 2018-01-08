@@ -3,7 +3,7 @@
 ### General description
 
 Not all windows should be managed by bug.n the same way, or even may not be
-managable at all. To handle windows differently, you can add rules to the
+manageable at all. To handle windows differently, you can add rules to the
 configuration.
 
 The general format of a rule added to `Config.ini` is as follows (all in one
