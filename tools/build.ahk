@@ -30,10 +30,13 @@ SetWorkingDir %A_ScriptDir%   ;; Ensures a consistent starting directory.
   Progress, 10
   
   compile(A_ScriptDir . "\..\src\Main.ahk", A_ScriptDir . "\..\bugn.exe", A_ScriptDir . "\..\src\logo.ico")
+  Progress, 70
+  
+  createCheatSheet(A_ScriptDir . "\..\doc\Default_hotkeys.md", A_ScriptDir . "\..\doc\Cheat_sheet")
   Progress, 100
   
   _log.message("Building " . M_NAME . " finished", 0)
-  Sleep, 1000
+  Sleep, 500
   Progress, OFF
 Return
 ;; end of the auto-execute section
@@ -79,14 +82,42 @@ compile(source, destination, customIcon, compiler := "C:\Program Files\AutoHotke
   Global _log
   
   useMpress := FileExist(compressor)
-  _log.message("**Compile**: Variable set, source      -> ``" . source      . "``, the file does " . (FileExist(source)      ? "" : "**not** ") . "exist.", 5)
-  _log.message("**Compile**: Variable set, destination -> ``" . destination . "``, the file does " . (FileExist(destination) ? "" : "**not** ") . "exist.", 5)
-  _log.message("**Compile**: Variable set, customIcon  -> ``" . customIcon  . "``, the file does " . (FileExist(customIcon)  ? "" : "**not** ") . "exist.", 5)
-  _log.message("**Compile**: Variable set, compiler    -> ``" . compiler    . "``, the file does " . (FileExist(compiler)    ? "" : "**not** ") . "exist.", 5)
-  _log.message("**Compile**: Variable set, useMpress   -> ``" . useMpress   . "``", 5)
+  _log.message("**compile**: Variable set, source      -> ``" . source      . "``, the file does " . (FileExist(source)      ? "" : "**not** ") . "exist.", 5)
+  _log.message("**compile**: Variable set, destination -> ``" . destination . "``, the file does " . (FileExist(destination) ? "" : "**not** ") . "exist.", 5)
+  _log.message("**compile**: Variable set, customIcon  -> ``" . customIcon  . "``, the file does " . (FileExist(customIcon)  ? "" : "**not** ") . "exist.", 5)
+  _log.message("**compile**: Variable set, compiler    -> ``" . compiler    . "``, the file does " . (FileExist(compiler)    ? "" : "**not** ") . "exist.", 5)
+  _log.message("**compile**: Variable set, useMpress   -> ``" . useMpress   . "``", 5)
   If (FileExist(source) && FileExist(compiler))
     RunWait, %compiler% /in %source% /icon %customIcon% /mpress %useMpress% /out %destination%
   _log.message("Compiling the script to an executable finished.", 4)
+}
+
+createCheatSheet(source, destDir, filename := "cheat_sheet", converter := "C:\Users\joten\AppData\Local\Pandoc\pandoc.exe") {
+  Global _log
+  
+  _log.message("**createCheatSheet**: Variable set, source    -> ``" . source    . "``, the file does " . (FileExist(source)    ? "" : "**not** ") . "exist.", 5)
+  _log.message("**createCheatSheet**: Variable set, destDir   -> ``" . destDir   . "``, the file does " . (FileExist(destDir)   ? "" : "**not** ") . "exist.", 5)
+  _log.message("**createCheatSheet**: Variable set, converter -> ``" . converter . "``, the file does " . (FileExist(converter) ? "" : "**not** ") . "exist.", 5)
+  If (FileExist(source) && FileExist(destDir) && FileExist(converter)) {
+    FileRead, md, %source%
+    If (ErrorLevel = 0) {
+      md := RegExReplace(md, "s)^## Default hotkeys\R\R.+\R\### Window management", "## bug.n default hotkeys`r`n`r`n### Window management")
+      md := StrReplace(md, "`r`n-------------------------------------------------------------------------------`r`n", "`r`n")
+      md := RegExReplace(md, "s)\R>.+?\R\R", "`r`n")
+      md := RegExReplace(md, "s)\R>.+?\R\R", "`r`n")
+      md := StrReplace(md, "``Config_hotkey=", "#### <kbd>")
+      md := RegExReplace(md, "::.+\R", "</kbd>")
+      md := StrReplace(md, "<kbd>#", "<kbd>Win</kbd><kbd>")
+      md := StrReplace(md, "<kbd>!", "<kbd>Alt</kbd><kbd>")
+      md := StrReplace(md, "<kbd>^", "<kbd>Ctrl</kbd><kbd>")
+      md := StrReplace(md, "<kbd>+", "<kbd>Shift</kbd><kbd>")
+      md := StrReplace(md, "<n>", "&lt;n&gt;")
+      FileDelete, %destDir%\%filename%.md
+      FileAppend, %md%, %destDir%\%filename%.md
+    }
+    RunWait, % converter . " -o " . destDir . "\" . filename . ".html -S --section-divs -c reset.css -c cheat_sheet.css " . destDir . "\" . filename . ".md"
+  }
+  _log.message("Creating the cheat sheet finished.", 4)
 }
 
 IntMin(int_1, int_2) {

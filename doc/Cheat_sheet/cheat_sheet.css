@@ -3,10 +3,10 @@
   background-color: white;
   font-family: Ubuntu, sans-serif;
   font-size: 12px;
-/*  position: absolute; top: 10mm; left: 10mm;*/
   position: absolute; top: 0; left: 0;
-  height: 190mm;
-  width: 277mm;
+  height: 184.8mm;
+  width: 272mm;
+  /*margin: 12.5mm;*/
 }
 em { font-weight: bold; }
 h2 {
@@ -18,9 +18,9 @@ h2 {
 /*  color: white;*/
   font-size: 24px;
   font-weight: bold;
-  padding: 8px;
+  padding: 8px 0;
   text-align: center;
-  width: 85.6mm;
+  width: 90mm;
 }
 
 .level3 {
@@ -59,12 +59,12 @@ sup { vertical-align: top; }
 #layout-management   { position: absolute; top:    0; left: 0; }
 #monitor-management  { position: absolute; bottom: 0; left: 0; }
 
-h2                   { position: absolute; top:    0; left: 93.5mm; }
-#window-management   { position: absolute; bottom: 0; left: 93.5mm; }
+h2                   { position: absolute; top:    0; left: 91.0mm; } /* 92.0mm - 90.0mm =>  2.0mm / 2 */
+#window-management   { position: absolute; bottom: 0; left: 91.0mm; }
 
 #view-tag-management { position: absolute; top:    0;   right: 0; }
-#gui-management      { position: absolute; top: 34.7ex; right: 0; }
-#administration      { position: absolute; top: 70.2ex; right: 0; } /* 76.5ex - 57.5ex => 19ex / 3 */
+#gui-management      { position: absolute; top: 29.4ex; right: 0; }   /* 37.2ex - 25.4ex ~> 11.8ex / 3 */
+#administration      { position: absolute; top: 59.3ex; right: 0; }
 #window-debugging    { position: absolute; bottom: 0;   right: 0; }
 
 code { font-family: Ubuntu Mono, monospace; }
