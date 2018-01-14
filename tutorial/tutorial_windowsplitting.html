@@ -1,0 +1,141 @@
+<!doctype html>
+<html>
+<head> 
+	<title>tutorial | bug.n dwm - dynamic window manager</font></title>
+	<meta charset="utf-8"> 
+</head> 
+<body>
+	<div id="header">
+		<a href="/"><img src="https://github.com/fuhsjr00/bug.n" /></a>
+		<p><span id="headerSubtitle"><font size="+2">bug.n dwm - dynamic window manager</font></span>
+		<p><a id="headerLink" href="/">https://github.com/alphaCTzo7G/bug.n/blob/master/tutorial/tutorial.html</a> 
+	</div>
+
+	</div>
+
+<h2>Launching</h2>
+
+<p> Instructions for launching bug.n can be found here <a href="https://github.com/fuhsjr00/bug.n/blob/master/doc/Installing_and_running.md">Installation</a> </code></p>
+
+<h2>Introduction</h2>
+
+<p>Using bug.n can be done in pure keyboard control or through some extra mouse
+handling. See the
+<a href="https://github.com/fuhsjr00/bug.n/blob/master/doc/Default_hotkeys.md">Default_hotkeys</a> for what
+are the default bindings. They are used in this tutorial.</p>
+
+<h2>Window model</h2>
+
+<p>For this tutorial, we will use git-bash (https://git-for-windows.github.io/), 
+since the target audience is programmers and most programmers are already 
+very familiar with VIM and git. Git bash comes with VIM installed, 
+so you can try it out for yourself. Further a lot of use work with terminals 
+and lots of them, and it directly shows a use case which will be helpful 
+to a lot of us. Start bug.n by executing the bug.n exe file, 
+and then launch git bash. It will look something like this: 
+
+</p>
+<p>
+<img src = "start_up.bmp"
+   width="420"
+   alt = "Picture of command prompt and bug.n at startup" />
+</p>
+<p>
+Now lets open VIM installed in git bash in the git-bash window, as we will use that for demonstration of the windowing capabilities.
+</p>
+<img src = "1_window.bmp"
+   width="420"
+   alt = "Picture of VIM opened up showing title bar" />
+</p>
+<p>
+
+Lets open a second Window (Window_2) and see what happens
+</p>
+
+<p>
+<img src = "2_window.bmp"
+   width="420"
+   alt = "Picture of 2 VIM windows opened" />
+
+</p>
+
+Existing windows are pushed upon a <strong>stack</strong> to the right of the
+screen. We will come back to the meaning of stack, and master later. For now just assume that the 
+Window on the Right is <strong>Master</strong> and the Window on the left is <strong>stack</strong>
+
+If you open more windows, the newest window will become the master. The previous windows will
+be put on the stack. As a result, in this current configuration, you will have only 1 large master
+Window, and several smaller windows in stack, looking something like this
+
+Two Windows opened:
+
+<p>
+<img src = "2_window.bmp"
+   width="420"
+   alt = "Picture of 2 VIM windows opened" />
+
+</p>
+
+Three Windows opened:
+
+<p>
+<img src = "three_windows_opened.bmp"
+   width="420"
+   alt = "Picture of 2 VIM windows opened" />
+
+</p>
+
+Four Windows opened:
+
+<p>
+<img src = "four_windows_opened.bmp"
+   width="420"
+   alt = "Picture of 2 VIM windows opened" />
+
+</p>
+
+<h2>Part of the Window</h2>
+
+In the default configuration, bug.n hides the default title-bar of any window currently opened as best as possible. As a result, you can use the maximum screen-real-estate possible. It displays a thin bar at the top, which in turn consists of 4 main parts:
+
+<p>
+1. <strong>Tags</strong>: Tags are like Virtual desktop, and each tag can hold multiple windows together.
+<p>
+2. <strong>Current Window Config</strong>: This displays the current configuration (Monocole). Bug.n has a number of other modes, that we will discuss in upcoming tutorials. 
+<p>
+3. <strong>Title Bar</strong>: This displays the name of the application, as well as the name of the current file. 
+<p>
+4. <strong>Info Bar</strong>: displays the time, and date. 
+
+<p>
+<img src = "Window_parts.bmp"
+   width="420"
+   alt = "different parts of the bug.n title bar" />
+
+</p>
+
+<h2>Resetting and Quitting</h2>
+As you learn the ins and outs of how bug.n works, if you have a lot of applications/fancy GUIs opened and as we work to make bug.n resolve edge cases better, and make it more stable, you may find that its not behaving as expected. The easiest way to get it working is to reset bug.n to its default configuration. 
+
+<p>To reset bug.n cleanly:</p>
+
+<pre><code><font size="+2">[Win]+[Cntrl]+[r]</font></code></pre>
+
+<p>To quit bug.n cleanly:</p>
+
+<pre><code><font size="+2">[Win]+[Cntrl]+[q]</font></code>
+
+</code></pre>
+
+
+	</div>
+
+	</div>
+
+	<div id="footer">
+	<span class="right">
+	&copy; 2010-2017 bug.n community | <a href="https://github.com/fuhsjr00/bug.n">Impressum</a> | <a href="https://github.com/fuhsjr00/bug.n">e.V.</a>
+	</span>
+	</div>
+</body>
+</html>

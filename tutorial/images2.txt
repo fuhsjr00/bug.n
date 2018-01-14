@@ -1,0 +1,20 @@
+ This is the second Window.  ^
+			     ^	
+ Notice that the value right ^ above, hasnt changed.
+ This is because we are still in MONOCOLE mode.
+
+
+
+
+
+
+ Boundary between the window2  and window1            ---->>
+
+ Because Bug.n is a dynamic 
+ tiling window manager, the 
+ boundaries between the 2 
+ windows are automatically 
+ adjusted to remove any
+ weird spaces between the 
+ windows, and have as much 
+ space avalable for display.
