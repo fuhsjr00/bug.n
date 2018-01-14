@@ -64,10 +64,6 @@ description.
 configuration. With this overview you may find unused keys, which can be used
 for non-bug.n hotkeys or to reassign bug.n functions.
 
-##### [Xmonad hotkeys](./Xmonad-hotkeys.md)
-> A list of hotkeys, which are similar to those used in
-[xmonad](http://xmonad.org/), a dynamically tiling X11 window manager on *n?x.
-
 ##### [User proposed hotkeys](./User-hotkeys.md)
 > Some individual hotkeys, proposed by bug.n users.
 
