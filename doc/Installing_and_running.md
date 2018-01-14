@@ -18,17 +18,17 @@ There is no installation process for bug.n. Unpack the `zip` file, and you
 should be able to run either the executable as it is or the main script
 (`src\Main.ahk`) with [AutoHotkey](http://ahkscript.org/download/).
 
-You may copy bug.n anywhere you like -- at least if you have write acces
-there -- e. g. `C:\Program Files\bugn` or link it to the 'Windows Start Menu'
+You may copy bug.n anywhere you like -- at least if you have write access 
+there -- e.g. `C:\Program Files\bugn` or link it to the 'Windows Start Menu'
 or the 'Windows Taskbar', for example.
 
 By default bug.n stores the session data (configuration, layout, window states
-and log) to the user's APPDATA directory, e. g.
+and log) to the user's APPDATA directory, e.g.
 `C:\Users\joten\AppData\Roaming\bug.n`.
 
 You may redirect the bug.n data directory by setting the first argument either
 to the executable or to the main script (`Main.ahk`), when running bug.n,
-e. g. `C:\Program Files\bugn\bugn.exe D:\bugn`; but you will need to have write
+e.g. `C:\Program Files\bugn\bugn.exe D:\bugn`; but you will need to have write
 access to this directory.
 
 You can run bug.n manually, either by using the executable and starting it like
@@ -42,13 +42,13 @@ possibility, to do so, is to install AutoHotkey, open the directory, where
 ### Microsoft Windows User Access Control
 
 If you are using bug.n on Microsoft Windows Vista or higher you may use
-applications, which run with administrator privileges, e. g. 'administrative
+applications, which run with administrator privileges, e.g. 'administrative
 tools'. In the case that you are running bug.n in the standard user session,
-i. e. _without_ administrator privileges, bug.n will not be able to manage the
+i.e. _without_ administrator privileges, bug.n will not be able to manage the
 associated windows. If you want those application windows to be managed, you
 need to run bug.n with administrator privileges, too.
 You can set the option `Run this program as an administrator` on the
-'Compatiblity' tab, section 'Privilege level' of the bug.n executable file
+'Compatibility' tab, section 'Privilege level' of the bug.n executable file
 properties. But if you also want to run bug.n when Windows starts, you will
 have to create a task in 'Task Scheduler'.
 

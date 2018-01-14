@@ -1,6 +1,6 @@
 ## Used hotkeys
 
-The following tables list the base keys, i. e. a key without any modifier, and
+The following tables list the base keys, i.e. a key without any modifier, and
 their combination with the modifier keys (Alt: `!`, Ctrl: `^`, LWin: `#` and
 Shift: `+`), which are used in bug.n. With this overview you may find unused
 keys, which can be used for non-bug.n hotkeys or to reassign bug.n functions.

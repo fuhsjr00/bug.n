@@ -4,17 +4,17 @@ bug.n can be customized by setting configuration variables and hotkeys (the key
 bindings for the bug.n functions).
 
 To change either of them, first create a configuration file (`Config.ini`) by
-using the hotkey `#^s`, i. e. <kbd>Win</kbd><kbd>Ctrl</kbd><kbd>S</kbd>. The
+using the hotkey `#^s`, i.e. <kbd>Win</kbd><kbd>Ctrl</kbd><kbd>S</kbd>. The
 file is either saved in the directory you specified with the parameter to the
 executable or script when running bug.n, or in the Windows user directory
-(e. g. `C:\Users\joten\AppData\Roaming\bug.n`).
+(e.g. `C:\Users\joten\AppData\Roaming\bug.n`).
 
-You may then edit the file with a text editor, i. a. using the hotkey `#^e`
+You may then edit the file with a text editor, i.a. using the hotkey `#^e`
 (<kbd>Win</kbd><kbd>Ctrl</kbd><kbd>E</kbd>), and add a new line for each
 configuration variable with its value; the general format is
 `<variable>=<value>` not using quotation marks surrounding the values.
 If you want to set a boolean value, use `1` for "True" and `0` for "False";
-e. g. `Config_showBar=0`. You will have to reload bug.n for the changes to take
+e.g. `Config_showBar=0`. You will have to reload bug.n for the changes to take
 effect.
 
 To set a hotkey, use the variable name `Config_hotkey` and [the hotkey notation
@@ -42,9 +42,9 @@ You may find a sample and template configuration file in the
 
 The hotkey `#l` (<kbd>Win</kbd><kbd>L</kbd>) is set by Microsoft Windows to
 lock the workstation. If you want to use it as a hotkey in bug.n, you can bind
-another hotkey, e. g. `#^+l`
+another hotkey, e.g. `#^+l`
 (<kbd>Win</kbd><kbd>Ctrl</kbd><kbd>Shift</kbd><kbd>L</kbd>), to the lock
-function by using the bug.n-function `Manager_lockWorkStation()`, which i. a.
+function by using the bug.n-function `Manager_lockWorkStation()`, which i.a.
 sets the registry key
 `Software\Microsoft\Windows\CurrentVersion\Policies\System\DisableLockWorkstation`
 and locks the workstation. This than allows to set `#l` as a hotkey in

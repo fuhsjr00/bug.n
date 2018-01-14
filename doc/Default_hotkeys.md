@@ -13,7 +13,7 @@ Possible modifiers are the following:
 * `+` <kbd>Shift</kbd>
 
 You will have to press all keys of a hotkey at the same time beginning with the
-modifier for calling the associated function, e. g. `#^q` means pressing the
+modifier for calling the associated function, e.g. `#^q` means pressing the
 left 'Windows key' and the 'Control key' and the 'Q key'
 (<kbd>Win</kbd><kbd>Ctrl</kbd><kbd>Q</kbd>) for quitting bug.n.
 
@@ -63,7 +63,7 @@ _Show / Hide the title bar_ of the active window.
 
 _Toggle_ the _floating status_ of the active window.
 
-> The floating status effects the tiling of the active window (i. e. dis- / 
+> The floating status effects the tiling of the active window (i.e. dis- / 
 regard it).
 
 -------------------------------------------------------------------------------
@@ -219,11 +219,11 @@ _Reduce_ the size of _the master area_ in the active view.
 
 > This has only an effect, if the tile layout is active.
 
-> You may also set an additional parameter for accelerating the third one. E. g. 
+> You may also set an additional parameter for accelerating the third one. E.g. 
 with `Config_hotkey=#Left::View_setLayoutProperty(MFactor, 0, -0.05, 2)` the 
 first step, by which the master area is reduced, is -0.0016% and will be 
 doubled with consecutive calls until it reaches -0.05%.
-With the second parameter you may set an absolute value, e. g.
+With the second parameter you may set an absolute value, e.g.
 `View_setLayoutProperty(MFactor, 0.5, 0)` splits the view in half.
 
 -------------------------------------------------------------------------------
@@ -233,11 +233,11 @@ _Enlarge_ the size of _the master area_ in the active view.
 
 > This has only an effect, if the tile layout is active.
 
-> You may also set a additional parameter for accelerating the third one. E. g. 
+> You may also set a additional parameter for accelerating the third one. E.g. 
 with `Config_hotkey=#Right::View_setLayoutProperty(MFactor, 0, +0.05, 0.5)` the
 first step, by which the master area is reduced, is 0.05%, but with consecutive
 calls it will be halved until it reaches 0.0016%.
-With the second parameter you may set an absolute value, e. g.
+With the second parameter you may set an absolute value, e.g.
 `View_setLayoutProperty(MFactor, 0.67, 0)` makes the master area two thirds
 and the stacking area one third the size of the view.
 
@@ -246,7 +246,7 @@ and the stacking area one third the size of the view.
 
 Rotate the layout axis.
 
-> I. e. 2 -> 1 = vertical layout, 1 -> 2 = horizontal layout.
+> I.e. 2 -> 1 = vertical layout, 1 -> 2 = horizontal layout.
 
 > This has only an effect, if the tile layout is active.
 
@@ -255,7 +255,7 @@ Rotate the layout axis.
 
 Mirror the layout axis.
 
-> I. e. -1 -> 1 / 1 -> -1 = master on the left / right side, 
+> I.e. -1 -> 1 / 1 -> -1 = master on the left / right side, 
 -2 -> 2 / 2 -> -2 = master at top / bottom.
 
 > This has only an effect, if the tile layout is active.
@@ -265,7 +265,7 @@ Mirror the layout axis.
 
 Rotate the master axis.
 
-> I. e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 = y-axis = vertical stack, 
+> I.e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 = y-axis = vertical stack, 
 2 -> 3 = z-axis = monocle.
 
 > This has only an effect, if the tile layout is active.
@@ -275,7 +275,7 @@ Rotate the master axis.
 
 Rotate the stack axis.
 
-> I. e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 = y-axis = vertical stack, 
+> I.e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 = y-axis = vertical stack, 
 2 -> 3 = z-axis = monocle.
 
 > This has only an effect, if the tile layout is active.
@@ -326,7 +326,7 @@ Minimum of 1.
 _Decrease the gap between windows_ in "monocle" and "tile" layout. 
 
 > You may also set an absolute value for the gap width by using the first 
-parameter, e. g. `View_setLayoutProperty(GapWidth, 0, 0)` will eliminate the 
+parameter, e.g. `View_setLayoutProperty(GapWidth, 0, 0)` will eliminate the 
 gap and `View_setLayoutProperty(GapWidth, 20, 0)` will set it to 20px.
 
 -------------------------------------------------------------------------------
@@ -386,7 +386,7 @@ is not / is already set.
 
 Activate the _next monitor_ in a multi-monitor environment. 
 
-> You may also activate a specific monitor by using the first parameter, e. g.
+> You may also activate a specific monitor by using the first parameter, e.g.
 `Manager_activateMonitor(1)` will activate the first monitor.
 
 -------------------------------------------------------------------------------
@@ -401,7 +401,7 @@ _Set_ the active window's view _to_ the active view on _the next monitor_ in a
 multi-monitor environment. 
 
 > You may also set the active window on a specific monitor by using the first 
-parameter, e. g. `Manager_setWindowMonitor(1)` will set the active window on 
+parameter, e.g. `Manager_setWindowMonitor(1)` will set the active window on 
 the first monitor.
 
 -------------------------------------------------------------------------------
@@ -417,7 +417,7 @@ _Set all windows_ of the active view _on_ the active view of _the next monitor_
 in a multi-monitor environment. 
 
 > You may also set all windows of the active view on a specific monitor by 
-using the first parameter, e. g. `Manager_setViewMonitor(1)` will set all 
+using the first parameter, e.g. `Manager_setViewMonitor(1)` will set all 
 windows of the active view on the first monitor.
 
 -------------------------------------------------------------------------------
@@ -469,9 +469,9 @@ _Save the current state_ of monitors, views, layouts to the configuration file.
 -------------------------------------------------------------------------------
 `Config_hotkey=#^r::Reload`
 
-_Reload_ bug.n (i. e. the whole script).
+_Reload_ bug.n (i.e. the whole script).
 
-> This resets i. a. the configuration and internal variables of bug.n, 
+> This resets i.a. the configuration and internal variables of bug.n, 
 including the window lists. It is like Quitting and restarting bug.n.
 If `Config_autoSaveSession` is not set to `off`, the window lists can be
 restored and windows are put to their associated monitor and views.

@@ -8,13 +8,13 @@ version and the Wiki pages available for additional information.
 > A description of what bug.n can do.
 
 #### [CHANGES](./CHANGES.md)
-> A list of changes to the user interface (i. a. configuration variables and
+> A list of changes to the user interface (i.a. configuration variables and
 hotkeys) for each version of bug.n.
 
 #### [Installing and running bug.n](./Installing_and_running.md)
 > A description of how to install and run bug.n. Also described is a method to
 run bug.n as Administrator to solve problems with the User Access Control of
-Microsft Windows higher than Vista.
+Microsoft Windows higher than Vista.
 
 ##### [Stable version](../../../releases/latest)
 > The current stable version of bug.n as a package (`.zip` file); it includes

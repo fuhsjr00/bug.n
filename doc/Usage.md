@@ -43,7 +43,7 @@ following lines in an AutoHotkey script:
     ;; 3rd example:
     ControlSetText, Edit2, % "Monitor_activateView(4)`nRun, explorer.exe", bug.n_BAR_0
 
-It might be necessary to put a `Sleep, <delay in milliseconds>`, e. g.
+It might be necessary to put a `Sleep, <delay in milliseconds>`, e.g.
 `Sleep, 200`, between to consecutive `ControlSetText` to give bug.n time to
 recognize the next command.
 
@@ -85,6 +85,6 @@ you will have to run them manually. The configuration variables may include
 those listed in the document
 "[Default configuration](./Default_configuration.md)", hotkeys as
 listed in the document "[Default hotkeys](./Default_hotkeys.md)" and internal
-variables for the current state of bug.n, e. g. the active view (saved for each
+variables for the current state of bug.n, e.g. the active view (saved for each
 monitor), the layout and its configuration (saved for each view) and window
 states as they could be set by a rule.

@@ -56,7 +56,7 @@ Appearance" settings for the "Active Title Bar".
 -------------------------------------------------------------------------------
 `Config_largeFontSize=24`
 
-Font size in pixel, i. a. for the numbering of areas in the area trace.
+Font size in pixel, i.a. for the numbering of areas in the area trace.
 
 -------------------------------------------------------------------------------
 `Config_backColor_#1=<COLOR_GRADIENTINACTIVECAPTION>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_GRADIENTINACTIVECAPTION>;<COLOR_GRADIENTACTIVECAPTION>;<COLOR_GRADIENTACTIVECAPTION>`
@@ -84,14 +84,14 @@ elaborate example have a look at [joten_01.ini](../usr/joten_01.ini).
 `Config_backColor_#2=<COLOR_GRADIENTACTIVECAPTION>;;;;;;;<COLOR_MENU>;<COLOR_MENU>`
 
 The background color of bar elements, which are highlighted depending on the
-status, i. a. the active view, a discharging battery and the sound volume, if
+status, i.a. the active view, a discharging battery and the sound volume, if
 it is not muted.
 
 -------------------------------------------------------------------------------
 `Config_backColor_#3=;;;;;;;ff8040;`
 
 The background color of bar elements, which are highlighted depending on the
-status, i. a. a discharging battery with a battery level lower than 10%.
+status, i.a. a discharging battery with a battery level lower than 10%.
 
 -------------------------------------------------------------------------------
 `Config_foreColor_#1=<COLOR_INACTIVECAPTION>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_MENU>;<COLOR_ACTIVECAPTION>;<COLOR_INACTIVECAPTION>;<COLOR_ACTIVECAPTION>;<COLOR_GRADIENTINACTIVECAPTION>`
@@ -104,14 +104,14 @@ foreground depends on the value of the progress bar.
 `Config_foreColor_#2=<COLOR_ACTIVECAPTION>;;;;;;;<COLOR_HIGHLIGHT>;<COLOR_HIGHLIGHT>`
 
 The foreground color of bar elements, which are highlighted depending on the
-status, i. a. the active view, a discharging battery and the sound volume, if
+status, i.a. the active view, a discharging battery and the sound volume, if
 it is not muted.
 
 -------------------------------------------------------------------------------
 `Config_foreColor_#3=;;;;;;;<COLOR_INACTIVECAPTION>;`
 
 The foreground color of bar elements, which are highlighted depending on the
-status, i. a. a discharging battery with a battery level lower than 10%.
+status, i.a. a discharging battery with a battery level lower than 10%.
 
 -------------------------------------------------------------------------------
 `Config_fontColor_#1=<COLOR_INACTIVECAPTIONTEXT>;<COLOR_CAPTIONTEXT>;<COLOR_MENUTEXT>;<COLOR_CAPTIONTEXT>;<COLOR_MENUTEXT>;<COLOR_CAPTIONTEXT>;<COLOR_INACTIVECAPTIONTEXT>;<COLOR_CAPTIONTEXT>;<COLOR_INACTIVECAPTIONTEXT>`
@@ -122,14 +122,14 @@ The default font color for the text of bar elements.
 `Config_fontColor_#2=<COLOR_CAPTIONTEXT>;;;;;;;<COLOR_MENUTEXT>;<COLOR_MENUTEXT>`
 
 The font color of bar elements, which are highlighted depending on the
-status, i. a. the active view, a discharging battery and the sound volume, if
+status, i.a. the active view, a discharging battery and the sound volume, if
 it is not muted.
 
 -------------------------------------------------------------------------------
 `Config_fontColor_#3=;;;;;;;<COLOR_INACTIVECAPTIONTEXT>;`
 
 The fontground color of bar elements, which are highlighted depending on the
-status, i. a. a discharging battery with a battery level lower than 10%.
+status, i.a. a discharging battery with a battery level lower than 10%.
 
 > The default color values are retrieved from the "Window Color and Appearance"
 settings.
@@ -145,7 +145,7 @@ visible at all, if `Config_barTransparency` is not set to `off`.
 -------------------------------------------------------------------------------
 `Config_barCommands=Run, explore doc;Monitor_toggleBar();Reload;ExitApp`
 
-The commands seperated by semicolon, which are listed in the command GUI of
+The commands separated by semicolon, which are listed in the command GUI of
 the bar (#!) and therewith can be selected rather then typed; bug.n functions
 (as used in the hotkey configuration), the `Run` and `Send` command of
 AutoHotkey can be used here.
@@ -257,7 +257,7 @@ resized manually by dragging the border, even if using the according hotkey
 -------------------------------------------------------------------------------
 `Config_selBorderColor=`
 
-Border colour of the active window, format: 0x00BBGGRR; e. g. `0x006A240A`,
+Border colour of the active window, format: 0x00BBGGRR; e.g. `0x006A240A`,
 if `=0`, the system's window border colour is not changed (supported Windows 
 versions: _not_ 10).
 
@@ -267,7 +267,7 @@ versions: _not_ 10).
 
 The names of the views separated by a semicolon. This variable sets the names
 of the views shown in the status bar and determines the number of views
-(`Config_viewCount`); the total number of names given, i. e. views, should not
+(`Config_viewCount`); the total number of names given, i.e. views, should not
 be exceeded by the configured hotkeys.
 
     Config_layout_#1=[]=;tile
@@ -303,7 +303,7 @@ The stack axis:  1 = x (from left to right), 2 = y (from top to bottom),
 `Config_layoutGapWidth=0`
 
 The default gap width in px (only even numbers) used in the "tile" and
-"monocle" layout, i. e. the space between windows and around the layout.
+"monocle" layout, i.e. the space between windows and around the layout.
 
 -------------------------------------------------------------------------------
 `Config_layoutMFactor=0.6`
@@ -327,7 +327,7 @@ If true (`=1`), the area trace is continuously shown over the desktop.
 -------------------------------------------------------------------------------
 `Config_dynamicTiling=1`
 
-If true (`=1`), windows are dynamically tiled i. e. the layout is reset and
+If true (`=1`), windows are dynamically tiled i.e. the layout is reset and
 therewith all windows resized and positioned automatically, if new windows are
 created or existing destroyed or moved.
 If false (`=0`) you may use manual tiling.
@@ -363,8 +363,8 @@ list and the stack area.
 -------------------------------------------------------------------------------
 `Config_onActiveHiddenWnds=view`
 
-The action, which will be taken, if a window e. g. should be activated, but
-is not visible; `view`: show the view accordng to the first tag of the window
+The action, which will be taken, if a window e.g. should be activated, but
+is not visible; `view`: show the view according to the first tag of the window
 in question, `tag`: add the window in question to the current visible view,
 `hide`: hide the window again ignoring the activation.
 
@@ -408,7 +408,7 @@ the [specific documentation](./Configuring_rules.md).
 `Config_rule_#1=.*;.*;;1;0;0;0;0;0;`
 
 By default all windows are managed, not allocated on a specific monitor or
-view, not floating (i. e. tiled), the window title bar is not visible, the
+view, not floating (i.e. tiled), the window title bar is not visible, the
 title is not hidden on the bug.n status bar and no window action is taken, when
 the window first is created.
 
@@ -433,7 +433,7 @@ excluded from the preceding rule.
 -------------------------------------------------------------------------------
 `Config_rule_#5=SWT_Window0;.*;;1;0;0;0;0;0;`
 
-Also windows created by Java (SWT) e. g. Eclipse should be excluded from the
+Also windows created by Java (SWT) e.g. Eclipse should be excluded from the
 second rule for the same reason as above.
 
 -------------------------------------------------------------------------------
@@ -518,5 +518,5 @@ unintentionally quits.
 `Config_monitorDisplayChangeMessages=1`
 
 If true (`=1`) bug.n reacts on `WM_DISPLAYCHANGE` system messages asking to 
-reset the monitor configuration, e. g. if a monitor is dis-/connected or the 
+reset the monitor configuration, e.g. if a monitor is dis-/connected or the 
 monitor resolution is changed.

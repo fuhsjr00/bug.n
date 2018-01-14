@@ -3,7 +3,7 @@
 ### General description
 
 Not all windows should be managed by bug.n the same way, or even may not be
-managable at all. To handle windows differently, you can add rules to the
+manageable at all. To handle windows differently, you can add rules to the
 configuration.
 
 The general format of a rule added to `Config.ini` is as follows (all in one
@@ -27,7 +27,7 @@ following information:
 
 1. class (as a regular expression)
 2. title (as a regular expression)
-3. arbitrary criterion (as a function name, e. g. "Window_isPopup", or blank)
+3. arbitrary criterion (as a function name, e.g. "Window_isPopup", or blank)
 
 With the second part you can give bug.n the following information on how to
 handle the identified windows:
@@ -37,14 +37,14 @@ handle the identified windows:
 0 means the currently active monitor)?
 3. On which views should the window be set (given as a binary mask converted to
 an integer >= 0, 0 means the currently active view)?
-4. Is the window floating, i. e. should not be tiled (0 = no, 1 = yes)?
+4. Is the window floating, i.e. should not be tiled (0 = no, 1 = yes)?
 5. Is the window decorated (0 = no, 1 = yes)? If not, the window title bar is
 removed.
 6. Should the title text be hidden in the bug.n bar (0 = no, 1 = yes)?
 7. A special single window action (`close` or `maximize` or blank).
 
 If you want to replace a rule, which is already set in `Config.ahk`, you will
-have to use the correct variable name; e. g. you may set a default rule
+have to use the correct variable name; e.g. you may set a default rule
 (identifying part: `.*;.*;`), overwriting the first rule set in `Config.ahk`,
 by using the variable name `Config_rule_#1`. If you want to _add_ a rule,
 simply use `Config_rule` as the variable name; the numbering will be done

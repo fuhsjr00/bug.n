@@ -15,7 +15,7 @@
 4. `~` Revised the following functions to allow setting absolute and relative values: `Debug_setLogLevel`,
 `Manager_activateMonitor`, `Manager_setViewMonitor`, `Manager_setWindowMonitor`, `Monitor_activateView`, `Monitor_setWindowTag`,
 `View_setGapWidth`, `View_setLayout`, `View_setMFactor`, `View_shuffleWindow`.
-5. `~` Revised the interface, i. e. the parameters, of the following functions for setting absolute and relative values -- but did
+5. `~` Revised the interface, i.e. the parameters, of the following functions for setting absolute and relative values -- but did
 not implement the functionality: `Monitor_toggleWindowTag`, `View_activateWindow`.
 6. `~` Revised the bar color scheme.
 7. `~` Revised the rule layout. The third parameter is not compared to the window style anymore, but is a function name, which is
