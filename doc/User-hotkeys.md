@@ -1,6 +1,13 @@
 ## User proposed hotkeys
 
-#### User: jbremer (2012-Oct-27 19:33, bug.n 8.2.1)
+### Table of contents
+
+* [User: jbremer (2012-Oct-27 19:33, bug.n 8.2.1)](#user-jbremer-2012-oct-27-1933-bugn-821)
+* [Xmonad hotkeys](#xmonad-hotkeys)
+* [AZERTY compatible hotkeys](#azerty-compatible-hotkeys)
+* [Slovak (QWERTZ)](#slovak-qwertz)
+
+### User: jbremer (2012-Oct-27 19:33, bug.n 8.2.1) #
 
 | Hotkey | Alias to     | Description                                                                                          |
 | ------ | ------------ | ---------------------------------------------------------------------------------------------------- |
@@ -10,7 +17,7 @@
 | `#t`   | -            | launch a terminal (`Run, C:\Program Files\mintty.exe -`)                                             |
 | `#b`   | -            | launch a terminal with an ssh connection (`Run, C:\Program Files\mintty.exe /bin/ssh user@hostname`) |
 
-#### Xmonad hotkeys
+### Xmonad hotkeys #
 
 Here follows an example for configuring hotkeys, which are similar to those of
 [xmonad](http://xmonad.org/); this example was submitted for bug.n version
@@ -63,7 +70,7 @@ Here follows an example for configuring hotkeys, which are similar to those of
     Config_hotkey=#.::View_setMSplit(-1)
     Config_hotkey=#Space::View_setLayout(>)
 
-### AZERTY compatible hotkeys
+### AZERTY compatible hotkeys #
 
 This configuration was created in order to make view/tagging hotkeys functionnal with AZERTY keyboards. In fact, `1`, `2`, `3`, `4`, `5`, `6`, `7`, `8`, `9` and `0` triggers respectively `&`, `é`, `"`, `'`, `(`, `-`, `è`, `_`, `ç` and `à` in such a layout.
 
@@ -97,7 +104,7 @@ Config_hotkey=#^_::toggleWindowTag(8)
 Config_hotkey=#^ç::toggleWindowTag(9)
 ```
 
-### Slovak (QWERTZ)
+### Slovak (QWERTZ) #
 
 ```
 Config_hotkey=#BackSpace::Monitor_activateView(-1)
