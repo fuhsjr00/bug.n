@@ -1,4 +1,4 @@
-## bug.n -- Tiling Window Management
+## bug.n &ndash; Tiling Window Management
 
 bug.n is a
 [tiling window manager](https://en.wikipedia.org/wiki/Tiling_window_manager)
@@ -48,7 +48,7 @@ scripting language [AutoHotkey](http://ahkscript.org/download/).
 
 ### What it can look like
 
-![bug.n screenshot](./usr/default_01.png "Screenshot of bug.n with the default configuration.")
+![Screenshot of bug.n with the default configuration.](https://github.com/fuhsjr00/bug.n/wiki/Configuration_examples/default_01.png "Screenshot of bug.n with the default configuration.")
 
 ### Installing and running bug.n
 

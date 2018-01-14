@@ -1,12 +1,8 @@
-## bug.n -- Tiling Window Manager
-
-bug.n is a
-[tiling window manager](https://en.wikipedia.org/wiki/Tiling_window_manager)
-add-on for Microsoft Windows.
+## Documentation overview
 
 This page links the resources available for information on installing and
-running, customizing and using bug.n and for a list of changes made with the
-current version.
+running, customizing and using bug.n, a list of changes made with the current 
+version and the Wiki pages available for additional information.
 
 #### [README](../README.md)
 > A description of what bug.n can do.
@@ -67,11 +63,21 @@ for non-bug.n hotkeys or to reassign bug.n functions.
 ##### [User proposed hotkeys](./User-hotkeys.md)
 > Some individual hotkeys, proposed by bug.n users.
 
-##### [Users' Config.ini and screenshots](../usr/)
-> A template for `Config.ini` and samples from users with related screenshots.
-
 #### [LICENSE](../LICENSE.md)
 > bug.n is licensed under the GNU General Public License version 3.
 
 #### [CREDITS](./CREDITS.md)
 > A list of people and projects, which contributed to bug.n.
+
+### Wiki
+
+#### [Configuration examples](https://github.com/fuhsjr00/bug.n/wiki/Configuration-examples)
+> Some configuration examples given as a `Config.ini` and shown by a 
+screenshot.
+
+#### [Documentation](https://github.com/fuhsjr00/bug.n/wiki/Documentation)
+> The documentation in the `doc` directory of the repository, which is also 
+linked above.
+
+#### [Q&A](https://github.com/fuhsjr00/bug.n/wiki/Q&A)
+> Some questions and answers regarding bug.n and window management in general.
