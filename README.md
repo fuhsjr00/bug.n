@@ -48,7 +48,7 @@ scripting language [AutoHotkey](http://ahkscript.org/download/).
 
 ### What it can look like
 
-![Screenshot of bug.n with the default configuration.](https://github.com/fuhsjr00/bug.n/wiki/Configuration_examples/default_01.png "Screenshot of bug.n with the default configuration.")
+![Screenshot of bug.n with the default configuration.](https://github.com/fuhsjr00/bug.n/wiki/Configuration-examples/default_01.png "Screenshot of bug.n with the default configuration.")
 
 ### Installing and running bug.n
 
