@@ -81,3 +81,6 @@ linked above.
 
 #### [Q&A](https://github.com/fuhsjr00/bug.n/wiki/Q&A)
 > Some questions and answers regarding bug.n and window management in general.
+
+#### [Tutorials](https://github.com/fuhsjr00/bug.n/wiki/Tutorials)
+> Some tutorials explaining bug.n and its functionality in more detail.
