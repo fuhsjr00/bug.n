@@ -22,6 +22,7 @@ SetWorkingDir %A_ScriptDir%   ;; Ensures a consistent starting directory.
 
 ;; pseudo main function
   M_NAME     := "bug.n"
+  M_VERSION  := "9.0.1"
   Progress,,,, Building %M_NAME%
   M_logLevel := 5             ;; higher values mean more logging, type = int, choices = [0, 1, 2, 3, 4, 5, 6], default = 5
   
@@ -93,7 +94,7 @@ compile(source, destination, customIcon, compiler := "C:\Program Files\AutoHotke
 }
 
 createCheatSheet(source, destDir, filename := "cheat_sheet", converter := "C:\Users\joten\AppData\Local\Pandoc\pandoc.exe") {
-  Global _log
+  Global _log, M_NAME, M_VERSION
   
   _log.message("**createCheatSheet**: Variable set, source    -> ``" . source    . "``, the file does " . (FileExist(source)    ? "" : "**not** ") . "exist.", 5)
   _log.message("**createCheatSheet**: Variable set, destDir   -> ``" . destDir   . "``, the file does " . (FileExist(destDir)   ? "" : "**not** ") . "exist.", 5)
@@ -101,7 +102,7 @@ createCheatSheet(source, destDir, filename := "cheat_sheet", converter := "C:\Us
   If (FileExist(source) && FileExist(destDir) && FileExist(converter)) {
     FileRead, md, %source%
     If (ErrorLevel = 0) {
-      md := RegExReplace(md, "s)^## Default hotkeys\R\R.+\R\### Window management", "## bug.n default hotkeys`r`n`r`n### Window management")
+      md := RegExReplace(md, "s)^## Default hotkeys\R\R.+\R\### Window management", "## " . M_NAME . " " . M_VERSION . " default hotkeys`r`n`r`n### Window management")
       md := StrReplace(md, "`r`n-------------------------------------------------------------------------------`r`n", "`r`n")
       md := RegExReplace(md, "s)\R>.+?\R\R", "`r`n")
       md := RegExReplace(md, "s)\R>.+?\R\R", "`r`n")

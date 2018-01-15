@@ -75,6 +75,9 @@ for non-bug.n hotkeys or to reassign bug.n functions.
 > Some configuration examples given as a `Config.ini` and shown by a 
 screenshot.
 
+#### [Default hotkeys cheat sheet](https://github.com/fuhsjr00/bug.n/wiki/Default-hotkeys_cheat-sheet.pdf)
+> A cheat sheet giving an overview of the default hotkeys on one page (PDF).
+
 #### [Documentation](https://github.com/fuhsjr00/bug.n/wiki/Documentation)
 > The documentation in the `doc` directory of the repository, which is also 
 linked above.
