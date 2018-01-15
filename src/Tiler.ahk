@@ -1,6 +1,6 @@
 /*
   bug.n -- tiling window management
-  Copyright (c) 2010-2015 Joshua Fuhs, joten
+  Copyright (c) 2010-2018 Joshua Fuhs, joten
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -10,7 +10,7 @@
   @license GNU General Public License version 3
            ../LICENSE.md or <http://www.gnu.org/licenses/>
 
-  @version 9.0.0
+  @version 9.0.1
 */
 
 Tiler_addSubArea(m, v, i, areaX, areaY, areaW, areaH) {

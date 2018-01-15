@@ -77,8 +77,7 @@ separated list, which contains the following items:
 
 > A valid color value is either one of the 16 primary HTML 
 [color names](https://autohotkey.com/docs/commands/Progress.htm#colors)
-or a 6-digit RGB color value. Examples are `Red` or `FF0000`; for a more 
-elaborate example have a look at [joten_01.ini](../usr/joten_01.ini).
+or a 6-digit RGB color value. Examples are `Red` or `FF0000`.
 
 -------------------------------------------------------------------------------
 `Config_backColor_#2=<COLOR_GRADIENTACTIVECAPTION>;;;;;;;<COLOR_MENU>;<COLOR_MENU>`
@@ -494,7 +493,14 @@ Firefox web browser. If the window's title bar is hidden, it looks distorted.
 These windows should also be treated as pop-up windows.
 
 -------------------------------------------------------------------------------
-`Config_ruleCount=17`
+`Config_rule_#18=ApplicationFrameWindow;.*Edge;;1;0;0;0;1;0;`
+
+Windows with the class ApplicationFrameWindow are not handled by bug.n by 
+default. Edge is one application with that window class, which does not load in
+the background and is set manually to be managed by bug.n.
+
+-------------------------------------------------------------------------------
+`Config_ruleCount=18`
 
 This variable will be automatically set to the total number of active rules
 above.

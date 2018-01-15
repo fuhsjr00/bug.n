@@ -6,6 +6,14 @@
 * `~` changed
 * `+` added
 
+### 9.0.1
+
+1. `+` Added a cheat sheet for the default hotkeys.
+2. `~` Revised the directory structure regarding the test and build tools.
+3. `+` Added a build script to create the executable and the cheat sheet as a printable HTML file.
+4. `~` Moved the `/usr/*.{ini,png}` files from the main repository to the Wiki and adding a page with configuration examples.
+5. `+` Added a tutorial describing bug.n and dynamic tiling in more detail.
+
 ### 9.0.0
 
 1. `~` Renamed the function `Manager_toggleDecor` to `Window_toggleDecor`.

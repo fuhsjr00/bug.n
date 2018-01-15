@@ -35,8 +35,8 @@ The available configuration variables are listed in the document
 associated functions are listed in the document
 "[Default hotkeys](./Default_hotkeys.md)".
 
-You may find a sample and template configuration file in the 
-[usr directory](../usr/).
+You may find a sample and template configuration file on the Wiki page
+[Configuration examples](https://github.com/fuhsjr00/bug.n/wiki/Configuration-examples).
 
 ### Re-using Win+L
 
