@@ -20,9 +20,12 @@
 ### Xmonad hotkeys #
 
 Here follows an example for configuring hotkeys, which are similar to those of
-[xmonad](http://xmonad.org/); this example was submitted for bug.n version
-8.2.1.
+[xmonad](http://xmonad.org/); ~~this example was submitted for bug.n version
+8.2.1.~~ 2018-01-24: Updated to work with bug.n 9.0.1.
 
+    ; remapping of lock screen needed to free up #l
+    Config_hotkey=#^+l::Manager_lockWorkStation()
+    
     Config_hotkey=#1::Monitor_activateView(1)
     Config_hotkey=#+1::Monitor_setWindowTag(1)
     Config_hotkey=#2::Monitor_activateView(2)
@@ -57,18 +60,21 @@ Here follows an example for configuring hotkeys, which are similar to those of
     Config_hotkey=#+w::Manager_setWindowMonitor(1)
     Config_hotkey=#e::Manager_activateMonitor(2)
     Config_hotkey=#+e::Manager_setWindowMonitor(2)
-    Config_hotkey=#t::View_toggleFloating()
-    Config_hotkey=#h::View_setMFactor(-0.05)
-    Config_hotkey=#j::View_activateWindow(+1)
-    Config_hotkey=#+j::View_shuffleWindow(+1)
-    Config_hotkey=#k::View_activateWindow(-1)
-    Config_hotkey=#+k::View_shuffleWindow(-1)
-    Config_hotkey=#l::View_setMFactor(+0.05)
-    Config_hotkey=#Enter::View_shuffleWindow(0)
+    Config_hotkey=#t::View_toggleFloatingWindow()
+    Config_hotkey=#h::View_setLayoutProperty(MFactor, 0, -0.05)
+    Config_hotkey=#j::View_activateWindow(0,+1)
+    Config_hotkey=#+j::View_shuffleWindow(0,+1)
+    Config_hotkey=#k::View_activateWindow(0,-1)
+    Config_hotkey=#+k::View_shuffleWindow(0,-1)
+    Config_hotkey=#l::View_setLayoutProperty(MFactor, 0, +0.05)
+    Config_hotkey=#Enter::View_shuffleWindow(1)
     Config_hotkey=#+c::Manager_closeWindow()
-    Config_hotkey=#,::View_setMSplit(+1)
-    Config_hotkey=#.::View_setMSplit(-1)
-    Config_hotkey=#Space::View_setLayout(>)
+    Config_hotkey=#,::View_setLayoutProperty(MY, 0, +1)
+    Config_hotkey=#.::View_setLayoutProperty(MY, 0, -1)
+    Config_hotkey=#Space::View_setLayout(0, +1)
+    Config_hotkey=#^Space::View_setLayout(1)
+    Config_hotkey=#b::Monitor_toggleTaskBar()
+    Config_hotkey=#^b::Monitor_toggleBar()
 
 ### AZERTY compatible hotkeys #
 
