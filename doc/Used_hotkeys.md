@@ -11,7 +11,7 @@ keys, which can be used for non-bug.n hotkeys or to reassign bug.n functions.
 | Up        | x   | x    | x    |       | x   |      |
 | Left      | x   | x    | x    |       |     |      |
 | Right     | x   | x    | x    |       |     |      |
-| Backspace | x   |      |      |       | x   |      |
+| Backspace | x   |      | x    |       | x   |      |
 | Enter     |     | x    | x    |       |     | x    |
 | Space     | x   | x    |      |       |     |      |
 | Tab       | x   |      | x    | x     |     |      |

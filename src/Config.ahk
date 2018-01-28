@@ -465,6 +465,7 @@ Config_UI_saveSession() {
 #^Left::View_setLayoutProperty("MX", 0, -1)
 #+Left::View_setLayoutProperty("GapWidth", 0, -2)
 #+Right::View_setLayoutProperty("GapWidth", 0, +2)
+#^Backspace::View_resetTileLayout()
 
 ;; View/Tag management
 #+n::View_toggleMargins()

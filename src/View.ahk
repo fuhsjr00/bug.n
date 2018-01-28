@@ -250,6 +250,31 @@ View_moveWindow(i=0, d=0) {
   }
 }
 
+View_resetTileLayout() {
+  Local m, v
+
+  m := Manager_aMonitor
+  v := Monitor_#%m%_aView_#1
+  
+  View_#%m%_#%v%_area_#0        := 0
+  View_#%m%_#%v%_layout_#2      := View_#%m%_#%v%_layout_#1
+  View_#%m%_#%v%_layout_#1      := 1
+  View_#%m%_#%v%_layoutAxis_#1  := Config_layoutAxis_#1
+  View_#%m%_#%v%_layoutAxis_#2  := Config_layoutAxis_#2
+  View_#%m%_#%v%_layoutAxis_#3  := Config_layoutAxis_#3
+  View_#%m%_#%v%_layoutGapWidth := Config_layoutGapWidth
+  View_#%m%_#%v%_layoutMFact    := Config_layoutMFactor
+  View_#%m%_#%v%_layoutMX       := 1
+  View_#%m%_#%v%_layoutMY       := 1
+  View_#%m%_#%v%_layoutSymbol   := Config_layoutSymbol_#1
+  View_#%m%_#%v%_margins        := "0;0;0;0"
+  View_#%m%_#%v%_showStackArea  := True
+  StringSplit, View_#%m%_#%v%_margin, View_#%m%_#%v%_margins, `;
+  
+  If Tiler_isActive(m, v)
+    View_arrange(m, v)
+}
+
 View_setActiveWindow(m, v, wndId) {
   Global
 

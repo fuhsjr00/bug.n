@@ -6,6 +6,14 @@
 * `~` changed
 * `+` added
 
+### 9.0.2
+
+1. `+` Added a function and corresponding hotkey to reset the tile layout of the current view.
+
+|  # | `-` or `~` Configuration Variables or <br/> `-` Hotkey Functions | `+` Configuration Variables or <br/> `+` Hotkey Functions |
+| --:| ---------------------------------------------------------------- | --------------------------------------------------------- |
+| 1. |                                                                  | `#^Backspace::View_resetTileLayout()`                     |
+
 ### 9.0.1
 
 1. `+` Added a cheat sheet for the default hotkeys.

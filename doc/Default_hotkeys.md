@@ -334,6 +334,14 @@ gap and `View_setLayoutProperty(GapWidth, 20, 0)` will set it to 20px.
 
 _Increase the gap between windows_ in "monocle" and "tile" layout.
 
+-------------------------------------------------------------------------------
+`Config_hotkey=#^Backspace::View_resetTileLayout()`
+
+_Reset the tile layout_.
+
+> This resets the layout and tile layout properties of the currently active 
+view to the initial (default) values.
+
 ### View / Tag management
 
 `Config_hotkey=#+n::View_toggleMargins()`
