@@ -21,7 +21,7 @@
 
 Here follows an example for configuring hotkeys, which are similar to those of
 [xmonad](http://xmonad.org/); ~~this example was submitted for bug.n version
-8.2.1.~~ 2018-01-24: Updated to work with bug.n 9.0.1.
+8.2.1.~~ 2018-01-29: Updated to work with bug.n 9.0.2.
 
     ; remapping of lock screen needed to free up #l
     Config_hotkey=#^+l::Manager_lockWorkStation()
@@ -72,7 +72,7 @@ Here follows an example for configuring hotkeys, which are similar to those of
     Config_hotkey=#,::View_setLayoutProperty(MY, 0, +1)
     Config_hotkey=#.::View_setLayoutProperty(MY, 0, -1)
     Config_hotkey=#Space::View_setLayout(0, +1)
-    Config_hotkey=#^Space::View_setLayout(1)
+    Config_hotkey=#^Space::View_resetTileLayout()
     Config_hotkey=#b::Monitor_toggleTaskBar()
     Config_hotkey=#^b::Monitor_toggleBar()
 
