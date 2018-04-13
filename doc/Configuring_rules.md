@@ -105,3 +105,18 @@ As provided by [NickSeagull](https://github.com/NickSeagull) in
 [issue #146](https://github.com/fuhsjr00/bug.n/issues/146):
 
 `Config_rule=*hap*;.*hap*;*hap*;0;0;1;1;1;1;`
+
+#### Applications written with the Qt5 development framework
+
+The following rule is corresponding to rule 4 regarding the previous version of
+the Qt development framework:
+
+`Config_rule=Qt5QWindowIcon;.*;;1;0;0;0;0;0;`
+
+#### Applications using the Modern (Windows 10) UI
+
+With some of the Windows 10 applications also running in the background, it is 
+not practical for all of them to be tiled by bug.n. Those applications, which 
+should be tiled, have to be listed specifically, e.g. Edge:
+
+`Config_rule=ApplicationFrameWindow;.*Edge;;1;0;0;0;1;0;`
