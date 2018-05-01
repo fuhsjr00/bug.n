@@ -39,7 +39,7 @@ View_activateWindow(i, d = 0) {
   Local aWndId, direction, failure, j, v, wndId, wndId0, wndIds
 
   Debug_logMessage("DEBUG[1] View_activateWindow(" . i . ", " . d . ")", 1)
-  If (d = 0)
+  If (i = 0) And (d = 0)
     Return
 
   WinGet, aWndId, ID, A
@@ -49,7 +49,13 @@ View_activateWindow(i, d = 0) {
   StringTrimRight, wndIds, View_#%Manager_aMonitor%_#%v%_wndIds, 1
   StringSplit, wndId, wndIds, `;
   Debug_logMessage("DEBUG[2] wndId count: " . wndId0, 2, False)
-  If (wndId0 > 1) {
+  If (i > 0) And (i <= wndId0) And (d = 0) {
+    wndId := wndId%i%
+    Window_set(wndId, "AlwaysOnTop", "On")
+    Window_set(wndId, "AlwaysOnTop", "Off")
+    Window_#%wndId%_isMinimized := False
+    Manager_winActivate(wndId)
+  } Else If (wndId0 > 1) {
     If Not InStr(Manager_managedWndIds, aWndId . ";") Or Window_#%aWndId%_isFloating
       Window_set(aWndId, "Bottom", "")
     Loop, % wndId0 {
