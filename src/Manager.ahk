@@ -449,19 +449,25 @@ Manager_moveWindow() {
 
 Manager_onDisplayChange(a, wParam, uMsg, lParam) {
   Global
-  
-  Debug_logMessage("DEBUG[1] Manager_onDisplayChange( a: " . a . ", uMsg: " . uMsg . ", wParam: " . wParam . ", lParam: " . lParam . " )", 1)
-  MsgBox, 291, , % "Would you like to reset the monitor configuration?`n'No' will only rearrange all active views.`n'Cancel' will result in no change."
-  IfMsgBox Yes
-    Manager_resetMonitorConfiguration()
-  Else IfMsgBox No
+  If Config_monitorDisplayChangeAlwaysYes
   {
-    Loop, % Manager_monitorCount {
-      View_arrange(A_Index, Monitor_#%A_Index%_aView_#1)
-      Bar_updateView(A_Index, Monitor_#%A_Index%_aView_#1)
+    Manager_resetMonitorConfiguration()
+  }
+  Else
+  {
+    Debug_logMessage("DEBUG[1] Manager_onDisplayChange( a: " . a . ", uMsg: " . uMsg . ", wParam: " . wParam . ", lParam: " . lParam . " )", 1)
+    MsgBox, 291, , % "Would you like to reset the monitor configuration?`n'No' will only rearrange all active views.`n'Cancel' will result in no change."
+    IfMsgBox Yes
+      Manager_resetMonitorConfiguration()
+    Else IfMsgBox No
+    {
+      Loop, % Manager_monitorCount {
+        View_arrange(A_Index, Monitor_#%A_Index%_aView_#1)
+        Bar_updateView(A_Index, Monitor_#%A_Index%_aView_#1)
+      }
+      Bar_updateStatus()
+      Bar_updateTitle()
     }
-    Bar_updateStatus()
-    Bar_updateTitle()
   }
 }
 
