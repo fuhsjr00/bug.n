@@ -102,9 +102,9 @@ Config_init() {
   Config_ruleCount := 18  ;; This variable has to be set to the total number of active rules above.
 
   ;; Configuration management
-  Config_autoSaveSession := "auto"    ;; "off" | "auto" | "ask"
+  Config_autoSaveSession := "auto"                ;; "off" | "auto" | "ask"
   Config_maintenanceInterval := 5000
-  Config_monitorDisplayChangeMessages := True
+  Config_monitorDisplayChangeMessages := "ask"    ;; "off" | "on" | "ask"
 
   Config_hotkeyCount := 0
   Config_restoreConfig(Config_filePath)
