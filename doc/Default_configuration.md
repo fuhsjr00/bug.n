@@ -521,8 +521,9 @@ saved to especially support the recovery of window states after bug.n
 unintentionally quits.
 
 -------------------------------------------------------------------------------
-`Config_monitorDisplayChangeMessages=1`
+`Config_monitorDisplayChangeMessages=ask`
 
-If true (`=1`) bug.n reacts on `WM_DISPLAYCHANGE` system messages asking to 
+If set to "ask", bug.n reacts on `WM_DISPLAYCHANGE` system messages asking to 
 reset the monitor configuration, e.g. if a monitor is dis-/connected or the 
-monitor resolution is changed.
+monitor resolution is changed. If set to "on", bug.n acts without asking, if 
+set to "off" or false (`=0`), bug.n ignores these system messages.
