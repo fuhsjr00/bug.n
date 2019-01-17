@@ -39,6 +39,7 @@ Manager_init()
   }
 
   SysGet, Manager_monitorCount, MonitorCount
+  Debug_logMessage("DEBUG[0] Manager_init: Found " . Manager_monitorCount . " monitors.", 0)
   Loop, % Manager_monitorCount
   {
     Monitor_init(A_Index, doRestore)
