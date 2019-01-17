@@ -30,6 +30,7 @@ Monitor_init(m, doRestore) {
     Config_restoreLayout(Config_filePath, m)
   SysGet, Monitor_#%m%_name, MonitorName, %m%
   Monitor_getWorkArea(m)
+  Debug_logMessage("DEBUG[0] Monitor_init: #" . m . ", name: " . Monitor_#%m%_name . ", x: " . Monitor_#%m%_x . ", y: " . Monitor_#%m%_y . ", w: " . Monitor_#%m%_w . ", h: " . Monitor_#%m%_h . ".", 0)
   If Not Monitor_#%m%_showTaskBar {
     Monitor_#%m%_showTaskBar := True
     Monitor_toggleTaskBar(m)
