@@ -42,6 +42,7 @@ Manager_init()
   Debug_logMessage("DEBUG[0] Manager_init: Found " . Manager_monitorCount . " monitor" . (Manager_monitorCount != 1 ? "s" . "") . ".", 0)
   Loop, % Manager_monitorCount
   {
+    Sleep, % Config_shellMsgDelay
     Monitor_init(A_Index, doRestore)
   }
   Bar_initCmdGui()
