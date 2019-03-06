@@ -241,7 +241,7 @@ Window_minimize(wndId) {
 }
 
 Window_move(wndId, x, y, width, height) {
-  Local wndMinMax, WM_ENTERSIZEMOVE, WM_EXITSIZEMOVE
+  Local wndClass, wndMinMax, WM_ENTERSIZEMOVE, WM_EXITSIZEMOVE
   Local wndH, wndW, wndX, wndY
   
   ;; Check, if the window has already the given position and size and no action is required.
@@ -259,11 +259,14 @@ Window_move(wndId, x, y, width, height) {
 
   WM_ENTERSIZEMOVE = 0x0231
   WM_EXITSIZEMOVE  = 0x0232
-  SendMessage, WM_ENTERSIZEMOVE, , , , ahk_id %wndId%
   If ErrorLevel {
     Debug_logMessage("DEBUG[2] Window_move: Potentially hung window " . wndId, 1)
     Return, 1
   } Else {
+    WinGetClass, wndClass, ahk_id %wndId%
+    If (wndClass != "mintty") {
+      SendMessage, WM_ENTERSIZEMOVE, , , , ahk_id %wndId%
+    }
     WinMove, ahk_id %wndId%, , %x%, %y%, %width%, %height%
     
     ;If Not (wndMinMax = 1) Or Not Window_#%wndId%_isDecorated Or Manager_windowNotMaximized(width, height) {
