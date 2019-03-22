@@ -263,12 +263,13 @@ Window_move(wndId, x, y, width, height) {
     Debug_logMessage("DEBUG[2] Window_move: Potentially hung window " . wndId, 1)
     Return, 1
   } Else {
-    WinGetClass, wndClass, ahk_id %wndId%
-    If (wndClass != "mintty") {
-      SendMessage, WM_ENTERSIZEMOVE, , , , ahk_id %wndId%
-    }
+    SendMessage, WM_ENTERSIZEMOVE, , , , ahk_id %wndId%
     WinMove, ahk_id %wndId%, , %x%, %y%, %width%, %height%
     
+    WinGetClass, wndClass, ahk_id %wndId%
+    If (wndClass == "mintty") {
+      Sleep, % Config_shellMsgDelay
+    }
     ;If Not (wndMinMax = 1) Or Not Window_#%wndId%_isDecorated Or Manager_windowNotMaximized(width, height) {
       If Window_getPosEx(wndId, wndX, wndY, wndW, wndH) And (Abs(wndX - x) > 1 Or Abs(wndY - y) > 1 Or Abs(wndW - width) > 1 Or Abs(wndH - height) > 1) {
         x -= wndX - x
