@@ -38,12 +38,15 @@ Manager_init()
     doRestore := 1
   }
 
+  mmngr1 := New MonitorManager()
+  mmngr2 := ""
   SysGet, Manager_monitorCount, MonitorCount
   Debug_logMessage("DEBUG[0] Manager_init: Found " . Manager_monitorCount . " monitor" . (Manager_monitorCount != 1 ? "s" . "") . ".", 0)
   Loop, % Manager_monitorCount
   {
     Sleep, % Config_shellMsgDelay
     Monitor_init(A_Index, doRestore)
+    Debug_logMessage("DEBUG[6] MonitorW: " . Monitor_#%A_Index%_width . ", MMW1: " . mmngr1.monitors[A_Index].width . ", MM1dpiX: " . mmngr1.monitors[A_Index].dpiX . ", MM1scaleX: " . mmngr1.monitors[A_Index].scaleX, 6)
   }
   Bar_initCmdGui()
 
@@ -736,8 +739,10 @@ Manager_resetMonitorConfiguration() {
     }
   } Else {
     ;; Has the resolution of a monitor been changed?
+    mmngr2 := New MonitorManager()
     Loop, % Manager_monitorCount {
       Monitor_getWorkArea(A_Index)
+      Debug_logMessage("DEBUG[6] MonitorW: " . Monitor_#%A_Index%_width . ", MMW1: " . mmngr1.monitors[A_Index].width . ", MM1dpiX: " . mmngr1.monitors[A_Index].dpiX . ", MM1scaleX: " . mmngr1.monitors[A_Index].scaleX . ", MMW2: " . mmngr2.monitors[A_Index].width . ", MM2dpiX: " . mmngr2.monitors[A_Index].dpiX . ", MM2scaleX: " . mmngr2.monitors[A_Index].scaleX, 6)
       Bar_init(A_Index)
     }
   }

@@ -191,3 +191,4 @@ Return
 #Include Tiler.ahk
 #Include View.ahk
 #Include Window.ahk
+#Include %A_ScriptDir%\MonitorManager.ahk

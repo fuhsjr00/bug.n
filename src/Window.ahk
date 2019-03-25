@@ -271,6 +271,7 @@ Window_move(wndId, x, y, width, height) {
       Sleep, % Config_shellMsgDelay
     }
     ;If Not (wndMinMax = 1) Or Not Window_#%wndId%_isDecorated Or Manager_windowNotMaximized(width, height) {
+    If (mmngr2 == "") {
       If Window_getPosEx(wndId, wndX, wndY, wndW, wndH) And (Abs(wndX - x) > 1 Or Abs(wndY - y) > 1 Or Abs(wndW - width) > 1 Or Abs(wndH - height) > 1) {
         x -= wndX - x
         y -= wndY - y
@@ -278,7 +279,7 @@ Window_move(wndId, x, y, width, height) {
         height += height - wndH - 1
         WinMove, ahk_id %wndId%, , %x%, %y%, %width%, %height%
       }
-    ;}
+    }
     
     SendMessage, WM_EXITSIZEMOVE, , , , ahk_id %wndId%
     Return, 0
