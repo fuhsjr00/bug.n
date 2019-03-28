@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html>
+<!--
+:title:     bug.n/userinterface
+:copyright: (c) 2019 by joten <https://github.com/joten>
+:license:   GNU General Public License version 3
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+PARTICULAR PURPOSE.
+
+:bibliography:
+w3schools.com (2019) W3.CSS Templates [source code]. https://www.w3schools.com/w3css/tryw3css_templates_analytics.htm
+-->
+<head>
+  <title>bug.n</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="./assets/w3-analytics.css">
+  <link rel="stylesheet" href="./assets/font-roboto/all.css">
+  <link rel="stylesheet" href="./assets/font-awesome/all.min.css">
+  <link rel="icon" type="image/ico" href="./assets/logo.ico">
+  <style>
+    html, body {font-family: "Roboto Condensed", sans-serif}
+    h1, h2, h3, h4, h5, h6 {font-family: "Roboto Slab", serif}
+    .w3-bar-item {line-height: 100%;}
+    .w3-main {margin-top: 30px;}
+    #bug-n-bar {z-index: 4; overflow: hidden;}
+    #bug-n-shebang        {font-weight: bold;}
+    /*#bug-n-system-time    {background-color: #000;}
+    #bug-n-system-date    {background-color: #222;}
+    #bug-n-system-battery {background-color: #333;}
+    #bug-n-system-volume  {background-color: #444;}
+    #bug-n-system-cpu     {background-color: #555;}
+    #bug-n-system-memory  {background-color: #666;}
+    #bug-n-system-storage {background-color: #777;}
+    #bug-n-system-network {background-color: #888;}*/
+    div[id$="-icon"] {cursor: pointer;}
+    div[id$="-icon"] > div > i {padding: 8px;}
+    div[id$="-icon"] > div.w3-right {padding: 2px 8px 0 0;}
+    div[id$="-icon"] > div > h4 {line-height: 1;}
+  </style>
+</head>
+<body class="w3-light-grey">
+  
+<!-- Top container -->
+<div class="w3-bar w3-top w3-black w3-medium" id="bug-n-bar">
+  <span class="w3-bar-item" id="bug-n-monitor-indicator"><i class="fa fa-desktop"></i>&nbsp;<span>?</span></span>
+  <span class="w3-bar-item" id="bug-n-desktop-indicator"><i class="fa fa-layer-group"></i>&nbsp;<span>?</span></span>
+  <span class="w3-bar-item" id="bug-n-views-indicator"  ><i class="fa fa-object-group"></i>&nbsp;<span>?</span></span>
+  <span class="w3-bar-item" id="bug-n-layout-indicator" ><i class="fa fa-th-large"></i>&nbsp;<span>??????</span></span>
+  <span class="w3-bar-item w3-hide-small w3-hide-medium" id="bug-n-window-indicator"><span>?</span></span>
+  <span class="w3-bar-item w3-right"               id="bug-n-shebang"       ><i class="fa fa-hashtag"     ></i>&nbsp;<span>!</span></span>
+  <span class="w3-bar-item w3-right"               id="bug-n-system-time"   ><i class="fa fa-clock"       ></i>&nbsp;<span>??:??</span></span>
+  <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-date"   ><i class="fa fa-calendar"    ></i>&nbsp;<span>??, ??. ???. ????</span></span>
+  <span class="w3-bar-item w3-right w3-hide-small" id="bug-n-system-volume" ><i class="fa fa-volume-down" ></i>&nbsp;<span>???%</span></span>
+  <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-cpu"    ><i class="fa fa-microchip"></i>&nbsp;<span>???%</span></span>
+  <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-memory" ><i class="fa fa-memory"   ></i>&nbsp;<span>???%</span></span>
+  <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-storage"><i class="fa fa-hdd"      ></i>&nbsp;
+    <i class="fa fa-angle-down"></i>&nbsp;<span>???%</span>
+    <i class="fa fa-angle-up"  ></i>&nbsp;<span>???%</span>
+  </span>
+  <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-network"><i class="fa fa-network-wired"></i>&nbsp;
+    <i class="fa fa-angle-down"></i>&nbsp;<span>???B/s</span>
+    <i class="fa fa-angle-up"  ></i>&nbsp;<span>???B/s</span>
+  </span>
+  <span class="w3-bar-item w3-right"               id="bug-n-system-battery"><i class="fa fa-battery-half"></i>&nbsp;<span>???%</span></span>
+</div>
+<!-- <div class="w3-bar w3-top w3-black w3-large" id="bug-n-bar">
+  <span class="w3-bar-item"><i class="fa fa-cog"></i></span>
+  <span class="w3-bar-item" id="bug-n-index">?</span>
+  <span class="w3-bar-item w3-right"               id="bug-n-system-time"   ><i class="fa fa-clock"       ></i>&nbsp;<span>??:??</span></span>
+  <span class="w3-bar-item w3-right w3-hide-small" id="bug-n-system-date"   ><i class="fa fa-calendar"    ></i>&nbsp;<span>??, ??. ???. ????</span></span>
+  <span class="w3-bar-item w3-right"               id="bug-n-system-battery"><i class="fa fa-battery-half"></i>&nbsp;<span>???%</span></span> -->
+                                                                          <!-- plug/ battery-empty/ quarter/ half/ /three-quartes/ full -->
+  <!-- <span class="w3-bar-item w3-right w3-hide-small" id="bug-n-system-volume" ><i class="fa fa-volume-down" ></i>&nbsp;<span>???%</span></span> -->
+                                                                          <!-- volume-mute/ off/ down/ up -->
+  <!-- <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-cpu"    ><i class="fa fa-microchip"></i>&nbsp;<span>???%</span></span>
+  <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-memory" ><i class="fa fa-memory"   ></i>&nbsp;<span>???%</span></span>
+  <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-storage"><i class="fa fa-hdd"      ></i>&nbsp;
+    <i class="fa fa-angle-down"></i>&nbsp;<span>???%</span>
+    <i class="fa fa-angle-up"  ></i>&nbsp;<span>???%</span>
+  </span>
+  <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-network"><i class="fa fa-network-wired"></i>&nbsp;
+    <i class="fa fa-angle-down"></i>&nbsp;<span>???B/s</span>
+    <i class="fa fa-angle-up"  ></i>&nbsp;<span>???B/s</span>
+  </span>
+</div> -->
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main">
+
+  <!-- Header
+  <header class="w3-container" style="padding-top:22px">
+    <h5><b><i class="fa fa-???"></i> ???</b></h5>
+  </header>
+  -->
+  
+  <div class="w3-row">
+    <div class="w3-half">
+      <div class="w3-col l4 m4 w3-blue" id="bug-n-monitors-icon">
+        <div class="w3-left"><i class="fa fa-desktop w3-xlarge"></i></div>
+        <div class="w3-right w3-xlarge">?</div>
+        <div class="w3-clear w3-center"><h4>Monitors</h4></div>
+      </div>
+      <div class="w3-col l4 m4 w3-teal" id="bug-n-desktops-icon">
+        <div class="w3-left"><i class="fa fa-layer-group w3-xlarge"></i></div>
+        <div class="w3-right w3-xlarge">?</div>
+        <div class="w3-clear w3-center"><h4>Desktops</h4></div>
+      </div>
+      <div class="w3-col l4 m4 w3-light-green w3-text-white" id="bug-n-windows-icon">
+        <div class="w3-left"><i class="fa fa-window-restore w3-xlarge"></i></div>
+        <div class="w3-right w3-xlarge">?</div>
+        <div class="w3-clear w3-center"><h4>Windows</h4></div>
+      </div>
+    </div>
+    <div class="w3-half">
+      <div class="w3-col l4 m4 w3-lime w3-text-white" id="bug-n-messages-icon">
+        <div class="w3-left"><i class="fa fa-ellipsis-v w3-xlarge"></i></div>
+        <div class="w3-right w3-xlarge">?</div>
+        <div class="w3-clear w3-center"><h4>Messages</h4></div>
+      </div>
+      <!--<div class="w3-col l4 m4 w3-amber w3-text-white" id="bug-n-work-areas-icon">
+        <div class="w3-left"><i class="fa fa-window-maximize w3-xlarge"></i></div>
+        <div class="w3-right w3-xlarge">0</div>
+        <div class="w3-clear w3-center"><h4>Work<br/> Areas</h4></div>
+      </div>-->
+      <div class="w3-col l4 m4 w3-orange w3-text-white" id="bug-n-views-icon">
+        <div class="w3-left"><i class="fa fa-object-group w3-xlarge"></i></div>
+        <div class="w3-right w3-xlarge">?</div>
+        <div class="w3-clear w3-center"><h4>Views</h4></div>
+      </div>
+      <div class="w3-col l4 m4 w3-deep-orange" id="bug-n-log-icon">
+        <div class="w3-left"><i class="fa fa-scroll w3-xlarge"></i></div>
+        <div class="w3-right w3-xlarge">?</div>
+        <div class="w3-clear w3-center"><h4>Log</h4></div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="w3-container" id="bug-n-monitors-view">
+    <h3><i class="fa fa-desktop w3-text-blue w3-margin-left w3-margin-right"></i>Monitors</h3>
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+      <thead><tr><th>Index</th><th>Name</th><th>x-Coordinate</th><th>y-Coordinate</th><th>Width</th><th>Height</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="w3-container" id="bug-n-desktops-view">
+    <h3><i class="fa fa-layer-group w3-text-teal w3-margin-left w3-margin-right"></i>Desktops</h3>
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+      <thead><tr><th>Index</th><th>GUID</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="w3-container" id="bug-n-windows-view">
+    <h3><i class="fa fa-window-restore w3-text-light-green w3-margin-left w3-margin-right"></i>Windows</h3>
+    <input class="w3-input w3-border w3-padding" type="text" placeholder="Search filter" onkeyup="filterTable('bug-n-windows-view')">
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+      <thead><tr><th>Id</th><th>Class</th><th>Title</th><th>Process Name</th><th>Style</th><th>ExStyle</th><th>Min/ Max</th><th>x-Coordinate</th><th>y-Coordinate</th><th>Width</th><th>Height</th><th>View</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="w3-container" id="bug-n-messages-view">
+    <h3><i class="fa fa-ellipsis-v w3-text-lime w3-margin-left w3-margin-right"></i>Messages</h3>
+    <input class="w3-input w3-border w3-padding" type="text" placeholder="Search filter" onkeyup="filterTable('bug-n-messages-view')">
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+      <thead><tr><th>Timestanmp</th><th>Message</th><th>Number</th><th>Window Id</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  
+  <!--<div class="w3-container" id="bug-n-work-areas-view">
+    <h3><i class="fa fa-window-maximize w3-text-amber w3-margin-left w3-margin-right"></i>Work Areas</h3>
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+      <thead><tr><th>Index</th><th>x-Coordinate</th><th>y-Coordinate</th><th>Width</th><th>Height</th><th>Virtual Desktop</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>-->
+  <div class="w3-container" id="bug-n-views-view">
+    <h3><i class="fa fa-object-group w3-text-orange w3-margin-left w3-margin-right"></i>Views</h3>
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+      <thead><tr><th>Index</th><th>Name</th><th>Monitor</th><th>Desktop</th><th>x-Coordinate</th><th>y-Coordinate</th><th>Width</th><th>Height</th><th>Layout</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <div class="w3-container" id="bug-n-log-view">
+    <h3><i class="fa fa-scroll w3-text-deep-orange w3-margin-left w3-margin-right"></i>Log</h3>
+    <input class="w3-input w3-border w3-padding" type="text" placeholder="Search filter" onkeyup="filterTable('bug-n-log-entries-view')">
+    <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+      <thead><tr><th>Timestanmp</th><th>Level</th><th>Source</th><th>Message</th></tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  
+  <div class="w3-row-padding w3-margin-bottom">
+  </div>
+
+  <!-- Footer -->
+  <footer class="w3-container w3-padding-16 w3-light-grey">
+    <p><img class="w3-left" src="./assets/logo.ico" width="28px" />Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+  </footer>
+
+  <!-- End page content -->
+</div>
+
+<script>
+function filterTable(id) {
+  var column, container, input, filter, table, tr, td, i;
+  container = document.getElementById(id);
+  input = container.getElementsByTagName("input")[0];
+  filter = input.value.toUpperCase();
+  i = filter.indexOf(":");
+  column = 0;
+  if (i > -1) {
+    column = parseInt(filter.substring(0, i)) - 1;
+    filter = filter.substring(i + 1);
+  }
+  table = container.getElementsByTagName("table")[0];
+  tr = table.getElementsByTagName("tr");
+  for (i = 0; i < tr.length; i++) {
+    td = tr[i].getElementsByTagName("td")[column];
+    if (td) {
+      txtValue = td.textContent || td.innerText;
+      if (txtValue.toUpperCase().indexOf(filter) > -1) {
+        tr[i].style.display = "";
+      } else {
+        tr[i].style.display = "none";
+      }
+    }
+  }
+}
+
+var subIds = ["monitors", "desktops", "windows", "messages", "views", "log"];
+for (var i = 0; i < subIds.length; i++) {
+  document.getElementById("bug-n-" + subIds[i] + "-icon").onclick = function() {
+    var subId = this.id.substring(6, this.id.indexOf("-icon"));
+    for (var j = 0; j < subIds.length; j++) {
+      if (subIds[j] !== subId) {
+        document.getElementById("bug-n-" + subIds[j] + "-view").className = "w3-container w3-hide";
+      } else {
+        document.getElementById("bug-n-" + subIds[j] + "-view").className = "w3-container w3-show";
+      }
+    }
+  };
+}
+</script>
+
+</body>
+</html>
