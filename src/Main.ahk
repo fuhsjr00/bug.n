@@ -194,3 +194,4 @@ Return
 #Include Window.ahk
 #Include %A_ScriptDir%\logging.ahk
 #Include %A_ScriptDir%\monitormanager.ahk
+#Include %A_ScriptDir%\virtualdesktopmanager.ahk
