@@ -191,9 +191,10 @@ Return
 #Include ResourceMonitor.ahk
 #Include Tiler.ahk
 #Include View.ahk
-#Include Window.ahk
+#Include Windows.ahk
 #Include %A_ScriptDir%\logging.ahk
 #Include %A_ScriptDir%\monitormanager.ahk
 #Include %A_ScriptDir%\system.ahk
 #Include %A_ScriptDir%\userinterface.ahk
 #Include %A_ScriptDir%\virtualdesktopmanager.ahk
+#Include %A_ScriptDir%\window.ahk
