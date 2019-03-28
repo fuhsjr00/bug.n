@@ -28,6 +28,7 @@ SetWinDelay, 10
 #WinActivateForce
 
 ;; Pseudo main function
+  logger := New Logging()
   Main_appDir := ""
   If 0 = 1
     Main_appDir = %1%
@@ -191,4 +192,5 @@ Return
 #Include Tiler.ahk
 #Include View.ahk
 #Include Window.ahk
-#Include %A_ScriptDir%\MonitorManager.ahk
+#Include %A_ScriptDir%\logging.ahk
+#Include %A_ScriptDir%\monitormanager.ahk
