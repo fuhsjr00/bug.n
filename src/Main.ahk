@@ -24,7 +24,7 @@ SetTitleMatchMode, fast
 SetWinDelay, 10
 #NoEnv
 #SingleInstance force
-;#Warn                         ; Enable warnings to assist with detecting common errors.
+#Warn                         ; Enable warnings to assist with detecting common errors.
 #WinActivateForce
 
 ;; Pseudo main function
