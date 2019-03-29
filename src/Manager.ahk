@@ -49,6 +49,7 @@ Manager_init()
     Debug_logMessage("DEBUG[6] MonitorW: " . Monitor_#%A_Index%_width . ", MMW1: " . mmngr1.monitors[A_Index].width . ", MM1dpiX: " . mmngr1.monitors[A_Index].dpiX . ", MM1scaleX: " . mmngr1.monitors[A_Index].scaleX, 6)
   }
   Bar_initCmdGui()
+  vdmngr := New VirtualDesktopManager(Func("Manager_onTaskbarCreated"))
 
   Manager_hideShow      := False
   Bar_hideTitleWndIds   := ""
@@ -67,6 +68,13 @@ Manager_init()
   Manager_registerShellHook()
   SetTimer, Manager_doMaintenance, %Config_maintenanceInterval%
   SetTimer, Bar_loop, %Config_readinInterval%
+}
+
+Manager_onTaskbarCreated() {
+  Global logger
+  
+  logger.warning("Window message WM_TASKBARCREATED received.", "Manager_onTaskbarCreated")
+  ;; Reload?
 }
 
 Manager_activateMonitor(i, d = 0) {
