@@ -13,7 +13,7 @@
   @version 9.0.2
 */
 
-NAME  := "bug.n"
+;; bug.n
 VERSION := "9.0.2-a"
 
 ;; Script settings
@@ -41,7 +41,7 @@ SetWinDelay, 10
   Config_filePath := Main_appDir "\Config.ini"
   Config_init()
 
-  Menu, Tray, Tip, %NAME% %VERSION%
+  Menu, Tray, Tip, bug.n %VERSION%
   If A_IsCompiled
     Menu, Tray, Icon, %A_ScriptFullPath%, -159
   If FileExist(A_ScriptDir . "\logo.ico")

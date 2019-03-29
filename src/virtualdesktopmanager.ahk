@@ -17,38 +17,6 @@ PARTICULAR PURPOSE.
 */
 
 /*
-; internal interface IVirtualDesktopManagerInternal   https://sourceforge.net/p/virtual-desktop-grid-switcher/src/ci/d85ff70ced929d161bd45d10a47ebb0c0f2a1f68/tree/VirtualDesktop-master/source/VirtualDesktop/Interop/IVirtualDesktopManagerInternal.cs#l71
-; IVirtualDesktopManager interface                    https://docs.microsoft.com/en-us/windows/desktop/api/shobjidl_core/nn-shobjidl_core-ivirtualdesktopmanager
-; IObjectArray                                        https://docs.microsoft.com/en-us/windows/desktop/api/objectarray/nn-objectarray-iobjectarray
-
-CLSID_ImmersiveShell                    Guid("C2F03A33-21F5-47FA-B4BB-156362A2F239")
-CLSID_VirtualDesktopManagerInternal     Guid("C5E0CDCA-7B6E-41B2-9FC4-D93975CC467B")
-CLSID_VirtualDesktopManager             Guid("AA509086-5CA9-4C25-8F95-589D3C07B48A")
-
-IVirtualDesktop Guid("FF72FFDD-BE7E-43FC-9C03-AD81681E88E4")
-- bool            IsViewVisible(        IApplicationView view);
-+ Guid            GetId();
-
-IVirtualDesktopManagerInternal          Guid("C5E0CDCA-7B6E-41B2-9FC4-D93975CC467B"), Guid("F31574D6-B682-4CDC-BD56-1827860ABEC6")
-- int             GetCount();
-- void            MoveViewToDesktop(    IApplicationView view, IVirtualDesktop desktop);
-- bool            CanViewMoveDesktops(  IApplicationView view);
-+ IVirtualDesktop GetCurrentDesktop();
-+ void            GetDesktops(          out IObjectArray desktops);
-- int             GetAdjacentDesktop(   IVirtualDesktop from, int direction, out IVirtualDesktop desktop);
-+ void            SwitchDesktop(        IVirtualDesktop desktop);
-+ IVirtualDesktop CreateDesktop();
-+ void            RemoveDesktop(        IVirtualDesktop desktop, IVirtualDesktop fallback);
-- IVirtualDesktop FindDesktop(          ref Guid desktopid);
-
-IVirtualDesktopManager                  Guid("A5CD92FF-29BE-454C-8D04-D82879FB3F1B")
-- bool IsWindowOnCurrentVirtualDesktop( IntPtr topLevelWindow)
-+ Guid            GetWindowDesktopId(   IntPtr topLevelWindow)
-- void            MoveWindowToDesktop(  IntPtr topLevelWindow, ref Guid desktopId)
-
-+ HRESULT         GetCount(             UINT *pcObjects)
-+ HRESULT         GetAt(                UINT uiIndex, REFIID riid, void **ppv)
-
 ImmersiveShell                  := ComObjCreate("{C2F03A33-21F5-47FA-B4BB-156362A2F239}", "{00000000-0000-0000-C000-000000000046}")
 IVirtualDesktopManagerInternal  := ComObjQuery(ImmersiveShell,   "{C5E0CDCA-7B6E-41B2-9FC4-D93975CC467B}", "{AF8DA486-95BB-4460-B3B7-6E7A6B2962B5}")
 IServiceProvider                := ComObjCreate("{C2F03A33-21F5-47FA-B4BB-156362A2F239}", "{6D5140C1-7436-11CE-8034-00AA006009FA}")
@@ -146,15 +114,15 @@ class VirtualDesktopManager {
     IGetDesktops  := NumGet(NumGet(this.IVirtualDesktopManagerInternal + 0) +  7 * A_PtrSize)
     DllCall(IGetDesktops, "UPtr", this.IVirtualDesktopManagerInternal, "UPtrP", IObjectArray, "UInt")
     
-    count := 0
+    n := 0
     IGetCount := NumGet(NumGet(IObjectArray + 0) + 3 * A_PtrSize)
-    DllCall(IGetCount, "UPtr", IObjectArray, "UIntP", count, "UInt")
-    logger.info(count . " desktop" . (count == 1 ? "" : "s") . " found.", "VirtualDesktopManager.getDesktops")
+    DllCall(IGetCount, "UPtr", IObjectArray, "UIntP", n, "UInt")
+    logger.info(n . " desktop" . (n == 1 ? "" : "s") . " found.", "VirtualDesktopManager.getDesktops")
     
     IVirtualDesktop := 0
     VarSetCapacity(GUID, 16)
     VarSetCapacity(strGUID, (38 + 1) * 2)
-    Loop % count {
+    Loop % n {
         ; https://github.com/nullpo-head/Windows-10-Virtual-Desktop-Switching-Shortcut/blob/master/VirtualDesktopSwitcher/VirtualDesktopSwitcher/VirtualDesktops.h
         DllCall("Ole32.dll\CLSIDFromString", "Str", "{FF72FFDD-BE7E-43FC-9C03-AD81681E88E4}", "UPtr", &GUID)
         IGetAt := NumGet(NumGet(IObjectArray + 0) + 4 * A_PtrSize)
