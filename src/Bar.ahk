@@ -1,6 +1,6 @@
 /*
   bug.n -- tiling window management
-  Copyright (c) 2010-2018 Joshua Fuhs, joten
+  Copyright (c) 2010-2019 Joshua Fuhs, joten
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -447,7 +447,7 @@ Bar_updateStatus() {
     }
     If Config_readinDate {
       FormatTime, time, , % Config_readinDateFormat
-      GuiControl, , Bar_#%m%_date, % time 
+      GuiControl, , Bar_#%m%_date, % time
     }
     If Config_readinTime {
       FormatTime, time, , % Config_readinTimeFormat

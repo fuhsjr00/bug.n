@@ -9,10 +9,13 @@
 ### 9.0.2
 
 1. `+` Added a function and corresponding hotkey to reset the tile layout of the current view.
+2. `~` Enhanced the function `View_activateWindow` with the possibility to use absolute values.
+3. `~` Added more options for the configuration variable `Config_monitorDisplayChangeMessages`.
 
 |  # | `-` or `~` Configuration Variables or <br/> `-` Hotkey Functions | `+` Configuration Variables or <br/> `+` Hotkey Functions |
 | --:| ---------------------------------------------------------------- | --------------------------------------------------------- |
 | 1. |                                                                  | `#^Backspace::View_resetTileLayout()`                     |
+| 3. | `Config_monitorDisplayChangeMessages`                            |                                                           |
 
 ### 9.0.1
 
