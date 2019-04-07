@@ -1,6 +1,6 @@
 /*
   bug.n -- tiling window management
-  Copyright (c) 2010-2018 Joshua Fuhs, joten
+  Copyright (c) 2010-2019 Joshua Fuhs, joten
 
   This program is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of

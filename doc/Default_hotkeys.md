@@ -23,6 +23,11 @@ left 'Windows key' and the 'Control key' and the 'Q key'
 
 _Activate_ the _next_ window in the active view.
 
+> You may also activate a window on an absolute position in the window list by
+using the first parameter; e.g `View_activateWindow(1)` activates the first
+window, which is the window in the master area, if you are using the default
+settings for the tile layout.
+
 -------------------------------------------------------------------------------
 `Config_hotkey=#Up::View_activateWindow(0, -1)`
 
@@ -36,13 +41,13 @@ _Move_ the active window _to the next position_ in the window list of the view.
 -------------------------------------------------------------------------------
 `Config_hotkey=#+Up::View_shuffleWindow(0, -1)`
 
-_Move_ the active window _to the previous position_ in the window list of the 
+_Move_ the active window _to the previous position_ in the window list of the
 view.
 
 -------------------------------------------------------------------------------
 `Config_hotkey=#+Enter::View_shuffleWindow(1)`
 
-_Move_ the active window _to the first position_ in the window list of the 
+_Move_ the active window _to the first position_ in the window list of the
 view.
 
 > You may also move the active window to any other absolute position in the
@@ -63,7 +68,7 @@ _Show / Hide the title bar_ of the active window.
 
 _Toggle_ the _floating status_ of the active window.
 
-> The floating status effects the tiling of the active window (i.e. dis- / 
+> The floating status effects the tiling of the active window (i.e. dis- /
 regard it).
 
 -------------------------------------------------------------------------------
@@ -99,7 +104,7 @@ _Move and resize_ the active window _to_ the size of the _work area_.
 
 Get information for the active window.
 
-> The information being id, title, class, process name, style, geometry, tags 
+> The information being id, title, class, process name, style, geometry, tags
 and floating state.
 
 -------------------------------------------------------------------------------
@@ -121,7 +126,7 @@ Manually _move_ the active window _to the next area_ in the layout.
 
 Manually _move_ the active window _to the previous area_ in the layout.
 
-> This has only an effect, if dynamic tiling is disabled 
+> This has only an effect, if dynamic tiling is disabled
 (`Config_dynamicTiling=0`).
 
 -------------------------------------------------------------------------------
@@ -134,16 +139,16 @@ _Move and resize_ the active window _to_ the size of the _work area_.
 -------------------------------------------------------------------------------
 `Config_hotkey=!<n>::View_moveWindow(<n>)`
 
-Manually _move_ the active window _to the n<sup><small>th</small></sup> area_ 
+Manually _move_ the active window _to the n<sup><small>th</small></sup> area_
 in the layout.
 
-> &lt;n&gt; can be an integer between 1 and 9. This has only an effect, if 
+> &lt;n&gt; can be an integer between 1 and 9. This has only an effect, if
 dynamic tiling is disabled (`Config_dynamicTiling=0`).
 
 -------------------------------------------------------------------------------
 `Config_hotkey=!BackSpace::View_toggleStackArea()`
 
-Toggle the stack area of the layout. 
+Toggle the stack area of the layout.
 
 > If the stack area is toggled off, the master area takes up the whole view and
 the stack area cannot be used to position windows.
@@ -161,7 +166,7 @@ _Dump_ window information on the _windows of the active view_ to the log.
 
 _Dump_ window information on the _managed windows_ to the log.
 
-> The list of managed windows contains the floating and tiled windows of all 
+> The list of managed windows contains the floating and tiled windows of all
 views.
 
 -------------------------------------------------------------------------------
@@ -175,26 +180,26 @@ two hotkeys being `Manager_logViewWindowList` and `Manager_logManagedWindowList`
 -------------------------------------------------------------------------------
 `Config_hotkey=#^d::Debug_setLogLevel(0, -1)`
 
-Decrement the debug log level. 
+Decrement the debug log level.
 
-> This results in showing fewer debug messages. You may also set the debug log 
+> This results in showing fewer debug messages. You may also set the debug log
 level to an absolute value by using the first parameter.
 
 -------------------------------------------------------------------------------
 `Config_hotkey=#^+d::Debug_setLogLevel(0, +1)`
 
-Increment the debug log level. 
+Increment the debug log level.
 
-> This results in showing more debug messages. You may also set the debug log 
+> This results in showing more debug messages. You may also set the debug log
 level to an absolute value by using the first parameter.
 
 ### Layout management
 
 `Config_hotkey=#Tab::View_setLayout(-1)`
 
-Set the _previous_-ly set _layout_. 
+Set the _previous_-ly set _layout_.
 
-> You may also use `View_setLayout(0, +1)` for setting the next or 
+> You may also use `View_setLayout(0, +1)` for setting the next or
 `View_setLayout(0, -1)` for setting the previous layout in the layout array.
 
 -------------------------------------------------------------------------------
@@ -219,9 +224,9 @@ _Reduce_ the size of _the master area_ in the active view.
 
 > This has only an effect, if the tile layout is active.
 
-> You may also set an additional parameter for accelerating the third one. E.g. 
-with `Config_hotkey=#Left::View_setLayoutProperty(MFactor, 0, -0.05, 2)` the 
-first step, by which the master area is reduced, is -0.0016% and will be 
+> You may also set an additional parameter for accelerating the third one. E.g.
+with `Config_hotkey=#Left::View_setLayoutProperty(MFactor, 0, -0.05, 2)` the
+first step, by which the master area is reduced, is -0.0016% and will be
 doubled with consecutive calls until it reaches -0.05%.
 With the second parameter you may set an absolute value, e.g.
 `View_setLayoutProperty(MFactor, 0.5, 0)` splits the view in half.
@@ -233,7 +238,7 @@ _Enlarge_ the size of _the master area_ in the active view.
 
 > This has only an effect, if the tile layout is active.
 
-> You may also set a additional parameter for accelerating the third one. E.g. 
+> You may also set a additional parameter for accelerating the third one. E.g.
 with `Config_hotkey=#Right::View_setLayoutProperty(MFactor, 0, +0.05, 0.5)` the
 first step, by which the master area is reduced, is 0.05%, but with consecutive
 calls it will be halved until it reaches 0.0016%.
@@ -255,7 +260,7 @@ Rotate the layout axis.
 
 Mirror the layout axis.
 
-> I.e. -1 -> 1 / 1 -> -1 = master on the left / right side, 
+> I.e. -1 -> 1 / 1 -> -1 = master on the left / right side,
 -2 -> 2 / 2 -> -2 = master at top / bottom.
 
 > This has only an effect, if the tile layout is active.
@@ -265,7 +270,7 @@ Mirror the layout axis.
 
 Rotate the master axis.
 
-> I.e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 = y-axis = vertical stack, 
+> I.e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 = y-axis = vertical stack,
 2 -> 3 = z-axis = monocle.
 
 > This has only an effect, if the tile layout is active.
@@ -275,7 +280,7 @@ Rotate the master axis.
 
 Rotate the stack axis.
 
-> I.e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 = y-axis = vertical stack, 
+> I.e. 3 -> 1 = x-axis = horizontal stack, 1 -> 2 = y-axis = vertical stack,
 2 -> 3 = z-axis = monocle.
 
 > This has only an effect, if the tile layout is active.
@@ -285,7 +290,7 @@ Rotate the stack axis.
 
 Increase the master Y dimension.
 
-> This results in an increased number of windows in the master area by X. 
+> This results in an increased number of windows in the master area by X.
 Maximum of 9.
 
 > This has only an effect, if the tile layout is active.
@@ -295,7 +300,7 @@ Maximum of 9.
 
 Decrease the master Y dimension.
 
-> This results in a decreased number of windows in the master area by X. 
+> This results in a decreased number of windows in the master area by X.
 Minimum of 1.
 
 > This has only an effect, if the tile layout is active.
@@ -305,7 +310,7 @@ Minimum of 1.
 
 Increase the master X dimension.
 
-> This results in an increased number of windows in the master area by Y. 
+> This results in an increased number of windows in the master area by Y.
 Maximum of 9.
 
 > This has only an effect, if the tile layout is active.
@@ -315,7 +320,7 @@ Maximum of 9.
 
 Decrease the master X dimension.
 
-> This results in a decreased number of windows in the master area by Y. 
+> This results in a decreased number of windows in the master area by Y.
 Minimum of 1.
 
 > This has only an effect, if the tile layout is active.
@@ -323,10 +328,10 @@ Minimum of 1.
 -------------------------------------------------------------------------------
 `Config_hotkey=#+Left::View_setLayoutProperty(GapWidth, 0, -2)`
 
-_Decrease the gap between windows_ in "monocle" and "tile" layout. 
+_Decrease the gap between windows_ in "monocle" and "tile" layout.
 
-> You may also set an absolute value for the gap width by using the first 
-parameter, e.g. `View_setLayoutProperty(GapWidth, 0, 0)` will eliminate the 
+> You may also set an absolute value for the gap width by using the first
+parameter, e.g. `View_setLayoutProperty(GapWidth, 0, 0)` will eliminate the
 gap and `View_setLayoutProperty(GapWidth, 20, 0)` will set it to 20px.
 
 -------------------------------------------------------------------------------
@@ -339,7 +344,7 @@ _Increase the gap between windows_ in "monocle" and "tile" layout.
 
 _Reset the tile layout_.
 
-> This resets the layout and tile layout properties of the currently active 
+> This resets the layout and tile layout properties of the currently active
 view to the initial (default) values.
 
 ### View / Tag management
@@ -353,15 +358,15 @@ Toggle the view margins.
 -------------------------------------------------------------------------------
 `Config_hotkey=#BackSpace::Monitor_activateView(-1)`
 
-Activate the previously activated view. 
+Activate the previously activated view.
 
-> You may also use `Monitor_activateView(0, -1)` or `Monitor_activateView(0, +1)` 
+> You may also use `Monitor_activateView(0, -1)` or `Monitor_activateView(0, +1)`
 for activating the previous or next adjacent view.
 
 -------------------------------------------------------------------------------
 `Config_hotkey=#+0::Monitor_setWindowTag(10)`
 
-Tag the active window with all tags. 
+Tag the active window with all tags.
 
 -------------------------------------------------------------------------------
 `Config_hotkey=#<n>::Monitor_activateView(<n>)`
@@ -377,7 +382,7 @@ Tag the active window with the n<sup><small>th</small></sup> tag.
 
 > &lt;n&gt; can be an integer between 1 and `Config_viewCount`.
 
-> You may also use `Monitor_setWindowTag(0, -1)` or `Monitor_setWindowTag(0, +1)` 
+> You may also use `Monitor_setWindowTag(0, -1)` or `Monitor_setWindowTag(0, +1)`
 for setting the tag of the previous or next adjacent to the current view.
 
 -------------------------------------------------------------------------------
@@ -392,7 +397,7 @@ is not / is already set.
 
 `Config_hotkey=#.::Manager_activateMonitor(0, +1)`
 
-Activate the _next monitor_ in a multi-monitor environment. 
+Activate the _next monitor_ in a multi-monitor environment.
 
 > You may also activate a specific monitor by using the first parameter, e.g.
 `Manager_activateMonitor(1)` will activate the first monitor.
@@ -406,32 +411,32 @@ Activate the _previous monitor_ in a multi-monitor environment.
 `Config_hotkey=#+.::Manager_setWindowMonitor(0, +1)`
 
 _Set_ the active window's view _to_ the active view on _the next monitor_ in a
-multi-monitor environment. 
+multi-monitor environment.
 
-> You may also set the active window on a specific monitor by using the first 
-parameter, e.g. `Manager_setWindowMonitor(1)` will set the active window on 
+> You may also set the active window on a specific monitor by using the first
+parameter, e.g. `Manager_setWindowMonitor(1)` will set the active window on
 the first monitor.
 
 -------------------------------------------------------------------------------
 `Config_hotkey=#+,::Manager_setWindowMonitor(0, -1)`
 
-_Set_ the active window's view _to_ the active view on _the previous monitor_ 
+_Set_ the active window's view _to_ the active view on _the previous monitor_
 in a multi-monitor environment.
 
 -------------------------------------------------------------------------------
 `Config_hotkey=#^+.::Manager_setViewMonitor(0, +1)`
 
 _Set all windows_ of the active view _on_ the active view of _the next monitor_
-in a multi-monitor environment. 
+in a multi-monitor environment.
 
-> You may also set all windows of the active view on a specific monitor by 
-using the first parameter, e.g. `Manager_setViewMonitor(1)` will set all 
+> You may also set all windows of the active view on a specific monitor by
+using the first parameter, e.g. `Manager_setViewMonitor(1)` will set all
 windows of the active view on the first monitor.
 
 -------------------------------------------------------------------------------
 `Config_hotkey=#^+,::Manager_setViewMonitor(0, -1)`
 
-_Set all windows_ of the active view _on_ the active view of 
+_Set all windows_ of the active view _on_ the active view of
 _the previous monitor_ in a multi-monitor environment.
 
 ### GUI management
@@ -464,9 +469,9 @@ Indicate the areas of the "tile" layout.
 
 `Config_hotkey=#^e::Run, edit <Config_filePath>`
 
-Open the configuration file in the standard text editor. 
+Open the configuration file in the standard text editor.
 
-> If you want to set this hotkey in `Config.ini`, you have to replace 
+> If you want to set this hotkey in `Config.ini`, you have to replace
 `<Config_filePath>` with an explicit file path.
 
 -------------------------------------------------------------------------------
@@ -479,7 +484,7 @@ _Save the current state_ of monitors, views, layouts to the configuration file.
 
 _Reload_ bug.n (i.e. the whole script).
 
-> This resets i.a. the configuration and internal variables of bug.n, 
+> This resets i.a. the configuration and internal variables of bug.n,
 including the window lists. It is like Quitting and restarting bug.n.
 If `Config_autoSaveSession` is not set to `off`, the window lists can be
 restored and windows are put to their associated monitor and views.

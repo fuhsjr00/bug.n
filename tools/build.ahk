@@ -1,7 +1,7 @@
 /*
 :title:     bug.n -- tiling window management
 :copyright: (c) 2010-2017 by Joshua Fuhs, joten <https://github.com/joten>
-:license:   GNU General Public License version 3; for more details: 
+:license:   GNU General Public License version 3; for more details:
             ../LICENSE.md or at <http://www.gnu.org/licenses/>.
 
 This program is distributed in the hope that it will be useful, but WITHOUT ANY
@@ -22,7 +22,7 @@ SetWorkingDir %A_ScriptDir%   ;; Ensures a consistent starting directory.
 
 ;; pseudo main function
   M_NAME     := "bug.n"
-  M_VERSION  := "9.0.2-a"
+  M_VERSION  := "9.0.2"
   Progress,,,, Building %M_NAME%
   M_logLevel := 5             ;; higher values mean more logging, type = int, choices = [0, 1, 2, 3, 4, 5, 6], default = 5
   
@@ -91,17 +91,22 @@ compile(source, destination, customIcon, compiler := "C:\Program Files\AutoHotke
   If (FileExist(source) && FileExist(compiler))
     RunWait, %compiler% /in %source% /icon %customIcon% /mpress %useMpress% /out %destination%
   _log.message("Compiling the script to an executable finished.", 4)
+  If (!FileExist(destination)) {
+    _log.message("**compile**: Resulting file ``" . destination . "`` does not exist.", 2)
+  }
 }
 
-createCheatSheet(source, destDir, filename := "cheat_sheet", converter := "C:\Users\joten\AppData\Local\Pandoc\pandoc.exe") {
+createCheatSheet(source, destDir, filename := "cheat_sheet", converter := "") {
   Global _log, M_NAME, M_VERSION
   
+  converter := converter != "" ? converter : A_AppData . "\..\Local\Pandoc\pandoc.exe"
   _log.message("**createCheatSheet**: Variable set, source    -> ``" . source    . "``, the file does " . (FileExist(source)    ? "" : "**not** ") . "exist.", 5)
   _log.message("**createCheatSheet**: Variable set, destDir   -> ``" . destDir   . "``, the file does " . (FileExist(destDir)   ? "" : "**not** ") . "exist.", 5)
   _log.message("**createCheatSheet**: Variable set, converter -> ``" . converter . "``, the file does " . (FileExist(converter) ? "" : "**not** ") . "exist.", 5)
   If (FileExist(source) && FileExist(destDir) && FileExist(converter)) {
     FileRead, md, %source%
     If (ErrorLevel = 0) {
+      _log.message("**createCheatSheet**: Converting source ``" . source . "`` to destination ``" . destDir . "\" . filename . ".md``.", 5)
       md := RegExReplace(md, "s)^## Default hotkeys\R\R.+\R\### Window management", "## " . M_NAME . " " . M_VERSION . " default hotkeys`r`n`r`n### Window management")
       md := StrReplace(md, "`r`n-------------------------------------------------------------------------------`r`n", "`r`n")
       md := RegExReplace(md, "s)\R>.+?\R\R", "`r`n")
@@ -116,9 +121,13 @@ createCheatSheet(source, destDir, filename := "cheat_sheet", converter := "C:\Us
       FileDelete, %destDir%\%filename%.md
       FileAppend, %md%, %destDir%\%filename%.md
     }
-    RunWait, % converter . " -o " . destDir . "\" . filename . ".html -S --section-divs -c reset.css -c cheat_sheet.css " . destDir . "\" . filename . ".md"
+    _log.message("**createCheatSheet**: Running command ``" . converter . " -s -o " . destDir . "\" . filename . ".html --section-divs -c reset.css -c cheat_sheet.css " . destDir . "\" . filename . ".md``", 5)
+    RunWait, % converter . " -s -o " . destDir . "\" . filename . ".html --section-divs -c reset.css -c cheat_sheet.css " . destDir . "\" . filename . ".md"
   }
   _log.message("Creating the cheat sheet finished.", 4)
+  If (!FileExist(destDir . "\" . filename . ".html")) {
+    _log.message("**createCheatSheet**: Resulting file ``" . destDir . "\" . filename . ".html`` does not exist.", 2)
+  }
 }
 
 IntMin(int_1, int_2) {
