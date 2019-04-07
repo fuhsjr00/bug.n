@@ -6,6 +6,10 @@
 * `~` changed
 * `+` added
 
+### 9.1.0
+
+
+
 ### 9.0.2
 
 1. `+` Added a function and corresponding hotkey to reset the tile layout of the current view.
