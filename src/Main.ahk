@@ -10,11 +10,11 @@
   @license GNU General Public License version 3
            ../LICENSE.md or <http://www.gnu.org/licenses/>
 
-  @version 9.0.2
+  @version 9.1.0
 */
 
 NAME  := "bug.n"
-VERSION := "9.0.2"
+VERSION := "9.1.0"
 
 ;; Script settings
 OnExit, Main_cleanup

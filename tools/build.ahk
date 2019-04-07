@@ -22,7 +22,7 @@ SetWorkingDir %A_ScriptDir%   ;; Ensures a consistent starting directory.
 
 ;; pseudo main function
   M_NAME     := "bug.n"
-  M_VERSION  := "9.0.2"
+  M_VERSION  := "9.1.0"
   Progress,,,, Building %M_NAME%
   M_logLevel := 5             ;; higher values mean more logging, type = int, choices = [0, 1, 2, 3, 4, 5, 6], default = 5
   
