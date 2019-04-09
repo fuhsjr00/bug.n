@@ -8,7 +8,7 @@
 
 ### 9.1.0
 
-
+1. `~` Changed the registry-based to per-monitor display scaling awareness
 
 ### 9.0.2
 
