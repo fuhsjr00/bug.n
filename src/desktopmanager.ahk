@@ -1,5 +1,5 @@
 /*
-:title:     bug.n/virtualdesktopmanager
+:title:     bug.n/desktopmanager
 :copyright: (c) 2019 by joten <https://github.com/joten>
 :license:   GNU General Public License version 3
 
@@ -41,7 +41,7 @@ GetCount                        := NumGet(NumGet(IObjectArray + 0) + 3 * A_PtrSi
 GetAt                           := NumGet(NumGet(IObjectArray + 0) + 4 * A_PtrSize)
 */
 
-class VirtualDesktopManager {
+class DesktopManager {
   __New(funcObject) {
     Global logger
     
@@ -72,6 +72,7 @@ class VirtualDesktopManager {
   createDesktop() {
     Global logger
     
+    IVirtualDesktop := ""
     ICreateDesktop := NumGet(NumGet(this.IVirtualDesktopManagerInternal + 0) + 10 * A_PtrSize)
     DllCall(ICreateDesktop, "UPtr", this.IVirtualDesktopManagerInternal, "UPtrP", IVirtualDesktop, "UInt")
     GUID := this.getDesktopId(IVirtualDesktop)
@@ -83,6 +84,7 @@ class VirtualDesktopManager {
     Global logger
     
     index := 0
+    IVirtualDesktop := ""
     IGetCurrentDesktop := NumGet(NumGet(this.IVirtualDesktopManagerInternal + 0) +  6 * A_PtrSize)
     DllCall(IGetCurrentDesktop, "UPtr", this.IVirtualDesktopManagerInternal, "UPtr", IVirtualDesktop, "UInt")
     For i, desktop in this.desktops {

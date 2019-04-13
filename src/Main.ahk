@@ -54,6 +54,8 @@ SetWinDelay, 10
 
   ResourceMonitor_init()
   Manager_init()
+  sys := New System(Config_readinDiskLoad ? [Config_readinDiskLoad] : "", Config_readinNetworkLoad ? [Config_readinNetworkLoad] : "")
+  mgr := New Manager()
   Debug_logMessage("====== Running ======", 0)
 Return          ;; end of the auto-execute section
 
@@ -65,6 +67,8 @@ Main_cleanup:
     Manager_saveState()
   Manager_cleanup()
   ResourceMonitor_cleanup()
+  mgr := ""
+  sys := ""
   Debug_logMessage("====== Exiting bug.n ======", 0)
 ExitApp
 
@@ -192,9 +196,9 @@ Return
 #Include Tiler.ahk
 #Include View.ahk
 #Include Windows.ahk
+#Include %A_ScriptDir%\desktopmanager.ahk
 #Include %A_ScriptDir%\logging.ahk
 #Include %A_ScriptDir%\monitormanager.ahk
 #Include %A_ScriptDir%\system.ahk
 #Include %A_ScriptDir%\userinterface.ahk
-#Include %A_ScriptDir%\virtualdesktopmanager.ahk
 #Include %A_ScriptDir%\window.ahk

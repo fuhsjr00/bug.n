@@ -46,7 +46,7 @@ w3schools.com (2019) W3.CSS Templates [source code]. https://www.w3schools.com/w
   
 <!-- Top container -->
 <div class="w3-bar w3-top w3-black w3-medium" id="bug-n-bar">
-  <span class="w3-bar-item" id="bug-n-monitor-indicator"><i class="fa fa-desktop"></i>&nbsp;<span>?</span></span>
+  <span class="w3-bar-item" id="bug-n-work-area-indicator"><i class="fa fa-window-maximize"></i>&nbsp;<span>?</span></span>
   <span class="w3-bar-item" id="bug-n-desktop-indicator"><i class="fa fa-layer-group"></i>&nbsp;<span>?</span></span>
   <span class="w3-bar-item" id="bug-n-views-indicator"  ><i class="fa fa-object-group"></i>&nbsp;<span>?</span></span>
   <span class="w3-bar-item" id="bug-n-layout-indicator" ><i class="fa fa-th-large"></i>&nbsp;<span>??????</span></span>
@@ -99,41 +99,41 @@ w3schools.com (2019) W3.CSS Templates [source code]. https://www.w3schools.com/w
   
   <div class="w3-row">
     <div class="w3-half">
-      <div class="w3-col l4 m4 w3-blue" id="bug-n-monitors-icon">
+      <div class="w3-col l3 m3 w3-blue" id="bug-n-monitors-icon">
         <div class="w3-left"><i class="fa fa-desktop w3-xlarge"></i></div>
-        <div class="w3-right w3-xlarge">?</div>
+        <div class="w3-right w3-xlarge">0</div>
         <div class="w3-clear w3-center"><h4>Monitors</h4></div>
       </div>
-      <div class="w3-col l4 m4 w3-teal" id="bug-n-desktops-icon">
+      <div class="w3-col l3 m3 w3-teal" id="bug-n-desktops-icon">
         <div class="w3-left"><i class="fa fa-layer-group w3-xlarge"></i></div>
-        <div class="w3-right w3-xlarge">?</div>
+        <div class="w3-right w3-xlarge">0</div>
         <div class="w3-clear w3-center"><h4>Desktops</h4></div>
       </div>
-      <div class="w3-col l4 m4 w3-light-green w3-text-white" id="bug-n-windows-icon">
+      <div class="w3-col l3 m3 w3-light-green w3-text-white" id="bug-n-windows-icon">
         <div class="w3-left"><i class="fa fa-window-restore w3-xlarge"></i></div>
-        <div class="w3-right w3-xlarge">?</div>
+        <div class="w3-right w3-xlarge">0</div>
         <div class="w3-clear w3-center"><h4>Windows</h4></div>
+      </div>
+      <div class="w3-col l3 m3 w3-lime w3-text-white" id="bug-n-messages-icon">
+        <div class="w3-left"><i class="fa fa-ellipsis-v w3-xlarge"></i></div>
+        <div class="w3-right w3-xlarge">0</div>
+        <div class="w3-clear w3-center"><h4>Messages</h4></div>
       </div>
     </div>
     <div class="w3-half">
-      <div class="w3-col l4 m4 w3-lime w3-text-white" id="bug-n-messages-icon">
-        <div class="w3-left"><i class="fa fa-ellipsis-v w3-xlarge"></i></div>
-        <div class="w3-right w3-xlarge">?</div>
-        <div class="w3-clear w3-center"><h4>Messages</h4></div>
-      </div>
-      <!--<div class="w3-col l4 m4 w3-amber w3-text-white" id="bug-n-work-areas-icon">
+      <div class="w3-col l4 m4 w3-amber w3-text-white" id="bug-n-work-areas-icon">
         <div class="w3-left"><i class="fa fa-window-maximize w3-xlarge"></i></div>
         <div class="w3-right w3-xlarge">0</div>
-        <div class="w3-clear w3-center"><h4>Work<br/> Areas</h4></div>
-      </div>-->
+        <div class="w3-clear w3-center"><h4>Work Areas</h4></div>
+      </div>
       <div class="w3-col l4 m4 w3-orange w3-text-white" id="bug-n-views-icon">
         <div class="w3-left"><i class="fa fa-object-group w3-xlarge"></i></div>
-        <div class="w3-right w3-xlarge">?</div>
+        <div class="w3-right w3-xlarge">0</div>
         <div class="w3-clear w3-center"><h4>Views</h4></div>
       </div>
       <div class="w3-col l4 m4 w3-deep-orange" id="bug-n-log-icon">
         <div class="w3-left"><i class="fa fa-scroll w3-xlarge"></i></div>
-        <div class="w3-right w3-xlarge">?</div>
+        <div class="w3-right w3-xlarge">0</div>
         <div class="w3-clear w3-center"><h4>Log</h4></div>
       </div>
     </div>
@@ -170,17 +170,17 @@ w3schools.com (2019) W3.CSS Templates [source code]. https://www.w3schools.com/w
     </table>
   </div>
   
-  <!--<div class="w3-container" id="bug-n-work-areas-view">
+  <div class="w3-container" id="bug-n-work-areas-view">
     <h3><i class="fa fa-window-maximize w3-text-amber w3-margin-left w3-margin-right"></i>Work Areas</h3>
     <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
-      <thead><tr><th>Index</th><th>x-Coordinate</th><th>y-Coordinate</th><th>Width</th><th>Height</th><th>Virtual Desktop</th></tr></thead>
+      <thead><tr><th>Index</th><th>x-Coordinate</th><th>y-Coordinate</th><th>Width</th><th>Height</th></tr></thead>
       <tbody></tbody>
     </table>
-  </div>-->
+  </div>
   <div class="w3-container" id="bug-n-views-view">
     <h3><i class="fa fa-object-group w3-text-orange w3-margin-left w3-margin-right"></i>Views</h3>
     <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
-      <thead><tr><th>Index</th><th>Name</th><th>Monitor</th><th>Desktop</th><th>x-Coordinate</th><th>y-Coordinate</th><th>Width</th><th>Height</th><th>Layout</th></tr></thead>
+      <thead><tr><th>Index</th><th>Name</th><th>Work Area</th><th>Desktop</th><th>x-Coordinate</th><th>y-Coordinate</th><th>Width</th><th>Height</th><th>Layout</th></tr></thead>
       <tbody></tbody>
     </table>
   </div>
@@ -231,7 +231,7 @@ function filterTable(id) {
   }
 }
 
-var subIds = ["monitors", "desktops", "windows", "messages", "views", "log"];
+var subIds = ["monitors", "desktops", "windows", "messages", "work-areas", "views", "log"];
 for (var i = 0; i < subIds.length; i++) {
   document.getElementById("bug-n-" + subIds[i] + "-icon").onclick = function() {
     var subId = this.id.substring(6, this.id.indexOf("-icon"));

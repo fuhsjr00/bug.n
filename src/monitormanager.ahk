@@ -83,10 +83,10 @@ class MonitorManager {
       this.right  := rectRight
       this.bottom := rectBottom
       
-      this.x      := rectLeft
-      this.y      := rectTop
-      this.width  := rectRight - rectLeft
-      this.height := rectBottom - rectTop
+      this.x := rectLeft
+      this.y := rectTop
+      this.w := rectRight - rectLeft
+      this.h := rectBottom - rectTop
       
       dpi := this.getDpiForMonitor()
       this.dpiX := dpi.x
@@ -116,16 +116,18 @@ class MonitorManager {
   
   class WorkArea {
     __New(i) {
+      this.index := i
+      
       SysGet, rect, MonitorWorkArea, % i
       this.left   := rectLeft
       this.top    := rectTop
       this.right  := rectRight
       this.bottom := rectBottom
       
-      this.x      := rectLeft
-      this.y      := rectTop
-      this.width  := rectRight - rectLeft
-      this.height := rectBottom - rectTop
+      this.x := rectLeft
+      this.y := rectTop
+      this.w := rectRight - rectLeft
+      this.h := rectBottom - rectTop
     }
   }
 }

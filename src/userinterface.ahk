@@ -48,7 +48,8 @@ class UserInterface {
 		ComObjConnect(this.display, this.EventHandler)    ;; Connect ActiveX control events to the associated class object.
 		logger.info("ActiveX control connected to event handler.", "UserInterface.__New")
 		
-    this.display.Navigate("javascript:document.getElementById('bug-n-log-entries-icon').click()")
+		this.setMainBelowBar()
+    this.display.Navigate("javascript:document.getElementById('bug-n-log-icon').click()")
     
     Gui, Show, % "NoActivate x" . this.x . " y" . this.y . " w" . this.w . " h" . this.h, % "bug.n Display " . this.index
     WinSet, Bottom, , % "ahk_id " . this.winId
@@ -99,6 +100,12 @@ class UserInterface {
   ;; Functions controlling the DOM of the loaded HTML file in this.display (ActiveX control).
   ;; Changing elements by id.
   
+  barHeight[] {
+    get {
+      Return, this.display.document.getElementById("bug-n-bar").clientHeight
+    }
+  }
+  
   insertTableRows(subId, data, position := "beforeend") {
     ;; possible position values: "afterbegin" or "beforeend".
     keys := subKeys := []
@@ -108,15 +115,15 @@ class UserInterface {
       keys := ["timestamp", "level", "src", "msg"]
     } Else If (subId == "messages") {
       keys := ["timestamp", "msg", "msgNum", "winId"]
-      subKeys := ["winClass", "winTitle", "winPName", "winStyle", "winExStyle", "winMinMax", "winX", "winY", "winWidth", "winHeight"]
+      subKeys := ["winClass", "winTitle", "winPName", "winStyle", "winExStyle", "winMinMax", "winX", "winY", "winW", "winH"]
     } Else If (subId == "monitors") {
-      keys := ["index", "name", "x", "y", "width", "height"]
+      keys := ["index", "name", "x", "y", "w", "h"]
     } Else If (subId == "views") {
-      keys := ["index", "name", "monitor", "desktop", "x", "y", "width", "height", "layout"]
+      keys := ["index", "name", "workArea", "desktop", "x", "y", "w", "h", "layout"]
     } Else If (subId == "windows") {
-      keys := ["id", "class", "title", "pName", "style", "exStyle", "minMax", "x", "y", "width", "height", "view"]
-    ;; } Else If (subId == "work-areas") {
-    ;;  keys := ["index", "x", "y", "width", "height", "virtualDesktop"]
+      keys := ["id", "class", "title", "pName", "style", "exStyle", "minMax", "x", "y", "w", "h", "view"]
+    } Else If (subId == "work-areas") {
+      keys := ["index", "x", "y", "w", "h"]
     }
     For i, item in data {
       html := "<tr>"
@@ -149,6 +156,10 @@ class UserInterface {
   
   setIconCounter(subId, value) {
     this.display.document.getElementById("bug-n-" . subId . "-icon").getElementsByTagName("div")[1].innerHTML := value
+  }
+  
+  setMainBelowBar() {
+    this.display.document.getElementsByClassName("w3-main")[0].style.marginTop := this.barHeight . "px"
   }
   
   setSystemInformation(data) {

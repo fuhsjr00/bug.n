@@ -13,6 +13,129 @@
   @version 9.0.2
 */
 
+class Manager {
+  __New() {
+    Global Config_barTransparency, Config_readinInterval, logger, sys
+    
+    this.monmgrs := [New MonitorManager(), ""]
+    this.workAreas := []
+    For i, item in this.monmgrs[1].monitors {
+      this.workAreas[i] := item.workArea
+    }
+    this.dskmgr := New DesktopManager(ObjBindMethod(this, "onTaskbarCreated"))
+    currentDesktopIndex := this.dskmgr.getCurrentDesktopIndex()
+    this.uifaces := []
+    For i, item in this.workAreas {
+      this.uifaces[i] := New UserInterface(i, item.x, item.y, item.w, item.h, ObjBindMethod(this, "onUifaceAppCall"), Config_barTransparency)
+    }
+    this.windows   := {}
+    data := []
+    WinGet, winId_, List, , ,
+    Loop, % winId_ {
+      wnd := this.getWindow(winId_%A_Index%)
+      data.push({id: wnd.id, class: wnd.class, title: wnd.title, pName: wnd.pName
+        , style: wnd.style, exStyle: wnd.exStyle, minMax: wnd.minMax
+        , x: wnd.x, y: wnd.y, w: wnd.w, h: wnd.h, view: 0})
+      this.applyRules(1, wnd)
+    }
+    this.setUifaceTables(data)
+    
+    this.setUifaceSystemInformation()
+    funcObject := ObjBindMethod(this, "setUifaceSystemInformation")
+    SetTimer, % funcObject, % Config_readinInterval
+    logger.debug("Timer for updating the system information in UI bars set to " . Config_readinInterval . " milliseconds.", "Manager.__New")
+    sys.registerShellHookWindow(ObjBindMethod(this, "onShellMessage"), this.uifaces[1].winId)
+  }
+  
+  __Delete() {
+    this.dskmgr := ""
+    For i, item in this.uifaces {
+      item := ""
+    }
+  }
+  
+  applyRules(msgNum, wnd) {
+  }
+  
+  getWindow(winId) {
+    wnd := ""
+    If (this.windows.HasKey(winId)) {
+      wnd := this.windows[winId]
+      wnd.update()
+    } Else {
+      wnd := New Window(winId)
+      this.windows[wnd.id] := wnd
+    }
+    Return, wnd
+  }
+  
+  onShellMessage(msgNum, winId) {
+    Global logger, sys
+    
+    winId := Format("0x{:x}", winId)
+    logger.debug("Shell message received with wParam '" . msgNum . "' and lParam '" . winId . "'.", "Manager.onShellMessage")
+    wnd := this.getWindow(winId)
+    data := [{timestamp: logger.getTimestamp(), msg: sys.HSHELL_messages[msgNum], msgNum: msgNum
+      , winId: wnd.id, winClass: wnd.class, winTitle: wnd.title, winPName: wnd.pName
+      , winStyle: wnd.style, winExStyle: wnd.exStyle, winMinMax: wnd.minMax
+      , winX: wnd.x, winY: wnd.y, winW: wnd.w, winH: wnd.h}]
+    this.uifaces[1].insertTableRows("shell-events", data, "afterbegin")
+    this.applyRules(msgNum, wnd)
+  }
+  
+  onTaskbarCreated() {
+    Global logger
+    
+    logger.warning("Window message WM_TASKBARCREATED received.", "Manager.onTaskbarCreated")
+    ;; Reload?
+  }
+  
+  onUifaceAppCall(URLpath) {
+  }
+  
+  setUifaceSystemInformation() {
+    Global Config_readinBat, Config_readinCpu, Config_readinDate, Config_readinDateFormat, Config_readinDiskLoad, Config_readinMemoryUsage, Config_readinNetworkLoad, Config_readinTime, Config_readinTimeFormat, sys
+    
+    battery := Config_readinBat ? sys.batteryStatus : ""
+    cpuUsage := Config_readinCpu ? sys.cpuUsage : ""
+    date := ""
+    If (Config_readinDate != "") {
+      FormatTime, date, A_Now, % Config_readinDateFormat
+    }
+    memoryUsage := Config_readinMemoryUsage ? sys.memoryUsage : ""
+    networkUsage := Config_readinNetworkLoad > 0 ? sys.networkUsage : ""
+    storageUsage := Config_readinDiskLoad > 0 ? sys.storageUsage : ""
+    time := ""
+    If (Config_readinTime != "") {
+      FormatTime, time, A_Now, % Config_readinTimeFormat
+    }
+    volume := ""
+    data := {battery: battery, cpu: cpuUsage, date: date, memory: memoryUsage, network: networkUsage, storage: storageUsage, time: time, volume: volume}
+    For i, item in this.uifaces {
+      item.setSystemInformation(data)
+    }
+  }
+  
+  setUifaceTables(winData) {
+    data := []
+    For i, item in this.monmgrs[1].monitors {
+      data.push({index: item.index, name: item.name, x: item.x, y: item.y, w: item.w, h: item.h})
+    }
+    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("monitors", data)
+    data := []
+    For i, item in this.dskmgr.desktops {
+      data.push({index: i, GUID: item.GUID})
+    }
+    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("desktops", data)
+    data := []
+    For i, item in this.workAreas {
+      data.push({index: item.index, x: item.x, y: item.y, w: item.w, h: item.h})
+    }
+    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("work-areas", data)
+    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("windows", winData)
+  }
+}
+
 Manager_init()
 {
   Local doRestore
@@ -49,7 +172,6 @@ Manager_init()
     Debug_logMessage("DEBUG[6] MonitorW: " . Monitor_#%A_Index%_width . ", MMW1: " . mmngr1.monitors[A_Index].width . ", MM1dpiX: " . mmngr1.monitors[A_Index].dpiX . ", MM1scaleX: " . mmngr1.monitors[A_Index].scaleX, 6)
   }
   Bar_initCmdGui()
-  vdmngr := New VirtualDesktopManager(Func("Manager_onTaskbarCreated"))
 
   Manager_hideShow      := False
   Bar_hideTitleWndIds   := ""
@@ -68,13 +190,6 @@ Manager_init()
   Manager_registerShellHook()
   SetTimer, Manager_doMaintenance, %Config_maintenanceInterval%
   SetTimer, Bar_loop, %Config_readinInterval%
-}
-
-Manager_onTaskbarCreated() {
-  Global logger
-  
-  logger.warning("Window message WM_TASKBARCREATED received.", "Manager_onTaskbarCreated")
-  ;; Reload?
 }
 
 Manager_activateMonitor(i, d = 0) {
