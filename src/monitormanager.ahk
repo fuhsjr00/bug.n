@@ -10,21 +10,14 @@ PARTICULAR PURPOSE.
 
 class MonitorManager {
   __New() {
-    Global logger
+    Global logger, sys
     
     ;; enum _PROCESS_DPI_AWARENESS
-    PROCESS_DPI_UNAWARE := 0
-    PROCESS_SYSTEM_DPI_AWARE := 1
-    PROCESS_PER_MONITOR_DPI_AWARE := 2
-    ; DllCall("SHcore\SetProcessDpiAwareness", "UInt", PROCESS_PER_MONITOR_DPI_AWARE)
+    ; DllCall("SHcore\SetProcessDpiAwareness", "UInt", sys.PROCESS_PER_MONITOR_DPI_AWARE)
     ;; InnI: Get per-monitor DPI scaling factor (https://www.autoitscript.com/forum/topic/189341-get-per-monitor-dpi-scaling-factor/?tab=comments#comment-1359832)
-    ;; Setting `PROCESS_SYSTEM_DPI_AWARE` resulted in an access violation.
+    ;; Setting `PROCESS_PER_MONITOR_DPI_AWARE` resulted in an access violation.
     ;; Setting `DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE` did work without errors, but does it have an effect?
-    DPI_AWARENESS_CONTEXT_UNAWARE := -1
-    DPI_AWARENESS_CONTEXT_SYSTEM_AWARE := -2
-    DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE := -3
-    DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2 := -4
-    result := DllCall("User32\SetProcessDpiAwarenessContext", "UInt" , DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2)
+    result := DllCall("User32\SetProcessDpiAwarenessContext", "UInt" , sys.DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2)
     ;; pneumatic: -DPIScale not working properly (https://www.autohotkey.com/boards/viewtopic.php?p=241869&sid=abb2db983d2b3966bc040c3614c0971e#p241869)
     logger.debug("Dll 'User32\SetProcessDpiAwarenessContext' called with result <mark>" . result . "</mark>.", "MonitorManager.__New")
     
@@ -98,15 +91,12 @@ class MonitorManager {
     }
     
     getDpiForMonitor() {
-      ;; enum _MONITOR_DPI_TYPE
-      MDT_EFFECTIVE_DPI := 0
-      MDT_ANGULAR_DPI := 1
-      MDT_RAW_DPI := 2
-      MDT_DEFAULT := MDT_EFFECTIVE_DPI
+      Global sys
+      
       ptr := A_PtrSize ? "Ptr" : "UInt"
       dpiX := dpiY := 0
       If (this.handle != 0) {
-        DllCall("SHcore\GetDpiForMonitor", ptr, this.handle, "Int", MDT_DEFAULT, "UInt*", dpiX, "UInt*", dpiY)
+        DllCall("SHcore\GetDpiForMonitor", ptr, this.handle, "Int", sys.MDT_DEFAULT, "UInt*", dpiX, "UInt*", dpiY)
       }
       
       Return, {x: dpiX, y: dpiY}

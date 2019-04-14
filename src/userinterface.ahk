@@ -14,7 +14,7 @@ class UserInterface {
     ;; funcObject should be a function object for app:// calls, which can receive a string, the URL path, as an argument.
     ;; transparancy is used to set the transparency of the whole window and can be an integer between 0 and 255 or the string "Off".
     ;; htmlFile is the local file, which is loaded into the ActiveX control (web browser).
-    Global logger
+    Global logger, sys
     Static display
     
     this.index := index
@@ -37,8 +37,8 @@ class UserInterface {
     this.display := display
     this.display.Navigate("file://" . htmlFile)
     DllCall("urlmon\CoInternetSetFeatureEnabled"
-           ,"Int",  21            ;; FEATURE_DISABLE_NAVIGATION_SOUNDS
-           ,"UInt", 0x00000002    ;; SET_FEATURE_ON_PROCESS
+           ,"Int",  sys.FEATURE_DISABLE_NAVIGATION_SOUNDS
+           ,"UInt", sys.SET_FEATURE_ON_PROCESS
            ,"Int", 1)
     ;; MrBubbles (2016) Webapp.ahk - Make web-based apps with AutoHotkey. [source code] https://autohotkey.com/boards/viewtopic.php?p=117029#p117029
 		While this.display.readystate != 4 || this.display.busy {

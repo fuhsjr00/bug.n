@@ -54,8 +54,8 @@ SetWinDelay, 10
   Menu, Tray, Add, Exit, Main_quit
 
   ResourceMonitor_init()
-  Manager_init()
   sys := New System(Config_readinDiskLoad ? [Config_readinDiskLoad] : "", Config_readinNetworkLoad ? [Config_readinNetworkLoad] : "")
+  Manager_init()
   mgr := New Manager()
   Debug_logMessage("====== Running ======", 0)
 Return          ;; end of the auto-execute section
