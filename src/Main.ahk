@@ -40,6 +40,7 @@ SetWinDelay, 10
   Debug_logMessage("====== Initializing ======", 0)
   Config_filePath := Main_appDir "\Config.ini"
   Config_init()
+  config := New Configuration()
 
   Menu, Tray, Tip, bug.n %VERSION%
   If A_IsCompiled
@@ -196,6 +197,7 @@ Return
 #Include Tiler.ahk
 #Include View.ahk
 #Include Windows.ahk
+#Include %A_ScriptDir%\configuration.ahk
 #Include %A_ScriptDir%\desktopmanager.ahk
 #Include %A_ScriptDir%\logging.ahk
 #Include %A_ScriptDir%\monitormanager.ahk

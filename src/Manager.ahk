@@ -15,7 +15,7 @@
 
 class Manager {
   __New() {
-    Global Config_barTransparency, Config_readinInterval, logger, sys
+    Global config, logger, sys
     
     this.monmgrs := [New MonitorManager(), ""]
     this.workAreas := []
@@ -26,7 +26,7 @@ class Manager {
     currentDesktopIndex := this.dskmgr.getCurrentDesktopIndex()
     this.uifaces := []
     For i, item in this.workAreas {
-      this.uifaces[i] := New UserInterface(i, item.x, item.y, item.w, item.h, ObjBindMethod(this, "onUifaceAppCall"), Config_barTransparency)
+      this.uifaces[i] := New UserInterface(i, item.x, item.y, item.w, item.h, ObjBindMethod(this, "onUifaceAppCall"), config.uifaceTransparency)
     }
     this.windows   := {}
     data := []
@@ -42,8 +42,8 @@ class Manager {
     
     this.setUifaceSystemInformation()
     funcObject := ObjBindMethod(this, "setUifaceSystemInformation")
-    SetTimer, % funcObject, % Config_readinInterval
-    logger.debug("Timer for updating the system information in UI bars set to " . Config_readinInterval . " milliseconds.", "Manager.__New")
+    SetTimer, % funcObject, % config.sysInfoUpdateInterval
+    logger.debug("Timer for updating the system information in UI bars set to " . config.sysInfoUpdateInterval . " milliseconds.", "Manager.__New")
     sys.registerShellHookWindow(ObjBindMethod(this, "onShellMessage"), this.uifaces[1].winId)
   }
   
@@ -94,20 +94,20 @@ class Manager {
   }
   
   setUifaceSystemInformation() {
-    Global Config_readinBat, Config_readinCpu, Config_readinDate, Config_readinDateFormat, Config_readinDiskLoad, Config_readinMemoryUsage, Config_readinNetworkLoad, Config_readinTime, Config_readinTimeFormat, sys
+    Global config, sys
     
-    battery := Config_readinBat ? sys.batteryStatus : ""
-    cpuUsage := Config_readinCpu ? sys.cpuUsage : ""
+    battery := config.showBatteryStatus ? sys.batteryStatus : ""
+    cpuUsage := config.showCpuUsage ? sys.cpuUsage : ""
     date := ""
-    If (Config_readinDate != "") {
-      FormatTime, date, A_Now, % Config_readinDateFormat
+    If (config.showDate != "") {
+      FormatTime, date, A_Now, % config.showDate
     }
-    memoryUsage := Config_readinMemoryUsage ? sys.memoryUsage : ""
-    networkUsage := Config_readinNetworkLoad > 0 ? sys.networkUsage : ""
-    storageUsage := Config_readinDiskLoad > 0 ? sys.storageUsage : ""
+    memoryUsage := config.showMemoryUsage ? sys.memoryUsage : ""
+    networkUsage := config.showNetworkUsage > 0 ? sys.networkUsage : ""
+    storageUsage := config.showStorageUsage > 0 ? sys.storageUsage : ""
     time := ""
-    If (Config_readinTime != "") {
-      FormatTime, time, A_Now, % Config_readinTimeFormat
+    If (config.showTime != "") {
+      FormatTime, time, A_Now, % config.showTime
     }
     volume := ""
     data := {battery: battery, cpu: cpuUsage, date: date, memory: memoryUsage, network: networkUsage, storage: storageUsage, time: time, volume: volume}
