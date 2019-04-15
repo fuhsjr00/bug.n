@@ -26,7 +26,8 @@ class Manager {
     currentDesktopIndex := this.dskmgr.getCurrentDesktopIndex()
     this.uifaces := []
     For i, item in this.workAreas {
-      this.uifaces[i] := New UserInterface(i, item.x, item.y, item.w, item.h, ObjBindMethod(this, "onUifaceAppCall"), config.uifaceTransparency)
+      this.uifaces[i] := New UserInterface(i, item.x, item.y, item.w, item.h, ObjBindMethod(this, "onUifaceAppCall"), config.uifaceTransparency, config.barPosition, config.barHeight)
+      this.uifaces[i].wnd := this.getWindow(this.uifaces[i].winId)
     }
     this.windows   := {}
     data := []
@@ -79,7 +80,7 @@ class Manager {
       , winId: wnd.id, winClass: wnd.class, winTitle: wnd.title, winPName: wnd.pName
       , winStyle: wnd.style, winExStyle: wnd.exStyle, winMinMax: wnd.minMax
       , winX: wnd.x, winY: wnd.y, winW: wnd.w, winH: wnd.h}]
-    this.uifaces[1].insertTableRows("shell-events", data, "afterbegin")
+    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("shell-events", data, "afterbegin")
     this.applyRules(msgNum, wnd)
   }
   
@@ -88,29 +89,44 @@ class Manager {
     
     logger.warning("Window message WM_TASKBARCREATED received.", "Manager.onTaskbarCreated")
     ;; Reload?
+    this.dskmgr := ""
+    this.dskmgr := New DesktopManager(ObjBindMethod(this, "onTaskbarCreated"))
   }
   
-  onUifaceAppCall(URLpath) {
+  onUifaceAppCall(urlPath) {
+    Global sys
+    
+    If (RegExMatch(urlPath, "uifaces/current/toggleMainVisibility", id)) {
+      i := this.monmgrs[1].primaryMonitor
+      this.uifaces[i].wnd.update()
+      If (this.uifaces[i].wnd.exStyle & sys.WS_EX_TOPMOST) {
+        this.uifaces[i].wnd.runCommand("toggleAlwaysOnTop")
+        this.uifaces[i].wnd.runCommand("bottom")
+      } Else {
+        this.uifaces[i].wnd.runCommand("setAlwaysOnTop")
+      }
+    }
   }
   
   setUifaceSystemInformation() {
     Global config, sys
     
-    battery := config.showBatteryStatus ? sys.batteryStatus : ""
+    battery := config.showBatteryStatus ? sys.battery : ""
     cpuUsage := config.showCpuUsage ? sys.cpuUsage : ""
     date := ""
     If (config.showDate != "") {
       FormatTime, date, A_Now, % config.showDate
     }
     memoryUsage := config.showMemoryUsage ? sys.memoryUsage : ""
-    networkUsage := config.showNetworkUsage > 0 ? sys.networkUsage : ""
-    storageUsage := config.showStorageUsage > 0 ? sys.storageUsage : ""
+    network := config.showNetworkUsage.Length() > 0 ? sys.network : ""
+    storage := config.showStorageUsage ? sys.storage : ""
     time := ""
     If (config.showTime != "") {
       FormatTime, time, A_Now, % config.showTime
     }
-    volume := ""
-    data := {battery: battery, cpu: cpuUsage, date: date, memory: memoryUsage, network: networkUsage, storage: storageUsage, time: time, volume: volume}
+    volume := config.showVolumeLevel ? sys.volume : ""
+    
+    data := { battery: battery, date: date, cpu: cpuUsage, memory: memoryUsage, network: network, storage: storage, time: time, volume: volume}
     For i, item in this.uifaces {
       item.setSystemInformation(data)
     }
@@ -135,6 +151,15 @@ class Manager {
     this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("windows", winData)
   }
 }
+
+UifaceEscape:
+  mgr.uifaces[A_Gui].wnd.runCommand("toggleAlwaysOnTop")
+  mgr.uifaces[A_Gui].wnd.runCommand("bottom")
+Return
+
+UfaceSize:
+  mgr.uifaces[A_Gui].resizeGuiControls()
+Return
 
 Manager_init()
 {

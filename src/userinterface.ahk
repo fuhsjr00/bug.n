@@ -9,20 +9,19 @@ PARTICULAR PURPOSE.
 */
 
 class UserInterface {
-  __New(index, xCoordinate, yCoordinate, width, height, funcObject, transparency := "Off", htmlFile := "") {
+  __New(index, xCoordinate, yCoordinate, width, height, funcObject, transparency := "Off", barPosition := "top", barHeight := "medium", htmlFile := "") {
     ;; This is the web browser window with an ActiveX control. Argument 2-5 are used to position and size the window.
     ;; funcObject should be a function object for app:// calls, which can receive a string, the URL path, as an argument.
     ;; transparancy is used to set the transparency of the whole window and can be an integer between 0 and 255 or the string "Off".
     ;; htmlFile is the local file, which is loaded into the ActiveX control (web browser).
     Global logger, sys
-    Static display
+    Static appIface, display
     
     this.index := index
     this.x := xCoordinate
     this.y := yCoordinate
     this.w := width
     this.h := height
-    this.appSchemeFunc := funcObject
     htmlFile := htmlFile != "" ? htmlFile : A_ScriptDir . "\userinterface.html"
     this.barIsVisible := True
     
@@ -30,9 +29,12 @@ class UserInterface {
     Gui, %index%: Default
     Gui, Destroy
     Gui, Margin, 0, 0
-    Gui, % "-Caption +HwndWinId +LabelUIface +LastFound +ToolWindow"
+    Gui, % "+AlwaysOnTop -Caption +HwndWinId +LabelUiface +LastFound +ToolWindow"
     this.winId := winId
+    this.wnd   := ""
     
+    Gui, Add, Edit, x0 y0 w0 h0 Hidden vAppIface
+    GuiControl, +g, appIface, % funcObject
     Gui, Add, ActiveX, % "vDisplay w" . this.w . " h" . this.h, Shell.Explorer
     this.display := display
     this.display.Navigate("file://" . htmlFile)
@@ -48,7 +50,8 @@ class UserInterface {
 		ComObjConnect(this.display, this.EventHandler)    ;; Connect ActiveX control events to the associated class object.
 		logger.info("ActiveX control connected to event handler.", "UserInterface.__New")
 		
-		this.setMainBelowBar()
+		this.barPosition := barPosition
+		this.barHeight   := barHeight
     this.display.Navigate("javascript:document.getElementById('bug-n-log-icon').click()")
     
     Gui, Show, % "NoActivate x" . this.x . " y" . this.y . " w" . this.w . " h" . this.h, % "bug.n Display " . this.index
@@ -66,30 +69,34 @@ class UserInterface {
   }
   
   class EventHandler {
-    NavigateComplete2(disp, URL) {
-    }
-    DownloadComplete(disp, URL) {
+    BeforeNavigate(disp, url) {
       disp.Stop()
     }
-    DocumentComplete(disp, URL) {
-      disp.Stop()
-    }
-    NavigateError(disp, URL) {
-      disp.Stop()
-    }
-    BeforeNavigate2(disp, URL) {
-      Global logger
+    BeforeNavigate2(disp, url) {
+      Global logger, mgr
       
       disp.Stop()
-      If (InStr(URL, "app://") == 1) {
-        URLpath := SubStr(URL, 7)
-        this.appSchemeFunc.Call(URLpath)
-        logger.info("App function called with argument " . URLpath . ".", "UserInterface.EventHandler.BeforeNavigate2")
+      If (i := InStr(url, "#")) {
+        urlPath := SubStr(url, i + 1)
+        mgr.onUifaceAppCall(urlPath)
+        logger.info("App function called with argument " . urlPath . ".", "UserInterface.EventHandler.BeforeNavigate2")
       }
+    }
+    DocumentComplete(disp, url) {
+      disp.Stop()
+    }
+    DownloadComplete(disp, url) {
+      disp.Stop()
+    }
+    NavigateComplete2(disp, url) {
+      disp.Stop()
+    }
+    NavigateError(disp, url) {
+      disp.Stop()
     }
   }
   
-  resizeGUIControls() {
+  resizeGuiControls() {
     Global logger
     
     i := this.index
@@ -103,6 +110,27 @@ class UserInterface {
   barHeight[] {
     get {
       Return, this.display.document.getElementById("bug-n-bar").clientHeight
+    }
+    
+    set {
+      className := this.display.document.getElementById("bug-n-bar").className
+      this.display.document.getElementById("bug-n-bar").className := RegExReplace(className, "w3-(tiny|small|medium|large|xlarge|xxlarge|xxxlarge|jumbo)", "w3-" . value)
+      h := this.display.document.getElementById("bug-n-bar").clientHeight
+      this.display.document.getElementsByClassName("w3-main")[0].style.marginTop := (this.barPosition == "top" ? h : 0) . "px"
+      Return, h
+    }
+  }
+  
+  barPosition[] {
+    get {
+      RegExMatch(this.display.document.getElementById("bug-n-bar").className, "O)w3-(bottom|top)", className)
+      Return, className[1]
+    }
+    
+    set {
+      className := this.display.document.getElementById("bug-n-bar").className
+      this.display.document.getElementById("bug-n-bar").className := RegExReplace(className, "w3-(bottom|top)", "w3-" . value)
+      Return, value
     }
   }
   
@@ -158,20 +186,70 @@ class UserInterface {
     this.display.document.getElementById("bug-n-" . subId . "-icon").getElementsByTagName("div")[1].innerHTML := value
   }
   
-  setMainBelowBar() {
-    this.display.document.getElementsByClassName("w3-main")[0].style.marginTop := this.barHeight . "px"
-  }
-  
   setSystemInformation(data) {
     For key, value in data {
       If (value == "") {
         this.display.document.getElementById("bug-n-system-" . key).style.display := "none"
       } Else {
-        If (key == "storage" || key == "network") {
-          this.display.document.getElementById("bug-n-system-" . key).getElementsByTagName("span")[0].innerHTML := value[0]
-          this.display.document.getElementById("bug-n-system-" . key).getElementsByTagName("span")[1].innerHTML := value[1]
+        If (key == "network" || key == "storage") {
+          If (key == "network") {
+            text := [Format("{1:-3.1f}", value[1].received.value) . value[1].received.unit
+                   , Format("{1:-3.1f}", value[1].sent.value) . value[1].sent.unit]
+          } Else If (key == "storage") {
+            text := [Format("{1:-3.1f}", value[1].write.value) . value[1].write.unit
+                   , Format("{1:-3.1f}", value[1].read.value) . value[1].read.unit]
+          }
+          barItemText := this.display.document.getElementById("bug-n-system-" . key).getElementsByTagName("span")[0]
+          barItemText.innerHTML := text[1]
+          barItemText := this.display.document.getElementById("bug-n-system-" . key).getElementsByTagName("span")[1]
+          barItemText.innerHTML := text[2]
         } Else {
-          this.display.document.getElementById("bug-n-system-" . key).getElementsByTagName("span")[0].innerHTML := value
+          class := ""
+          icon  := ""
+          text  := "???%"
+          If (key == "battery") {
+            If (value.acLineStatus == "on") {
+              icon := "plug"
+            } Else If (value.level.value < 25) {
+              icon := "battery-empty"
+              If (value.level.value < 10) {
+                class := "alert"
+              }
+            } Else If (value.level.value < 50) {
+              icon := "battery-quarter"
+            } Else If (value.level.value < 75) {
+              icon := "battery-half"
+            } Else If (value.level.value < 100) {
+              icon := "battery-three-quarters"
+            } Else {
+              icon := "battery-full"
+            }
+            text := value.level.value . value.level.unit
+          } Else If (key == "volume") {
+            If (value.muteStatus == "On") {
+              icon := "volume-mute"
+            } Else If (value.level.value < 1) {
+              icon := "volume-off"
+            } Else If (value.level.value < 66) {
+              icon := "volume-down"
+            } Else {
+              icon := "volume-up"
+            }
+            text := value.level.value . value.level.unit
+          } Else If (key == "date" || key == "time") {
+            text := value
+          } Else {
+            text := value.value . value.unit
+          }
+          If (icon != "") {
+            barItemIcon := this.display.document.getElementById("bug-n-system-" . key).getElementsByTagName("i")[0]
+            barItemIcon.className := RegExReplace(barItemIcon.className, "fa-(.+)", "fa-" . icon)
+          }
+          barItemText := this.display.document.getElementById("bug-n-system-" . key).getElementsByTagName("span")[0]
+          barItemText.innerHTML := text
+          If (class != "") {
+            barItemText.className := RegExReplace(barItemText.className, "bug-n-(.+)", "bug-n-" . class)
+          }
         }
       }
     }

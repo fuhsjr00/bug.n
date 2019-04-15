@@ -24,10 +24,10 @@ w3schools.com (2019) W3.CSS Templates [source code]. https://www.w3schools.com/w
   <style>
     html, body {font-family: "Roboto Condensed", sans-serif}
     h1, h2, h3, h4, h5, h6 {font-family: "Roboto Slab", serif}
+    a {text-decoration: none;}
     .w3-bar-item {line-height: 100%;}
-    .w3-main {margin-top: 30px;}
     #bug-n-bar {z-index: 4; overflow: hidden;}
-    #bug-n-shebang        {font-weight: bold;}
+    #bug-n-shebang        {cursor: pointer; font-weight: bold;}
     /*#bug-n-system-time    {background-color: #000;}
     #bug-n-system-date    {background-color: #222;}
     #bug-n-system-battery {background-color: #333;}
@@ -45,48 +45,47 @@ w3schools.com (2019) W3.CSS Templates [source code]. https://www.w3schools.com/w
 <body class="w3-light-grey">
   
 <!-- Top container -->
-<div class="w3-bar w3-top w3-black w3-medium" id="bug-n-bar">
-  <span class="w3-bar-item" id="bug-n-work-area-indicator"><i class="fa fa-window-maximize"></i>&nbsp;<span>?</span></span>
-  <span class="w3-bar-item" id="bug-n-desktop-indicator"><i class="fa fa-layer-group"></i>&nbsp;<span>?</span></span>
-  <span class="w3-bar-item" id="bug-n-views-indicator"  ><i class="fa fa-object-group"></i>&nbsp;<span>?</span></span>
-  <span class="w3-bar-item" id="bug-n-layout-indicator" ><i class="fa fa-th-large"></i>&nbsp;<span>??????</span></span>
-  <span class="w3-bar-item w3-hide-small w3-hide-medium" id="bug-n-window-indicator"><span>?</span></span>
-  <span class="w3-bar-item w3-right"               id="bug-n-shebang"       ><i class="fa fa-hashtag"     ></i>&nbsp;<span>!</span></span>
-  <span class="w3-bar-item w3-right"               id="bug-n-system-time"   ><i class="fa fa-clock"       ></i>&nbsp;<span>??:??</span></span>
-  <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-date"   ><i class="fa fa-calendar"    ></i>&nbsp;<span>??, ??. ???. ????</span></span>
-  <span class="w3-bar-item w3-right w3-hide-small" id="bug-n-system-volume" ><i class="fa fa-volume-down" ></i>&nbsp;<span>???%</span></span>
-  <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-cpu"    ><i class="fa fa-microchip"></i>&nbsp;<span>???%</span></span>
-  <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-memory" ><i class="fa fa-memory"   ></i>&nbsp;<span>???%</span></span>
-  <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-storage"><i class="fa fa-hdd"      ></i>&nbsp;
-    <i class="fa fa-angle-down"></i>&nbsp;<span>???%</span>
-    <i class="fa fa-angle-up"  ></i>&nbsp;<span>???%</span>
+<div class="w3-bar w3-black" id="bug-n-bar">
+  <span id="bug-n-work-area-indicator" class="w3-bar-item"><i class="fa fa-window-maximize" ></i>&nbsp;<span>?</span></span>
+  <span id="bug-n-desktop-indicator"   class="w3-bar-item"><i class="fa fa-layer-group"     ></i>&nbsp;<span>?</span></span>
+  <span id="bug-n-views-indicator"     class="w3-bar-item"><i class="fa fa-object-group"    ></i>&nbsp;<span>?</span></span>
+  <a    id="bug-n-layout-indicator"    class="w3-bar-item"><i class="fa fa-th-large"        ></i>&nbsp;<span>??????</span></a>
+  <span id="bug-n-window-indicator"    class="w3-bar-item w3-hide-small w3-hide-medium">               <span>?</span></span>
+  
+  <a    id="bug-n-shebang"        class="w3-bar-item w3-right">
+    <i class="fa fa-hashtag"></i>&nbsp;<span>!</span>
+  </a>
+  <span id="bug-n-system-time"    class="w3-bar-item w3-right">
+    <i class="fa fa-clock"        ></i>&nbsp;<span>??:??</span>
   </span>
-  <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-network"><i class="fa fa-network-wired"></i>&nbsp;
-    <i class="fa fa-angle-down"></i>&nbsp;<span>???B/s</span>
-    <i class="fa fa-angle-up"  ></i>&nbsp;<span>???B/s</span>
+  <span id="bug-n-system-date"    class="w3-bar-item w3-right w3-hide-small w3-hide-medium">
+    <i class="fa fa-calendar"     ></i>&nbsp;<span>??, ??. ???. ????</span>
   </span>
-  <span class="w3-bar-item w3-right"               id="bug-n-system-battery"><i class="fa fa-battery-half"></i>&nbsp;<span>???%</span></span>
+  <span id="bug-n-system-volume"  class="w3-bar-item w3-right w3-hide-small">
+    <i class="fa fa-volume-down"  ></i>&nbsp;<span>???%</span>
+    <!-- volume-mute/ volume-off/ volume-down/ volume-up -->
+  </span>
+  <span id="bug-n-system-battery" class="w3-bar-item w3-right">
+    <i class="fa fa-battery-half" ></i>&nbsp;<span>???%</span>
+    <!-- plug/ battery-empty/ battery-quarter/ battery-half/ battery-three-quarters/ battery-full -->
+  </span>
+  <span id="bug-n-system-cpu"     class="w3-bar-item w3-right w3-hide-small w3-hide-medium">
+    <i class="fa fa-microchip"    ></i>&nbsp;<span>???%</span>
+  </span>
+  <span id="bug-n-system-memory"  class="w3-bar-item w3-right w3-hide-small w3-hide-medium">
+    <i class="fa fa-memory"       ></i>&nbsp;<span>???%</span>
+  </span>
+  <span id="bug-n-system-storage" class="w3-bar-item w3-right w3-hide-small w3-hide-medium">
+    <i class="fa fa-hdd"          ></i>&nbsp;
+    <i class="fa fa-angle-down"   ></i>&nbsp;<span>???%</span>
+    <i class="fa fa-angle-up"     ></i>&nbsp;<span>???%</span>
+  </span>
+  <span id="bug-n-system-network" class="w3-bar-item w3-right w3-hide-small w3-hide-medium">
+    <i class="fa fa-network-wired"></i>&nbsp;
+    <i class="fa fa-angle-down"   ></i>&nbsp;<span>???B/s</span>
+    <i class="fa fa-angle-up"     ></i>&nbsp;<span>???B/s</span>
+  </span>
 </div>
-<!-- <div class="w3-bar w3-top w3-black w3-large" id="bug-n-bar">
-  <span class="w3-bar-item"><i class="fa fa-cog"></i></span>
-  <span class="w3-bar-item" id="bug-n-index">?</span>
-  <span class="w3-bar-item w3-right"               id="bug-n-system-time"   ><i class="fa fa-clock"       ></i>&nbsp;<span>??:??</span></span>
-  <span class="w3-bar-item w3-right w3-hide-small" id="bug-n-system-date"   ><i class="fa fa-calendar"    ></i>&nbsp;<span>??, ??. ???. ????</span></span>
-  <span class="w3-bar-item w3-right"               id="bug-n-system-battery"><i class="fa fa-battery-half"></i>&nbsp;<span>???%</span></span> -->
-                                                                          <!-- plug/ battery-empty/ quarter/ half/ /three-quartes/ full -->
-  <!-- <span class="w3-bar-item w3-right w3-hide-small" id="bug-n-system-volume" ><i class="fa fa-volume-down" ></i>&nbsp;<span>???%</span></span> -->
-                                                                          <!-- volume-mute/ off/ down/ up -->
-  <!-- <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-cpu"    ><i class="fa fa-microchip"></i>&nbsp;<span>???%</span></span>
-  <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-memory" ><i class="fa fa-memory"   ></i>&nbsp;<span>???%</span></span>
-  <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-storage"><i class="fa fa-hdd"      ></i>&nbsp;
-    <i class="fa fa-angle-down"></i>&nbsp;<span>???%</span>
-    <i class="fa fa-angle-up"  ></i>&nbsp;<span>???%</span>
-  </span>
-  <span class="w3-bar-item w3-right w3-hide-small w3-hide-medium" id="bug-n-system-network"><i class="fa fa-network-wired"></i>&nbsp;
-    <i class="fa fa-angle-down"></i>&nbsp;<span>???B/s</span>
-    <i class="fa fa-angle-up"  ></i>&nbsp;<span>???B/s</span>
-  </span>
-</div> -->
 
 <!-- !PAGE CONTENT! -->
 <div class="w3-main">
@@ -244,6 +243,18 @@ for (var i = 0; i < subIds.length; i++) {
     }
   };
 }
+
+document.getElementById("bug-n-shebang").onclick = function() {
+  window.navigate("#uifaces/current/toggleMainVisibility");
+};
+document.getElementById("bug-n-layout-indicator").onclick = function() {
+};
+document.getElementById("bug-n-layout-indicator").oncontextmenu = function() {
+};
+
+window.oncontextmenu = function() {
+  return false;
+};
 </script>
 
 </body>

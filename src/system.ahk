@@ -9,7 +9,7 @@ PARTICULAR PURPOSE.
 */
 
 class System {
-  __New(physicalDrives := "", networkInterfaces := "") {
+  __New(networkInterfaces := "") {
     ;; physicalDrives and networkInterfaces should be arrays of device names; e.g. physicalDrives may be ["PhysicalDrive0"].
     Global logger
     
@@ -108,24 +108,16 @@ class System {
     this.WS_POPUP            := 0x80000000
     ;; this.WS_VSCROLL          := 0x200000
     
-    this.physicalDrives := []
-    For i, drive in physicalDrives {
-      this.physicalDrives[i] := DllCall("CreateFile", "Str", "\\.\" . drive . "", "UInt", 0, "UInt", 3, "UInt", 0, "UInt", 3, "UInt", 0, "UInt", 0)
-      logger.info("Got handle on " . drive . ".", "System.__New")
-    }
+    this.objWMIService := ComObjGet("winmgmts:{impersonationLevel=impersonate}!\\" . A_ComputerName . "\root\cimv2")
     this.networkInterfaces := []
-    objWMIService := ComObjGet("winmgmts:{impersonationLevel=impersonate}!\\" . A_ComputerName . "\root\cimv2")
-    For i, interface in networkInterfaces {
-      WQLQuery := "SELECT * FROM Win32_PerfFormattedData_Tcpip_NetworkInterface WHERE Name LIKE '%" . interface . "%'"
-      this.networkInterfaces[i] := objWMIService.ExecQuery(WQLQuery).ItemIndex(0)
-      logger.info("Got handle on " . interface . ".", "System.__New")
+    For i, item in networkInterfaces {
+      WQLQuery := "SELECT * FROM Win32_PerfFormattedData_Tcpip_NetworkInterface WHERE Name LIKE '%" . item . "%'"
+      this.networkInterfaces[i] := this.objWMIService.ExecQuery(WQLQuery).ItemIndex(0)
+      logger.info("Queried Win32_PerfFormattedData_Tcpip_NetworkInterface for " . item . ".", "System.__New")
     }
   }
   
   __Delete() {
-    For i, drive in this.physicalDrives {
-      DllCall("CloseHandle", "UInt", drive)
-    }
     DllCall("DeregisterShellHookWindow", "UInt", this.shellHookWinId)
   }
   
@@ -143,7 +135,7 @@ class System {
   
   ;; System information and helper functions
   
-  batteryStatus[] {
+  battery[] {
     get {
       Global logger
       
@@ -158,25 +150,21 @@ class System {
       acLineStatus := (acLineStatus = 0) ? "off" : (acLineStatus = 1) ? "on" : "?"
       batteryLevel := (batteryLevel = 255) ? "???" : batteryLevel
 
-      Return, {batteryLevel: {value: batteryLevel, unit: "%"}, acLineStatus: acLineStatus}
+      Return, {level: {value: batteryLevel, unit: "%"}, acLineStatus: acLineStatus}
     }
   }
   ;; PhiLho: AC/Battery status (http://www.autohotkey.com/forum/topic7633.html)
   
   cpuUsage[] {
     get {
-      ;; Total CPU Load
-      Static idleTime_2 := 0, krnlTime_2 := 0, userTime_2 := 0
-
-      idleTime_1 := idleTime_2
-      krnlTime_1 := krnlTime_2
-      userTime_1 := userTime_2
-    
-      DllCall("GetSystemTimes", "Int64P", idleTime_2, "Int64P", krnlTime_2, "Int64P", userTime_2)
-      systemTime := Round((1 - (idleTime_2 - idleTime_1) / ((krnlTime_2 - krnlTime_1) + (userTime_2 - userTime_1))) * 100)
-      Return, {value: systemTime, unit: "%"}   ;; system time in percent
+      n := 0, p := 0
+      For item in this.objWMIService.ExecQuery("SELECT * FROM Win32_PerfFormattedData_PerfOS_Processor") {
+        n += 1
+    		p += item.PercentProcessorTime
+    	}
+      Return, {value: Round(p / n, 0), unit: "%"}
     }
-    ;; Sean: CPU LoadTimes (http://www.autohotkey.com/forum/topic18913.html)
+    ;; TLM: Accessing PerfMon counters (https://www.autohotkey.com/boards/viewtopic.php?p=103227&sid=7b13f0bbd27b9ab88ce05870f44545b8#p103227)
   }
   
   formatBytes(value) {
@@ -193,8 +181,9 @@ class System {
       unit := " B"
     }
     value := Round(value, 1)
-    If (value > 99.9 || unit = " B")
+    If (value > 99.9 || unit = " B") {
       value := Round(value, 0)
+    }
   
     Return, {value: value, unit: unit}
   }
@@ -208,44 +197,50 @@ class System {
     ;; fures: System + Network monitor - with net history graph (http://www.autohotkey.com/community/viewtopic.php?p=260329)
   }
   
-  networkUsage[] {
+  network[] {
     get {
       usage := []
-      For i, interface in this.networkInterfaces {
-        interface.Refresh_
-        download := this.formatBytes(interface.BytesReceivedPerSec)
-        upload   := this.formatBytes(interface.BytesSentPerSec)
-        download.unit .= "/s"
-        upload.unit   .= "/s"
-        usage.push({download: download, upload: upload})
-      }
+      r := 0, s := 0
+      For i, item in this.networkInterfaces {
+        item.Refresh_
+        r += item.BytesReceivedPerSec
+        s += item.BytesSentPerSec
+    	}
+      r := this.formatBytes(r)
+      s := this.formatBytes(s)
+      r.unit   .= "/s"
+      s.unit .= "/s"
+      usage.push({received: r, sent: s})
       Return, usage
     }
+    ;; TLM: Accessing PerfMon counters (https://www.autohotkey.com/boards/viewtopic.php?p=103227&sid=7b13f0bbd27b9ab88ce05870f44545b8#p103227)
     ;; Pillus: System monitor (HDD/Wired/Wireless) using keyboard LEDs (http://www.autohotkey.com/board/topic/65308-system-monitor-hddwiredwireless-using-keyboard-leds/)
   }
   
-  storageUsage[] {
+  storage[] {
     get {
-      Static rCount_2, wCount_2
-
-      rCount_1 := rCount_2
-      wCount_1 := wCount_2
       usage := []
-
-      varCapacity := 5 * 8 + 4 + 4 + 4 + 4 + 8 + 4 + 8 * (A_IsUnicode ? 2 : 1) + 12    ;; 88?
-      VarSetCapacity(var, varCapacity)
-      For i, drive in this.physicalDrives {
-        DllCall("DeviceIoControl", "UInt", drive, "UInt", 0x00070020, "UInt", 0, "UInt", 0, "UInt", &var, "UInt", varCapacity, "UIntP", 0, "UInt", 0)   ;; IOCTL_DISK_PERFORMANCE
-        rCount_2 := NumGet(var, 40)
-        wCount_2 := NumGet(var, 44)
-        read  := Round((1 - 1 / (1 + rCount_2 - rCount_1)) * 100)
-        write := Round((1 - 1 / (1 + wCount_2 - wCount_1)) * 100)
-        usage.push({read: {value: read, unit: "%"}, write: {value: write, unit: "%"}})
-      }
-
+      r := 0, w := 0
+      For item in this.objWMIService.ExecQuery("SELECT * FROM Win32_PerfFormattedData_PerfDisk_PhysicalDisk") {
+        r += item.DiskWriteBytesPersec
+        w += item.DiskReadBytesPersec
+    	}
+      r := this.formatBytes(r)
+      w := this.formatBytes(w)
+      r.unit   .= "/s"
+      w.unit .= "/s"
+      usage.push({read: r, write: w})
       Return, usage
     }
-    ;; fures: System + Network monitor - with net history graph (http://www.autohotkey.com/community/viewtopic.php?p=260329)
-    ;; SKAN: HDD Activity Monitoring LED (http://www.autohotkey.com/community/viewtopic.php?p=113890&sid=64d9824fdf252697ff4d5026faba91f8#p113890)
+    ;; TLM: Accessing PerfMon counters (https://www.autohotkey.com/boards/viewtopic.php?p=103227&sid=7b13f0bbd27b9ab88ce05870f44545b8#p103227)
+  }
+  
+  volume[] {
+    get {
+      SoundGet, volumeLevel, MASTER, VOLUME
+      SoundGet, muteStatus, MASTER, MUTE
+      
+      Return, {level: {value: Round(volumeLevel), unit: "%"}, muteStatus: muteStatus}
+    }
   }
 }
