@@ -289,7 +289,7 @@ class UserInterface {
     } Else {
       logger.warning("Icon file <mark>" . logo . "</mark> not found.", "UserInterface.__New")
     }
-    Menu, Tray, MainWindow
+    Menu, Tray, NoMainWindow
     logger.info("Tray menu set with tooltip, icon and main window.", "UserInterface.setTrayMenu")
   }
 }

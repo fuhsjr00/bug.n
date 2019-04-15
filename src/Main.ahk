@@ -42,16 +42,8 @@ SetWinDelay, 10
   Config_init()
   config := New Configuration()
 
-  Menu, Tray, Tip, bug.n %VERSION%
-  If A_IsCompiled
-    Menu, Tray, Icon, %A_ScriptFullPath%, -159
-  If FileExist(A_ScriptDir . "\logo.ico")
-    Menu, Tray, Icon, % A_ScriptDir . "\logo.ico"
-  Menu, Tray, NoStandard
-  Menu, Tray, Add, Toggle bar, Main_toggleBar
-  Menu, Tray, Add, Help, Main_help
-  Menu, Tray, Add,
-  Menu, Tray, Add, Exit, Main_quit
+  app := {name: "bug.n", logo: A_ScriptDir . "\assets\logo.ico"}
+  UserInterface.setTrayMenu(app.name, app.logo)
 
   ResourceMonitor_init()
   sys := New System(Config_readinNetworkLoad ? [Config_readinNetworkLoad] : "")
