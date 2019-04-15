@@ -52,6 +52,7 @@ class UserInterface {
 		
 		this.barPosition := barPosition
 		this.barHeight   := barHeight
+		this.fitTables()
     this.display.Navigate("javascript:document.getElementById('bug-n-log-icon').click()")
     
     Gui, Show, % "NoActivate x" . this.x . " y" . this.y . " w" . this.w . " h" . this.h, % "bug.n Display " . this.index
@@ -131,6 +132,23 @@ class UserInterface {
       className := this.display.document.getElementById("bug-n-bar").className
       this.display.document.getElementById("bug-n-bar").className := RegExReplace(className, "w3-(bottom|top)", "w3-" . value)
       Return, value
+    }
+  }
+  
+  fitTables() {
+    Global logger
+    
+    iconHeight := this.display.document.getElementById("bug-n-icon-row").offsetHeight
+    For i, subId in ["monitors", "desktops", "windows", "messages", "work-areas", "views", "log"] {
+      view := this.display.document.getElementById("bug-n-" . subId . "-view")
+      h3Height := view.getElementsByTagName("h3")[0].offsetHeight
+      inputHeight := 0
+      If (subId == "windows" || subId == "messages" || subId == "log") {
+        inputHeight := view.getElementsByTagName("input")[0].offsetHeight
+      }
+      tableHeight := this.h - this.barHeight - iconHeight - h3Height - inputHeight - 38
+      view.getElementsByTagName("div")[0].style.height := tableHeight . "px"
+      logger.debug("Table fitted to (" . this.h . " - " . this.barHeight . " - " . iconHeight . " - " . h3Height . " - " . inputHeight . " - 32) = " . tableHeight, "UserInterface.fitTables")
     }
   }
   

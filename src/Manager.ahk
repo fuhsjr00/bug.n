@@ -46,6 +46,10 @@ class Manager {
     SetTimer, % funcObject, % config.sysInfoUpdateInterval
     logger.debug("Timer for updating the system information in UI bars set to " . config.sysInfoUpdateInterval . " milliseconds.", "Manager.__New")
     sys.registerShellHookWindow(ObjBindMethod(this, "onShellMessage"), this.uifaces[1].winId)
+    
+    funcObject := ObjBindMethod(this, "updateUifaceLogView")
+    SetTimer, % funcObject, % config.logViewUpdateInterval
+    logger.debug("Timer for updating the UI log view set to " . config.logViewUpdateInterval . " milliseconds.")
   }
   
   __Delete() {
@@ -80,7 +84,7 @@ class Manager {
       , winId: wnd.id, winClass: wnd.class, winTitle: wnd.title, winPName: wnd.pName
       , winStyle: wnd.style, winExStyle: wnd.exStyle, winMinMax: wnd.minMax
       , winX: wnd.x, winY: wnd.y, winW: wnd.w, winH: wnd.h}]
-    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("shell-events", data, "afterbegin")
+    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("messages", data, "afterbegin")
     this.applyRules(msgNum, wnd)
   }
   
@@ -106,6 +110,13 @@ class Manager {
         this.uifaces[i].wnd.runCommand("setAlwaysOnTop")
       }
     }
+  }
+  
+  updateUifaceLogView() {
+    Global logger
+    
+    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("log", logger.cache, "afterbegin")
+    logger.cache := []
   }
   
   setUifaceSystemInformation() {
