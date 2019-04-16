@@ -509,7 +509,10 @@ Config_UI_saveSession() {
 
 ;; GUI management
 #+Space::Monitor_toggleBar()
-#Space::Monitor_toggleTaskBar()
+#Space::
+  Monitor_toggleTaskBar()
+  mgr.toggleTaskbar()
+Return
 #y::Bar_toggleCommandGui()
 #+y::Monitor_toggleNotifyIconOverflowWindow()
 !+y::View_traceAreas()

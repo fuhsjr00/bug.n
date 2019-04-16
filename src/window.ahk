@@ -8,7 +8,7 @@ WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
 PARTICULAR PURPOSE.
 */
 
-class Window {
+class Window extends Rectangle {
   __New(winId) {
     Global logger, sys
     

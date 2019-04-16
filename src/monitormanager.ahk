@@ -59,22 +59,19 @@ class MonitorManager {
     logger.info("Monitor " . i . " found to be the primary monitor.", "MonitorManager.enumAutoHotkeyMonitors")
   }
   
-  class Monitor {
+  class Monitor extends Rectangle {
     __New(index, handle, rectLeft, rectTop, rectRight, rectBottom) {
       Global logger
       
-      this.handle     := handle
-      this.index      := index
-      this.aIndex     := 0
-      this.isPrimary  := False
-      this.key        := rectLeft . "-" . rectTop . "-" . rectRight . "-" . rectBottom
-      this.name       := ""
-      this.workArea   := ""
-      
-      this.left   := rectLeft
-      this.top    := rectTop
-      this.right  := rectRight
-      this.bottom := rectBottom
+      this.handle      := handle
+      this.index       := index
+      this.aIndex      := 0
+      this.isPrimary   := False
+      this.key         := rectLeft . "-" . rectTop . "-" . rectRight . "-" . rectBottom
+      this.name        := ""
+      this.workArea    := ""
+      this.trayWnd     := ""
+      this.showTaskbar := True
       
       this.x := rectLeft
       this.y := rectTop
@@ -104,21 +101,29 @@ class MonitorManager {
     ;; InnI: Get per-monitor DPI scaling factor (https://www.autoitscript.com/forum/topic/189341-get-per-monitor-dpi-scaling-factor/?tab=comments#comment-1359832)
   }
   
-  class WorkArea {
+  class WorkArea extends Rectangle {
     __New(i) {
       this.index := i
       
       SysGet, rect, MonitorWorkArea, % i
-      this.left   := rectLeft
-      this.top    := rectTop
-      this.right  := rectRight
-      this.bottom := rectBottom
       
       this.x := rectLeft
       this.y := rectTop
       this.w := rectRight - rectLeft
       this.h := rectBottom - rectTop
     }
+    
+    setSystemParametersInfo() {
+      Global sys
+      
+      VarSetCapacity(area, 16)
+      NumPut(this.x,          area,  0)
+      NumPut(this.y,          area,  4)
+      NumPut(this.x + this.w, area,  8)
+      NumPut(this.y + this.h, area, 12)
+      DllCall("SystemParametersInfo", UInt, sys.SPI_SETWORKAREA, UInt, 0, UInt, &area, UInt, 0)
+    }
+    ;; flashkid: Send SetWorkArea to second Monitor (http://www.autohotkey.com/board/topic/42564-send-setworkarea-to-second-monitor/)
   }
 }
 

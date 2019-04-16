@@ -31,6 +31,8 @@ class System {
     this.MDT_RAW_DPI        := 2
     this.MDT_DEFAULT        := this.MDT_EFFECTIVE_DPI
     
+    this.SPI_SETWORKAREA    := 0x2F
+    
     /*
       Windows CONSTANTS
       GUI

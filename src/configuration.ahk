@@ -10,12 +10,12 @@ PARTICULAR PURPOSE.
 
 class Configuration {
   __New() {
-    Global Config_barTransparency, Config_maintenanceInterval, Config_readinBat, Config_readinCpu, Config_readinDate, Config_readinDateFormat, Config_readinDiskLoad, Config_readinInterval, Config_readinMemoryUsage, Config_readinNetworkLoad, Config_readinTime, Config_readinTimeFormat, Config_readinVolume, Config_showBar, Config_verticalBarPos
+    Global Config_barTransparency, Config_maintenanceInterval, Config_readinBat, Config_readinCpu, Config_readinDate, Config_readinDateFormat, Config_readinDiskLoad, Config_readinInterval, Config_readinMemoryUsage, Config_readinNetworkLoad, Config_readinTime, Config_readinTimeFormat, Config_readinVolume, Config_showBar, Config_showTaskbar, Config_verticalBarPos
     
     this.uifaceTransparency     := Config_barTransparency                                             ;; possible values: "Off", 0-255
     this.barHeight              := "medium"                                                           ;; possible values: "tiny", "small", "medium", "large", "xlarge", "xxlarge", "xxxlarge", "jumbo"
     this.barPosition            := Config_verticalBarPos == "tray" ? "top" : Config_verticalBarPos    ;; possible values: "bottom", "top"
-    this.showBar                := Config_showBar                                                     ;; possible values: True, False
+    this.showBarDefault         := Config_showBar                                                     ;; possible values: True, False
     this.showBatteryStatus      := Config_readinBat                                                   ;; possible values: True, False
     this.showCpuUsage           := Config_readinCpu                                                   ;; possible values: True, False
     this.showDate               := Config_readinDate ? Config_readinDateFormat : ""                   ;; possible values: "", a quoted string as described in https://autohotkey.com/docs/commands/FormatTime.htm#Date_Formats_case_sensitive
@@ -25,8 +25,10 @@ class Configuration {
     this.showTime               := Config_readinTime ? Config_readinTimeFormat : ""                   ;; possible values: "", a quoted string as described in https://autohotkey.com/docs/commands/FormatTime.htm#Time_Formats_case_sensitive
     this.showVolumeLevel        := Config_readinVolume                                                ;; possible values: True, False
     ;; show*                                    ;; possible values for hiding *: False, 0, ""
-    this.logViewUpdateInterval  := Config_maintenanceInterval                                         ;; possible values: "Off", 1-4294967295 (time in milliseconds)
     this.sysInfoUpdateInterval  := Config_readinInterval                                              ;; possible values: "Off", 1-4294967295 (time in milliseconds)
+    this.logViewUpdateInterval  := Config_maintenanceInterval                                         ;; possible values: "Off", 1-4294967295 (time in milliseconds)
+    
+    this.showTaskbarDefault     := Config_showTaskbar                                                 ;; possible values: True, False
     
     this.rules := []
     

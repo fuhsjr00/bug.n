@@ -15,11 +15,16 @@
 
 class Manager {
   __New() {
-    Global config, logger, sys
+    Global Bar_height, config, logger, sys
     
     this.monmgrs := [New MonitorManager(), ""]
+    this.detectTaskbars()
     this.workAreas := []
     For i, item in this.monmgrs[1].monitors {
+      showTaskbar := IsObject(config.monitors[i]) ? config.monitors[i].showTaskbar : config.showTaskbarDefault
+      If (!showTaskbar) {
+        this.toggleTaskbar(i)
+      }
       this.workAreas[i] := item.workArea
     }
     this.dskmgr := New DesktopManager(ObjBindMethod(this, "onTaskbarCreated"))
@@ -29,6 +34,7 @@ class Manager {
       this.uifaces[i] := New UserInterface(i, item.x, item.y, item.w, item.h, ObjBindMethod(this, "onUifaceAppCall"), config.uifaceTransparency, config.barPosition, config.barHeight)
       this.uifaces[i].wnd := this.getWindow(this.uifaces[i].winId)
     }
+    Bar_height := this.uifaces[this.monmgrs[1].primaryMonitor].barHeight
     this.windows   := {}
     data := []
     WinGet, winId_, List, , ,
@@ -60,6 +66,25 @@ class Manager {
   }
   
   applyRules(msgNum, wnd) {
+  }
+  
+  detectTaskbars() {
+    DetectHiddenWindows, On
+    WinGet, winId_, List, , ,
+    Loop, % winId_ {
+      WinGetClass, winClass, % "ahk_id " . winId_%A_Index%
+      If (RegExMatch(winClass, "Shell_.*TrayWnd")) {
+        wnd := this.getWindow(winId_%A_Index%)
+        rect := New Rectangle(wnd.x + wnd.w / 2, wnd.y + wnd.h / 2)
+        For i, item in this.monmgrs[1].monitors {
+          If (item.match(rect)) {
+            item.trayWnd := wnd
+            Break
+          }
+        }
+      }
+    }
+    DetectHiddenWindows, Off
   }
   
   getWindow(winId) {
@@ -112,13 +137,6 @@ class Manager {
     }
   }
   
-  updateUifaceLogView() {
-    Global logger
-    
-    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("log", logger.cache, "afterbegin")
-    logger.cache := []
-  }
-  
   setUifaceSystemInformation() {
     Global config, sys
     
@@ -160,6 +178,54 @@ class Manager {
     }
     this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("work-areas", data)
     this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("windows", winData)
+  }
+    
+  toggleTaskbar(i := 0) {
+    i := i ? i : this.monmgrs[1].primaryMonitor
+    m := this.monmgrs[1].monitors[i]
+    If (m.trayWnd != "") {
+      m.showTaskbar := !m.showTaskbar
+      If (!m.showTaskbar) {
+        WinHide, % "Start ahk_class Button"
+        WinHide, % "ahk_class " . m.trayWnd.class
+        m.workArea.x := m.x
+        m.workArea.y := m.y
+        m.workArea.w := m.w
+        m.workArea.h := m.h
+      } Else {
+        m.workArea := New MonitorManager.WorkArea(i)
+        WinShow, % "Start ahk_class Button"
+        WinShow, % "ahk_class " . m.trayWnd.class
+      }
+      m.workArea.setSystemParametersInfo()
+      this.workAreas[i] := m.workArea
+      this.uifaces[i].wnd.move(this.workAreas[i].x, this.workAreas[i].y, this.workAreas[i].w, this.workAreas[i].h)
+    }
+  }
+  
+  updateUifaceLogView() {
+    Global logger
+    
+    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("log", logger.cache, "afterbegin")
+    logger.cache := []
+  }
+}
+
+class Rectangle {
+  ;; A rectangle must have the following properties: x (x-coordinate), y (y-coordinate), w (width), h (height)
+  __New(xCoordinate, yCoordinate, width := 0, height := 0) {
+    this.x := xCoordinate
+    this.y := yCoordinate
+    this.w := width
+    this.h := height
+  }
+  
+  match(rect, delta := 2) {
+    If (rect.w = 0 || rect.h = 0) {
+      Return, (this.x <= rect.x && this.y <= rect.y && this.x + this.w >= rect.x && this.y + this.h >= rect.y)
+    } Else {
+      Return, (Abs(this.x - rect.x) < delta && Abs(this.y - rect.y) < delta && Abs(this.w - rect.w) < delta && Abs(this.h - rect.h) < delta)
+    }
   }
 }
 

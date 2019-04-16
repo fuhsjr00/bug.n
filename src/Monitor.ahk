@@ -210,7 +210,7 @@ Monitor_getWorkArea(m) {
   Monitor_#%m%_barX   := Monitor_#%m%_x
   Monitor_#%m%_barY   := bTop
 
-  Monitor_setWorkArea(monitorLeft, monitorTop, monitorRight, monitorBottom)
+  ; Monitor_setWorkArea(monitorLeft, monitorTop, monitorRight, monitorBottom)
 }
 
 Monitor_moveToIndex(m, n) {
