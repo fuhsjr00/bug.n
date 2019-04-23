@@ -48,7 +48,7 @@ class System {
     this.HSHELL_WINDOWDESTROYED      :=  2
     ;; this.HSHELL_ACTIVATESHELLWINDOW  :=  3
     this.HSHELL_WINDOWACTIVATED      :=  4
-    ;; this.HSHELL_GETMINRECT           :=  5
+    this.HSHELL_GETMINRECT           :=  5
     this.HSHELL_REDRAW               :=  6
     ;; this.HSHELL_TASKMAN              :=  7
     ;; this.HSHELL_LANGUAGE             :=  8
@@ -69,7 +69,7 @@ class System {
     this.HSHELL_messages[2]     := "WINDOWDESTROYED"
     ;; this.HSHELL_messages[3]     := "ACTIVATESHELLWINDOW"
     this.HSHELL_messages[4]     := "WINDOWACTIVATED"
-    ;; this.HSHELL_messages[5]     := "GETMINRECT"
+    this.HSHELL_messages[5]     := "GETMINRECT"
     this.HSHELL_messages[6]     := "REDRAW"
     ;; this.HSHELL_messages[7]     := "TASKMAN"
     ;; this.HSHELL_messages[8]     := "LANGUAGE"

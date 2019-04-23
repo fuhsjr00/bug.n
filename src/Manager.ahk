@@ -17,8 +17,10 @@ class Manager {
   __New() {
     Global Bar_height, config, logger, sys
     
+    this.active := {monitor: "?", workArea: "?", desktop: "?", view: "?", layout: "?", window: "?"}
     this.monmgrs := [New MonitorManager(), ""]
     this.detectTaskbars()
+    this.active.monitor := this.monmgrs[1].primaryMonitor
     this.workAreas := []
     For i, item in this.monmgrs[1].monitors {
       showTaskbar := IsObject(config.monitors[i]) ? config.monitors[i].showTaskbar : config.showTaskbarDefault
@@ -27,25 +29,24 @@ class Manager {
       }
       this.workAreas[i] := item.workArea
     }
+    this.active.workArea := this.monmgrs[1].primaryMonitor
     this.dskmgr := New DesktopManager(ObjBindMethod(this, "onTaskbarCreated"))
-    currentDesktopIndex := this.dskmgr.getCurrentDesktopIndex()
+    this.active.desktop := this.dskmgr.getCurrentDesktopIndex()
     this.uifaces := []
     For i, item in this.workAreas {
-      this.uifaces[i] := New UserInterface(i, item.x, item.y, item.w, item.h, ObjBindMethod(this, "onUifaceAppCall"), config.uifaceTransparency, config.barPosition, config.barHeight)
+      trayWnd := this.monmgrs[1].monitors[i].trayWnd
+      this.uifaces[i] := New UserInterface(i, item.x, item.y, item.w, item.h, ObjBindMethod(this, "onUifaceAppCall"), config.uifaceTransparency, config.barPosition, config.barHeight, (IsObject(trayWnd) && trayWnd.w > trayWnd.h) ? trayWnd.h : 0)
       this.uifaces[i].wnd := this.getWindow(this.uifaces[i].winId)
     }
     Bar_height := this.uifaces[this.monmgrs[1].primaryMonitor].barHeight
     this.windows   := {}
-    data := []
     WinGet, winId_, List, , ,
     Loop, % winId_ {
       wnd := this.getWindow(winId_%A_Index%)
-      data.push({id: wnd.id, class: wnd.class, title: wnd.title, pName: wnd.pName
-        , style: wnd.style, exStyle: wnd.exStyle, minMax: wnd.minMax
-        , x: wnd.x, y: wnd.y, w: wnd.w, h: wnd.h, view: 0})
       this.applyRules(1, wnd)
     }
-    this.setUifaceTables(data)
+    this.setUifaceTables()
+    this.applyRules(0)
     
     this.setUifaceSystemInformation()
     funcObject := ObjBindMethod(this, "setUifaceSystemInformation")
@@ -65,7 +66,32 @@ class Manager {
     }
   }
   
-  applyRules(msgNum, wnd) {
+  applyRules(msgNum, wnd := "") {
+    Global config, logger
+    
+    For i, rule in config.rules[msgNum] {
+      match := False
+      For j, condition in rule.conditions {
+        If (IsObject(wnd)) {
+          condition := RegExReplace(condition, "^get/windows/_\?", "get/windows/" . wnd.id . "?")
+        }
+        If (this.resolveAppCall(condition)) {
+          logger.info((IsObject(wnd) ? "Window " . wnd.id . " m" : "M") . "atched rule " . i . " for message number " . msgNum . ".", "Manager.applyRules")
+          For j, action in rule.actions {
+            If (action == "break") {
+              Break, 3
+            } Else {
+              If (IsObject(wnd)) {
+                action := RegExReplace(action, "^set/userinterfaces/_/bar\?window=_$", "set/userinterfaces/_/bar?window=" . wnd.title)
+                action := RegExReplace(action, "^set/windows\?id=_", "set/windows?id=" . wnd.id)
+                action := RegExReplace(action, "^set/windows/_\?$", "set/windows/" . wnd.id . "?")
+              }
+              this.resolveAppCall(action)
+            }
+          }
+        }
+      }
+    }
   }
   
   detectTaskbars() {
@@ -122,17 +148,72 @@ class Manager {
     this.dskmgr := New DesktopManager(ObjBindMethod(this, "onTaskbarCreated"))
   }
   
-  onUifaceAppCall(urlPath) {
-    Global sys
+  resolveAppCall(uri) {
+    Global logger, sys
     
-    If (RegExMatch(urlPath, "uifaces/current/toggleMainVisibility", id)) {
-      i := this.monmgrs[1].primaryMonitor
+    this.updateActive()
+    
+    If (uri == "get/True") {
+      Return, True
+    } Else If (RegExMatch(uri, "O)^get/windows/([0-9xa-f]{7,8})\?", id)) {
+      wnd := this.getWindow(id[1])
+      queries := SubStr(uri, InStr(uri, "?") + 1)
+      truethiness := queries
+      For i, query in StrSplit(queries, "&") {
+        truethiness := truethiness && wnd.testProperty(query)
+      }
+      Return, truethiness
+    } Else If (RegExMatch(uri, "O)^set/windows\?active=([0-9xa-f]{7,8})$", id)) {
+      this.windows[id[1]].setProperty("active=True")
+    } Else If (RegExMatch(uri, "^set/windows\?")) {
+      queries := SubStr(uri, InStr(uri, "?") + 1)
+      If (RegExMatch(queries, "O)id=([0-9xa-f]{7,8})", id)) {
+        wnd := this.getWindow(id[1])
+        data := [{id: wnd.id, class: wnd.class, title: wnd.title, pName: wnd.pName
+          , style: wnd.style, exStyle: wnd.exStyle, minMax: wnd.minMax
+          , x: wnd.x, y: wnd.y, w: wnd.w, h: wnd.h, view: 0}]
+        this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("windows", data)
+        For i, query in StrSplit(queries, "&") {
+          parts := StrSplit(query, "=")
+          If (parts[1] == "view") {
+            wnd.setProperty(query)
+          } Else If (parts[1] != "id") {
+            wnd.setProperty(query)
+          }
+        }
+      }
+    } Else If (RegExMatch(uri, "O)^set/windows/([0-9xa-f]{7,8})\?$", id)) {
+      If (WinExist(id[1])) {
+        this.windows[id[1]].setProperty("closed=True")
+      }
+      this.uifaces[this.monmgrs[1].primaryMonitor].removeTableRows("windows", [id[1]])
+      this.windows[id[1]] := ""
+    } Else If (RegExMatch(uri, "O)^set/windows/([0-9xa-f]{7,8})\?", id)) {
+      wnd := this.getWindow(id[1])
+      queries := SubStr(uri, InStr(uri, "?") + 1)
+      For i, query in StrSplit(queries, "&") {
+        wnd.setProperty(query)
+      }
+    } Else If (RegExMatch(uri, "O)^set/userinterfaces/([_0-9]+)/bar\?window=(.*)", match)) {
+      title := match[2] == "_" ? this.getWindow(this.active.window).title : match[2]
+      If (match[1] == "_") {
+        For i, item in this.uifaces {
+          item.setCurrentIndicator("desktop", this.active.desktop)
+          item.setCurrentIndicator("view",    this.active.view)
+          item.setCurrentIndicator("layout",  this.active.layout)
+          item.setCurrentIndicator("window",  title)
+        }
+      } Else {
+        this.uifaces[match[1]].setCurrentIndicator("window", title)
+      }
+    } Else If (RegExMatch(uri, "O)^set/userinterfaces/([_0-9]+)/window\?alwaysontop=toggle", index)) {
+      i := index[1] == "_" ? this.active.workArea : index[1]
       this.uifaces[i].wnd.update()
       If (this.uifaces[i].wnd.exStyle & sys.WS_EX_TOPMOST) {
-        this.uifaces[i].wnd.runCommand("toggleAlwaysOnTop")
-        this.uifaces[i].wnd.runCommand("bottom")
+        this.uifaces[i].wnd.setProperty("alwaysOnTop=toggle")
+        this.uifaces[i].wnd.setProperty("stackPosition=bottom")
       } Else {
-        this.uifaces[i].wnd.runCommand("setAlwaysOnTop")
+        this.uifaces[i].wnd.setProperty("alwaysOnTop=on")
       }
     }
   }
@@ -161,7 +242,7 @@ class Manager {
     }
   }
   
-  setUifaceTables(winData) {
+  setUifaceTables() {
     data := []
     For i, item in this.monmgrs[1].monitors {
       data.push({index: item.index, name: item.name, x: item.x, y: item.y, w: item.w, h: item.h})
@@ -177,11 +258,10 @@ class Manager {
       data.push({index: item.index, x: item.x, y: item.y, w: item.w, h: item.h})
     }
     this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("work-areas", data)
-    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("windows", winData)
   }
     
   toggleTaskbar(i := 0) {
-    i := i ? i : this.monmgrs[1].primaryMonitor
+    i := i ? i : this.active.monitor
     m := this.monmgrs[1].monitors[i]
     If (m.trayWnd != "") {
       m.showTaskbar := !m.showTaskbar
@@ -201,6 +281,26 @@ class Manager {
       this.workAreas[i] := m.workArea
       this.uifaces[i].wnd.move(this.workAreas[i].x, this.workAreas[i].y, this.workAreas[i].w, this.workAreas[i].h)
     }
+  }
+  
+  updateActive() {
+    this.active.window := WinExist("A")
+    For i, item in this.monitors {
+      If (item.match(New Rectangle(this.active.window.x + this.active.window.w / 2, this.active.window.y + this.active.window.h / 2))) {
+        this.active.monitor := i
+        Break
+      }
+    }
+    For i, item in this.workAreas {
+      wnd := this.getWindow(this.active.window)
+      If (item.match(New Rectangle(wnd.x + wnd.w / 2, wnd.y + wnd.h / 2))) {
+        this.active.workArea := i
+        Break
+      }
+    }
+    this.active.desktop := this.dskmgr.getCurrentDesktopIndex() + 1
+    this.active.view := "?"
+    this.active.layout := "?"
   }
   
   updateUifaceLogView() {
@@ -230,8 +330,8 @@ class Rectangle {
 }
 
 UifaceEscape:
-  mgr.uifaces[A_Gui].wnd.runCommand("toggleAlwaysOnTop")
-  mgr.uifaces[A_Gui].wnd.runCommand("bottom")
+  mgr.uifaces[A_Gui].wnd.setProperty("alwaysOnTop=toggle")
+  mgr.uifaces[A_Gui].wnd.setProperty("stackPosition=bottom")
 Return
 
 UfaceSize:

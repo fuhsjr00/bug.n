@@ -9,7 +9,7 @@ PARTICULAR PURPOSE.
 */
 
 class UserInterface {
-  __New(index, xCoordinate, yCoordinate, width, height, funcObject, transparency := "Off", barPosition := "top", barHeight := "medium", htmlFile := "") {
+  __New(index, xCoordinate, yCoordinate, width, height, funcObject, transparency := "Off", barPosition := "top", barHeight := "medium", tableOffset := 0, htmlFile := "") {
     ;; This is the web browser window with an ActiveX control. Argument 2-5 are used to position and size the window.
     ;; funcObject should be a function object for app:// calls, which can receive a string, the URL path, as an argument.
     ;; transparancy is used to set the transparency of the whole window and can be an integer between 0 and 255 or the string "Off".
@@ -41,7 +41,7 @@ class UserInterface {
     DllCall("urlmon\CoInternetSetFeatureEnabled"
            ,"Int",  sys.FEATURE_DISABLE_NAVIGATION_SOUNDS
            ,"UInt", sys.SET_FEATURE_ON_PROCESS
-           ,"Int", 1)
+           ,"Int",  1)
     ;; MrBubbles (2016) Webapp.ahk - Make web-based apps with AutoHotkey. [source code] https://autohotkey.com/boards/viewtopic.php?p=117029#p117029
 		While this.display.readystate != 4 || this.display.busy {
 		  Sleep, 10                   ;; Wait for IE to load the page, referencing it.
@@ -50,10 +50,11 @@ class UserInterface {
 		ComObjConnect(this.display, this.EventHandler)    ;; Connect ActiveX control events to the associated class object.
 		logger.info("ActiveX control connected to event handler.", "UserInterface.__New")
 		
+		this.setCurrentIndicator("work-area", this.index)
 		this.barPosition := barPosition
 		this.barHeight   := barHeight
-		this.fitTables()
-    this.display.Navigate("javascript:document.getElementById('bug-n-log-icon').click()")
+		this.fitTables(tableOffset)
+		this.display.Navigate("javascript:document.getElementById('bug-n-log-icon').click()")
     
     Gui, Show, % "NoActivate x" . this.x . " y" . this.y . " w" . this.w . " h" . this.h, % "bug.n Display " . this.index
     WinSet, Bottom, , % "ahk_id " . this.winId
@@ -79,7 +80,7 @@ class UserInterface {
       disp.Stop()
       If (i := InStr(url, "#")) {
         urlPath := SubStr(url, i + 1)
-        mgr.onUifaceAppCall(urlPath)
+        mgr.resolveAppCall(urlPath)
         logger.info("App function called with argument " . urlPath . ".", "UserInterface.EventHandler.BeforeNavigate2")
       }
     }
@@ -135,7 +136,7 @@ class UserInterface {
     }
   }
   
-  fitTables() {
+  fitTables(tableOffset) {
     Global logger
     
     iconHeight := this.display.document.getElementById("bug-n-icon-row").offsetHeight
@@ -146,9 +147,10 @@ class UserInterface {
       If (subId == "windows" || subId == "messages" || subId == "log") {
         inputHeight := view.getElementsByTagName("input")[0].offsetHeight
       }
-      tableHeight := this.h - this.barHeight - iconHeight - h3Height - inputHeight - 38
+      footerHeight := this.display.document.getElementsByTagName("footer")[0].offsetHeight
+      tableHeight := this.h - this.barHeight - iconHeight - h3Height - inputHeight - footerHeight ;;- (20 + tableOffset)
       view.getElementsByTagName("div")[0].style.height := tableHeight . "px"
-      logger.debug("Table fitted to (" . this.h . " - " . this.barHeight . " - " . iconHeight . " - " . h3Height . " - " . inputHeight . " - 32) = " . tableHeight, "UserInterface.fitTables")
+      logger.debug("Table fitted to (" . this.h . " - " . this.barHeight . " - " . iconHeight . " - " . h3Height . " - " . inputHeight . " - " . footerHeight . ") = " . tableHeight, "UserInterface.fitTables")
     }
   }
   
@@ -161,7 +163,7 @@ class UserInterface {
       keys := ["timestamp", "level", "src", "msg"]
     } Else If (subId == "messages") {
       keys := ["timestamp", "msg", "msgNum", "winId"]
-      subKeys := ["winClass", "winTitle", "winPName", "winStyle", "winExStyle", "winMinMax", "winX", "winY", "winW", "winH"]
+      subKeys := ["winClass", "winTitle", "winPName", "winMinMax", "winStyle", "winExStyle", "winX", "winW", "winY", "winH"]
     } Else If (subId == "monitors") {
       keys := ["index", "name", "x", "y", "w", "h"]
     } Else If (subId == "views") {
@@ -176,11 +178,15 @@ class UserInterface {
       For j, key in keys {
         If (subId == "messages" && key == "winId") {
           html .= "<td class='w3-tooltip'>" . item[key]
-          html .= "<table class='w3-text' style='position:absolute;'><tr><th>Class</th><th>Title</th><th>Process Name</th><th>Style</th><th>ExStyle</th><th>Min/ Max</th><th>x-Coordinate</th><th>y-Coordinate</th><th>Width</th><th>Height</th></tr><tr>"
-          For k, subKey in subKeys {
-            html .= "<td>" . item[subKey] . "</td>"
+          html .= "<div class='w3-text' style='position:absolute; z-index:3; top:-100%; right:100%;'><table class='w3-table-all w3-white'>"
+          For k, header in ["Class", "Title", "Process Name", "Min/ Max"] {
+            html .= "<tr><th class='w3-blue-grey' style='min-width: 8em;'>" . header . "</th><td colspan=3>" . item[subKeys[k]] . "</td></tr>"
           }
-          html .= "</tr></table></td>"
+          For k, header in [["Style", "ExStyle"], ["x-Coordinate", "Width"], ["y-Coordinate", "Height"]] {
+            html .= "<tr><th class='w3-blue-grey'>" . header[1] . "</th><td>" . item[subKeys[4 + 2 * k - 1]] . "</td>"
+            html .= "    <th class='w3-blue-grey'>" . header[2] . "</th><td>" . item[subKeys[4 + 2 * k]] . "</td></tr>"
+          }
+          html .= "</table></div></td>"
         } Else {
           html .= "<td>" . item[key] . "</td>"
         }
@@ -190,6 +196,20 @@ class UserInterface {
     }
     count := this.display.document.getElementById("bug-n-" . subId . "-icon").getElementsByTagName("div")[1].innerHTML
     this.setIconCounter(subId, count + data.Length())
+  }
+  
+  removeTableRows(subId, data) {
+    tbody := this.display.document.getElementById("bug-n-" . subId . "-view").getElementsByTagName("tbody")[0]
+    rows := tbody.getElementsByTagName("tr")
+    For i, item in data {
+      Loop, % rows.length {
+        If (rows[A_Index - 1].getElementsByTagName("td")[0].innerHTML == item) {
+          tbody.removeChild(rows[A_Index - 1])
+          count := this.display.document.getElementById("bug-n-" . subId . "-icon").getElementsByTagName("div")[1].innerHTML
+          this.setIconCounter(subId, count - 1)
+        }
+      }
+    }
   }
   
   setCurrentIndicator(subId, value) {

@@ -132,8 +132,9 @@ class DesktopManager {
         
         GUID := this.getDesktopId(IVirtualDesktop)
         DllCall("Ole32.dll\StringFromGUID2", "UPtr", &GUID, "UPtr", &strGUID, "Int", 38 + 1)
+        GUID := StrGet(&strGUID, "UTF-16")
         logger.info("Desktop with GUID " . GUID . " added at index " . A_Index . ".", "VirtualDesktopManager.getDesktops")
-        this.desktops[A_Index] := {GUID: StrGet(&strGUID, "UTF-16"), IVirtualDesktop: IVirtualDesktop}
+        this.desktops[A_Index] := {GUID: GUID, IVirtualDesktop: IVirtualDesktop}
     }
   }
   

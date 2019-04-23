@@ -36,15 +36,16 @@ class Window extends Rectangle {
     this.minMax  := winMinMax
     this.getPosEx()
     
-    this.hasCaption := (this.style & sys.WS_CAPTION)
-    isBugNDisplay := (this.class == "AutoHotkey" && !this.hasCaption && this.exStyle & sys.WS_EX_TOOLWINDOW)
-    isDwmElement  := InStr(";Button;DesktopBackgroundClass;Progman;Shell_TrayWnd;SysListView32;WorkerW;#32768;", ";" . this.class . ";")
-    this.isAppWindow := !isDwmElement && !isBugNDisplay && !this.isCloaked()
-    this.isChild     := this.style & sys.WS_CHILD
-    this.isElevated  := !A_IsAdmin && !DllCall("OpenProcess", UInt, 0x400, Int, 0, UInt, winPID, Ptr)
+    WinGetClass, winClass, % "ahk_id " . this.id
+    this.isHidden    := (this.class != winClass)
+    this.hasCaption  := (this.style & sys.WS_CAPTION)
+    isBugNDisplay    := (this.class == "AutoHotkeyGUI" && RegExMatch(this.title, "bug.n Display \d+") && !this.hasCaption && this.exStyle & sys.WS_EX_TOOLWINDOW)
+    this.isAppWindow := (!isBugNDisplay && !this.isCloaked && !this.isHidden && this.w > 0 && this.h > 0)
+    this.isChild     := (this.style & sys.WS_CHILD)
+    this.isElevated  := (!A_IsAdmin && !DllCall("OpenProcess", UInt, 0x400, Int, 0, UInt, winPID, Ptr))
     ;; jeeswg: How would I mimic the windows Alt+Esc hotkey in AHK? (https://autohotkey.com/boards/viewtopic.php?p=134910&sid=192dd8fcd7839b6222826561491fcd57#p134910)
-  	this.isPopup := this.style & sys.WS_POPUP
-    this.isGhost := this.pPath == "C:\Windows\System32\dwm.exe" && this.class == "Ghost"
+  	this.isPopup := (this.style & sys.WS_POPUP)
+    this.isGhost := (this.pPath == "C:\Windows\System32\dwm.exe" && this.class == "Ghost")
     this.isResponding := DllCall("SendMessageTimeout", "UInt", this.id, "UInt", 0x0, "Int", 0, "Int", 0, "UInt", 0x2, "UInt", 150, "UInt *", 0)
     ;; 150 = timeout in milliseconds
     
@@ -119,20 +120,22 @@ class Window extends Rectangle {
   }
   ;; jballi: [Function] WinGetPosEx v0.1 (Preview) - Get the real position and size of a window (https://autohotkey.com/boards/viewtopic.php?t=3392)
   
-  isCloaked() {
-    Global sys
-    
-    result := False
-    VarSetCapacity(var, A_PtrSize)
-    If !DllCall("DwmApi\DwmGetWindowAttribute", "Ptr", this.id, "UInt", sys.DWMWA_CLOAKED, "Ptr", &var, "UInt", A_PtrSize)
-      ;; returns S_OK (which is zero) on success, otherwise, it returns an HRESULT error code
-      result := NumGet(var)    ;; omitting the "&" performs better
-    /* DWMWA_CLOAKED: If the window is cloaked, the following values explain why:
-      1  The window was cloaked by its owner application (DWM_CLOAKED_APP)
-      2  The window was cloaked by the Shell (DWM_CLOAKED_SHELL)
-      4  The cloak value was inherited from its owner window (DWM_CLOAKED_INHERITED)
-    */
-    Return, result
+  isCloaked[] {
+    get {
+      Global sys
+      
+      result := False
+      VarSetCapacity(var, A_PtrSize)
+      If !DllCall("DwmApi\DwmGetWindowAttribute", "Ptr", this.id, "UInt", sys.DWMWA_CLOAKED, "Ptr", &var, "UInt", A_PtrSize)
+        ;; returns S_OK (which is zero) on success, otherwise, it returns an HRESULT error code
+        result := NumGet(var)    ;; omitting the "&" performs better
+      /* DWMWA_CLOAKED: If the window is cloaked, the following values explain why:
+        1  The window was cloaked by its owner application (DWM_CLOAKED_APP)
+        2  The window was cloaked by the Shell (DWM_CLOAKED_SHELL)
+        4  The cloak value was inherited from its owner window (DWM_CLOAKED_INHERITED)
+      */
+      Return, result
+    }
   }
   ;; ophthalmos: Get last active window resp. all windows in the Alt+Tab list (https://autohotkey.com/boards/viewtopic.php?p=68194&sid=427a7811da17f81ad31bac20af9835d6#p68194)
 
@@ -226,6 +229,58 @@ class Window extends Rectangle {
       this.caption := False
     }
     Return, 0
+  }
+  
+  setProperty(query) {
+    Global sys
+    
+    parts := StrSplit(query, "=")
+    If (this.isUnresponsive("Window.setProperty(" . query . ")")) {
+      Return, 1
+    } Else If (query == "active=True") {
+      WinActivate, % "ahk_id " this.id
+    } Else If (parts[1] == "alwaysOnTop") {
+      WinSet, AlwaysOnTop, % parts[2], % "ahk_id " this.id
+    } Else If (parts[1] == "caption") {
+      WinSet, Style, % (parts[2] == "Off" ? "-" : "+") . sys.WS_CAPTION, % "ahk_id " this.id
+    } Else If (query == "closed=True") {
+      WinClose, % "ahk_id " this.id
+    } Else If (parts[1] == "hidden") {
+      If (parts[2] == True) {
+        WinHide, % "ahk_id " this.id
+      } Else {
+        WinShow, % "ahk_id " this.id
+      }
+    } Else If (parts[1] == "minMax") {
+      If (parts[2] == -1) {
+        WinMinimize, % "ahk_id " this.id
+      } Else If (parts[2] == 1) {
+        WinMaximize, % "ahk_id " this.id
+      } Else {
+        WinRestore, % "ahk_id " this.id
+      }
+    } Else If (parts[1] == "stackPosition") {
+      WinSet, % parts[2],, % "ahk_id " this.id
+    } Else If (parts[1] == "view") {
+      this.view := parts[2]
+    }
+    this.update()
+  }
+  
+  testProperty(query) {
+    Global logger
+    
+    parts := StrSplit(query, "=")
+    logger.debug("Testing query <mark>" . query . "</mark> against window with id <mark>" . this.id . "</mark> and property value <mark>" . this[parts[1]] . "</mark>.", "Window.testProperty")
+    If (RegExMatch(parts[1], "(class|title|pName|pPath)")) {
+      Return, RegExMatch(this[parts[1]], parts[2])
+    } Else If (RegExMatch(parts[1], "(style|exStyle)")) {
+      Return, (this[parts[1]] & parts[2])
+    } Else If (RegExMatch(parts[1], "(isAppWindow|isChild|isElevated|isPopup)")) {
+      Return, (this[parts[1]] && parts[2] == "True" || !this[parts[1]] && parts[2] == "False")
+    } Else {
+      Return, (this[parts[1]] == parts[2])
+    }
   }
   
   update() {
