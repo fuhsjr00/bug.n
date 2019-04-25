@@ -213,10 +213,18 @@ class UserInterface {
   }
   
   setCurrentIndicator(subId, value) {
-    If (subId == "views") {
+    element := this.display.document.getElementById("bug-n-" . subId . "-indicator")
+    If (subId == "work-area") {
+      element.getElementsByTagName("span")[0].innerHTML := value
+      If (value == this.index) {
+        element.className := StrReplace(element.className, "w3-text-white", "w3-text-amber")
+      } Else {
+        element.className := StrReplace(element.className, "w3-text-amber", "w3-text-white")
+      }
+    } Else If (subId == "views") {
       
     } Else {
-      this.display.document.getElementById("bug-n-" . subId . "-indicator").getElementsByTagName("span")[0].innerHTML := value
+      element.getElementsByTagName("span")[0].innerHTML := value
     }
   }
   

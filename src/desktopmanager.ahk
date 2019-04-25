@@ -52,13 +52,13 @@ class DesktopManager {
     
     this.IVirtualDesktopManagerInternal := ComObjQuery(IServiceProvider, "{C5E0CDCA-7B6E-41B2-9FC4-D93975CC467B}", "{F31574D6-B682-4CDC-BD56-1827860ABEC6}")
     If (!this.IVirtualDesktopManagerInternal) {
-      logger.warning("Could not query IVirtualDesktopManagerInternal from IServiceProvider, trying ImmersiveShell.", "VirtualDesktopManager.__New")
+      logger.warning("Could not query IVirtualDesktopManagerInternal from IServiceProvider, trying ImmersiveShell.", "DesktopManager.__New")
       this.IVirtualDesktopManagerInternal := ComObjQuery(ImmersiveShell,   "{C5E0CDCA-7B6E-41B2-9FC4-D93975CC467B}", "{AF8DA486-95BB-4460-B3B7-6E7A6B2962B5}")
     }
     this.getDesktops()
     
     OnMessage(DllCall("RegisterWindowMessage", "Str", "TaskbarCreated"), funcObject)
-    logger.info("'TaskbarCreated' message registered to function " . funcObject.Name, "VirtualDesktopManager.__New")
+    logger.info("'TaskbarCreated' message registered to function " . funcObject.Name, "DesktopManager.__New")
     ObjRelease(ImmersiveShell)
     ObjRelease(IServiceProvider)
   }
@@ -77,23 +77,32 @@ class DesktopManager {
     DllCall(ICreateDesktop, "UPtr", this.IVirtualDesktopManagerInternal, "UPtrP", IVirtualDesktop, "UInt")
     GUID := this.getDesktopId(IVirtualDesktop)
     this.desktops.push({GUID: GUID, IVirtualDesktop: IVirtualDesktop})
-    logger.info("New desktop created with GUID " . GUID . ".", "VirtualDesktopManager.createDesktop")
+    logger.info("New desktop created with GUID " . GUID . ".", "DesktopManager.createDesktop")
   }
   
-  getCurrentDesktopIndex() {
-    Global logger
-    
-    index := 0
+  getCurrentDesktop() {
     IVirtualDesktop := ""
     IGetCurrentDesktop := NumGet(NumGet(this.IVirtualDesktopManagerInternal + 0) +  6 * A_PtrSize)
     DllCall(IGetCurrentDesktop, "UPtr", this.IVirtualDesktopManagerInternal, "UPtr", IVirtualDesktop, "UInt")
+    Return, IVirtualDesktop
+  }
+  
+  getCurrentDesktopIndex(winId := 0) {
+    Global logger
+    
+    If (winId != 0) {
+      GUID := this.getWindowDesktopId(winId)
+    } Else {
+      GUID := this.getDesktopId(this.getCurrentDesktop())
+    }
+    index := 0
     For i, desktop in this.desktops {
-      If (desktop.IVirtualDesktop == IVirtualDesktop) {
+      If (desktop.GUID == GUID) {
         index := i
         Break
       }
     }
-    logger.info("Current desktop found at index " . index . ".", "VirtualDesktopManager.getCurrentDesktopIndex")
+    logger.info("Current desktop found at index " . index . ".", "DesktopManager.getCurrentDesktopIndex")
     Return, index
   }
   
@@ -101,11 +110,11 @@ class DesktopManager {
     GUID := 0
     IGetId := NumGet(NumGet(IVirtualDesktop + 0) + 4 * A_PtrSize)
     DllCall(IGetId, "UPtr", IVirtualDesktop, "UPtr", &GUID, "UInt")
+    VarSetCapacity(strGUID, (38 + 1) * 2)
+    DllCall("Ole32.dll\StringFromGUID2", "UPtr", &GUID, "UPtr", &strGUID, "Int", 38 + 1)
+    GUID := StrGet(&strGUID, "UTF-16")
     
     Return, GUID
-    ;; VarSetCapacity(strGUID, (38 + 1) * 2)
-    ;; DllCall("Ole32.dll\StringFromGUID2", "UPtr", &GUID, "UPtr", &strGUID, "Int", 38 + 1)
-    ;; GUIDstr := StrGet(&strGUID, "UTF-16")
   }
   
   getDesktops() {
@@ -119,11 +128,10 @@ class DesktopManager {
     n := 0
     IGetCount := NumGet(NumGet(IObjectArray + 0) + 3 * A_PtrSize)
     DllCall(IGetCount, "UPtr", IObjectArray, "UIntP", n, "UInt")
-    logger.info(n . " desktop" . (n == 1 ? "" : "s") . " found.", "VirtualDesktopManager.getDesktops")
+    logger.info(n . " desktop" . (n == 1 ? "" : "s") . " found.", "DesktopManager.getDesktops")
     
     IVirtualDesktop := 0
     VarSetCapacity(GUID, 16)
-    VarSetCapacity(strGUID, (38 + 1) * 2)
     Loop % n {
         ; https://github.com/nullpo-head/Windows-10-Virtual-Desktop-Switching-Shortcut/blob/master/VirtualDesktopSwitcher/VirtualDesktopSwitcher/VirtualDesktops.h
         DllCall("Ole32.dll\CLSIDFromString", "Str", "{FF72FFDD-BE7E-43FC-9C03-AD81681E88E4}", "UPtr", &GUID)
@@ -131,21 +139,25 @@ class DesktopManager {
         DllCall(IGetAt, "UPtr", IObjectArray, "UInt", A_Index - 1, "UPtr", &GUID, "UPtrP", IVirtualDesktop, "UInt")
         
         GUID := this.getDesktopId(IVirtualDesktop)
-        DllCall("Ole32.dll\StringFromGUID2", "UPtr", &GUID, "UPtr", &strGUID, "Int", 38 + 1)
-        GUID := StrGet(&strGUID, "UTF-16")
-        logger.info("Desktop with GUID " . GUID . " added at index " . A_Index . ".", "VirtualDesktopManager.getDesktops")
         this.desktops[A_Index] := {GUID: GUID, IVirtualDesktop: IVirtualDesktop}
+        logger.info("Desktop with GUID " . GUID . " added at index " . A_Index . ".", "DesktopManager.getDesktops")
     }
   }
   
   getWindowDesktopId(winId) {
     Global logger
     
+    VarSetCapacity(GUID, 16)
     IVirtualDesktopManager := ComObjCreate("{AA509086-5CA9-4C25-8F95-589D3C07B48A}", "{A5CD92FF-29BE-454C-8D04-D82879FB3F1B}")
-    IGetWindowDesktopId    := NumGet(NumGet(IVirtualDesktopManager + 0) + 4 * A_PtrSize)
-    DllCall(IGetWindowDesktopId, "UPtr", IVirtualDesktopManager, "UInt", winId, "UPtr", GUID, "UInt")
+    IGetWindowDesktopId := NumGet(NumGet(IVirtualDesktopManager + 0) + 4 * A_PtrSize)
+    DllCall(IGetWindowDesktopId, "UPtr", IVirtualDesktopManager, "UInt", winId, "UPtr", &GUID, "UInt")
+    
+    VarSetCapacity(strGUID, (38 + 1) * 2)
+    DllCall("Ole32.dll\StringFromGUID2", "UPtr", &GUID, "UPtr", &strGUID, "Int", 38 + 1)
+    GUID := StrGet(&strGUID, "UTF-16")
+    
     ObjRelease(IVirtualDesktopManager)
-    logger.info("Window with id " . winId . " found on desktop with GUID " . GUID . ".", "VirtualDesktopManager.getWindowDesktopId")
+    logger.debug("Window with id " . winId . " found on desktop with GUID " . GUID . ".", "DesktopManager.getWindowDesktopId")
     
     Return, GUID
   }
@@ -158,9 +170,9 @@ class DesktopManager {
     removeIVirtualDesktop   := this.desktops[i].IVirtualDesktop
     fallbackIVirtualDesktop := this.desktops[j].IVirtualDesktop
     IRemoveDesktop := NumGet(NumGet(this.IVirtualDesktopManagerInternal + 0) + 11 * A_PtrSize)
-    DllCall(IRemoveDesktop, "UPtr", this.IVirtualDesktopManagerInternal, "UPtrP", removeIVirtualDesktop, "UPtrP", fallbackIVirtualDesktop, "UInt")
+    DllCall(IRemoveDesktop, "UPtr", this.IVirtualDesktopManagerInternal, "UPtr", removeIVirtualDesktop, "UPtr", fallbackIVirtualDesktop, "UInt")
     this.desktops.RemoveAt(i)
-    logger.warning("Desktop removed at index " . i . " switching to desktop at index " . j . ".", "VirtualDesktopManager.removeDesktop")
+    logger.warning("Desktop removed at index " . i . " switching to desktop at index " . j . ".", "DesktopManager.removeDesktop")
   }
   
   switchDesktop(index) {
@@ -169,7 +181,7 @@ class DesktopManager {
     If (index <= this.desktops.Length()) {
       ISwitchDesktop := NumGet(NumGet(this.IVirtualDesktopManagerInternal + 0) +  9 * A_PtrSize)
       DllCall(ISwitchDesktop, "UPtr", this.IVirtualDesktopManagerInternal, "UPtr", this.desktops[index].IVirtualDesktop, "UInt")
-      logger.info("Switched to desktop at index " . index . ".", "VirtualDesktopManager.switchDesktop")
+      logger.info("Switched to desktop at index " . index . ".", "DesktopManager.switchDesktop")
     }
   }
 }

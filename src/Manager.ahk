@@ -82,7 +82,6 @@ class Manager {
               Break, 3
             } Else {
               If (IsObject(wnd)) {
-                action := RegExReplace(action, "^set/userinterfaces/_/bar\?window=_$", "set/userinterfaces/_/bar?window=" . wnd.title)
                 action := RegExReplace(action, "^set/windows\?id=_", "set/windows?id=" . wnd.id)
                 action := RegExReplace(action, "^set/windows/_\?$", "set/windows/" . wnd.id . "?")
               }
@@ -194,17 +193,15 @@ class Manager {
       For i, query in StrSplit(queries, "&") {
         wnd.setProperty(query)
       }
-    } Else If (RegExMatch(uri, "O)^set/userinterfaces/([_0-9]+)/bar\?window=(.*)", match)) {
-      title := match[2] == "_" ? this.getWindow(this.active.window).title : match[2]
-      If (match[1] == "_") {
-        For i, item in this.uifaces {
-          item.setCurrentIndicator("desktop", this.active.desktop)
+    } Else If (RegExMatch(uri, "^set/userinterfaces/_/bar\?window=_$")) {
+      For i, item in this.uifaces {
+        item.setCurrentIndicator("work-area", this.active.workArea)
+        item.setCurrentIndicator("desktop",   this.active.desktop)
+        If (i == this.active.workArea) {
           item.setCurrentIndicator("view",    this.active.view)
           item.setCurrentIndicator("layout",  this.active.layout)
-          item.setCurrentIndicator("window",  title)
+          item.setCurrentIndicator("window",  this.active.window.title)
         }
-      } Else {
-        this.uifaces[match[1]].setCurrentIndicator("window", title)
       }
     } Else If (RegExMatch(uri, "O)^set/userinterfaces/([_0-9]+)/window\?alwaysontop=toggle", index)) {
       i := index[1] == "_" ? this.active.workArea : index[1]
@@ -284,7 +281,7 @@ class Manager {
   }
   
   updateActive() {
-    this.active.window := WinExist("A")
+    this.active.window := this.getWindow(WinExist("A"))
     For i, item in this.monitors {
       If (item.match(New Rectangle(this.active.window.x + this.active.window.w / 2, this.active.window.y + this.active.window.h / 2))) {
         this.active.monitor := i
@@ -298,7 +295,9 @@ class Manager {
         Break
       }
     }
-    this.active.desktop := this.dskmgr.getCurrentDesktopIndex() + 1
+    If (this.active.window.isAppWindow) {
+      this.active.desktop := this.dskmgr.getCurrentDesktopIndex(this.active.window.id)
+    }
     this.active.view := "?"
     this.active.layout := "?"
   }
