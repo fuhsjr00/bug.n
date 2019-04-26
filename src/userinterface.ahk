@@ -200,11 +200,12 @@ class UserInterface {
   
   removeTableRows(subId, data) {
     tbody := this.display.document.getElementById("bug-n-" . subId . "-view").getElementsByTagName("tbody")[0]
-    rows := tbody.getElementsByTagName("tr")
     For i, item in data {
-      Loop, % rows.length {
-        If (rows[A_Index - 1].getElementsByTagName("td")[0].innerHTML == item) {
-          tbody.removeChild(rows[A_Index - 1])
+      rows := tbody.getElementsByTagName("tr")
+      n := rows.length
+      Loop, % n {
+        If (rows[n - A_Index].getElementsByTagName("td")[0].innerHTML == item) {
+          tbody.removeChild(rows[n - A_Index])
           count := this.display.document.getElementById("bug-n-" . subId . "-icon").getElementsByTagName("div")[1].innerHTML
           this.setIconCounter(subId, count - 1)
         }
