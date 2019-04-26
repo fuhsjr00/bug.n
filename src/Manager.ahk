@@ -45,14 +45,16 @@ class Manager {
       wnd := this.getWindow(winId_%A_Index%)
       this.applyRules(1, wnd)
     }
-    this.setUifaceTables()
+    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("monitors", this.monmgrs[1].monitors)
+    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("desktops", this.dskmgr.desktops)
+    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("work-areas", this.workAreas)
     this.applyRules(0)
     
     this.setUifaceSystemInformation()
     funcObject := ObjBindMethod(this, "setUifaceSystemInformation")
     SetTimer, % funcObject, % config.sysInfoUpdateInterval
     logger.debug("Timer for updating the system information in UI bars set to " . config.sysInfoUpdateInterval . " milliseconds.", "Manager.__New")
-    sys.registerShellHookWindow(ObjBindMethod(this, "onShellMessage"), this.uifaces[1].winId)
+    sys.registerShellHookWindow(ObjBindMethod(this, "onShellMessage"), this.uifaces[1].wnd.id)
     
     funcObject := ObjBindMethod(this, "updateUifaceLogView")
     SetTimer, % funcObject, % config.logViewUpdateInterval
@@ -168,25 +170,26 @@ class Manager {
       queries := SubStr(uri, InStr(uri, "?") + 1)
       If (RegExMatch(queries, "O)id=([0-9xa-f]{7,8})", id)) {
         wnd := this.getWindow(id[1])
-        data := [{id: wnd.id, class: wnd.class, title: wnd.title, pName: wnd.pName
-          , style: wnd.style, exStyle: wnd.exStyle, minMax: wnd.minMax
-          , x: wnd.x, y: wnd.y, w: wnd.w, h: wnd.h, view: 0}]
-        this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("windows", data)
+        If (RegExMatch(queries, "O)view=([\w]+)", view)) {
+          i := view[1] == "_" ? this.active.view : view[1]
+          wnd.view := i
+        } Else {
+          wnd.view := False
+        }
         For i, query in StrSplit(queries, "&") {
           parts := StrSplit(query, "=")
-          If (parts[1] == "view") {
-            wnd.setProperty(query)
-          } Else If (parts[1] != "id") {
+          If (parts[1] != "id" && parts[1] != "view") {
             wnd.setProperty(query)
           }
         }
+        this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("windows", [wnd])
       }
-    } Else If (RegExMatch(uri, "O)^set/windows/([0-9xa-f]{7,8})\?$", id)) {
-      If (WinExist(id[1])) {
-        this.windows[id[1]].setProperty("closed=True")
+    } Else If (RegExMatch(uri, "O)^set/windows/([0-9xa-f]{7,8})\?(closed=True)?$", match)) {
+      If (match[2] == "closed=True" && WinExist(match[1])) {
+        this.windows[match[1]].setProperty("closed=True")
       }
-      this.uifaces[this.monmgrs[1].primaryMonitor].removeTableRows("windows", [id[1]])
-      this.windows[id[1]] := ""
+      this.uifaces[this.monmgrs[1].primaryMonitor].removeTableRows("windows", [match[1]])
+      this.windows[match[1]] := ""
     } Else If (RegExMatch(uri, "O)^set/windows/([0-9xa-f]{7,8})\?", id)) {
       wnd := this.getWindow(id[1])
       queries := SubStr(uri, InStr(uri, "?") + 1)
@@ -239,24 +242,6 @@ class Manager {
     }
   }
   
-  setUifaceTables() {
-    data := []
-    For i, item in this.monmgrs[1].monitors {
-      data.push({index: item.index, name: item.name, x: item.x, y: item.y, w: item.w, h: item.h})
-    }
-    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("monitors", data)
-    data := []
-    For i, item in this.dskmgr.desktops {
-      data.push({index: i, GUID: item.GUID})
-    }
-    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("desktops", data)
-    data := []
-    For i, item in this.workAreas {
-      data.push({index: item.index, x: item.x, y: item.y, w: item.w, h: item.h})
-    }
-    this.uifaces[this.monmgrs[1].primaryMonitor].insertTableRows("work-areas", data)
-  }
-    
   toggleTaskbar(i := 0) {
     i := i ? i : this.active.monitor
     m := this.monmgrs[1].monitors[i]
@@ -289,8 +274,7 @@ class Manager {
       }
     }
     For i, item in this.workAreas {
-      wnd := this.getWindow(this.active.window)
-      If (item.match(New Rectangle(wnd.x + wnd.w / 2, wnd.y + wnd.h / 2))) {
+      If (item.match(New Rectangle(this.active.window.x + this.active.window.w / 2, this.active.window.y + this.active.window.h / 2))) {
         this.active.workArea := i
         Break
       }

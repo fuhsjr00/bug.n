@@ -13,6 +13,7 @@ class Window extends Rectangle {
     Global logger, sys
     
     this.id := Format("0x{:x}", winId)
+    this.view := 0
     this.wFactor := 1.0
     this.hFactor := 1.0
     

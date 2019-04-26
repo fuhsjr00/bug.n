@@ -127,11 +127,11 @@ class System {
     ;; functionObject should be a function object (not a function name), for the callback function, which can receive the two arguments, wParam (message number) and lParam (window id).
     Global logger
     
-    this.shellHookWinId := winId ? winId : WinExist()
+    this.shellHookWinId := Format("0x{:x}", winId ? winId : WinExist())
     DllCall("RegisterShellHookWindow", "UInt", this.shellHookWinId)
     msgNum := DllCall("RegisterWindowMessage", "Str", "SHELLHOOK")
     OnMessage(msgNum, funcObject)
-    logger.info("ShellHook registered to window (id = " . this.winId . ")", "System.registerShellHookWindow")
+    logger.info("ShellHook registered to window (id = " . this.shellHookWinId . ")", "System.registerShellHookWindow")
   }
   ;; SKAN: How to Hook on to Shell to receive its messages? (http://www.autohotkey.com/forum/viewtopic.php?p=123323#123323)
   

@@ -36,29 +36,29 @@ class Configuration {
     this.rules[0] := [{conditions: ["get/True"], actions: ["set/userinterfaces/_/bar?window=_"]}]
 
     ;; WINDOWCREATED
-    this.rules[1] := [{conditions: ["get/windows/_?isAppWindow=False"],             actions: ["break"]}
-      , {conditions: ["get/windows/_?class=^ApplicationFrameWindow$&title=^$"],     actions: ["break"]}
-      , {conditions: ["get/windows/_?class=^OperationStatusWindow$"],               actions: ["break"]}
-      , {conditions: ["get/windows/_?class=^Progman$&title=^Program Manager$"],     actions: ["break"]}
-      , {conditions: ["get/windows/_?class=^CabinetWClass$"],                       actions: ["set/windows?id=_&tile=True&title=On", "break"]}
-      , {conditions: ["get/windows/_?class=^Chrome_WidgetWin_1$&isPopup=False"],    actions: ["set/windows?id=_&tile=True&title=On", "break"]}
-      , {conditions: ["get/windows/_?class=^ApplicationFrameWindow$&title=Edge$"],  actions: ["set/windows?id=_&tile=True&title=On", "break"]}
-      , {conditions: ["get/windows/_?class=^IEFrame$&title=Internet Explorer$"],    actions: ["set/windows?id=_&tile=True&title=On", "break"]}
-      , {conditions: ["get/windows/_?class=^MozillaWindowClass$&title=Firefox$"],   actions: ["set/windows?id=_&tile=True&title=On", "break"]}
-      , {conditions: ["get/windows/_?class=^ApplicationFrameWindow$&title=^(Calculator|Rechner)$"], actions: ["set/windows?id=_&tile=False&title=On", "break"]}
-      , {conditions: ["get/windows/_?class=^QWidget$"],     actions: ["set/windows?id=_&tile=True&title=On&caption=Off", "break"]}
-      , {conditions: ["get/windows/_?class=^SWT_Window0$"], actions: ["set/windows?id=_&tile=True&title=On&caption=Off", "break"]}
-      , {conditions: ["get/windows/_?class=^Xming$"],       actions: ["set/windows?id=_&tile=True&title=On&caption=Off", "break"]}
-      , {conditions: ["get/windows/_?isChild=True"],        actions: ["break"]}
-      , {conditions: ["get/windows/_?isPopup=True"],        actions: ["break"]}
-      , {conditions: ["get/windows/_?isAppWindows=True"],   actions: ["set/windows?id=_&tile=True&title=On&caption=Off", "break"]}]
+    this.rules[1] := [{conditions: ["get/windows/_?isAppWindow=False"],             actions: ["set/windows?id=_", "break"]}
+      , {conditions: ["get/windows/_?class=^ApplicationFrameWindow$&title=^$"],     actions: ["set/windows?id=_", "break"]}
+      , {conditions: ["get/windows/_?class=^OperationStatusWindow$"],               actions: ["set/windows?id=_", "break"]}
+      , {conditions: ["get/windows/_?class=^Progman$&title=^Program Manager$"],     actions: ["set/windows?id=_", "break"]}
+      , {conditions: ["get/windows/_?class=^CabinetWClass$"],                       actions: ["set/windows?id=_&view=_&tile=True&title=On", "break"]}
+      , {conditions: ["get/windows/_?class=^Chrome_WidgetWin_1$&isPopup=False"],    actions: ["set/windows?id=_&view=_&tile=True&title=On", "break"]}
+      , {conditions: ["get/windows/_?class=^ApplicationFrameWindow$&title=Edge$"],  actions: ["set/windows?id=_&view=_&tile=True&title=On", "break"]}
+      , {conditions: ["get/windows/_?class=^IEFrame$&title=Internet Explorer$"],    actions: ["set/windows?id=_&view=_&tile=True&title=On", "break"]}
+      , {conditions: ["get/windows/_?class=^MozillaWindowClass$&title=Firefox$"],   actions: ["set/windows?id=_&view=_&tile=True&title=On", "break"]}
+      , {conditions: ["get/windows/_?class=^ApplicationFrameWindow$&title=^(Calculator|Rechner)$"], actions: ["set/windows?id=_&view=_&tile=False&title=On", "break"]}
+      , {conditions: ["get/windows/_?class=^QWidget$"],     actions: ["set/windows?id=_&view=_&tile=True&title=On&caption=Off", "break"]}
+      , {conditions: ["get/windows/_?class=^SWT_Window0$"], actions: ["set/windows?id=_&view=_&tile=True&title=On&caption=Off", "break"]}
+      , {conditions: ["get/windows/_?class=^Xming$"],       actions: ["set/windows?id=_&view=_&tile=True&title=On&caption=Off", "break"]}
+      , {conditions: ["get/windows/_?isChild=True"],        actions: ["set/windows?id=_", "break"]}
+      , {conditions: ["get/windows/_?isPopup=True"],        actions: ["set/windows?id=_", "break"]}
+      , {conditions: ["get/windows/_?isAppWindows=True"],   actions: ["set/windows?id=_&view=_&tile=True&title=On&caption=Off", "break"]}]
     
     ;;
     this.rules[16] := this.rules[1]
     
     ;; WINDOWDESTROYED
-    this.rules[2] := [{conditions: ["get/windows/_?isAppWindow=False"], actions: ["break"]}
-      , {conditions: ["get/windows/_?isAppWindow=True"], actions: ["set/windows/_?"]}]
+    this.rules[2] := [{conditions: ["get/windows/_?isAppWindow=False"], actions: ["set/windows/_?", "break"]}
+      , {conditions: ["get/windows/_?isAppWindow=True"], actions: ["set/windows/_?closed=True"]}]
     
     ;; ACTIVATESHELLWINDOW  :=  3
     

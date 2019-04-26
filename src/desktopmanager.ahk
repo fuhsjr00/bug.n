@@ -139,7 +139,7 @@ class DesktopManager {
         DllCall(IGetAt, "UPtr", IObjectArray, "UInt", A_Index - 1, "UPtr", &GUID, "UPtrP", IVirtualDesktop, "UInt")
         
         GUID := this.getDesktopId(IVirtualDesktop)
-        this.desktops[A_Index] := {GUID: GUID, IVirtualDesktop: IVirtualDesktop}
+        this.desktops[A_Index] := {index: A_Index, GUID: GUID, IVirtualDesktop: IVirtualDesktop}
         logger.info("Desktop with GUID " . GUID . " added at index " . A_Index . ".", "DesktopManager.getDesktops")
     }
   }

@@ -163,28 +163,37 @@ class UserInterface {
       keys := ["timestamp", "level", "src", "msg"]
     } Else If (subId == "messages") {
       keys := ["timestamp", "msg", "msgNum", "winId"]
-      subKeys := ["winClass", "winTitle", "winPName", "winMinMax", "winStyle", "winExStyle", "winX", "winW", "winY", "winH"]
+      tooltipKeys := [["winTitle"], ["winClass", "winPName"], ["winStyle", "winExStyle", "winMinMax"], ["winX", "winY"], ["winW", "winH"]]
+      tooltipHeaders := [["Title"], ["Class", "Process Name"], ["Style", "ExStyle", "Min/ Max"], ["x-Coordinate", "y-Coordinate"], ["Width", "Height"]]
     } Else If (subId == "monitors") {
       keys := ["index", "name", "x", "y", "w", "h"]
     } Else If (subId == "views") {
       keys := ["index", "name", "workArea", "desktop", "x", "y", "w", "h", "layout"]
     } Else If (subId == "windows") {
       keys := ["id", "class", "title", "pName", "style", "exStyle", "minMax", "x", "y", "w", "h", "view"]
+      tooltipKeys := [["isCloaked", "isHidden", "isAppWindow"], ["hasCaption", "isPopup", "isElevated"], ["isChild", "parentId"], ["isResponding", "ownerId"]]
+      tooltipHeaders := [["Cloaked",   "Hidden", "App Window"], ["Caption", "Popup", "Elevated"], ["Child", "Parent ID"], ["Responding", "Owner ID"]]
     } Else If (subId == "work-areas") {
       keys := ["index", "x", "y", "w", "h"]
     }
     For i, item in data {
       html := "<tr>"
       For j, key in keys {
-        If (subId == "messages" && key == "winId") {
+        If (subId == "messages" && key == "winId" || subId == "windows" && key == "id") {
           html .= "<td class='w3-tooltip'>" . item[key]
-          html .= "<div class='w3-text' style='position:absolute; z-index:3; top:-100%; right:100%;'><table class='w3-table-all w3-white'>"
-          For k, header in ["Class", "Title", "Process Name", "Min/ Max"] {
-            html .= "<tr><th class='w3-blue-grey' style='min-width: 8em;'>" . header . "</th><td colspan=3>" . item[subKeys[k]] . "</td></tr>"
-          }
-          For k, header in [["Style", "ExStyle"], ["x-Coordinate", "Width"], ["y-Coordinate", "Height"]] {
-            html .= "<tr><th class='w3-blue-grey'>" . header[1] . "</th><td>" . item[subKeys[4 + 2 * k - 1]] . "</td>"
-            html .= "    <th class='w3-blue-grey'>" . header[2] . "</th><td>" . item[subKeys[4 + 2 * k]] . "</td></tr>"
+          html .= "<div class='w3-text' style='position:absolute; z-index:3; top:-100%; " . (subId == "messages" ? "right" : "left") . ":100%;'><table class='w3-table-all w3-white'>"
+          For k, headers in tooltipHeaders {
+            html .= "<tr>"
+            For l, header in headers {
+              html .= "<th class='w3-blue-grey' style='min-width: 7em;'>" . header . "</th>"
+              html .= "<td colspan=" . (l = headers.Length() ? (3 * 2 - headers.Length()) : 1) . ">"
+              If (RegExMatch(tooltipKeys[k][l], "^(is|has)")) {
+                html .= "<i class='fa fa-" . (item[tooltipKeys[k][l]] ? "check w3-text-green" : "times w3-text-red") . "'></i>" . "</td>"
+              } Else {
+                html .= item[tooltipKeys[k][l]] . "</td>"
+              }
+            }
+            html .= "</tr>"
           }
           html .= "</table></div></td>"
         } Else {
@@ -204,7 +213,7 @@ class UserInterface {
       rows := tbody.getElementsByTagName("tr")
       n := rows.length
       Loop, % n {
-        If (rows[n - A_Index].getElementsByTagName("td")[0].innerHTML == item) {
+        If (RegExMatch(rows[n - A_Index].getElementsByTagName("td")[0].innerHTML, "^" . item . "<div")) {
           tbody.removeChild(rows[n - A_Index])
           count := this.display.document.getElementById("bug-n-" . subId . "-icon").getElementsByTagName("div")[1].innerHTML
           this.setIconCounter(subId, count - 1)
