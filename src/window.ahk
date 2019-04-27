@@ -19,6 +19,10 @@ class Window extends Rectangle {
     
     DetectHiddenWindows, On
     WinGetClass, winClass, % "ahk_id " . this.id
+    While (winId != 0 && WinExist(winId) && winClass == "") {
+      Sleep, 10
+    }
+    WinGetClass, winClass, % "ahk_id " . this.id
     WinGetTitle, winTitle, % "ahk_id " . this.id
     WinGet, winPID, PID, % "ahk_id " . this.id
     WinGet, winPName, ProcessName, % "ahk_id " . this.id
@@ -38,10 +42,11 @@ class Window extends Rectangle {
     this.getPosEx()
     
     WinGetClass, winClass, % "ahk_id " . this.id
-    this.isHidden    := (this.class != winClass)
+    this.isHidden    := (this.class != "" && this.class != winClass)
     this.hasCaption  := (this.style & sys.WS_CAPTION)
     isBugNDisplay    := (this.class == "AutoHotkeyGUI" && RegExMatch(this.title, "bug.n Display \d+") && !this.hasCaption && this.exStyle & sys.WS_EX_TOOLWINDOW)
-    this.isAppWindow := (!isBugNDisplay && !this.isCloaked && !this.isHidden && this.w > 0 && this.h > 0)
+    this.isAppWindow := (!isBugNDisplay && !this.isCloaked && this.w > 0 && this.h > 0)
+    ;; this.isHidden is not significant for a window being an app window; notepad for example first creates a hidden window, which later becomes fully visible.
     this.isChild     := (this.style & sys.WS_CHILD)
     this.isElevated  := (!A_IsAdmin && !DllCall("OpenProcess", UInt, 0x400, Int, 0, UInt, winPID, Ptr))
     ;; jeeswg: How would I mimic the windows Alt+Esc hotkey in AHK? (https://autohotkey.com/boards/viewtopic.php?p=134910&sid=192dd8fcd7839b6222826561491fcd57#p134910)
@@ -53,7 +58,7 @@ class Window extends Rectangle {
     this.ownerId  := Format("0x{:x}", DllCall("GetWindow", "UInt", this.id, "UInt", sys.GW_OWNER))
     this.parentId := Format("0x{:x}", DllCall("GetParent", "UInt", this.id))
     
-    logger.debug("Window with id " . this.id . " added.", "Window.__New")
+    logger.debug("New window with id <mark>" . this.id . "</mark> and class '<mark>" . this.class . "</mark>' (<mark>" . winClass . "</mark>) added.", "Window.__New")
   }
   
   getPosEx() {

@@ -177,7 +177,7 @@ class UserInterface {
       keys := ["index", "x", "y", "w", "h"]
     }
     For i, item in data {
-      html := "<tr>"
+      html := "<tr class='bug-n-tr'>"
       For j, key in keys {
         If (subId == "messages" && key == "winId" || subId == "windows" && key == "id") {
           html .= "<td class='w3-tooltip'>" . item[key]
@@ -208,9 +208,12 @@ class UserInterface {
   }
   
   removeTableRows(subId, data) {
+    Global logger
+    
     tbody := this.display.document.getElementById("bug-n-" . subId . "-view").getElementsByTagName("tbody")[0]
     For i, item in data {
-      rows := tbody.getElementsByTagName("tr")
+      logger.debug("Removing row with first cell's content <mark>" . item . "</mark>.", "UserInterface.removeTableRow")
+      rows := tbody.getElementsByClassName("bug-n-tr")
       n := rows.length
       Loop, % n {
         If (RegExMatch(rows[n - A_Index].getElementsByTagName("td")[0].innerHTML, "^" . item . "<div")) {

@@ -51,7 +51,7 @@ class Configuration {
       , {conditions: ["get/windows/_?class=^Xming$"],       actions: ["set/windows?id=_&view=_&tile=True&title=On&caption=Off", "break"]}
       , {conditions: ["get/windows/_?isChild=True"],        actions: ["set/windows?id=_", "break"]}
       , {conditions: ["get/windows/_?isPopup=True"],        actions: ["set/windows?id=_", "break"]}
-      , {conditions: ["get/windows/_?isAppWindows=True"],   actions: ["set/windows?id=_&view=_&tile=True&title=On&caption=Off", "break"]}]
+      , {conditions: ["get/windows/_?isAppWindow=True"],    actions: ["set/windows?id=_&view=_&tile=True&title=On&caption=Off", "break"]}]
     
     ;;
     this.rules[16] := this.rules[1]

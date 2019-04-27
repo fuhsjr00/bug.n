@@ -29,6 +29,7 @@ SetWinDelay, 10
 
 ;; Pseudo main function
   logger := New Logging()
+  mgr := ""
   Main_appDir := ""
   If 0 = 1
     Main_appDir = %1%

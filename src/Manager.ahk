@@ -80,12 +80,13 @@ class Manager {
         If (this.resolveAppCall(condition)) {
           logger.info((IsObject(wnd) ? "Window " . wnd.id . " m" : "M") . "atched rule " . i . " for message number " . msgNum . ".", "Manager.applyRules")
           For j, action in rule.actions {
+            logger.info("Acting" . (IsObject(wnd) ? " on window " . wnd.id : "") . " to " . action . ".", "Manager.applyRules")
             If (action == "break") {
               Break, 3
             } Else {
               If (IsObject(wnd)) {
                 action := RegExReplace(action, "^set/windows\?id=_", "set/windows?id=" . wnd.id)
-                action := RegExReplace(action, "^set/windows/_\?$", "set/windows/" . wnd.id . "?")
+                action := RegExReplace(action, "^set/windows/_\?(closed=True)?$", "set/windows/" . wnd.id . "?$1")
               }
               this.resolveAppCall(action)
             }
@@ -154,6 +155,7 @@ class Manager {
     
     this.updateActive()
     
+    logger.debug("Resolving app call <mark>" . uri . "</mark>.", "Manager.resolveAppCall")
     If (uri == "get/True") {
       Return, True
     } Else If (RegExMatch(uri, "O)^get/windows/([0-9xa-f]{7,8})\?", id)) {
@@ -188,6 +190,7 @@ class Manager {
       If (match[2] == "closed=True" && WinExist(match[1])) {
         this.windows[match[1]].setProperty("closed=True")
       }
+      logger.debug("Removing window with id <mark>" . match[1] . "</mark>.", "Manager.resolveAppCall")
       this.uifaces[this.monmgrs[1].primaryMonitor].removeTableRows("windows", [match[1]])
       this.windows[match[1]] := ""
     } Else If (RegExMatch(uri, "O)^set/windows/([0-9xa-f]{7,8})\?", id)) {
@@ -317,7 +320,7 @@ UifaceEscape:
   mgr.uifaces[A_Gui].wnd.setProperty("stackPosition=bottom")
 Return
 
-UfaceSize:
+UifaceSize:
   mgr.uifaces[A_Gui].resizeGuiControls()
 Return
 

@@ -257,6 +257,7 @@ Bar_getHeight()
     If Not Config_singleRowBar
       Bar_ctrlHeight := Bar_height / 2
   }
+  Bar_height := 30
 }
 
 Bar_getTextWidth(x, reverse=False)
