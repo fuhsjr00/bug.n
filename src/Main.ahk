@@ -184,6 +184,7 @@ Return
 
 #Include Bar.ahk
 #Include Config.ahk
+#Include %A_ScriptDir%\Custom\CustomConfig.ahk
 #Include Debug.ahk
 #Include Manager.ahk
 #Include Monitor.ahk
