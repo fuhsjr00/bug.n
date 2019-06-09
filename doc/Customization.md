@@ -55,3 +55,18 @@ keybinding for locking the workstation at least once and therewith set the
 needed registry key.
 
 **WARNING**: This will permanently set a registry key.
+
+### Adding customized Run and Send functions
+
+While for most use cases adding hotkeys to `Config.ini` is enough. You can add custom hotkey fucntions in the `Custom/CustomConfig.ahk` file that will not be modified when updating through git or package managers. For instance differentiating between <kbd>RWin</kbd> and <kbd>LWin</kbd>:
+```
+LWin & t::
+  Manager_activateMonitor(1)
+  View_setLayout(1)
+Return
+
+RWin & t::
+  Manager_activateMonitor(2)
+  View_setLayout(1)
+Return
+```
