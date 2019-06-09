@@ -1,7 +1,4 @@
 bugn.exe
-doc\Cheat_sheet\cheat_sheet.html
-doc\Cheat_sheet\cheat_sheet.md
-doc\Cheat_sheet\cheat_sheet.pdf
-src\Custom\
-src\CustomConfig.ahk
+doc/Cheat_sheet/*
+src/Custom/*
 tools\log-build*.md
