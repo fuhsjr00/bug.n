@@ -70,6 +70,15 @@ There is no installation process for bug.n. Unpack the `zip` file, and you
 should be able to run either the executable as it is or the main script
 (`src\Main.ahk`) with [AutoHotkey](http://ahkscript.org/download/).
 
+##### Package Managers
+
+You can install bug.n by using the [scoop](https://scoop.sh) utility as package manager.
+Run the following commands either in cmd or in powershell:
+```
+>scoop bucket add extras
+>scoop install bugn
+```
+
 ### Documentation
 
 Please see the [documentation](./doc) for more information on
