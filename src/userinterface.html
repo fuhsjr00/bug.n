@@ -50,7 +50,7 @@ w3schools.com (2019) W3.CSS Templates [source code]. https://www.w3schools.com/w
   
 <!-- Top container -->
 <div class="w3-bar w3-black" id="bug-n-bar">
-  <span id="bug-n-work-area-indicator" class="w3-bar-item w3-text-white"><i class="fa fa-solar-panel" ></i>&nbsp;<span>?</span></span>
+  <span id="bug-n-work-area-indicator" class="w3-bar-item w3-text-white"><i class="fa fa-solar-panel" ></i>&nbsp;<span id="bug-n-user-interface-index">?</span></span>
   <span id="bug-n-desktop-indicator"   class="w3-bar-item"><i class="fa fa-layer-group" ></i>&nbsp;<span>?</span></span>
   <span id="bug-n-views-indicator"     class="w3-bar-item"><i class="fa fa-object-group"></i>&nbsp;<span>?</span></span>
   <a    id="bug-n-layout-indicator"    class="w3-bar-item"><i class="fa fa-th-large"    ></i>&nbsp;<span>?</span></a>
@@ -215,7 +215,7 @@ w3schools.com (2019) W3.CSS Templates [source code]. https://www.w3schools.com/w
 
   <!-- Footer -->
   <footer class="w3-container w3-display-bottomleft w3-padding-16">
-    <p class="w3-light-grey"><img class="w3-left" src="./assets/logo.ico" width="28px" /> User interface Powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
+    <p class="w3-light-grey"><img class="w3-left" src="./assets/logo.ico" width="28px" /> User interface powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">w3.css</a></p>
   </footer>
 
   <!-- End page content -->
@@ -269,6 +269,8 @@ for (var i = 0; i < subIds.length; i++) {
 document.getElementById("bug-n-shebang").onclick = function() {
   var i = document.getElementById("bug-n-user-interface-index").innerHTML;
   window.navigate("#set/userinterfaces/" + i + "/window?alwaysontop=toggle");
+};
+document.getElementById("bug-n-shebang").oncontextmenu = function() {
 };
 document.getElementById("bug-n-layout-indicator").onclick = function() {
 };
