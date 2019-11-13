@@ -106,6 +106,13 @@ As provided by [NickSeagull](https://github.com/NickSeagull) in
 
 `Config_rule=*hap*;.*hap*;*hap*;0;0;1;1;1;1;`
 
+#### Captura
+
+As provided by [tantoinet](https://github.com/tantoinet) in 
+[issue #146](https://github.com/fuhsjr00/bug.n/issues/146):
+
+`Config_rule=;Region Picker;;0;1;;0;0;0;`
+
 #### Applications written with the Qt5 development framework
 
 The following rule is corresponding to rule 4 regarding the previous version of
