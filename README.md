@@ -3,7 +3,7 @@
 bug.n is a
 [tiling window manager](https://en.wikipedia.org/wiki/Tiling_window_manager)
 add-on for the Explorer shell of Microsoft Windows. It is written in the 
-scripting language [AutoHotkey](http://ahkscript.org/download/).
+scripting language [AutoHotkey](https://www.autohotkey.com/download/).
 
 ### What it can do
 
@@ -55,7 +55,7 @@ scripting language [AutoHotkey](http://ahkscript.org/download/).
 ##### Requirements
 
 * Microsoft Windows 2000 or higher
-* [AutoHotkey](http://ahkscript.org/download/) 1.1.10 or higher (if running
+* [AutoHotkey](https://www.autohotkey.com/download/) 1.1.10 or higher (if running
   bug.n from source as a script)
 
 You may either
@@ -68,7 +68,7 @@ files.
 
 There is no installation process for bug.n. Unpack the `zip` file, and you
 should be able to run either the executable as it is or the main script
-(`src\Main.ahk`) with [AutoHotkey](http://ahkscript.org/download/).
+(`src\Main.ahk`) with [AutoHotkey](https://www.autohotkey.com/download/).
 
 ### Documentation
 
