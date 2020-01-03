@@ -3,7 +3,7 @@
 #### Requirements
 
 * Microsoft Windows 2000 or higher
-* [AutoHotkey](http://ahkscript.org/download/) 1.1.10 or higher (if running
+* [AutoHotkey](https://www.autohotkey.com/download/) 1.1.10 or higher (if running
   bug.n from source as a script)
 
 You may either
@@ -16,7 +16,7 @@ files.
 
 There is no installation process for bug.n. Unpack the `zip` file, and you
 should be able to run either the executable as it is or the main script
-(`src\Main.ahk`) with [AutoHotkey](http://ahkscript.org/download/).
+(`src\Main.ahk`) with [AutoHotkey](https://www.autohotkey.com/download/).
 
 You may copy bug.n anywhere you like -- at least if you have write access 
 there -- e.g. `C:\Program Files\bugn` or link it to the 'Windows Start Menu'
@@ -33,7 +33,7 @@ access to this directory.
 
 You can run bug.n manually, either by using the executable and starting it like
 any other application, or by using the main script (`Main.ahk`) and starting it
-with [AutoHotkey](http://ahkscript.org/download/).
+with [AutoHotkey](https://www.autohotkey.com/download/).
 If using the script, the working directory must be the directory, where the
 file `Main.ahk` is saved; therewith bug.n can find the other script files. One
 possibility, to do so, is to install AutoHotkey, open the directory, where
