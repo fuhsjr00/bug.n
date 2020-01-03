@@ -18,17 +18,17 @@ e.g. `Config_showBar=0`. You will have to reload bug.n for the changes to take
 effect.
 
 To set a hotkey, use the variable name `Config_hotkey` and [the hotkey notation
-from AutoHotkey](http://ahkscript.org/docs/Hotkeys.htm) as value:
+from AutoHotkey](https://www.autohotkey.com/docs/Hotkeys.htm) as value:
 `Config_hotkey=<key name>::<command or function name>`.
 You may overwrite default or add new hotkeys.
 * To deactivate a hotkey from the default configuration, add a new line in the
 format `Config_hotkey=<key name>::` (without a function name).
 * To assign an external program to a new hotkey, add a line in the general
 format, using the `Run` command of AutoHotkey as described in
-http://ahkscript.org/docs/commands/Run.htm (`Run, Target [, WorkingDir,
+https://www.autohotkey.com/docs/commands/Run.htm (`Run, Target [, WorkingDir,
 Max|Min|Hide|UseErrorLevel, OutputVarPID]`).
 * You may also use the `Send` command of AutoHotkey as described in
-http://ahkscript.org/docs/commands/Send.htm
+https://www.autohotkey.com/docs/commands/Send.htm
 
 The available configuration variables are listed in the document
 "[Default configuration](./Default_configuration.md)"; the hotkeys with their
