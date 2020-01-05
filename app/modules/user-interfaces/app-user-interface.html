@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<!--
+:title:     bug.n/user-interfaces/app-user-interface
+:copyright: (c) 2019 by joten <https://github.com/joten>
+:license:   GNU General Public License version 3
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+:bibliography:
+w3schools.com (2019) W3.CSS Templates [source code]. https://www.w3schools.com/w3css/tryw3css_templates_analytics.htm
+-->
+<head>
+  <title>bug.n</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../../assets/w3-analytics.css">
+  <link rel="stylesheet" href="../../assets/font-awesome/all.min.css">
+  <link rel="stylesheet" href="../../assets/font-roboto/all.css">
+  <link rel="stylesheet" href="../../../etc/custom.css">
+  <link rel="icon" type="image/ico" href="../../assets/logo.ico">
+  <style>
+    html, body {font-family: "Roboto Condensed", sans-serif; overflow-y: hidden;}
+    h1, h2, h3, h4, h5, h6 {font-family: "Roboto Slab", serif;}
+    a {text-decoration: none;}
+    mark {background-color: #607d8b; color: white;}
+    
+    .app-text-yellow {color: #ffeb3b;}
+    .app-bar-item-active {background-color: #607d8b;}
+    .app-bar-item-alarm {background-color: #ff5722; color: white;}
+    .app-bar-item-separator {color: #607d8b;}
+    
+    #app-bar {background-color: #101010 !important; overflow: hidden; z-index: 4;}
+    .app-bar-item-icon {margin-right: 1.0ex;}
+    .w3-bar-item {line-height: 100%;}
+    
+    div[id^="app-icon-"] {cursor: pointer;}
+    div[id^="app-icon-"] > div > i {padding: 8px;}
+    div[id^="app-icon-"] > div.w3-right {padding: 2px 8px 0 0;}
+    div[id^="app-icon-"] > div > h4 {line-height: 1;}
+    
+    div[id^="app-view-"] > div {overflow-y: auto;}
+    
+    footer > p {line-height: 1;}
+  </style>
+</head>
+<body class="w3-light-grey">
+  
+<!-- Top Container -->
+<div class="w3-bar w3-black w3-medium" id="app-bar">
+  
+  <a id="app-bar-item-01" class="w3-bar-item"><i class="fa fa-window-minimize"></i><span></span></a>
+  <a id="app-bar-item-02" class="w3-bar-item w3-hide"><i class=""></i><span></span></a>
+  <a id="app-bar-item-03" class="w3-bar-item w3-hide"><i class=""></i><span></span></a>
+  <a id="app-bar-item-04" class="w3-bar-item w3-hide"><i class=""></i><span></span></a>
+  <a id="app-bar-item-05" class="w3-bar-item w3-hide"><i class=""></i><span></span></a>
+  <a id="app-bar-item-06" class="w3-bar-item w3-hide"><i class=""></i><span></span></a>
+  <a id="app-bar-item-07" class="w3-bar-item w3-hide"><i class=""></i><span></span></a>
+  <a id="app-bar-item-08" class="w3-bar-item w3-hide"><i class=""></i><span></span></a>
+  <a id="app-bar-item-09" class="w3-bar-item w3-hide"><i class=""></i><span></span></a>
+  <a id="app-bar-item-10" class="w3-bar-item w3-hide"><i class=""></i><span></span></a>
+  <a id="app-bar-item-11" class="w3-bar-item w3-hide"><i class=""></i><span></span></a>
+  <a id="app-bar-item-12" class="w3-bar-item w3-hide"><i class=""></i><span></span></a>
+  
+  <a id="app-bar-item-24" class="w3-bar-item w3-hide w3-right"><i class=""></i><span></span></a>
+  <a id="app-bar-item-23" class="w3-bar-item w3-hide w3-right"><i class=""></i><span></span></a>
+  <a id="app-bar-item-22" class="w3-bar-item w3-hide w3-right"><i class=""></i><span></span></a>
+  <a id="app-bar-item-21" class="w3-bar-item w3-hide w3-right"><i class=""></i><span></span></a>
+  <a id="app-bar-item-20" class="w3-bar-item w3-hide w3-right"><i class=""></i><span></span></a>
+  <a id="app-bar-item-19" class="w3-bar-item w3-hide w3-right"><i class=""></i><span></span></a>
+  <a id="app-bar-item-18" class="w3-bar-item w3-hide w3-right"><i class=""></i><span></span></a>
+  <a id="app-bar-item-17" class="w3-bar-item w3-hide w3-right"><i class=""></i><span></span></a>
+  <a id="app-bar-item-16" class="w3-bar-item w3-hide w3-right"><i class=""></i><span></span></a>
+  <a id="app-bar-item-15" class="w3-bar-item w3-hide w3-right"><i class=""></i><span></span></a>
+  <a id="app-bar-item-14" class="w3-bar-item w3-hide w3-right"><i class=""></i><span></span></a>
+  <a id="app-bar-item-13" class="w3-bar-item w3-hide w3-right"><i class=""></i><span></span></a>
+  
+<!-- End Top Container -->
+</div>
+
+<!-- Page Content -->
+<div class="w3-main">
+  
+  <div class="w3-cell-row" id="app-icons">
+    <div class="w3-cell w3-hide w3-blue-grey" id="app-icon-01">
+      <div class="w3-left"><i class="fa fa-window-minimize w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4></h4></div>
+    </div>
+    <div class="w3-cell w3-hide w3-blue" id="app-icon-02">
+      <div class="w3-left"><i class="fa fa-window-minimize w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4></h4></div>
+    </div>
+    <div class="w3-cell w3-hide w3-cyan w3-text-white" id="app-icon-03">
+      <div class="w3-left"><i class="fa fa-window-minimize w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4></h4></div>
+    </div>
+    <div class="w3-cell w3-hide w3-teal" id="app-icon-04">
+      <div class="w3-left"><i class="fa fa-window-minimize w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4></h4></div>
+    </div>
+    <div class="w3-cell w3-hide w3-green" id="app-icon-05">
+      <div class="w3-left"><i class="fa fa-window-minimize w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4></h4></div>
+    </div>
+    <div class="w3-cell w3-hide w3-light-green w3-text-white" id="app-icon-06">
+      <div class="w3-left"><i class="fa fa-window-minimize w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4></h4></div>
+    </div>
+    <div class="w3-cell w3-hide w3-lime w3-text-white" id="app-icon-07">
+      <div class="w3-left"><i class="fa fa-window-minimize w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4></h4></div>
+    </div>
+    <div class="w3-cell w3-hide w3-yellow w3-text-white" id="app-icon-08">
+      <div class="w3-left"><i class="fa fa-window-minimize w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4></h4></div>
+    </div>
+    <div class="w3-cell w3-hide w3-amber w3-text-white" id="app-icon-09">
+      <div class="w3-left"><i class="fa fa-window-minimize w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4></h4></div>
+    </div>
+    <div class="w3-cell w3-hide w3-orange w3-text-white" id="app-icon-10">
+      <div class="w3-left"><i class="fa fa-window-minimize w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4></h4></div>
+    </div>
+    <div class="w3-cell w3-hide w3-deep-orange" id="app-icon-11">
+      <div class="w3-left"><i class="fa fa-window-minimize w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4></h4></div>
+    </div>
+    <div class="w3-cell w3-hide w3-red" id="app-icon-12">
+      <div class="w3-left"><i class="fa fa-window-minimize w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4></h4></div>
+    </div>
+  </div>
+  
+  <div class="w3-container w3-hide" id="app-view-01">
+    <h3><i class="fa fa-window-minimize w3-text-blue-grey w3-margin-left w3-margin-right"></i><span></span></h3>
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="w3-container w3-hide" id="app-view-02">
+    <h3><i class="fa fa-window-minimize w3-text-blue w3-margin-left w3-margin-right"></i><span></span></h3>
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="w3-container w3-hide" id="app-view-03">
+    <h3><i class="fa fa-window-minimize w3-text-cyan w3-margin-left w3-margin-right"></i><span></span></h3>
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="w3-container w3-hide" id="app-view-04">
+    <h3><i class="fa fa-window-minimize w3-text-teal w3-margin-left w3-margin-right"></i><span></span></h3>
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="w3-container w3-hide" id="app-view-05">
+    <h3><i class="fa fa-window-minimize w3-text-green w3-margin-left w3-margin-right"></i><span></span></h3>
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="w3-container w3-hide" id="app-view-06">
+    <h3><i class="fa fa-window-minimize w3-text-light-green w3-margin-left w3-margin-right"></i><span></span></h3>
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="w3-container w3-hide" id="app-view-07">
+    <h3><i class="fa fa-window-minimize w3-text-lime w3-margin-left w3-margin-right"></i><span></span></h3>
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="w3-container w3-hide" id="app-view-08">
+    <h3><i class="fa fa-window-minimize app-text-yellow w3-margin-left w3-margin-right"></i><span></span></h3>
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="w3-container w3-hide" id="app-view-09">
+    <h3><i class="fa fa-window-minimize w3-text-amber w3-margin-left w3-margin-right"></i><span></span></h3>
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="w3-container w3-hide" id="app-view-10">
+    <h3><i class="fa fa-window-minimize w3-text-orange w3-margin-left w3-margin-right"></i><span></span></h3>
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="w3-container w3-hide" id="app-view-11">
+    <h3><i class="fa fa-window-minimize w3-text-deep-orange w3-margin-left w3-margin-right"></i><span></span></h3>
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="w3-container w3-hide" id="app-view-12">
+    <h3><i class="fa fa-window-minimize w3-text-red w3-margin-left w3-margin-right"></i><span></span></h3>
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="w3-row-padding w3-margin-bottom">
+  </div>
+
+  <!-- Footer -->
+  <footer class="w3-container w3-hide w3-display-bottomleft">
+    <p class="w3-light-grey"><img class="w3-left" src="../../assets/logo.png" width="16px" />&nbsp;User interface powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">W3.CSS</a></p>
+  </footer>
+  
+<!-- End Page Content -->
+</div>
+
+<script>
+
+var indices = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+for (var i = 0; i < indices.length; i++) {
+  var element = document.getElementById("app-view-" + indices[i]).getElementsByTagName("input")[0];
+  if (document.body.contains(element)) {
+    element.onkeypress = function() {
+      var id = this.parentElement.id;
+      var column, container, input, filter, table, tr, td, i;
+      container = document.getElementById(id);
+      input = container.getElementsByTagName("input")[0];
+      filter = input.value.toUpperCase();
+      i = filter.indexOf(":");
+      column = 0;
+      if (i > -1) {
+        column = parseInt(filter.substring(0, i)) - 1;
+        filter = filter.substring(i + 1);
+      }
+      table = container.getElementsByTagName("table")[0];
+      tr = table.getElementsByTagName("tr");
+      for (i = 0; i < tr.length; i++) {
+        td = tr[i].getElementsByTagName("td")[column];
+        if (td) {
+          txtValue = td.textContent || td.innerText;
+          if (txtValue.toUpperCase().indexOf(filter) > -1) {
+            tr[i].style.display = "";
+            // tr[i].className = tr[i].className.replace(" w3-hide", "");
+          } else {
+            tr[i].style.display = "none";
+            // tr[i].className += " w3-hide";
+          }
+        }
+      }
+    };
+  }
+}
+
+var indices = ["01", "02", "03", "04", "05", "06", "07", "08", "09", "10", "11", "12"];
+for (var i = 0; i < indices.length; i++) {
+  document.getElementById("app-icon-" + indices[i]).onclick = function() {
+    var index = this.id.substring(9);
+    for (var j = 0; j < indices.length; j++) {
+      if (indices[j] !== index) {
+        document.getElementById("app-view-" + indices[j]).className = "w3-container w3-hide";
+      } else {
+        document.getElementById("app-view-" + index).className = "w3-container w3-show";
+      }
+    }
+  };
+}
+/*
+document.getElementById("app-*").onclick = function() {
+};
+document.getElementById("app-*").oncontextmenu = function() {
+};
+*/
+window.oncontextmenu = function() {
+  return false;
+};
+
+</script>
+
+</body>
+</html>

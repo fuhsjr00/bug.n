@@ -1,0 +1,17 @@
+.w3-bar-item {padding: 0.5ex 1.0ex !important;}
+.w3-bar-item > span {font-family: "Roboto Mono", monospace; font-size: 90%}
+.app-bar-item-active {background-color: #005577 !important;}
+/*#app-bar-item-02 {*/
+  /*padding-left: 2ex !important;*/
+  /*padding-right: 2ex !important;*/
+/*}*/
+
+/*
+col_gray1 := "#222222"
+col_gray2 := "#444444"
+col_gray3 := "#bbbbbb"
+col_gray4 := "#eeeeee"
+col_cyan  := "#005577"
+SchemeNorm: [col_gray3, col_gray1, col_gray2]
+SchemeSel:  [col_gray4, col_cyan,  col_cyan]
+*/

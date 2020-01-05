@@ -1,0 +1,33 @@
+100 start
+125 reset
+125 restart
+100 reset
+100 restart
+
+DPI 100 -> 125 -> 100 (1366)
+2019-03-25 12:26:56 MonitorW: 1366, MMW1: 1366, MM1dpiX:  96, MM1scaleX: 1.000000                                                                                                         491 +  901 = 1392
+2019-03-25 12:27:13 MonitorW: 1093, MMW1: 1366, MM1dpiX:  96, MM1scaleX: 1.000000, MMW2: 1093, MM2dpiX:  96, MM2scaleX: 1.000000  => bar ok, tiling 287px short             -- not 273px  304 +  549 =  853
+2019-03-25 12:27:20 MonitorW: 1366, MMW1: 1366, MM1dpiX: 120, MM1scaleX: 1.250000                                                 => bar too long, tiling ok                              495 +  905 = 1400
+2019-03-25 12:27:43 MonitorW: 1708, MMW1: 1366, MM1dpiX: 120, MM1scaleX: 1.250000, MMW2: 1708, MM2dpiX: 120, MM2scaleX: 1.250000  => bar too long, tiling 353px wide & gaps -- not 342px  730 + 1345 = 2075
+2019-03-25 12:27:48 MonitorW: 1366, MMW1: 1366, MM1dpiX:  96, MM1scaleX: 1.000000                                                 => bar ok, tiling ok
+
+DPI 100 -> 125 -> 100 (1024)
+2019-03-25 12:49:15 MonitorW: 1024, MMW1: 1024, MM1dpiX:  96, MM1scaleX: 1.000000
+2019-03-25 12:50:31 MonitorW:  819, MMW1: 1024, MM1dpiX:  96, MM1scaleX: 1.000000, MMW2:  819, MM2dpiX:  96, MM2scaleX: 1.000000  => bar ok, tiling 218px short             -- not 205px
+2019-03-25 12:51:53 MonitorW: 1024, MMW1: 1024, MM1dpiX: 120, MM1scaleX: 1.250000                                                 => bar too long, tiling ok
+2019-03-25 12:52:14 MonitorW: 1280, MMW1: 1024, MM1dpiX: 120, MM1scaleX: 1.250000, MMW2: 1280, MM2dpiX: 120, MM2scaleX: 1.250000  => bar too long, tiling 266px wide & gaps -- not 256px
+2019-03-25 12:53:31 MonitorW: 1024, MMW1: 1024, MM1dpiX:  96, MM1scaleX: 1.000000                                                 => bar ok, tiling ok
+
+DPI 100 -> 125 -> 100 (1366), -DPIScale
+2019-03-25 13:04:22 MonitorW: 1366, MMW1: 1366, MM1dpiX:  96, MM1scaleX: 1.000000
+2019-03-25 13:05:06 MonitorW: 1093, MMW1: 1366, MM1dpiX:  96, MM1scaleX: 1.000000, MMW2: 1093, MM2dpiX:  96, MM2scaleX: 1.000000  => bar ok, tiling 287px short
+2019-03-25 13:05:54 MonitorW: 1366, MMW1: 1366, MM1dpiX: 120, MM1scaleX: 1.250000                                                 => bar text off & too large?, tiling ok
+2019-03-25 13:08:16 MonitorW: 1708, MMW1: 1366, MM1dpiX: 120, MM1scaleX: 1.250000, MMW2: 1708, MM2dpiX: 120, MM2scaleX: 1.250000  => bar text off & too large?, tiling 353px wide & gaps
+2019-03-25 13:09:26 MonitorW: 1366, MMW1: 1366, MM1dpiX:  96, MM1scaleX: 1.000000                                                 => bar ok, tiling ok
+
+Res 1366 -> 1280 -> 1366 (bar ok, tiling ok)
+2019-03-25 12:27:48 MonitorW: 1366, MMW1: 1366, MM1dpiX:  96, MM1scaleX: 1.000000
+2019-03-25 12:32:58 MonitorW: 1280, MMW1: 1366, MM1dpiX:  96, MM1scaleX: 1.000000, MMW2: 1280, MM2dpiX:  96, MM2scaleX: 1.000000
+2019-03-25 12:33:24 MonitorW: 1280, MMW1: 1280, MM1dpiX:  96, MM1scaleX: 1.000000
+2019-03-25 12:37:28 MonitorW: 1366, MMW1: 1280, MM1dpiX:  96, MM1scaleX: 1.000000, MMW2: 1366, MM2dpiX:  96, MM2scaleX: 1.000000
+2019-03-25 12:37:42 MonitorW: 1366, MMW1: 1366, MM1dpiX:  96, MM1scaleX: 1.000000

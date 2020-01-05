@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+<!--
+:title:     bug.n/user-interfaces/work-area
+:copyright: (c) 2019 by joten <https://github.com/joten>
+:license:   GNU General Public License version 3
+
+This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; 
+without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+
+:bibliography:
+w3schools.com (2019) W3.CSS Templates [source code]. https://www.w3schools.com/w3css/tryw3css_templates_analytics.htm
+-->
+<head>
+  <title>bug.n</title>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../../assets/w3-analytics.css">
+  <link rel="stylesheet" href="../../assets/font-awesome/all.min.css">
+  <link rel="stylesheet" href="../../assets/font-roboto/all.css">
+  <link rel="icon" type="image/ico" href="../../assets/logo.ico">
+  <style>
+    html, body {font-family: "Roboto Condensed", sans-serif; overflow-y: hidden;}
+    h1, h2, h3, h4, h5, h6 {font-family: "Roboto Slab", serif;}
+    a {text-decoration: none;}
+    mark {background-color: lightblue;}
+    
+    div[id^="app-icon-"] {cursor: pointer;}
+    div[id^="app-icon-"] > div > i {padding: 8px;}
+    div[id^="app-icon-"] > div.w3-right {padding: 2px 8px 0 0;}
+    div[id^="app-icon-"] > div > h4 {line-height: 1;}
+    div[id^="app-view-"] > div {overflow-y: auto;}
+  </style>
+</head>
+<body class="w3-light-grey">
+  
+<!-- Top container -->
+
+<!-- !PAGE CONTENT! -->
+<div class="w3-main">
+
+  <!-- Header
+  <header class="w3-container" style="padding-top:22px">
+    <h5><b><i class="fa fa-???"></i> ???</b></h5>
+  </header>
+  -->
+  
+  <div class="w3-cell-row" id="app-icons">
+    <div class="w3-cell w3-blue" id="app-icon-configuration">
+      <div class="w3-left"><i class="fa fa-tools w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4>Configuration</h4></div>
+    </div>
+    <div class="w3-cell w3-teal" id="app-icon-desktops">
+      <div class="w3-left"><i class="fa fa-layer-group w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4>Desktops</h4></div>
+    </div>
+    <div class="w3-cell w3-light-green w3-text-white" id="app-icon-monitors">
+      <div class="w3-left"><i class="fa fa-desktop w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4>Monitors</h4></div>
+    </div>
+    <div class="w3-cell w3-lime w3-text-white" id="app-icon-work-areas">
+      <div class="w3-left"><i class="fa fa-object-group w3-xlarge"></i></div>
+                                   <!-- fa-solar-panel -->
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4>Work Areas</h4></div>
+    </div>
+    <div class="w3-cell w3-amber w3-text-white" id="app-icon-windows">
+      <div class="w3-left"><i class="fa fa-window-restore w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4>Windows</h4></div>
+    </div>
+    <div class="w3-cell w3-orange w3-text-white" id="app-icon-messages">
+      <div class="w3-left"><i class="fa fa-ellipsis-v w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4>Messages</h4></div>
+    </div>
+    <div class="w3-cell w3-deep-orange" id="app-icon-log">
+      <div class="w3-left"><i class="fa fa-scroll w3-xlarge"></i></div>
+      <div class="w3-right w3-xlarge">0</div>
+      <div class="w3-clear w3-center"><h4>Log</h4></div>
+    </div>
+  </div>
+  
+  <div class="w3-container" id="app-view-configuration">
+    <h3><i class="fa fa-tools w3-text-blue w3-margin-left w3-margin-right"></i>Configuration</h3>
+    <div>
+    </div>
+  </div>
+  <div class="w3-container" id="app-view-desktops">
+    <h3><i class="fa fa-layer-group w3-text-teal w3-margin-left w3-margin-right"></i>Desktops</h3>
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead><tr><th>Index</th><th>GUID</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="w3-container" id="app-view-monitors">
+    <h3><i class="fa fa-desktop w3-text-light-green w3-margin-left w3-margin-right"></i>Monitors</h3>
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead><tr><th>Index</th><th>Name</th><th>x-Coordinate</th><th>y-Coordinate</th><th>Width</th><th>Height</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="w3-container" id="app-view-work-areas">
+    <h3><i class="fa fa-object-group w3-text-lime w3-margin-left w3-margin-right"></i>Work Areas</h3>
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead><tr><th>Index</th><th>x-Coordinate</th><th>y-Coordinate</th><th>Width</th><th>Height</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="w3-container" id="app-view-windows">
+    <h3><i class="fa fa-window-restore w3-text-amber w3-margin-left w3-margin-right"></i>Windows</h3>
+    <input class="w3-input w3-border w3-padding" type="text" placeholder="Search filter">
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead><tr><th>Id</th><th>Class</th><th>Title</th><th>Process Name</th><th>Style</th><th>ExStyle</th><th>Min/ Max</th><th>x-Coordinate</th><th>y-Coordinate</th><th>Width</th><th>Height</th><th>View</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="w3-container" id="app-view-messages">
+    <h3><i class="fa fa-ellipsis-v w3-text-orange w3-margin-left w3-margin-right"></i>Messages</h3>
+    <input class="w3-input w3-border w3-padding" type="text" placeholder="Search filter">
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead><tr><th>Timestanmp</th><th>Message</th><th>Number</th><th>Window Id</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  <div class="w3-container" id="app-view-log">
+    <h3><i class="fa fa-scroll w3-text-deep-orange w3-margin-left w3-margin-right"></i>Log</h3>
+    <input class="w3-input w3-border w3-padding" type="text" placeholder="Search filter">
+    <div>
+      <table class="w3-table w3-striped w3-bordered w3-border w3-hoverable w3-white">
+        <thead><tr><th>Timestanmp</th><th>Level</th><th>Source</th><th>Message</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="w3-row-padding w3-margin-bottom">
+  </div>
+
+  <!-- Footer -->
+  <footer class="w3-container w3-display-bottomleft w3-padding-16">
+    <p class="w3-light-grey"><img class="w3-left" src="../../assets/logo.png" width="16px" /> User interface powered by <a href="https://www.w3schools.com/w3css/default.asp" target="_blank">W3.CSS</a></p>
+  </footer>
+
+  <!-- End page content -->
+</div>
+
+<script>
+var subIds = ["log", "messages", "windows"];
+for (var i = 0; i < subIds.length; i++) {
+  document.getElementById("app-view-" + subIds[i]).getElementsByTagName("input")[0].onkeypress = function() {
+    var id = this.parentElement.id;
+    var column, container, input, filter, table, tr, td, i;
+    container = document.getElementById(id);
+    input = container.getElementsByTagName("input")[0];
+    filter = input.value.toUpperCase();
+    i = filter.indexOf(":");
+    column = 0;
+    if (i > -1) {
+      column = parseInt(filter.substring(0, i)) - 1;
+      filter = filter.substring(i + 1);
+    }
+    table = container.getElementsByTagName("table")[0];
+    tr = table.getElementsByTagName("tr");
+    for (i = 0; i < tr.length; i++) {
+      td = tr[i].getElementsByTagName("td")[column];
+      if (td) {
+        txtValue = td.textContent || td.innerText;
+        if (txtValue.toUpperCase().indexOf(filter) > -1) {
+          tr[i].style.display = "";
+        } else {
+          tr[i].style.display = "none";
+        }
+      }
+    }
+  };
+}
+
+var subIds = ["configuration", "desktops", "log", "messages", "monitors", "windows", "work-areas"];
+for (var i = 0; i < subIds.length; i++) {
+  document.getElementById("app-icon-" + subIds[i]).onclick = function() {
+    var subId = this.id.substring(9);
+    for (var j = 0; j < subIds.length; j++) {
+      if (subIds[j] !== subId) {
+        document.getElementById("app-view-" + subIds[j]).className = "w3-container w3-hide";
+      } else {
+        document.getElementById("app-view-" + subIds[j]).className = "w3-container w3-show";
+      }
+    }
+  };
+}
+/*
+document.getElementById("app-*").onclick = function() {
+};
+document.getElementById("app-*").oncontextmenu = function() {
+};
+*/
+window.oncontextmenu = function() {
+  return false;
+};
+</script>
+
+</body>
+</html>
