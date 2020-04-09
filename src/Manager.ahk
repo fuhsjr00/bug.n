@@ -1240,3 +1240,12 @@ Manager_windowNotMaximized(width, height) {
   Global
   Return, (width < 0.99 * Monitor_#%Manager_aMonitor%_width Or height < 0.99 * Monitor_#%Manager_aMonitor%_height)
 }
+
+Manager_activateViewByMouse(d) {
+	Local mousePositionX, mousePositionY, window, windowTitle
+	MouseGetPos, mousePositionX, mousePositionY, window
+	WinGetTitle windowTitle, ahk_id %Window%
+	if( InStr(windowTitle, "bug.n_BAR_") = 1 ) {
+		Monitor_activateView(0, d)
+	}
+}
