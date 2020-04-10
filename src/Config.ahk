@@ -498,6 +498,8 @@ Config_UI_saveSession() {
 #9::Monitor_activateView(9)
 #+9::Monitor_setWindowTag(9)
 #^9::Monitor_toggleWindowTag(9)
+~WheelUp::Manager_activateViewByMouse(-1)
+~WheelDown::Manager_activateViewByMouse(+1)
 
 ;; Monitor management
 #.::Manager_activateMonitor(0, +1)
