@@ -87,3 +87,11 @@ which contributed to bug.n.
 
 bug.n is licensed under the GNU General Public License version 3. Please see
 the [LICENSE file](./LICENSE.md) for the full license text.
+
+### Development
+
+Currently, there are three development branches: 
+
+* master, the current stable version (v9), which is no longer actively developed or maintained
+* X, a development version (v10), which is a rewrite of bug.n and in alpha stage, but development is dormant
+* x.min, a minimal version of X with less features and currently in alpha stage
