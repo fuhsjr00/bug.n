@@ -127,3 +127,7 @@ not practical for all of them to be tiled by bug.n. Those applications, which
 should be tiled, have to be listed specifically, e.g. Edge:
 
 `Config_rule=ApplicationFrameWindow;.*Edge;;1;0;0;0;1;0;`
+
+#### Windows background apps
+
+ˋConfig_rule=NarratorHelperWindow;.*;;0;ˋ
