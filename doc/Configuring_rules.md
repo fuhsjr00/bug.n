@@ -130,4 +130,4 @@ should be tiled, have to be listed specifically, e.g. Edge:
 
 #### Windows background apps
 
-ˋConfig_rule=NarratorHelperWindow;.*;;0;ˋ
+`Config_rule=NarratorHelperWindow;.*;;0;`
