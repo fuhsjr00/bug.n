@@ -492,7 +492,13 @@ Bar_updateTitle() {
 }
 
 Bar_updateView(m, v) {
-  Local managedWndId0, wndId0, wndIds
+  Local managedWndId0, wndId0, wndIds, newBar
+
+  newBar := View_#%m%_#%v%_showBar
+  If Not (newBar = Monitor_#%m%_showBar) {
+    Monitor_#%m%_showBar := View_#%m%_#%v%_showBar
+    Monitor_updateBar(Manager_aMonitor, v)
+  }
 
   GuiN := (m - 1) + 1
   Gui, %GuiN%: Default

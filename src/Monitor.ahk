@@ -295,15 +295,25 @@ Monitor_setWorkArea(left, top, right, bottom) {
 }
 ;; flashkid: Send SetWorkArea to second Monitor (http://www.autohotkey.com/board/topic/42564-send-setworkarea-to-second-monitor/)
 
-Monitor_toggleBar()
-{
+Monitor_updateBar(m, v) {
   Global
 
-  Monitor_#%Manager_aMonitor%_showBar := Not Monitor_#%Manager_aMonitor%_showBar
-  Bar_toggleVisibility(Manager_aMonitor)
-  Monitor_getWorkArea(Manager_aMonitor)
-  View_arrange(Manager_aMonitor, Monitor_#%Manager_aMonitor%_aView_#1)
+  Bar_toggleVisibility(m)
+  Monitor_getWorkArea(m)
+  View_arrange(m, v)
   Manager_winActivate(Bar_aWndId)
+}
+
+Monitor_toggleBar()
+{
+  Local m, v
+  m := Manager_aMonitor
+  v := Monitor_#%m%_aView_#1
+
+  View_#%m%_#%v%_showBar := Not View_#%m%_#%v%_showBar
+  Monitor_#%m%_showBar := View_#%m%_#%v%_showBar
+
+  Monitor_updateBar(Manager_aMonitor, v)
 }
 
 Monitor_toggleNotifyIconOverflowWindow() {

@@ -33,6 +33,7 @@ View_init(m, v)
   View_#%m%_#%v%_showStackArea  := True
   StringSplit, View_#%m%_#%v%_margin, View_#%m%_#%v%_margins, `;
   View_#%m%_#%v%_wndIds         := ""
+  View_#%m%_#%v%_showBar        := True
 }
 
 View_activateWindow(i, d = 0) {
