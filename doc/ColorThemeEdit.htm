@@ -1,0 +1,836 @@
+<!-- vim: set ft=html noet ts=4 sts=4 sw=4: -->
+<!DOCTYPE html>
+<html>
+
+<!----------------------------------------------------------------------------->
+
+<head>
+<meta charset="UTF-8">
+<title>bug.n Color Theme Editor</title>
+
+<!----------------------------------------------------------------------------->
+
+<script type="text/javascript">
+window.addEventListener("load", preparePreview);
+function preparePreview() {
+	let barContainer		= document.querySelector("#barArea");
+	for (let i = 0; i < 3 ; i++) {
+		//FIXME: bug.n bar area name assignment. Need check.
+		barContainer.insertAdjacentHTML("beforeend",
+			'<div class="bar">'
+		+		'<div class="container line">'
+		+			'<div class="container">'
+		+				'<div class="view"></div>'
+		+				'<div class="view status"></div>'
+		+				'<div class="view"></div>'.repeat(7)
+		+				'<div class="layout"></div>'
+		+			'</div>'
+
+		+			'<div class="title spacer"></div>'
+
+		+			`<div class="battery${i == 1 ? ' status' : i == 2 ? ' flag' : ''}"></div>`
+
+		+			'<div class="anytext perf"></div>'
+
+		+			`<div class="volume${i == 1 ? ' status' : ''}"></div>`
+		+			'<div class="date"></div>'
+		+			'<div class="time"></div>'
+		+			'<div class="shebang"></div>'
+		+		'</div>'
+
+		+		'<div class="container line">'
+		+			'<div class="title"></div>'
+		+		'</div>'
+		+	'</div>'
+		);
+	}
+
+	//----------------------------------------------------------
+
+	for (let className of [
+		"view"		, "layout"
+	,	"battery"	, "anytext"		, "volume"
+	,	"date"		, "time"		, "shebang"		, "title"
+	]) {
+		for (let obj of barContainer.querySelectorAll(`.${className}`)) {
+			obj.insertAdjacentHTML("afterbegin",
+				'<div class="fore"></div>'
+			+	'<div class="text"></div>'
+			);
+		}
+	}
+}
+
+//--------------------------------------------------------------
+
+window.addEventListener("load", prepareSettings);
+function prepareSettings() {
+	prepareFontSetting();
+	prepareColorPicker();
+	prepareIniValue();
+}
+
+//--------------------------------------------------------------
+
+function prepareFontSetting() {
+	let settingContainer	= document.querySelector("#settingArea");
+	settingContainer.insertAdjacentHTML("beforeend",
+		'<table id="font">'
+
+	+	'<tbody>'
+
+	+		'<tr>'
+	+			'<th>Font Family</th>'
+	+			'<td><input type="text"   id="fontfamily"></td>'
+	+		'</tr>'
+
+	+		'<tr>'
+	+			'<th>Font Size</th>'
+	+			'<td><input type="number" id="fontsize" min="6" max="128"></td>'
+	+		'</tr>'
+
+	+	'</tbody>'
+
+	+'</table>'
+	);
+
+	//..........................................................
+
+	for (let id of [ "fontfamily", "fontsize" ]) {
+		settingContainer.querySelector(`#${id}`)
+			.addEventListener("change", () => {
+				applyFont();
+				setIniValue();
+			});
+	}
+}
+
+//..............................................................
+
+function applyFont() {
+	//console.debug("Apply Font");
+
+	let themeStyle		= document.querySelector("style.theme.font");
+	while (themeStyle.childNodes.length > 0) {
+		themeStyle.childNodes[0].remove();
+	}
+
+	//..........................................................
+
+	let fontSetting		= document.querySelector("#settingArea #font");
+
+	let style			= new Map();
+	let obj, val;
+	obj		= fontSetting.querySelector("#fontfamily");
+	val		= obj && obj.value;
+	if (val) {
+		style.set("font-family", val);
+	}
+
+	obj		= fontSetting.querySelector("#fontsize");
+	val		= obj && obj.value;
+	if (val) {
+		style.set("font-size", `${val}pt`);
+	}
+
+	//..........................................................
+
+	themeStyle.insertAdjacentText("afterbegin", [
+		'.bar {'
+	,	...Array.from(style.entries()).map((entry) => entry.join(" : ") + ";")
+	,	'}'
+	].join(" "));
+	//console.debug(themeStyle.innerText);
+}
+
+//..............................................................
+
+function parseFontText(setting) {
+	setting		=
+		setting.split(/\s*\n/)
+		.map   ((line) => line.trim())
+		.filter((line) => /=/.test(line))
+		.map   ((line) => {
+			let sepIndex	= line.indexOf('=');
+			let id			= line.slice(0           , sepIndex   ).trim();
+			let value		= line.slice(sepIndex + 1, line.length).trim();
+			return [ id, value ];
+		});
+
+	let fontStyle		= {};
+	for (let [ id, value ] of setting) {
+		if (!/^Config_font(Name|Size)$/.test(id)) {
+			continue;
+		}
+
+		id				= RegExp.$1;
+		switch (id) {
+		case "Name":	id = "fontfamily" ; break;
+		case "Size":	id = "fontsize"   ; break;
+		default:		continue;
+		}
+
+		fontStyle[id]	= value;
+	}
+
+	return fontStyle;
+}
+
+//..............................................................
+
+function setFont(style = {}, isInitialize = false) {
+	let fontStyle	= document.querySelector("#settingArea #font");
+	for (let prop of [ "fontfamily", "fontsize" ]) {
+		let obj		= fontStyle.querySelector(`#${prop}`);
+		let value	= style[prop];
+
+		if (!obj) {
+			continue;
+		}
+
+		switch (prop) {
+		case "fontsize":
+			if (/^\d+$/.test(value)) {
+				value = parseInt(value, 10);
+			} else {
+				value = undefined;
+			}
+			break;
+
+		default:
+			break;
+		}
+
+		if (!value && isInitialize) {
+			switch (prop) {
+			case "fontsize":		value	= 9           ; break;
+			case "fontfamily":		value	= "Meiryo UI" ; break;
+			}
+		}
+
+		if (value) {
+			obj.value		= value;
+		}
+	}
+}
+
+//--------------------------------------------------------------
+
+function prepareColorPicker() {
+	let settingContainer	= document.querySelector("#settingArea");
+	settingContainer.insertAdjacentHTML("beforeend",
+			'<table id="colorPicker">'
+
+		+	'<thead>'
+		+		'<tr>'
+		+			'<th></th>'
+		+			'<th>view</th>'
+		+			'<th>layout</th>'
+		+			'<th>title</th>'
+		+			'<th>shebang</th>'
+		+			'<th>time</th>'
+		+			'<th>date</th>'
+		+			'<th>anytext</th>'
+		+			'<th>battery</th>'
+		+			'<th>volume</th>'
+		+		'</tr>'
+		+	'</thead>'
+
+		+	'<tbody>'
+		+	'</tbody>'
+
+		+'</table>'
+	);
+
+	//..........................................................
+
+	let tbody		= settingContainer.querySelector("table#colorPicker tbody");
+	for (let name of [ "backColor", "foreColor", "fontColor" ]) {
+		for (let i = 0; i < 3; i++) {
+			let line	= document.createElement("tr");
+			line.classList.add(`${name}_${i+1}`);
+
+			//XXX: This color picker depends on OS / browser implementation
+			line.insertAdjacentHTML("afterbegin",
+				`<th>${name}_#${i+1}</th>`
+			+	'<td><input type="color" class="color"></td>'.repeat(9)
+			);
+
+			tbody.appendChild(line);
+		}
+	}
+
+	//..........................................................
+
+	for (let obj of tbody.querySelectorAll("input.color")) {
+		obj.addEventListener("change", () => {
+			applyColor();
+			setIniValue();
+		});
+	}
+}
+
+//..............................................................
+
+const COLOR_NAME		= new Map([
+	[ "black"		, "000000" ]
+,	[ "silver"		, "C0C0C0" ]
+,	[ "gray"		, "808080" ]
+,	[ "white"		, "FFFFFF" ]
+,	[ "maroon"		, "800000" ]
+,	[ "red"			, "FF0000" ]
+,	[ "purple"		, "800080" ]
+,	[ "fuchsia"		, "FF00FF" ]
+,	[ "green"		, "008000" ]
+,	[ "lime"		, "00FF00" ]
+,	[ "olive"		, "808000" ]
+,	[ "yellow"		, "FFFF00" ]
+,	[ "navy"		, "000080" ]
+,	[ "blue"		, "0000FF" ]
+,	[ "teal"		, "008080" ]
+,	[ "aqua"		, "00FFFF" ]
+]);
+
+//..............................................................
+
+function applyColor() {
+	//console.debug("Apply Color");
+
+	let themeStyle		= document.querySelector("style.theme.color");
+	while (themeStyle.childNodes.length > 0) {
+		themeStyle.childNodes[0].remove();
+	}
+
+	let colors			= document.querySelector("#colorPicker");
+
+	//----------------------------------------------------------
+
+	//FIXME: Config.ini -> bug.n bar area mapping. Need check.
+	const COLOR_SETTING_INDEX	= Object.freeze(new Map([
+		[ "view"		,	0 ]
+	,	[ "layout"		,	1 ]
+	,	[ "title"		,	2 ]
+	,	[ "shebang"		,	3 ]
+	,	[ "time"		,	4 ]
+	,	[ "date"		,	5 ]
+	,	[ "anytext"		,	6 ]
+	,	[ "battery"		,	7 ]
+	,	[ "volume"		,	8 ]
+	]));
+
+	for (let [ name, typeNo ] of COLOR_SETTING_INDEX.entries()) {
+		let css			= new Map();
+
+		for (let colorName of [ "backColor", "foreColor", "fontColor" ]) {
+			for (let i = 0; i < 3; i++) {
+				let flag, area, prop;
+				switch (i) {
+				case 1:				flag = ".status" ; break;
+				case 2:				flag = ".flag"   ; break;
+				case 0:
+				default:			flag = ""        ; break;
+				}
+
+				switch (colorName) {
+				case "foreColor":	area = ".fore" ; prop = "background-color" ; break;
+				case "fontColor":	area = ".text" ; prop = "color"            ; break;
+				case "backColor":
+				default:			area = ""      ; prop = "background-color" ; break;
+				}
+
+				let target		= [ `.${name}${flag}`, area ].join(" ");
+
+				if (!css.has(target)) {
+					css.set(target, new Map());
+				}
+
+				let style		= css.get(target);
+
+				let colorObj	= colors.querySelectorAll(`.${colorName}_${i+1} input.color`)[typeNo];
+				//console.debug(`.${colorName}_${i+1}[${typeNo}] => ${target}`, colorObj);
+				if (colorObj.disabled) {
+					continue;
+				}
+				style.set(prop, colorObj.value);
+			}
+		}
+
+		themeStyle.insertAdjacentText("afterbegin",
+			Array.from(css.entries())
+				.map(([ target, style ]) => {
+					style		= Array.from(style.entries())
+									.map((prop) => prop.join(" : ") + ";")
+									.join(" ");
+					return `.bar ${target} { ${style} }`;
+				})
+				.join("\n")
+		);
+		//console.debug(themeStyle.innerText);
+	}
+}
+
+//..............................................................
+
+function setColor(colors = {}, isSetDisable = false) {
+	//console.debug(colors);
+
+	let colorPicker		= document.querySelector("#settingArea #colorPicker");
+
+	for (let prop of [ "backColor", "foreColor", "fontColor" ]) {
+		for (let i = 0; i < 3; i++) {
+			//console.debug(colors, prop, i, colors[prop]);
+			let setting = {
+				obj			: colorPicker.querySelector(`.${prop}_${i+1}`)
+			,	value		: colors[prop] && colors[prop][i]
+			};
+
+			if (!setting.obj) {
+				return;
+			}
+
+			setting.obj		= setting.obj.querySelectorAll("input.color");
+			setting.obj.forEach((o, index) => {
+				if (setting.value && setting.value[index]) {
+					o.value		= `#${setting.value[index]}`.toUpperCase();
+				} else {
+					o.value		= "#FFFFFF";
+					if (isSetDisable) {
+						o.disabled		= true;
+						o.parentNode.classList.add("disabled");
+					}
+					//console.debug(o, setting.value, index);
+				}
+			});
+		}
+	}
+}
+
+//..............................................................
+
+function parseColorText(setting) {
+	setting		=
+		setting.split(/\s*\n/)
+		.map   ((line) => line.trim())
+		.filter((line) => /=/.test(line))
+		.map   ((line) => {
+			let sepIndex	= line.indexOf('=');
+			let id			= line.slice(0           , sepIndex   ).trim();
+			let value		= line.slice(sepIndex + 1, line.length).trim();
+			return [ id, value ];
+		});
+
+	let colors		= {};
+	for (let [ id, value ] of setting) {
+		if (!/^Config_(back|fore|font)Color_#(\d+)$/.test(id)) {
+			continue;
+		}
+
+		id				= `${RegExp.$1}Color`;
+		let index		= parseInt(RegExp.$2, 10) - 1;
+
+		value			=
+			value.split(/\s*;\s*/)
+				.map((color) => color.trim())
+				.map((color) => {
+					if (/^[0-9a-fA-F]{6}$/.test(color)) {
+						return color.toUpperCase();
+					}
+
+					if (COLOR_NAME.has(color.toLowerCase())) {
+						return COLOR_NAME.get(color.toLowerCase());
+					}
+
+					return undefined;
+				});
+
+		//console.debug(colors, id, index, value);
+
+		if (!colors[id]) {
+			colors[id]		= [];
+		}
+		colors[id][index]	= value;
+	}
+
+	return colors;
+}
+
+//--------------------------------------------------------------
+
+const DEFAULT_SETTING		= [
+	"Config_fontName=Meiryo UI"
+,	"Config_fontSize=9"
+,	"Config_backColor_#1=D7E4F2;99B4D1;F0F0F0;99B4D1;F0F0F0;99B4D1;D7E4F2;B9D1EA;B9D1EA"
+,	"Config_backColor_#2=B0C1E6;      ;      ;      ;      ;      ;      ;B9D1EA;B9D1EA"
+,	"Config_backColor_#3=      ;      ;      ;      ;      ;      ;      ;FF8040;"
+,	"Config_foreColor_#1=BECBD8;99B4D1;F0F0F0;99B4D1;F0F0F0;99B4D1;BFCDDB;D7E4F2;D7E4F2"
+,	"Config_foreColor_#2=95ACC4;      ;      ;      ;      ;      ;      ;D7E4F2;D7E4F2"
+,	"Config_foreColor_#3=      ;      ;      ;      ;      ;      ;      ;D7E4F2;"
+,	"Config_fontColor_#1=000000;000000;000000;000000;000000;000000;000000;000000;000000"
+,	"Config_fontColor_#2=000000;      ;      ;      ;      ;      ;      ;000000;000000"
+,	"Config_fontColor_#3=      ;      ;      ;      ;      ;      ;      ;000000;"
+].join("\n");
+
+//..............................................................
+
+function prepareIniValue() {
+	let settingContainer	= document.querySelector("#settingArea");
+	settingContainer.insertAdjacentHTML("beforeend",
+		'<table id="ini">'
+
+	+	'<thead>'
+	+		'<tr><th>Config.ini</th></tr>'
+	+	'</thead>'
+
+	+	'<tbody>'
+	+		'<tr><td>'
+	+			'<textarea id="config_ini"></textarea>'
+	+		'</td></tr>'
+	+	'</tbody>'
+
+	+	'</table>'
+	);
+
+	//..........................................................
+
+	let textarea	= settingContainer.querySelector("#ini textarea");
+	textarea.value	= DEFAULT_SETTING;
+
+	setFont(parseFontText(textarea.value), true);
+	applyFont();
+
+	setColor(parseColorText(textarea.value), true);
+	applyColor();
+
+	//..........................................................
+
+	textarea.addEventListener("change", () => {
+		if (textarea.isSetting) {
+			return;
+		}
+
+		setFont(parseFontText(textarea.value));
+		applyFont();
+
+		setColor(parseColorText(textarea.value));
+		applyColor();
+	});
+}
+
+//..............................................................
+
+function setIniValue() {
+	let textarea	= document.querySelector("#settingArea #ini textarea");
+	try {
+		//Suppress INI -> {Font, Color} setting mirroring
+		textarea.isSetting		= true;
+
+		let iniValue	= new Map();
+
+		iniValue.set("fontName", document.querySelector("#settingArea #font #fontfamily").value);
+		iniValue.set("fontSize", document.querySelector("#settingArea #font #fontsize"  ).value);
+
+		for (let colorProp of [ "backColor", "foreColor", "fontColor" ]) {
+			for (let i = 0; i < 3; i++) {
+				iniValue.set(`${colorProp}_#${i+1}`,
+					Array.from(document.querySelectorAll(`#settingArea #colorPicker .${colorProp}_${i+1} input.color`))
+						.map((color) => {
+							if (color.disabled) {
+								return " ".repeat(6);
+							}
+
+							color		= color.value;
+							if (/^#/.test(color)) {
+								color		= color.slice(1);
+							}
+
+							return color.toUpperCase();
+						})
+						.join(";").replace(/\s+$/, "")
+				);
+			}
+		}
+
+		textarea.value		=
+			Array.from(iniValue.entries())
+				.map(([ prop, value ]) => [ `Config_${prop}`, value ].join("="))
+				.join("\n");
+	}
+	//..........................................................
+	finally {
+		textarea.isSetting		= false;
+	}
+}
+</script>
+
+<!----------------------------------------------------------------------------->
+
+<style type="text/css">
+.bar {
+	display					: table;
+	overflow				: hidden;
+	margin					: 1em;
+	padding					: 0px;
+	width					: calc(100% - 2em);
+}
+
+.bar .line {
+	display					: block ! important;
+
+	width					: 100%;
+	height					: 1.5em;
+	vertical-align			: middle;
+	overflow				: hidden;
+}
+
+.bar .container {
+	display					: inline-block;
+	white-space				: nowrap;
+
+	padding					: 0px;
+	margin					: 0px;
+	height					: 1.5em;
+}
+
+.bar .view,
+.bar .layout,
+.bar .battery,
+.bar .anytext,
+.bar .volume,
+.bar .date,
+.bar .time,
+.bar .shebang,
+.bar .title {
+	display					: inline-block;
+	position				: relative;
+	height					: 1.5em;
+	min-width				: 1.0em;
+}
+
+.bar .view    .fore,
+.bar .layout  .fore,
+.bar .battery .fore,
+.bar .anytext .fore,
+.bar .volume  .fore,
+.bar .date    .fore,
+.bar .time    .fore,
+.bar .shebang .fore,
+.bar .title   .fore {
+	display					: inline-block;
+	position				: absolute;
+	z-index					: 1;
+
+	top						: 1px;
+	bottom					: 1px;
+	left					: 1px;
+	width					: calc( 25% - 2px);
+	height					: calc(100% - 2px);
+}
+
+.bar .anytext .fore,
+.bar .title   .fore {
+	width					: calc(100% - 2px);
+}
+
+.bar .spacer  *,
+.bar .layout  .fore,
+.bar .date    .fore,
+.bar .time    .fore,
+.bar .shebang .fore {
+	display					: none ! important;
+}
+
+.bar .view    .text,
+.bar .layout  .text,
+.bar .battery .text,
+.bar .anytext .text,
+.bar .volume  .text,
+.bar .date    .text,
+.bar .time    .text,
+.bar .shebang .text,
+.bar .title   .text {
+	display					: inline-block;
+	position				: absolute;
+	z-index					: 2;
+
+	top						: 1px;
+	bottom					: 1px;
+	left					: 1px;
+	right					: 1px;
+	width					: calc(100% - 2px);
+	height					: calc(100% - 2px);
+
+	text-align				: center;
+	white-space				: pre;
+
+	overflow				: hidden;
+}
+
+.bar .view {
+	width					:  2.0em;
+}
+
+.bar .layout {
+	width					:  4.0em;
+}
+
+.bar .spacer {
+	width					:  8.0em ! important;
+}
+
+.bar .battery {
+	width					:  8.0em;
+}
+
+.bar .anytext {
+	min-width				:  8.0em;
+	width					: calc(100%
+		- (  2.0em * 9 +  4.0em +  8.0em +  8.0em +  8.0em + 10.0em +  6.0em +  2.0em)
+	);
+}
+
+.bar .volume {
+	width					:  8.0em;
+}
+
+.bar .date {
+	width					: 10.0em;
+}
+
+.bar .time {
+	width					:  6.0em;
+}
+
+.bar .shebang {
+	width					:  2.0em;
+}
+
+.bar .title {
+	width					: 100%;
+}
+
+.bar .view:nth-child(1) .text:before { content : "1"; }
+.bar .view:nth-child(2) .text:before { content : "2"; }
+.bar .view:nth-child(3) .text:before { content : "3"; }
+.bar .view:nth-child(4) .text:before { content : "4"; }
+.bar .view:nth-child(5) .text:before { content : "5"; }
+.bar .view:nth-child(6) .text:before { content : "6"; }
+.bar .view:nth-child(7) .text:before { content : "7"; }
+.bar .view:nth-child(8) .text:before { content : "8"; }
+.bar .view:nth-child(9) .text:before { content : "9"; }
+.bar .layout            .text:before { content : "2|[1]"; }
+.bar .battery           .text:before { content : "BAT:  50%"; }
+.bar .battery.flag      .text:before { content : "BAT:  10%"; }
+.bar .anytext           .text:before { content : "CPU:  50% | RAM: 50% | Dr:  50% | Dw  50% | UP: 500 B/s | dn: 500 B/s"; }
+.bar .volume            .text:before { content : "VOL:  50%"; }
+.bar .date              .text:before { content : "Sat, 01. Jan. 2000"; }
+.bar .time              .text:before { content : "12:34"; }
+.bar .shebang           .text:before { content : "#!"; }
+.bar .title             .text:before { content : "Window Title"; }
+
+/*----------------------------------------------------------------------------*/
+
+/* DEBUG *
+.bar {
+	background-color		: rgba(255,   0,   0, 0.30);
+}
+/**
+.bar .view,
+.bar .layout,
+.bar .battery,
+.bar .anytext,
+.bar .volume,
+.bar .date,
+.bar .time,
+.bar .shebang,
+.bar .title {
+	background-color		: rgba(  0,   0, 255, 0.30);
+	border					: 1px solid blue;
+}
+
+.bar .fore {
+	background-color		: rgba(  0,   0,   0, 0.30);
+}
+
+.bar .text {
+	background-color		: rgba(  0, 255,   0, 0.30);
+}
+/**/
+
+/*----------------------------------------------------------------------------*/
+
+#settingArea table tr:first-child:not(thead ~ tbody tr) th:first-child,
+#settingArea table tr:first-child:not(thead ~ tbody tr) td:first-child { border-top-left-radius     : 6px; }
+#settingArea table tr:first-child:not(thead ~ tbody tr) th:last-child,
+#settingArea table tr:first-child:not(thead ~ tbody tr) td:last-child  { border-top-right-radius    : 6px; }
+#settingArea table tr:last-child:not(thead tr)          th:first-child,
+#settingArea table tr:last-child:not(thead tr)          td:first-child { border-bottom-left-radius  : 6px; }
+#settingArea table tr:last-child:not(thead tr)          th:last-child,
+#settingArea table tr:last-child:not(thead tr)          td:last-child  { border-bottom-right-radius : 6px; }
+
+#settingArea table       th,
+#settingArea table       td {
+	width					: 5em;
+	padding					: 0.5ex;
+}
+
+#settingArea table       th {
+	background-color		: hsla(200,  50%,  60%, 1.00);
+	color					: hsla(200,  50%, 100%, 1.00);
+}
+
+#settingArea table tbody tr:nth-child(odd)  td {
+	background-color		: hsla(200,  50%,  95%, 1.00);
+	color					: hsla(200,  50%,   0%, 1.00);
+}
+
+#settingArea table tbody tr:nth-child(even) td {
+	background-color		: hsla(200,  50%,  80%, 1.00);
+	color					: hsla(200,  50%,   0%, 1.00);
+}
+
+#settingArea table tbody tr                 td.disabled {
+	background-color		: hsla(200,  50%,  80%, 1.00);
+	color					: hsla(200,  50%, 100%, 1.00);
+	opacity					: 20%;
+}
+
+#settingArea table             thead th {
+	text-align				: center;
+}
+
+#settingArea table#colorPicker tbody th {
+	text-align				: left;
+}
+
+#settingArea table#colorPicker tbody td {
+	text-align				: center;
+}
+
+#settingArea textarea {
+	min-width				: 10em;
+	width					: 50em;
+	min-height				:  5em;
+	height					: 15em;
+}
+</style>
+
+<!----------------------------------------------------------------------------->
+
+<style type="text/css" class="theme font"></style>
+<style type="text/css" class="theme color"></style>
+
+</head>
+
+<!----------------------------------------------------------------------------->
+
+<body>
+
+<div id="barArea"></div>
+
+<div id="settingArea"></div>
+
+</body>
+
+<!----------------------------------------------------------------------------->
+
+</html>
