@@ -348,17 +348,17 @@ Bar_toggleCommandGui() {
     Manager_winActivate(Bar_aWndId)
   } Else {
     Bar_cmdGuiIsVisible := True
-    
+
     If (Config_verticalBarPos = "tray")
       x := Monitor_#%Manager_aMonitor%_x + Monitor_#%Manager_aMonitor%_barX + Monitor_#%Manager_aMonitor%_barWidth - Bar_#0_#0W
     Else
       x := Monitor_#%Manager_aMonitor%_barX + Monitor_#%Manager_aMonitor%_barWidth - Bar_#0_#0W   ;; x := mX + (mBarX - mX) + mBarW - w
-    
+
     If (Config_verticalBarPos = "top") Or (Config_verticalBarPos = "tray") And (Monitor_#%Manager_aMonitor%_taskBarPos = "top" Or Not Monitor_#%Manager_aMonitor%_taskBarClass)
       y := Monitor_#%Manager_aMonitor%_y
     Else
       y := Monitor_#%Manager_aMonitor%_y + Monitor_#%Manager_aMonitor%_height - Bar_#0_#0H
-    
+
     Gui, Show
     WinGet, wndId, ID, bug.n_BAR_0
     WinMove, ahk_id %wndId%, , %x%, %y%

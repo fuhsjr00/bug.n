@@ -111,7 +111,7 @@ Monitor_activateView(i, d = 0) {
 
 Monitor_find(d, n) {
   Local mName
-  
+
   If (d < 0 Or d > 0) {
     Loop, % n {
       SysGet, mName, MonitorName, %A_Index%
@@ -146,7 +146,7 @@ Monitor_getWorkArea(m) {
 
   SysGet, monitor, Monitor, %m%
   Debug_logMessage("DEBUG[0] Monitor_getWorkArea: #" . m . ", l: " . monitorLeft . ", r: " . monitorRight . ", t: " . monitorTop . ", b: " . monitorBottom . ".", 0)
-  
+
   wndClasses := "Shell_TrayWnd;Shell_SecondaryTrayWnd"
   ;; @TODO What about third and so forth TrayWnd?
   If Config_bbCompatibility
@@ -161,7 +161,7 @@ Monitor_getWorkArea(m) {
       If (x >= monitorLeft && x <= monitorRight && y >= monitorTop && y <= monitorBottom) {
         If (A_LoopField = "Shell_TrayWnd") Or (A_LoopField = "Shell_SecondaryTrayWnd")
           Monitor_#%m%_taskBarClass := A_LoopField
-        
+
         Debug_logMessage("DEBUG[3] Monitor_getWorkArea: #" . m . ", window class: " . A_LoopField . ", x: " . wndX . ", y: " . wndY . ", w: " . wndWidth . ", h: " . wndHeight . ".", 3)
         If (wndHeight < wndWidth) {
           ;; Horizontal

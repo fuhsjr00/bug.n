@@ -261,7 +261,7 @@ View_resetTileLayout() {
 
   m := Manager_aMonitor
   v := Monitor_#%m%_aView_#1
-  
+
   View_#%m%_#%v%_area_#0        := 0
   View_#%m%_#%v%_layout_#2      := View_#%m%_#%v%_layout_#1
   View_#%m%_#%v%_layout_#1      := 1
@@ -276,7 +276,7 @@ View_resetTileLayout() {
   View_#%m%_#%v%_margins        := "0;0;0;0"
   View_#%m%_#%v%_showStackArea  := True
   StringSplit, View_#%m%_#%v%_margin, View_#%m%_#%v%_margins, `;
-  
+
   If Tiler_isActive(m, v)
     View_arrange(m, v)
 }
