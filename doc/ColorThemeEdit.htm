@@ -121,8 +121,9 @@ function applyFont() {
 
 	let style			= new Map();
 	let obj, val;
-	obj		= fontSetting.querySelector("#fontfamily");
+	obj					= fontSetting.querySelector("#fontfamily");
 	if (obj) {
+		obj.value		= obj.value.trim();
 		if (!obj.value && obj.default) {
 			obj.value		= obj.default;
 		}
@@ -133,8 +134,8 @@ function applyFont() {
 		}
 	}
 
-	obj		= fontSetting.querySelector("#fontsize");
-	val		= obj && obj.value;
+	obj					= fontSetting.querySelector("#fontsize");
+	val					= obj && obj.value;
 	if (obj) {
 		if (!obj.value && obj.default) {
 			obj.value		= obj.default;
