@@ -571,12 +571,20 @@ function setIniValue() {
 <!----------------------------------------------------------------------------->
 
 <style type="text/css">
+body {
+	font-size				: 12pt;
+}
+
 .bar {
-	display					: table;
+	display					: block;
 	overflow				: hidden;
-	margin					: 1em;
+	margin-top				: 1.0rem;
+	margin-bottom			: 1.0rem;
+	margin-left				: 0.0rem;
+	margin-right			: 0.0rem;
 	padding					: 0px;
-	width					: calc(100% - 2em);
+	width					: 100%;
+	overflow				: hidden;
 }
 
 .bar .line {
@@ -584,8 +592,8 @@ function setIniValue() {
 
 	width					: 100%;
 	height					: 1.5em;
+	min-height				: 12.0pt;
 	vertical-align			: middle;
-	overflow				: hidden;
 }
 
 .bar .container {
@@ -595,6 +603,7 @@ function setIniValue() {
 	padding					: 0px;
 	margin					: 0px;
 	height					: 1.5em;
+	min-height				: 12.0pt;
 }
 
 .bar .view,
@@ -609,6 +618,7 @@ function setIniValue() {
 	display					: inline-block;
 	position				: relative;
 	height					: 1.5em;
+	min-height				: 12.0pt;
 	min-width				: 1.0em;
 }
 
@@ -679,7 +689,7 @@ function setIniValue() {
 }
 
 .bar .spacer {
-	width					:  8.0em ! important;
+	width					:  8.0rem ! important;
 }
 
 .bar .battery {
@@ -689,7 +699,7 @@ function setIniValue() {
 .bar .anytext {
 	min-width				:  8.0em;
 	width					: calc(100%
-		- (  2.0em * 9 +  4.0em +  8.0em +  8.0em +  8.0em + 10.0em +  6.0em +  2.0em)
+		- (  2.0em * 9 +  4.0em +  8.0rem +  8.0em +  8.0em + 10.0em +  6.0em +  2.0em)
 	);
 }
 
@@ -764,13 +774,13 @@ function setIniValue() {
 /*----------------------------------------------------------------------------*/
 
 #settingArea table tr:first-child:not(thead ~ tbody tr) th:first-child,
-#settingArea table tr:first-child:not(thead ~ tbody tr) td:first-child { border-top-left-radius     : 6px; }
+#settingArea table tr:first-child:not(thead ~ tbody tr) td:first-child { border-top-left-radius     : 3px; }
 #settingArea table tr:first-child:not(thead ~ tbody tr) th:last-child,
-#settingArea table tr:first-child:not(thead ~ tbody tr) td:last-child  { border-top-right-radius    : 6px; }
+#settingArea table tr:first-child:not(thead ~ tbody tr) td:last-child  { border-top-right-radius    : 3px; }
 #settingArea table tr:last-child:not(thead tr)          th:first-child,
-#settingArea table tr:last-child:not(thead tr)          td:first-child { border-bottom-left-radius  : 6px; }
+#settingArea table tr:last-child:not(thead tr)          td:first-child { border-bottom-left-radius  : 3px; }
 #settingArea table tr:last-child:not(thead tr)          th:last-child,
-#settingArea table tr:last-child:not(thead tr)          td:last-child  { border-bottom-right-radius : 6px; }
+#settingArea table tr:last-child:not(thead tr)          td:last-child  { border-bottom-right-radius : 3px; }
 
 #settingArea table       th,
 #settingArea table       td {
@@ -809,6 +819,14 @@ function setIniValue() {
 
 #settingArea table#colorPicker tbody td {
 	text-align				: center;
+}
+
+#settingArea #font #fontfamily {
+	width					: 20em;
+}
+
+#settingArea #font #fontsize {
+	width					:  3em;
 }
 
 #settingArea textarea {
