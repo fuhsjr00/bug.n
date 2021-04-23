@@ -170,7 +170,7 @@ function parseFontText(setting) {
 			return [ id, value ];
 		});
 
-	let fontStyle		= {};
+	let fontStyle		= new Map();
 	for (let [ id, value ] of setting) {
 		if (!/^Config_font(Name|Size)$/.test(id)) {
 			continue;
@@ -183,7 +183,7 @@ function parseFontText(setting) {
 		default:		continue;
 		}
 
-		fontStyle[id]	= value;
+		fontStyle.set(id, value);
 	}
 
 	return fontStyle;
@@ -191,11 +191,10 @@ function parseFontText(setting) {
 
 //..............................................................
 
-function setFont(style = {}, isInitialize = false) {
+function setFont(style = new Map(), isInitialize = false) {
 	let fontStyle	= document.querySelector("#settingArea #font");
-	for (let prop of [ "fontfamily", "fontsize" ]) {
+	for (let [ prop, value ] of style.entries()) {
 		let obj		= fontStyle.querySelector(`#${prop}`);
-		let value	= style[prop];
 
 		if (!obj) {
 			continue;
@@ -385,17 +384,17 @@ function applyColor() {
 
 //..............................................................
 
-function setColor(colors = {}, isInitialize = false) {
+function setColor(colors = new Map(), isInitialize = false) {
 	//console.debug(colors);
 
 	let colorPicker		= document.querySelector("#settingArea #colorPicker");
 
-	for (let prop of [ "backColor", "foreColor", "fontColor" ]) {
+	for (let prop of colors.keys()) {
 		for (let i = 0; i < 3; i++) {
 			//console.debug(colors, prop, i, colors[prop]);
 			let setting = {
 				obj			: colorPicker.querySelector(`.${prop}_${i+1}`)
-			,	value		: colors[prop] && colors[prop][i]
+			,	value		: colors.has(prop) && colors.get(prop)[i]
 			};
 
 			if (!setting.obj) {
@@ -441,7 +440,7 @@ function parseColorText(setting) {
 			return [ id, value ];
 		});
 
-	let colors		= {};
+	let colors		= new Map();
 	for (let [ id, value ] of setting) {
 		if (!/^Config_(back|fore|font)Color_#(\d+)$/.test(id)) {
 			continue;
@@ -467,10 +466,11 @@ function parseColorText(setting) {
 
 		//console.debug(colors, id, index, value);
 
-		if (!colors[id]) {
-			colors[id]		= [];
+		let colorList		= colors.get(id);
+		if (!colorList) {
+			colors.set(id, colorList = []);
 		}
-		colors[id][index]	= value;
+		colorList[index]	= value;
 	}
 
 	return colors;
