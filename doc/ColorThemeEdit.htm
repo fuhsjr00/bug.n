@@ -504,6 +504,7 @@ function prepareIniValue() {
 	//..........................................................
 
 	textarea.addEventListener("change", () => {
+		//console.debug(`INI -> { Font, Color } mirroring: ${textarea.isSetting}`);
 		if (textarea.isSetting) {
 			return;
 		}
@@ -521,7 +522,10 @@ function prepareIniValue() {
 function setIniValue() {
 	let textarea	= document.querySelector("#settingArea #ini textarea");
 	try {
-		//Suppress INI -> {Font, Color} setting mirroring
+		//Suppress INI -> { Font, Color } setting mirroring.
+		//
+		//Leave this here, though, actually it is unnecessary worry.
+		//Textarea's change event is to be invoked only by user action.
 		textarea.isSetting		= true;
 
 		let iniValue	= new Map();
@@ -557,7 +561,9 @@ function setIniValue() {
 	}
 	//..........................................................
 	finally {
-		textarea.isSetting		= false;
+		setTimeout(() => {
+			textarea.isSetting		= false;
+		}, 0);
 	}
 }
 </script>
