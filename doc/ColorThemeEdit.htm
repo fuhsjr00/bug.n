@@ -612,15 +612,15 @@ function setIniValue() {
 	min-width				: 1.0em;
 }
 
-.bar .view    .fore,
-.bar .layout  .fore,
-.bar .battery .fore,
-.bar .anytext .fore,
-.bar .volume  .fore,
-.bar .date    .fore,
-.bar .time    .fore,
-.bar .shebang .fore,
-.bar .title   .fore {
+.bar .view         .fore,
+.bar .layout       .fore,
+.bar .battery      .fore,
+.bar .anytext      .fore,
+.bar .volume       .fore,
+.bar .date         .fore,
+.bar .time         .fore,
+.bar .shebang      .fore,
+.bar .title        .fore {
 	display					: inline-block;
 	position				: absolute;
 	z-index					: 1;
@@ -628,32 +628,31 @@ function setIniValue() {
 	top						: 1px;
 	bottom					: 1px;
 	left					: 1px;
-	width					: calc( 25% - 2px);
 	height					: calc(100% - 2px);
 }
 
-.bar .anytext .fore,
-.bar .title   .fore {
-	width					: calc(100% - 2px);
-}
+.bar .view         .fore { width   : calc( 25% - 2px); }
+.bar .battery      .fore { width   : calc( 50% - 2px); }
+.bar .battery.flag .fore { width   : calc( 10% - 2px); }
+.bar .volume       .fore { width   : calc( 50% - 2px); }
+.bar .anytext      .fore,
+.bar .title        .fore { width   : calc(100% - 2px); }
 
-.bar .spacer  *,
-.bar .layout  .fore,
-.bar .date    .fore,
-.bar .time    .fore,
-.bar .shebang .fore {
-	display					: none ! important;
-}
+.bar .spacer       *,
+.bar .layout       .fore,
+.bar .date         .fore,
+.bar .time         .fore,
+.bar .shebang      .fore { display : none ! important; }
 
-.bar .view    .text,
-.bar .layout  .text,
-.bar .battery .text,
-.bar .anytext .text,
-.bar .volume  .text,
-.bar .date    .text,
-.bar .time    .text,
-.bar .shebang .text,
-.bar .title   .text {
+.bar .view         .text,
+.bar .layout       .text,
+.bar .battery      .text,
+.bar .anytext      .text,
+.bar .volume       .text,
+.bar .date         .text,
+.bar .time         .text,
+.bar .shebang      .text,
+.bar .title        .text {
 	display					: inline-block;
 	position				: absolute;
 	z-index					: 2;
