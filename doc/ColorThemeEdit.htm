@@ -410,7 +410,12 @@ function setColor(colors = {}, isInitialize = false) {
 						o.default		= o.value;
 					}
 				} else {
+					/**/
+					//Actually, empty color is handled as black
+					o.value		= "#000000";
+					/*/
 					o.value		= o.default;
+					/**/
 					if (isInitialize) {
 						o.disabled		= true;
 						o.parentNode.classList.add("disabled");
@@ -662,14 +667,14 @@ body {
 .bar .battery      .fore { width   : calc( 50% - 2px); }
 .bar .battery.flag .fore { width   : calc( 10% - 2px); }
 .bar .volume       .fore { width   : calc( 50% - 2px); }
-.bar .anytext      .fore,
-.bar .title        .fore { width   : calc(100% - 2px); }
-
-.bar .spacer       *,
 .bar .layout       .fore,
+.bar .anytext      .fore,
+.bar .title        .fore,
 .bar .date         .fore,
 .bar .time         .fore,
-.bar .shebang      .fore { display : none ! important; }
+.bar .shebang      .fore { width   : calc(100% - 2px); }
+
+.bar .spacer       *     { display : none ! important; }
 
 .bar .view         .text,
 .bar .layout       .text,
