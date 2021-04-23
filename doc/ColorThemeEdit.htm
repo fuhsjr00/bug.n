@@ -122,15 +122,28 @@ function applyFont() {
 	let style			= new Map();
 	let obj, val;
 	obj		= fontSetting.querySelector("#fontfamily");
-	val		= obj && obj.value;
-	if (val) {
-		style.set("font-family", val);
+	if (obj) {
+		if (!obj.value && obj.default) {
+			obj.value		= obj.default;
+		}
+
+		val		= obj.value;
+		if (val) {
+			style.set("font-family", val);
+		}
 	}
 
 	obj		= fontSetting.querySelector("#fontsize");
 	val		= obj && obj.value;
-	if (val) {
-		style.set("font-size", `${val}pt`);
+	if (obj) {
+		if (!obj.value && obj.default) {
+			obj.value		= obj.default;
+		}
+
+		val		= obj.value;
+		if (val) {
+			style.set("font-size", `${val}pt`);
+		}
 	}
 
 	//..........................................................
@@ -201,15 +214,16 @@ function setFont(style = {}, isInitialize = false) {
 			break;
 		}
 
-		if (!value && isInitialize) {
-			switch (prop) {
-			case "fontsize":		value	= 9           ; break;
-			case "fontfamily":		value	= "Meiryo UI" ; break;
-			}
+		if (!value && obj.default) {
+			obj.value	= obj.default;
 		}
 
 		if (value) {
 			obj.value		= value;
+
+			if (isInitialize) {
+				obj.default		= value;
+			}
 		}
 	}
 }
@@ -371,7 +385,7 @@ function applyColor() {
 
 //..............................................................
 
-function setColor(colors = {}, isSetDisable = false) {
+function setColor(colors = {}, isInitialize = false) {
 	//console.debug(colors);
 
 	let colorPicker		= document.querySelector("#settingArea #colorPicker");
@@ -392,9 +406,12 @@ function setColor(colors = {}, isSetDisable = false) {
 			setting.obj.forEach((o, index) => {
 				if (setting.value && setting.value[index]) {
 					o.value		= `#${setting.value[index]}`.toUpperCase();
+					if (isInitialize) {
+						o.default		= o.value;
+					}
 				} else {
-					o.value		= "#FFFFFF";
-					if (isSetDisable) {
+					o.value		= o.default;
+					if (isInitialize) {
 						o.disabled		= true;
 						o.parentNode.classList.add("disabled");
 					}
@@ -495,7 +512,7 @@ function prepareIniValue() {
 	let textarea	= settingContainer.querySelector("#ini textarea");
 	textarea.value	= DEFAULT_SETTING;
 
-	setFont(parseFontText(textarea.value), true);
+	setFont (parseFontText (textarea.value), true);
 	applyFont();
 
 	setColor(parseColorText(textarea.value), true);
@@ -509,7 +526,7 @@ function prepareIniValue() {
 			return;
 		}
 
-		setFont(parseFontText(textarea.value));
+		setFont (parseFontText (textarea.value));
 		applyFont();
 
 		setColor(parseColorText(textarea.value));
