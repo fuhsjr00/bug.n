@@ -26,7 +26,7 @@ function preparePreview() {
 		+				'<div class="layout"></div>'
 		+			'</div>'
 
-		+			'<div class="title spacer"></div>'
+		+			'<div class="title"></div>'
 
 		+			`<div class="battery${i == 1 ? ' status' : i == 2 ? ' flag' : ''}"></div>`
 
@@ -65,17 +65,17 @@ function preparePreview() {
 
 window.addEventListener("load", prepareSettings);
 function prepareSettings() {
-	prepareFontSetting();
+	prepareLookSetting();
 	prepareColorPicker();
 	prepareIniValue();
 }
 
 //--------------------------------------------------------------
 
-function prepareFontSetting() {
+function prepareLookSetting() {
 	let settingContainer	= document.querySelector("#settingArea");
 	settingContainer.insertAdjacentHTML("beforeend",
-		'<table id="font">'
+		'<table id="look">'
 
 	+	'<tbody>'
 
@@ -89,6 +89,11 @@ function prepareFontSetting() {
 	+			'<td><input type="number" id="fontsize" min="6" max="128"></td>'
 	+		'</tr>'
 
+	+		'<tr>'
+	+			'<th>SingleRowBar</th>'
+	+			'<td><input type="checkbox" id="singleRowBar"></td>'
+	+		'</tr>'
+
 	+	'</tbody>'
 
 	+'</table>'
@@ -96,10 +101,10 @@ function prepareFontSetting() {
 
 	//..........................................................
 
-	for (let id of [ "fontfamily", "fontsize" ]) {
+	for (let id of [ "fontfamily", "fontsize", "singleRowBar" ]) {
 		settingContainer.querySelector(`#${id}`)
 			.addEventListener("change", () => {
-				applyFont();
+				applyLook();
 				setIniValue();
 			});
 	}
@@ -107,8 +112,8 @@ function prepareFontSetting() {
 
 //..............................................................
 
-function applyFont() {
-	//console.debug("Apply Font");
+function applyLook() {
+	//console.debug("Apply Look");
 
 	let themeStyle		= document.querySelector("style.theme.font");
 	while (themeStyle.childNodes.length > 0) {
@@ -117,11 +122,11 @@ function applyFont() {
 
 	//..........................................................
 
-	let fontSetting		= document.querySelector("#settingArea #font");
+	let lookSetting		= document.querySelector("#settingArea #look");
 
 	let style			= new Map();
 	let obj, val;
-	obj					= fontSetting.querySelector("#fontfamily");
+	obj					= lookSetting.querySelector("#fontfamily");
 	if (obj) {
 		obj.value		= obj.value.trim();
 		if (!obj.value && obj.default) {
@@ -134,7 +139,7 @@ function applyFont() {
 		}
 	}
 
-	obj					= fontSetting.querySelector("#fontsize");
+	obj					= lookSetting.querySelector("#fontsize");
 	val					= obj && obj.value;
 	if (obj) {
 		if (!obj.value && obj.default) {
@@ -144,6 +149,16 @@ function applyFont() {
 		val		= obj.value;
 		if (val) {
 			style.set("font-size", `${val}pt`);
+		}
+	}
+
+	obj					= lookSetting.querySelector("#singleRowBar");
+	value				= obj && obj.checked || false;
+	for (let bar of document.querySelectorAll(".bar")) {
+		if (value) {
+			bar.classList.add   ("singleRowBar");
+		} else {
+			bar.classList.remove("singleRowBar");
 		}
 	}
 
@@ -159,7 +174,7 @@ function applyFont() {
 
 //..............................................................
 
-function parseFontText(setting) {
+function parseLookText(setting) {
 	setting		=
 		setting.split(/\s*\n/)
 		.map   ((line) => line.trim())
@@ -171,59 +186,85 @@ function parseFontText(setting) {
 			return [ id, value ];
 		});
 
-	let fontStyle		= new Map();
+	let lookStyle		= new Map();
 	for (let [ id, value ] of setting) {
-		if (!/^Config_font(Name|Size)$/.test(id)) {
+		if (!/^Config_(font(Name|Size)|singleRowBar)$/.test(id)) {
 			continue;
 		}
 
 		id				= RegExp.$1;
 		switch (id) {
-		case "Name":	id = "fontfamily" ; break;
-		case "Size":	id = "fontsize"   ; break;
-		default:		continue;
+		case "fontName":		id		= "fontfamily";
+								break;
+
+		case "fontSize":		id		= "fontsize";
+								value	= /^\d+$/.test(value) ? parseInt(value, 10) : undefined;
+								break;
+
+		case "singleRowBar":	id		= "singleRowBar";
+								//console.debug(value, !!value);
+								if (/^\d+$/.test(value)) {
+									value	= !!parseInt(value, 10);
+								} else {
+									//If truthy (i.e. some value is set), treat as true.
+									//If falthy (i.e. null, undefined, or empty string),
+									//treat no value specified and set true as default value.
+									value	= true;
+								}
+								break;
+
+		default:				continue;
 		}
 
-		fontStyle.set(id, value);
+		lookStyle.set(id, value);
 	}
 
-	return fontStyle;
+	return lookStyle;
 }
 
 //..............................................................
 
-function setFont(style = new Map(), isInitialize = false) {
-	let fontStyle	= document.querySelector("#settingArea #font");
+function setLook(style = new Map(), isInitialize = false) {
+	let lookStyle	= document.querySelector("#settingArea #look");
 	for (let [ prop, value ] of style.entries()) {
-		let obj		= fontStyle.querySelector(`#${prop}`);
+		let obj		= lookStyle.querySelector(`#${prop}`);
 
 		if (!obj) {
 			continue;
 		}
 
-		switch (prop) {
-		case "fontsize":
-			if (/^\d+$/.test(value)) {
-				value = parseInt(value, 10);
-			} else {
-				value = undefined;
-			}
+		let isValidValue, setValue;
+
+		switch (obj.getAttribute("type")) {
+		case "checkbox":
+			isValidValue		= (value) => value != null;
+			sanitizeValue		= (value) => !!value;
+			setValue			= (value) => obj.checked = value;
 			break;
 
+		case "text":
+		case "number":
 		default:
+			isValidValue		= (value) => !!value;
+			sanitizeValue		= (value) => value ? value : undefined;
+			setValue			= (value) => obj.value = value;
 			break;
 		}
 
-		if (!value && obj.default) {
-			obj.value	= obj.default;
-		}
+		value		= sanitizeValue(value);
 
-		if (value) {
-			obj.value		= value;
+		console.debug(prop, value, obj);
+
+		if (isValidValue(value)) {
+			setValue(value);
 
 			if (isInitialize) {
 				obj.default		= value;
 			}
+		}
+		else
+		if (obj.default != null) {
+			setValue(value);
 		}
 	}
 }
@@ -482,6 +523,7 @@ function parseColorText(setting) {
 const DEFAULT_SETTING		= [
 	"Config_fontName=Meiryo UI"
 ,	"Config_fontSize=9"
+,	"Config_singleRowBar=1"
 ,	"Config_backColor_#1=D7E4F2;99B4D1;F0F0F0;99B4D1;F0F0F0;99B4D1;D7E4F2;B9D1EA;B9D1EA"
 ,	"Config_backColor_#2=B9D1EA;      ;      ;      ;      ;      ;      ;B9D1EA;B9D1EA"
 ,	"Config_backColor_#3=      ;      ;      ;      ;      ;      ;      ;FF8040;"
@@ -518,8 +560,8 @@ function prepareIniValue() {
 	let textarea	= settingContainer.querySelector("#ini textarea");
 	textarea.value	= DEFAULT_SETTING;
 
-	setFont (parseFontText (textarea.value), true);
-	applyFont();
+	setLook (parseLookText (textarea.value), true);
+	applyLook();
 
 	setColor(parseColorText(textarea.value), true);
 	applyColor();
@@ -527,13 +569,13 @@ function prepareIniValue() {
 	//..........................................................
 
 	textarea.addEventListener("change", () => {
-		//console.debug(`INI -> { Font, Color } mirroring: ${textarea.isSetting}`);
+		//console.debug(`INI -> { Look, Color } mirroring: ${textarea.isSetting}`);
 		if (textarea.isSetting) {
 			return;
 		}
 
-		setFont (parseFontText (textarea.value));
-		applyFont();
+		setLook (parseLookText (textarea.value));
+		applyLook();
 
 		setColor(parseColorText(textarea.value));
 		applyColor();
@@ -545,7 +587,7 @@ function prepareIniValue() {
 function setIniValue() {
 	let textarea	= document.querySelector("#settingArea #ini textarea");
 	try {
-		//Suppress INI -> { Font, Color } setting mirroring.
+		//Suppress INI -> { Look, Color } setting mirroring.
 		//
 		//Leave this here, though, actually it is unnecessary worry.
 		//Textarea's change event is to be invoked only by user action.
@@ -553,8 +595,9 @@ function setIniValue() {
 
 		let iniValue	= new Map();
 
-		iniValue.set("fontName", document.querySelector("#settingArea #font #fontfamily").value);
-		iniValue.set("fontSize", document.querySelector("#settingArea #font #fontsize"  ).value);
+		iniValue.set("fontName"    , document.querySelector("#settingArea #look #fontfamily"  ).value          );
+		iniValue.set("fontSize"    , document.querySelector("#settingArea #look #fontsize"    ).value          );
+		iniValue.set("singleRowBar", document.querySelector("#settingArea #look #singleRowBar").checked ? 1 : 0);
 
 		for (let colorProp of [ "backColor", "foreColor", "fontColor" ]) {
 			for (let i = 0; i < 3; i++) {
@@ -675,7 +718,8 @@ body {
 .bar .time         .fore,
 .bar .shebang      .fore { width   : calc(100% - 2px); }
 
-.bar .spacer       *     { display : none ! important; }
+.bar:not(.singleRowBar) .line:nth-child(1) .title * { display    : none   ! important; }
+.bar.singleRowBar       .line:nth-child(2)          { visibility : hidden ! important; }
 
 .bar .view         .text,
 .bar .layout       .text,
@@ -711,18 +755,31 @@ body {
 	width					:  4.0em;
 }
 
-.bar .spacer {
+.bar:not(.singleRowBar) .line:nth-child(1) .title {
 	width					:  8.0rem ! important;
+}
+
+.bar.singleRowBar       .line:nth-child(1) .title {
+	width					: calc(
+		(100% - (  2.0em * 9 +  4.0em +  8.0em +  8.0em + 10.0em +  6.0em +  2.0em)) / 2
+	);
 }
 
 .bar .battery {
 	width					:  8.0em;
 }
 
-.bar .anytext {
+.bar:not(.singleRowBar) .anytext {
 	min-width				:  8.0em;
-	width					: calc(100%
-		- (  2.0em * 9 +  4.0em +  8.0rem +  8.0em +  8.0em + 10.0em +  6.0em +  2.0em)
+	width					: calc(
+		 100% - (  2.0em * 9 +  4.0em +  8.0rem +  8.0em +  8.0em + 10.0em +  6.0em +  2.0em)
+	);
+}
+
+.bar.singleRowBar       .anytext {
+	min-width				:  8.0em;
+	width					: calc(
+		(100% - (  2.0em * 9 +  4.0em           +  8.0em +  8.0em + 10.0em +  6.0em +  2.0em)) / 2
 	);
 }
 
@@ -844,11 +901,11 @@ body {
 	text-align				: center;
 }
 
-#settingArea #font #fontfamily {
+#settingArea #look #fontfamily {
 	width					: 20em;
 }
 
-#settingArea #font #fontsize {
+#settingArea #look #fontsize {
 	width					:  3em;
 }
 
