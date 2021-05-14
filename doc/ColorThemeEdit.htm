@@ -135,6 +135,16 @@ function applyLook() {
 
 		val		= obj.value;
 		if (val) {
+			//XXX: Bold / Italic style can be set only if such font name is available.
+			if (/\b Italic$/.test(val)) {
+				val		= RegExp.leftContext;
+				style.set("font-style", "italic");
+			}
+			if (/\b Bold$/.test(val)) {
+				val		= RegExp.leftContext;
+				style.set("font-weight", "bold");
+			}
+
 			style.set("font-family", val);
 		}
 	}
