@@ -18,6 +18,7 @@ Window_activate(wndId) {
     Debug_logMessage("DEBUG[2] Window_activate: Potentially hung window " . wndId, 2)
     Return, 1
   } Else {
+    WinActivate, ahk_class Progman
     WinActivate, ahk_id %wndId%
     WinGet, aWndId, ID, A
     If (wndId != aWndId)
