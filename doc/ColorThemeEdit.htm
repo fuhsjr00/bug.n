@@ -22,7 +22,13 @@ function preparePreview() {
 		+			'<div class="container">'
 		+				'<div class="view"></div>'
 		+				'<div class="view status"></div>'
-		+				'<div class="view"></div>'.repeat(7)
+		+				'<div class="view"></div>'
+		+				'<div class="view"></div>'
+		+				'<div class="view"></div>'
+		+				'<div class="view"></div>'
+		+				'<div class="view status"></div>'
+		+				'<div class="view"></div>'
+		+				'<div class="view"></div>'
 		+				'<div class="layout"></div>'
 		+			'</div>'
 
@@ -698,15 +704,15 @@ body {
 	min-width				: 1.0em;
 }
 
-.bar .view         .fore,
-.bar .layout       .fore,
-.bar .battery      .fore,
-.bar .anytext      .fore,
-.bar .volume       .fore,
-.bar .date         .fore,
-.bar .time         .fore,
-.bar .shebang      .fore,
-.bar .title        .fore {
+.bar .view                .fore,
+.bar .layout              .fore,
+.bar .battery             .fore,
+.bar .anytext             .fore,
+.bar .volume              .fore,
+.bar .date                .fore,
+.bar .time                .fore,
+.bar .shebang             .fore,
+.bar .title               .fore {
 	display					: inline-block;
 	position				: absolute;
 	z-index					: 1;
@@ -717,29 +723,30 @@ body {
 	height					: calc(100% - 2px);
 }
 
-.bar .view         .fore { width   : calc( 25% - 2px); }
-.bar .battery      .fore { width   : calc( 50% - 2px); }
-.bar .battery.flag .fore { width   : calc( 10% - 2px); }
-.bar .volume       .fore { width   : calc( 50% - 2px); }
-.bar .layout       .fore,
-.bar .anytext      .fore,
-.bar .title        .fore,
-.bar .date         .fore,
-.bar .time         .fore,
-.bar .shebang      .fore { width   : calc(100% - 2px); }
+.bar .view                .fore { width   : calc( 25% - 2px); }
+.bar .view:nth-child(n+6) .fore { width   : calc( 75% - 2px); }
+.bar .battery             .fore { width   : calc( 50% - 2px); }
+.bar .battery.flag        .fore { width   : calc( 10% - 2px); }
+.bar .volume              .fore { width   : calc( 50% - 2px); }
+.bar .layout              .fore,
+.bar .anytext             .fore,
+.bar .title               .fore,
+.bar .date                .fore,
+.bar .time                .fore,
+.bar .shebang             .fore { width   : calc(100% - 2px); }
 
 .bar:not(.singleRowBar) .line:nth-child(1) .title * { display    : none   ! important; }
 .bar.singleRowBar       .line:nth-child(2)          { visibility : hidden ! important; }
 
-.bar .view         .text,
-.bar .layout       .text,
-.bar .battery      .text,
-.bar .anytext      .text,
-.bar .volume       .text,
-.bar .date         .text,
-.bar .time         .text,
-.bar .shebang      .text,
-.bar .title        .text {
+.bar .view                .text,
+.bar .layout              .text,
+.bar .battery             .text,
+.bar .anytext             .text,
+.bar .volume              .text,
+.bar .date                .text,
+.bar .time                .text,
+.bar .shebang             .text,
+.bar .title               .text {
 	display					: inline-block;
 	position				: absolute;
 	z-index					: 2;
