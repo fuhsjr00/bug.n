@@ -410,6 +410,8 @@ Config_UI_saveSession() {
   Config_saveSession(Config_filePath, Config_filePath)
 }
 
+#MaxHotkeysPerInterval 200
+
 ;; Key definitions
 ;; Window management
 #Down::View_activateWindow(0, +1)
