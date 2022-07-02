@@ -90,4 +90,4 @@ the [LICENSE file](./LICENSE.md) for the full license text.
 
 ### Development
 
-Currently, there is one branches, `master`, the current stable version (v9), which is no longer actively developed or maintained.
+Currently, there is one branch, `master`, the current stable version (v9), which is no longer actively developed or maintained.
