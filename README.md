@@ -90,7 +90,4 @@ the [LICENSE file](./LICENSE.md) for the full license text.
 
 ### Development
 
-Currently, there are two branches: 
-
-* `master`, the current stable version (v9), which is no longer actively developed or maintained;
-* `X`, a development version (v10), which is a rewrite of bug.n and in alpha stage, but development is dormant.
+Currently, there is one branches, `master`, the current stable version (v9), which is no longer actively developed or maintained.
