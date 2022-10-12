@@ -182,13 +182,13 @@ Main_toggleBar:
   Monitor_toggleBar()
 Return
 
-#Include Bar.ahk
-#Include Config.ahk
-#Include Debug.ahk
-#Include Manager.ahk
-#Include Monitor.ahk
-#Include ResourceMonitor.ahk
-#Include Tiler.ahk
-#Include View.ahk
-#Include Window.ahk
+#Include %A_ScriptDir\%Bar.ahk
+#Include %A_ScriptDir%\Config.ahk
+#Include %A_ScriptDir%\Debug.ahk
+#Include %A_ScriptDir%\Manager.ahk
+#Include %A_ScriptDir%\Monitor.ahk
+#Include %A_ScriptDir%\ResourceMonitor.ahk
+#Include %A_ScriptDir%\Tiler.ahk
+#Include %A_ScriptDir%\View.ahk
+#Include %A_ScriptDir%\Window.ahk
 #Include %A_ScriptDir%\MonitorManager.ahk
