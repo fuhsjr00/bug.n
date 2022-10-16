@@ -182,7 +182,7 @@ Main_toggleBar:
   Monitor_toggleBar()
 Return
 
-#Include %A_ScriptDir\%Bar.ahk
+#Include %A_ScriptDir%\Bar.ahk
 #Include %A_ScriptDir%\Config.ahk
 #Include %A_ScriptDir%\Debug.ahk
 #Include %A_ScriptDir%\Manager.ahk
