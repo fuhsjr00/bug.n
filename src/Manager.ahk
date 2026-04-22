@@ -745,6 +745,7 @@ Manager_resetMonitorConfiguration() {
       Debug_logMessage("DEBUG[6] MonitorW: " . Monitor_#%A_Index%_width . ", MMW1: " . mmngr1.monitors[A_Index].width . ", MM1dpiX: " . mmngr1.monitors[A_Index].dpiX . ", MM1scaleX: " . mmngr1.monitors[A_Index].scaleX . ", MMW2: " . mmngr2.monitors[A_Index].width . ", MM2dpiX: " . mmngr2.monitors[A_Index].dpiX . ", MM2scaleX: " . mmngr2.monitors[A_Index].scaleX, 6)
       Bar_init(A_Index)
     }
+    mmngr2 := ""
   }
   Manager_saveState()
   Loop, % Manager_monitorCount {
